@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Entity
 @Table(name = "admin")
 @Data
@@ -36,5 +38,35 @@ class Admin {
 
     @Column(length = 255)
     String address;
+
+    @OneToMany(mappedBy = "admin")
+    List<Reminder> reminders;
+
+    @OneToMany(mappedBy = "admin")
+    List<RegisReceive> regisReceives;
+
+    @OneToMany(mappedBy = "admin")
+    List<DonationRegistration> registrations;
+
+    @OneToMany(mappedBy = "admin")
+    List<EmergencyRequest> emergencyRequests;
+
+    @OneToMany(mappedBy = "admin")
+    List<BloodType> bloodTypes;
+
+    @OneToMany(mappedBy = "admin")
+    List<DonationHistory> donationHistories;
+
+    @OneToMany(mappedBy = "admin")
+    List<Member> members;
+
+    @OneToMany(mappedBy = "admin")
+    List<Staff> staffList;
+
+    @OneToMany(mappedBy = "admin")
+    List<Blog> blogs;
+
+    @OneToOne(mappedBy = "admin")
+    BloodInventory bloodInventory;
 }
 

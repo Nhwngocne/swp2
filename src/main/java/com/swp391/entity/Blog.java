@@ -28,4 +28,7 @@ class Blog {
 
     @ManyToOne
     Member member;
+
+    @ManyToOne
+    Admin admin;
 }

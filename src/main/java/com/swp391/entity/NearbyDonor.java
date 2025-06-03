@@ -16,12 +16,12 @@ class NearbyDonor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne
+    @Column(name = "distance_km")
+    Double distanceKm;
+
+    @OneToOne
     Member member;
 
     @ManyToOne
-    EmergencyRequest emergencyRequest;
-
-    @Column(name = "distance_km")
-    Double distanceKm;
+    RegisReceive regisReceive;
 }

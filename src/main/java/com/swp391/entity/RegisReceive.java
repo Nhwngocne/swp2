@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Entity
 @Table(name = "regis_receive")
 @Data
@@ -17,11 +19,17 @@ class RegisReceive {
     Long id;
 
     @ManyToOne
-    DonationRegistration donationRegistration;
-
-    @ManyToOne
     Member member;
 
-    @Column(name = "confirmed")
-    Boolean confirmed;
+    @ManyToOne
+    Staff staff;
+
+    @ManyToOne
+    Admin admin;
+
+    @ManyToOne
+    BloodType bloodType;
+
+    @OneToMany(mappedBy = "regisReceive")
+    List<NearbyDonor> nearbyDonors;
 }

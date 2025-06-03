@@ -33,4 +33,13 @@ class DonationRegistration {
 
     @ManyToOne
     Member member;
+
+    @ManyToOne
+    Staff staff;
+
+    @ManyToOne
+    Admin admin;
+
+    @ManyToOne
+    BloodType bloodType;
 }

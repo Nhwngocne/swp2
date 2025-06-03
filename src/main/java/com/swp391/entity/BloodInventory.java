@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "blood_inventory")
@@ -25,6 +26,12 @@ class BloodInventory {
 
     LocalDate lastUpdated;
 
+    @OneToMany(mappedBy = "bloodInventory")
+    List<BloodType> bloodTypes;
+
     @ManyToOne
     Staff staff;
+
+    @OneToOne
+    Admin admin;
 }

@@ -29,5 +29,14 @@ class DonationHistory {
     String status;
 
     @ManyToOne
+    Staff staff;
+
+    @ManyToOne
+    Admin admin;
+
+    @ManyToOne
+    BloodType bloodType;
+
+    @OneToOne
     Member member;
 }
