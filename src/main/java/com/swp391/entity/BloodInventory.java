@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class BloodInventory {
+public class BloodInventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

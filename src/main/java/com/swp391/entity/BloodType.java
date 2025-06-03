@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class BloodType {
+public class BloodType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
