@@ -24,4 +24,7 @@ class Reminder {
 
     @ManyToOne
     Member member;
+
+    @ManyToOne
+    Admin admin;
 }

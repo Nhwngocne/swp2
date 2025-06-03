@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+import java.util.Set;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -40,21 +43,36 @@ public class Member {
     @Column(length = 20)
     String numberCccd;
 
-//    @OneToMany(mappedBy = "member")
-//    List<DonationRegistration> registrations;
-//
-//    @OneToMany(mappedBy = "member")
-//    List<DonationHistory> donations;
-//
-//    @OneToMany(mappedBy = "member")
-//    List<EmergencyRequest> emergencyRequests;
-//
-//    @OneToMany(mappedBy = "member")
-//    List<Reminder> reminders;
-//
-//    @OneToMany(mappedBy = "member")
-//    List<Feedback> feedbacks;
-//
-//    @OneToMany(mappedBy = "member")
-//    List<Blog> blogs;
+    @ManyToOne
+    Admin admin;
+
+    @OneToOne
+    BloodType bloodType;
+
+    @OneToOne
+    DonationHistory donationHistory;
+
+    @OneToMany(mappedBy = "member")
+    List<Feedback> feedbacks;
+
+    @OneToMany(mappedBy = "member")
+    List<Blog> blogs;
+
+    @OneToMany(mappedBy = "member")
+    List<Reminder> reminders;
+
+    @OneToMany(mappedBy = "member")
+    List<RegisReceive> regisReceives;
+
+    @OneToMany(mappedBy = "member")
+    List<DonationRegistration> registrations;
+
+    @OneToMany(mappedBy = "member")
+    List<EmergencyRequest> emergencyRequests;
+
+    @OneToOne(mappedBy = "member")
+    NearbyDonor nearbyDonor;
+
+    @ManyToMany(mappedBy = "members")
+    Set<Staff> staff;
 }

@@ -30,5 +30,14 @@ class EmergencyRequest {
     String status;
 
     @ManyToOne
+    Staff staff;
+
+    @ManyToOne
     Member member;
+
+    @ManyToOne
+    Admin admin;
+
+    @ManyToOne
+    BloodType bloodType;
 }

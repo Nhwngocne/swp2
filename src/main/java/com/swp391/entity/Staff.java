@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Table(name = "staff")
 @Data
@@ -39,4 +42,31 @@ class Staff {
 
     @Column(name = "work_time_per_day")
     Double workTimePerDay;
+
+    @ManyToOne
+    Admin admin;
+
+    @OneToMany(mappedBy = "staff")
+    List<RegisReceive> regisReceives;
+
+    @OneToMany(mappedBy = "staff")
+    List<DonationRegistration> registrations;
+
+    @OneToMany(mappedBy = "staff")
+    List<EmergencyRequest> emergencyRequests;
+
+    @OneToMany(mappedBy = "staff")
+    List<BloodType> bloodTypes;
+
+    @OneToMany(mappedBy = "staff")
+    List<DonationHistory> donationHistories;
+
+    @OneToMany(mappedBy = "staff")
+    List<RegisOffline> regisOfflines;
+
+    @OneToMany(mappedBy = "staff")
+    List<BloodInventory> bloodInventories;
+
+    @ManyToMany
+    Set<Member> members;
 }
