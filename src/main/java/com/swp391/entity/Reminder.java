@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class Reminder {
+public class Reminder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

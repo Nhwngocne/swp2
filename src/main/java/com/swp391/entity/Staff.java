@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class Staff {
+public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

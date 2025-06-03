@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class Blog {
+public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
