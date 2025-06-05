@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FeedbackResponse {
-    Long id;
+    int id;
     String content;
     Integer rating;
     LocalDateTime createdAt;

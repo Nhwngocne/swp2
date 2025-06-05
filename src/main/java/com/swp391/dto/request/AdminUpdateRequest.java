@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminUpdateRequest {
 
-    Long id;
+    int id;
     String name;
     String email;
     String password;

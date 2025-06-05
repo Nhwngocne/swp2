@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DonationHistoryResponse {
-    Long id;
+    int id;
     LocalDate date;
     Integer volume;
     String component;

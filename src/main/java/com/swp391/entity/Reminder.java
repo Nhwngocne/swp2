@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class Reminder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    int id;
 
     LocalDate recoverTime;
 

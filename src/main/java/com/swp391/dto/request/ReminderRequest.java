@@ -13,6 +13,6 @@ import java.time.LocalDate;
 public class ReminderRequest {
     LocalDate recoverTime;
     Boolean isSent;
-    Long memberId;
-    Long adminId;
+    int memberId;
+    int adminId;
 }

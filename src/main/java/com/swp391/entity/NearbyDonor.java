@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class NearbyDonor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    int id;
 
     @Column(name = "distance_km")
     Double distanceKm;

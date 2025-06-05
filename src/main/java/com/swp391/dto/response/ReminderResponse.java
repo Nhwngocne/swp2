@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReminderResponse {
-    Long id;
+    int id;
     LocalDate recoverTime;
     Boolean isSent;
 }

@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BloodTypeResponse {
-    Long id;
+    int id;
     String name;
     String canDonateTo;
     String canReceiveFrom;

@@ -16,7 +16,7 @@ import java.util.List;
 public class BloodType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    int id;
 
     @Column(length = 10)
     String name;

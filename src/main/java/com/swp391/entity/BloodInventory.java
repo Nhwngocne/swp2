@@ -17,7 +17,7 @@ import java.util.List;
 public class BloodInventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    int id;
 
     @Column(length = 50)
     String component;

@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminResponse {
 
-    Long id;
+    int id;
     String name;
     String email;
     String gender;

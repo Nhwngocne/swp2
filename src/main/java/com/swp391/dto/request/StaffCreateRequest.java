@@ -17,5 +17,5 @@ public class StaffCreateRequest {
     String email;
     String job;
     Double workTimePerDay;
-    Long adminId;
+    int adminId;
 }

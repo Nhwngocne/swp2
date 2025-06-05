@@ -36,7 +36,7 @@ public class TokenService {
 
     // Tạo token cho từng loại user (Member/Staff/Admin)
     public String generateToken(Object user, String role) {
-        Long userId = null;
+        int userId = -1;
 
         if (user instanceof Member) {
             userId = ((Member) user).getId();
@@ -46,10 +46,10 @@ public class TokenService {
             userId = ((Admin) user).getId();
         }
 
-        if (userId == null) throw new RuntimeException("Invalid user type");
+        if (userId == -1) throw new RuntimeException("Invalid user type");
 
         return Jwts.builder()
-                .subject(userId.toString())
+                .subject(String.valueOf(userId)) // ID của user
                 .claim("role", role) // phân biệt MEMBER, STAFF, ADMIN
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 1 day

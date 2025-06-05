@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StaffResponse {
-    Long id;
+    int id;
     String name;
     String numberCccd;
     // Note: password is intentionally excluded for security

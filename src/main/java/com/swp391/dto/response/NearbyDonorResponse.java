@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NearbyDonorResponse {
-    Long id;
+    int id;
     Double distanceKm;
     MemberResponse member;
     RegisReceiveResponse regisReceive;
@@ -20,7 +20,7 @@ public class NearbyDonorResponse {
     @AllArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class MemberResponse {
-        Long id;
+        int id;
         String fullName;
         String email;
         String phoneNumber;

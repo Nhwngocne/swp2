@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class EmergencyRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    int id;
 
     @Column(length = 50)
     String component;

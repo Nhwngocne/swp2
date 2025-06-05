@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EmergencyResponse {
-    Long id;
+    int id;
     String component;
     String location;
     LocalDate freeday;

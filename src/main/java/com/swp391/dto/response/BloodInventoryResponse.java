@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BloodInventoryResponse {
-    Long id;
+    int id;
     String component;
     Integer quantity;
     LocalDate lastUpdated;

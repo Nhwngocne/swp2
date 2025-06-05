@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class RegisOffline {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    int id;
 
     @Column(length = 100)
     String name;

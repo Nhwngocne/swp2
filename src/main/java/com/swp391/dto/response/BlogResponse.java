@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BlogResponse {
-    Long id;
+    int id;
     String title;
     String content;
     LocalDate publishedDate;
