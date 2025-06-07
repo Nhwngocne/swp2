@@ -35,14 +35,14 @@ public class MemberService{
         return memberMapper.toMemberResponse(member);
     }
     //update member
-    public MemberResponse updateMember(MemberCreateRequest request, Long id) {
+    public MemberResponse updateMember(MemberCreateRequest request, int id) {
         Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("Member not found"));
         memberMapper.updateMember(member, request);
         member.setPassword(passwordEncoder.encode(request.getPassword()));
         return memberMapper.toMemberResponse(member);
     }
     //delete member
-    public void deleteMember(Long id){
+    public void deleteMember(int id){
         memberRepository.deleteById(id);
     }
     //get all members
@@ -50,7 +50,7 @@ public class MemberService{
         return memberRepository.findAll().stream().map(memberMapper::toMemberResponse).toList();
     }
     //get member by id
-    public MemberResponse getMemberById(Long id){
+    public MemberResponse getMemberById(int id){
             Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("Member not found"));
         return memberMapper.toMemberResponse(member);
     }

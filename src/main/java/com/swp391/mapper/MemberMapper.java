@@ -13,5 +13,6 @@ public interface MemberMapper {
     // Converts Member entity to MemberResponse DTO
     MemberResponse toMemberResponse(Member member);
     // Updates an existing Member entity with data from MemberCreateRequest
+
     void updateMember(@MappingTarget Member member, MemberCreateRequest request);
 }
