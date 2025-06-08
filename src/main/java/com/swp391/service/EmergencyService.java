@@ -5,6 +5,8 @@ import com.swp391.dto.response.EmergencyResponse;
 import com.swp391.dto.response.NearbyDonorResponse;
 import com.swp391.entity.EmergencyRequest;
 import com.swp391.entity.NearbyDonor;
+import com.swp391.exception.AppException;
+import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.EmergencyMapper;
 import com.swp391.repository.EmergencyRequestRepository;
 import com.swp391.repository.NearbyDonorRepository;
@@ -34,7 +36,7 @@ public class EmergencyService {
 
     public EmergencyResponse getEmergencyRequestById(int id) {
         EmergencyRequest emergencyRequest = emergencyRequestRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Emergency request not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
         return emergencyMapper.toEmergencyResponse(emergencyRequest);
     }
 
@@ -47,7 +49,7 @@ public class EmergencyService {
 
     public EmergencyResponse updateEmergencyRequest(int id, EmergencyRequestCreateRequest request) {
         EmergencyRequest emergencyRequest = emergencyRequestRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Emergency request not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
         emergencyMapper.toEmergencyRequest(request); // Nếu muốn update, cần map update, hoặc làm thủ công
         // Nếu bạn có method update trong mapper, gọi ở đây, ví dụ:
         // emergencyMapper.updateEmergencyRequest(emergencyRequest, request);
@@ -75,7 +77,7 @@ public class EmergencyService {
 
     public NearbyDonorResponse getNearbyDonorById(int id) {
         NearbyDonor nearbyDonor = nearbyDonorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Nearby donor not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.NEAR_BY_DONOR_NOT_EXISTED));
         return emergencyMapper.toNearbyDonorResponse(nearbyDonor);
     }
 

@@ -3,6 +3,8 @@ package com.swp391.service;
 import com.swp391.dto.request.StaffCreateRequest;
 import com.swp391.dto.response.StaffResponse;
 import com.swp391.entity.Staff;
+import com.swp391.exception.AppException;
+import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.StaffMapper;
 import com.swp391.repository.StaffRepository;
 import lombok.AccessLevel;
@@ -12,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +31,14 @@ public class StaffService {
             staff = staffRepository.save(staff);
 
         } catch (Exception e) {
-            throw new RuntimeException("Error creating staff: " + e.getMessage());
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
         return staffMapper.toStaffResponse(staff);
     }
     //update staff
     public StaffResponse updateStaff(int id, StaffCreateRequest request) {
         Staff staff = staffRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Staff not found with id: " + id));
+                .orElseThrow(() ->  new AppException(ErrorCode.USER_NOT_EXISTED));
 
         staffMapper.updateStaff(staff, request);
         staff.setPassword(passwordEncoder.encode(staff.getPassword()));
@@ -54,7 +55,7 @@ public class StaffService {
     // get staff by id
     public StaffResponse getStaffById(int id) {
         Staff staff = staffRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Staff not found with id: " + id));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return staffMapper.toStaffResponse(staff);
     }
 }

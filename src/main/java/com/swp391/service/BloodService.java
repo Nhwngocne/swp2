@@ -8,6 +8,8 @@ import com.swp391.dto.response.BloodInventoryResponse;
 import com.swp391.dto.response.BloodTypeResponse;
 import com.swp391.entity.BloodInventory;
 import com.swp391.entity.BloodType;
+import com.swp391.exception.AppException;
+import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.BloodMapper;
 import com.swp391.repository.BloodInventoryRepository;
 import com.swp391.repository.BloodTypeRepository;
@@ -37,7 +39,7 @@ public class BloodService {
     // Update
     public BloodTypeResponse updateBloodType(int id, BloodTypeUpdateRequest request) {
         BloodType bloodType = bloodTypeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blood type not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_EXISTED));
         bloodMapper.updateBloodType(bloodType, request);
         bloodType = bloodTypeRepository.save(bloodType);
         return bloodMapper.toBloodTypeResponse(bloodType);
@@ -56,7 +58,7 @@ public class BloodService {
     // Get by ID
     public BloodTypeResponse getBloodTypeById(int id) {
         BloodType bloodType = bloodTypeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blood type not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_EXISTED));
         return bloodMapper.toBloodTypeResponse(bloodType);
     }
 
@@ -70,7 +72,7 @@ public class BloodService {
     // Update
     public BloodInventoryResponse updateBloodInventory(int id, BloodInventoryUpdateRequest request) {
         BloodInventory inventory = bloodInventoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blood inventory not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_INVENTORY_NOT_EXISTED));
         bloodMapper.updateBloodInventory(inventory, request);
         inventory = bloodInventoryRepository.save(inventory);
         return bloodMapper.toBloodInventoryResponse(inventory);
@@ -89,7 +91,7 @@ public class BloodService {
     // Get by ID
     public BloodInventoryResponse getBloodInventoryById(int id) {
         BloodInventory inventory = bloodInventoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blood inventory not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_INVENTORY_NOT_EXISTED));
         return bloodMapper.toBloodInventoryResponse(inventory);
     }
 }
