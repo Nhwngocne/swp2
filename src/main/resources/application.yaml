@@ -1,4 +1,8 @@
 #spring.application.name=SWP391project
+server:
+  port: 8080
+  servlet:
+    context-path: /swp391
 
 spring:
   datasource:

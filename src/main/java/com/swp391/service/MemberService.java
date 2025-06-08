@@ -3,6 +3,8 @@ package com.swp391.service;
 import com.swp391.dto.request.MemberCreateRequest;
 import com.swp391.dto.response.MemberResponse;
 import com.swp391.entity.Member;
+import com.swp391.exception.AppException;
+import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.MemberMapper;
 import com.swp391.repository.MemberRepository;
 import lombok.AccessLevel;
@@ -29,14 +31,14 @@ public class MemberService{
         try{
             member = memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {
-            //throw new AppException(ErrorCode.USER_EXISTED);
-            throw new RuntimeException(e);
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
         return memberMapper.toMemberResponse(member);
     }
     //update member
     public MemberResponse updateMember(MemberCreateRequest request, int id) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("Member not found"));
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         memberMapper.updateMember(member, request);
         member.setPassword(passwordEncoder.encode(request.getPassword()));
         return memberMapper.toMemberResponse(member);
@@ -51,7 +53,8 @@ public class MemberService{
     }
     //get member by id
     public MemberResponse getMemberById(int id){
-            Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("Member not found"));
+            Member member = memberRepository.findById(id)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return memberMapper.toMemberResponse(member);
     }
 
