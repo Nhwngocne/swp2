@@ -9,6 +9,7 @@ import com.swp391.dto.response.BloodTypeResponse;
 import com.swp391.entity.BloodInventory;
 import com.swp391.entity.BloodType;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
@@ -17,6 +18,9 @@ public interface BloodMapper {
     // BLOOD TYPE
     BloodType toBloodType(BloodTypeCreateRequest request);
 
+    @Mapping(source = "admin.name", target = "adminName")
+    @Mapping(source = "staff.name", target = "staffName")
+    @Mapping(source = "bloodInventory.component", target = "bloodInventoryComponent")
     BloodTypeResponse toBloodTypeResponse(BloodType entity);
 
     void updateBloodType(@MappingTarget BloodType entity, BloodTypeUpdateRequest request);

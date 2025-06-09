@@ -4,6 +4,7 @@ import com.swp391.dto.request.BlogCreateRequest;
 import com.swp391.dto.response.BlogResponse;
 import com.swp391.entity.Blog;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 @Mapper (componentModel = "spring")
 public interface BlogMapper {
@@ -13,6 +14,6 @@ public interface BlogMapper {
     BlogResponse toBlogResponse(Blog entity);
 
     // Updates an existing Blog entity with data from BlogCreateRequest
-    void updateBlog(Blog entity, BlogCreateRequest request);
+    void updateBlog(@MappingTarget Blog entity, BlogCreateRequest request);
 
 }
