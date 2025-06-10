@@ -3,21 +3,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { showNotification } from '../components/common/Notification';
 
-
 const Register = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
     phone: '',
     password: '',
     confirmPassword: '',
-    birthDate: '',
     gender: '',
-    bloodType: '',
     address: '',
-    emergencyContact: '',
-    emergencyPhone: '',
-    medicalHistory: '',
+    job: '',
+    number_cccd: '',
     agreeTerms: false
   });
   const [loading, setLoading] = useState(false);
@@ -33,7 +29,7 @@ const Register = () => {
   };
 
   const validateForm = () => {
-    if (!formData.fullName.trim()) {
+    if (!formData.name.trim()) {
       showNotification('Vui lòng nhập họ tên', 'error');
       return false;
     }
@@ -53,16 +49,20 @@ const Register = () => {
       showNotification('Mật khẩu xác nhận không khớp', 'error');
       return false;
     }
-    if (!formData.birthDate) {
-      showNotification('Vui lòng nhập ngày sinh', 'error');
-      return false;
-    }
     if (!formData.gender) {
       showNotification('Vui lòng chọn giới tính', 'error');
       return false;
     }
-    if (!formData.bloodType) {
-      showNotification('Vui lòng chọn nhóm máu', 'error');
+    if (!formData.address.trim()) {
+      showNotification('Vui lòng nhập địa chỉ', 'error');
+      return false;
+    }
+    if (!formData.job.trim()) {
+      showNotification('Vui lòng nhập nghề nghiệp', 'error');
+      return false;
+    }
+    if (!formData.number_cccd.trim() || !/^[0-9]{9,12}$/.test(formData.number_cccd)) {
+      showNotification('Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)', 'error');
       return false;
     }
     if (!formData.agreeTerms) {
@@ -79,7 +79,9 @@ const Register = () => {
 
     setLoading(true);
     try {
-      await register(formData);
+      // Prepare data for API (exclude confirmPassword and agreeTerms)
+      const { confirmPassword, agreeTerms, ...registerData } = formData;
+      await register(registerData);
       showNotification('Đăng ký thành công!', 'success');
       navigate('/dashboard');
     } catch (error) {
@@ -103,12 +105,12 @@ const Register = () => {
             <h3>Thông tin cá nhân</h3>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="fullName">Họ và tên *</label>
+                <label htmlFor="name">Họ và tên *</label>
                 <input
                   type="text"
-                  id="fullName"
-                  name="fullName"
-                  value={formData.fullName}
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   required
                 />
@@ -139,13 +141,15 @@ const Register = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="birthDate">Ngày sinh *</label>
+                <label htmlFor="number_cccd">Số CCCD/CMND *</label>
                 <input
-                  type="date"
-                  id="birthDate"
-                  name="birthDate"
-                  value={formData.birthDate}
+                  type="text"
+                  id="number_cccd"
+                  name="number_cccd"
+                  value={formData.number_cccd}
                   onChange={handleChange}
+                  pattern="[0-9]{9,12}"
+                  title="Vui lòng nhập số CCCD/CMND từ 9-12 chữ số"
                   required
                 />
               </div>
@@ -162,84 +166,35 @@ const Register = () => {
                   required
                 >
                   <option value="">Chọn giới tính</option>
-                  <option value="male">Nam</option>
-                  <option value="female">Nữ</option>
-                  <option value="other">Khác</option>
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                  <option value="Khác">Khác</option>
                 </select>
               </div>
               <div className="form-group">
-                <label htmlFor="bloodType">Nhóm máu *</label>
-                <select
-                  id="bloodType"
-                  name="bloodType"
-                  value={formData.bloodType}
+                <label htmlFor="job">Nghề nghiệp *</label>
+                <input
+                  type="text"
+                  id="job"
+                  name="job"
+                  value={formData.job}
                   onChange={handleChange}
+                  placeholder="Ví dụ: Sinh viên, Kỹ sư, Bác sĩ..."
                   required
-                >
-                  <option value="">Chọn nhóm máu</option>
-                  <option value="A+">A+</option>
-                  <option value="A-">A-</option>
-                  <option value="B+">B+</option>
-                  <option value="B-">B-</option>
-                  <option value="AB+">AB+</option>
-                  <option value="AB-">AB-</option>
-                  <option value="O+">O+</option>
-                  <option value="O-">O-</option>
-                </select>
+                />
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="address">Địa chỉ</label>
+              <label htmlFor="address">Địa chỉ *</label>
               <textarea
                 id="address"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
                 rows="2"
-              />
-            </div>
-          </div>
-
-          {/* Emergency Contact */}
-          <div className="form-section">
-            <h3>Liên hệ khẩn cấp</h3>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="emergencyContact">Tên người liên hệ</label>
-                <input
-                  type="text"
-                  id="emergencyContact"
-                  name="emergencyContact"
-                  value={formData.emergencyContact}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="emergencyPhone">Số điện thoại</label>
-                <input
-                  type="tel"
-                  id="emergencyPhone"
-                  name="emergencyPhone"
-                  value={formData.emergencyPhone}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Medical Information */}
-          <div className="form-section">
-            <h3>Thông tin y tế</h3>
-            <div className="form-group">
-              <label htmlFor="medicalHistory">Tiền sử bệnh lý (nếu có)</label>
-              <textarea
-                id="medicalHistory"
-                name="medicalHistory"
-                value={formData.medicalHistory}
-                onChange={handleChange}
-                rows="3"
-                placeholder="Mô tả các bệnh lý, dị ứng, thuốc đang sử dụng..."
+                placeholder="Nhập địa chỉ đầy đủ của bạn"
+                required
               />
             </div>
           </div>
@@ -259,6 +214,7 @@ const Register = () => {
                   minLength="6"
                   required
                 />
+                <small>Mật khẩu phải có ít nhất 6 ký tự</small>
               </div>
               <div className="form-group">
                 <label htmlFor="confirmPassword">Xác nhận mật khẩu *</label>

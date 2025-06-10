@@ -139,10 +139,6 @@ const Login = () => {
             </div>
 
             <div className="form-options">
-              <label className="checkbox-label">
-                <input type="checkbox" />
-                <span className="checkbox-text">Ghi nhớ đăng nhập</span>
-              </label>
               <Link to="/forgot-password" className="forgot-password-link">
                 Quên mật khẩu?
               </Link>
@@ -157,21 +153,6 @@ const Login = () => {
             </button>
           </form>
 
-          <div className="login-divider">
-            <span>hoặc</span>
-          </div>
-
-          <div className="social-login">
-            <button className="btn btn-social btn-google">
-              <img src="/assets/google-icon.svg" alt="Google" />
-              Đăng nhập với Google
-            </button>
-            <button className="btn btn-social btn-facebook">
-              <img src="/assets/facebook-icon.svg" alt="Facebook" />
-              Đăng nhập với Facebook
-            </button>
-          </div>
-
           <div className="login-footer">
             <p>
               Chưa có tài khoản? 
@@ -182,34 +163,6 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="login-info">
-          <div className="info-content">
-            <h2>Tại sao nên hiến máu?</h2>
-            <div className="info-items">
-              <div className="info-item">
-                <div className="info-icon">❤️</div>
-                <div className="info-text">
-                  <h3>Cứu sống người khác</h3>
-                  <p>Mỗi lần hiến máu có thể cứu sống tới 3 người</p>
-                </div>
-              </div>
-              <div className="info-item">
-                <div className="info-icon">🏥</div>
-                <div className="info-text">
-                  <h3>Kiểm tra sức khỏe miễn phí</h3>
-                  <p>Được khám sức khỏe và xét nghiệm máu miễn phí</p>
-                </div>
-              </div>
-              <div className="info-item">
-                <div className="info-icon">🌟</div>
-                <div className="info-text">
-                  <h3>Ý nghĩa nhân văn</h3>
-                  <p>Góp phần xây dựng cộng đồng nhân ái, yêu thương</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
