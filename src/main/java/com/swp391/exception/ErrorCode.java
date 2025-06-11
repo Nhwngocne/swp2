@@ -17,8 +17,10 @@ public enum ErrorCode {
     BLOOD_INVENTORY_NOT_EXISTED(1002, "Blood inventory does not exist", HttpStatus.NOT_FOUND),
     BLOG_NOT_EXISTED(1002, "Blog does not exist", HttpStatus.NOT_FOUND),
     NEAR_BY_DONOR_NOT_EXISTED(1002, "NearbyDonor does not exist", HttpStatus.NOT_FOUND),
-
-
+    Donation_REGISTRATION_NOT_EXISTED(1002, "Donation registration does not exist", HttpStatus.NOT_FOUND),
+    Donation_HISTORY_NOT_EXISTED(1002, "Donation history does not exist", HttpStatus.NOT_FOUND),
+    Donation_RECEIVE_NOT_EXISTED(1002, "Donation receive does not exist", HttpStatus.NOT_FOUND),
+    Donation_REGISTRATION_OFFLINE_NOT_EXISTED(1002, "Donation registration offline does not exist", HttpStatus.NOT_FOUND),
     ;
 
     private final int code;

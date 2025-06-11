@@ -46,7 +46,7 @@ public class DonationService {
 
     public DonationHistoryResponse getDonationHistoryById(int id) {
         DonationHistory donationHistory = donationHistoryRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.Donation_HISTORY_NOT_EXISTED));
         return donationMapper.toDonationHistoryResponse(donationHistory);
     }
 
@@ -59,7 +59,7 @@ public class DonationService {
 
     public DonationHistoryResponse updateDonationHistory(int id, DonationHistoryCreateRequest request) {
         DonationHistory donationHistory = donationHistoryRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.Donation_HISTORY_NOT_EXISTED));
         donationMapper.updateDonationHistory(donationHistory, request);
         donationHistory = donationHistoryRepository.save(donationHistory);
         return donationMapper.toDonationHistoryResponse(donationHistory);
@@ -67,7 +67,7 @@ public class DonationService {
 
     public void deleteDonationHistory(int id) {
         if (!donationHistoryRepository.existsById(id)) {
-            throw new AppException(ErrorCode.EMERGENCY_NOT_EXISTED);
+            throw new AppException(ErrorCode.Donation_HISTORY_NOT_EXISTED);
         }
         donationHistoryRepository.deleteById(id);
     }
@@ -81,14 +81,14 @@ public class DonationService {
 
     public void updateDonationRegistration(int id, DonationRegistrationRequest request) {
         DonationRegistration registration = donationRegistrationRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.Donation_REGISTRATION_NOT_EXISTED));
         donationMapper.updateDonationRegistration(registration, request);
         donationRegistrationRepository.save(registration);
     }
 
     public void deleteDonationRegistration(int id) {
         if (!donationRegistrationRepository.existsById(id)) {
-            throw new AppException(ErrorCode.EMERGENCY_NOT_EXISTED);
+            throw new AppException(ErrorCode.Donation_REGISTRATION_NOT_EXISTED);
         }
         donationRegistrationRepository.deleteById(id);
     }
@@ -98,7 +98,7 @@ public class DonationService {
     public RegisOfflineResponse createRegisOffline(RegisReceiveRequest request) {
         // Lấy entity từ DB bằng code
         BloodType bloodType = bloodTypeRepository.findByName(request.getBloodType())
-                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.Donation_REGISTRATION_OFFLINE_NOT_EXISTED));
 
         RegisReceive receive = donationMapper.toRegisReceive(request);
         receive.setBloodType(bloodType);  // set thủ công sau khi map
@@ -110,7 +110,7 @@ public class DonationService {
 
     public RegisOfflineResponse getRegisOfflineById(int id) {
         RegisReceive receive = regisReceiveRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.Donation_REGISTRATION_OFFLINE_NOT_EXISTED));
         return donationMapper.toRegisOfflineResponse(receive);
     }
 
@@ -123,7 +123,7 @@ public class DonationService {
 
     public RegisOfflineResponse updateRegisOffline(int id, RegisReceiveRequest request) {
         RegisReceive receive = regisReceiveRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.Donation_REGISTRATION_OFFLINE_NOT_EXISTED));
         donationMapper.updateRegisReceive(receive, request);
         receive = regisReceiveRepository.save(receive);
         return donationMapper.toRegisOfflineResponse(receive);
@@ -131,7 +131,7 @@ public class DonationService {
 
     public void deleteRegisOffline(int id) {
         if (!regisReceiveRepository.existsById(id)) {
-            throw new AppException(ErrorCode.EMERGENCY_NOT_EXISTED);
+            throw new AppException(ErrorCode.Donation_REGISTRATION_OFFLINE_NOT_EXISTED);
         }
         regisReceiveRepository.deleteById(id);
     }
@@ -146,20 +146,20 @@ public class DonationService {
 
     public RegisReceiveResponse getRegisReceiveById(int id) {
         RegisReceive receive = regisReceiveRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.Donation_RECEIVE_NOT_EXISTED));
         return donationMapper.toRegisReceiveResponse(receive);
     }
 
     public void deleteRegisReceive(int id) {
         if (!regisReceiveRepository.existsById(id)) {
-            throw new AppException(ErrorCode.EMERGENCY_NOT_EXISTED);
+            throw new AppException(ErrorCode.Donation_RECEIVE_NOT_EXISTED);
         }
         regisReceiveRepository.deleteById(id);
     }
 
     public RegisReceiveResponse updateRegisReceiveFromRegistration(int id, DonationRegistrationRequest request) {
         RegisReceive receive = regisReceiveRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.Donation_RECEIVE_NOT_EXISTED));
         donationMapper.updateRegisReceive(receive, request);
         receive = regisReceiveRepository.save(receive);
         return donationMapper.toRegisReceiveResponse(receive);
