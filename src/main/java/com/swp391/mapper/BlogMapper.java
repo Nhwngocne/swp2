@@ -14,6 +14,6 @@ public interface BlogMapper {
     BlogResponse toBlogResponse(Blog entity);
 
     // Updates an existing Blog entity with data from BlogCreateRequest
-    void updateBlog(@MappingTarget Blog entity, BlogCreateRequest request);
+        void updateBlog(@MappingTarget Blog entity, BlogCreateRequest request);
 
 }
