@@ -4,7 +4,16 @@ import com.swp391.Enum.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AdminCreateRequest {
     @NotBlank(message = "Name cannot be blank")
     @Size(max = 100, message = "Name maximum 100 characters")
