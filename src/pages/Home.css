@@ -1,0 +1,262 @@
+/* Home.css */
+
+/* Tổng thể */
+.home-page {
+  font-family: Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+}
+
+/* Hero Section */
+.hero-section {
+  background-color: #fff5f5;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hero-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%;
+}
+.hero-content {
+  flex: 1 1 500px;
+}
+.hero-title {
+  font-size: 2.5rem;
+  color: #c62828;
+  margin-bottom: 10px;
+}
+.hero-subtitle {
+  display: block;
+  font-size: 1.2rem;
+  color: #555;
+}
+.hero-description {
+  margin: 20px 0;
+  color: #444;
+}
+.hero-actions {
+  display: flex;
+  gap: 15px;
+}
+.hero-image {
+  flex: 1 1 400px;
+  text-align: center;
+}
+.hero-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+}
+.btn-primary {
+  background-color: #c62828;
+  color: #fff;
+  border: none;
+}
+.btn-outline {
+  background-color: transparent;
+  color: #c62828;
+  border: 2px solid #c62828;
+}
+.btn-large {
+  font-size: 1rem;
+}
+.btn-small {
+  font-size: 0.9rem;
+  padding: 6px 12px;
+}
+
+/* Stats Section */
+.stats-section {
+  padding: 40px 20px;
+  background-color: #fff;
+}
+.section-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.stat-card {
+  background-color: #fbe9e7;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+}
+.stat-icon {
+  font-size: 2rem;
+}
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+.stat-label {
+  margin-top: 5px;
+}
+
+/* Events Section */
+.events-section,
+.news-section,
+.blood-types-section {
+  padding: 40px 20px;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.section-link {
+  color: #c62828;
+  text-decoration: none;
+  font-weight: bold;
+}
+.events-grid,
+.news-grid,
+.blood-types-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.event-card,
+.news-card,
+.blood-type-card {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.event-image,
+.news-image {
+  position: relative;
+}
+.event-image img,
+.news-image img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+.event-date {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: #c62828;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+.event-content,
+.news-content {
+  padding: 15px;
+}
+.event-title,
+.news-title {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+.event-location {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+.location-icon {
+  margin-right: 5px;
+}
+.news-date {
+  font-size: 0.85rem;
+  color: gray;
+  margin-bottom: 5px;
+}
+.news-excerpt {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+.news-link {
+  color: #c62828;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* CTA Section */
+.cta-section {
+  background-color: #fff5f5;
+  padding: 40px 20px;
+  text-align: center;
+}
+.cta-title {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+.cta-description {
+  max-width: 600px;
+  margin: 0 auto 20px;
+  color: #444;
+}
+.cta-actions {
+  margin-top: 20px;
+}
+
+/* Blood Types Section */
+.blood-type-card {
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #eee;
+  text-align: center;
+  border-radius: 10px;
+}
+.blood-type-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+.compatibility {
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+.can-donate,
+.can-receive {
+  display: block;
+  margin-top: 5px;
+}
+
+/* Loading */
+.loading-container {
+  padding: 100px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #888;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+}

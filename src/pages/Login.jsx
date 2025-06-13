@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import './Login.css';
 
 const Login = () => {
   const { login, user } = useAuth();
@@ -137,13 +138,6 @@ const Login = () => {
                 <span className="error-message">{errors.password}</span>
               )}
             </div>
-
-            <div className="form-options">
-              <Link to="/forgot-password" className="forgot-password-link">
-                Quên mật khẩu?
-              </Link>
-            </div>
-
             <button 
               type="submit" 
               className="btn btn-primary btn-full"

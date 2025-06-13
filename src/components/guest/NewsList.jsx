@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './NewsList.css';
 
 const NewsList = () => {
   const [news] = useState([
@@ -53,7 +54,7 @@ const NewsList = () => {
 
   const categories = ['all', 'Sức khỏe', 'Hướng dẫn', 'Thông tin', 'Câu chuyện'];
 
-  const filteredNews = news.filter(item => 
+  const filteredNews = news.filter(item =>
     selectedCategory === 'all' || item.category === selectedCategory
   );
 
@@ -74,93 +75,31 @@ const NewsList = () => {
 
   if (selectedNews) {
     return (
-      <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-        <button
-          onClick={() => setSelectedNews(null)}
-          style={{
-            padding: '10px 20px',
-            background: '#e74c3c',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginBottom: '20px',
-            fontSize: '14px'
-          }}
-        >
+      <div className="news-detail-container">
+        <button className="back-button" onClick={() => setSelectedNews(null)}>
           ← Quay lại danh sách
         </button>
 
-        <article style={{
-          background: 'white',
-          padding: '30px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{
-            display: 'inline-block',
-            padding: '6px 15px',
-            background: getCategoryColor(selectedNews.category),
-            color: 'white',
-            borderRadius: '20px',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            marginBottom: '20px'
-          }}>
+        <article className="news-article">
+          <div
+            className="news-category"
+            style={{ background: getCategoryColor(selectedNews.category) }}
+          >
             {selectedNews.category.toUpperCase()}
           </div>
 
-          <h1 style={{
-            fontSize: '2rem',
-            color: '#2c3e50',
-            marginBottom: '20px',
-            lineHeight: '1.3'
-          }}>
-            {selectedNews.title}
-          </h1>
+          <h1 className="news-title">{selectedNews.title}</h1>
 
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '20px',
-            marginBottom: '30px',
-            paddingBottom: '20px',
-            borderBottom: '1px solid #eee',
-            flexWrap: 'wrap'
-          }}>
-            <span style={{ color: '#666' }}>
-              👤 {selectedNews.author}
-            </span>
-            <span style={{ color: '#666' }}>
-              📅 {formatDate(selectedNews.publishDate)}
-            </span>
-            <span style={{ color: '#666' }}>
-              👁️ {selectedNews.views.toLocaleString()} lượt xem
-            </span>
+          <div className="news-meta">
+            <span>👤 {selectedNews.author}</span>
+            <span>📅 {formatDate(selectedNews.publishDate)}</span>
+            <span>👁️ {selectedNews.views.toLocaleString()} lượt xem</span>
           </div>
 
-          <div style={{
-            height: '300px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '4rem',
-            marginBottom: '30px'
-          }}>
-            📰
-          </div>
+          <div className="news-thumbnail">📰</div>
 
-          <div style={{
-            fontSize: '1.1rem',
-            lineHeight: '1.8',
-            color: '#2c3e50'
-          }}>
-            <p style={{ marginBottom: '20px', fontWeight: 'bold', fontSize: '1.2rem' }}>
-              {selectedNews.summary}
-            </p>
+          <div className="news-body">
+            <p className="news-summary">{selectedNews.summary}</p>
             <p>{selectedNews.content}</p>
           </div>
         </article>
@@ -169,138 +108,45 @@ const NewsList = () => {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h1 style={{ 
-          fontSize: '2.5rem', 
-          color: '#e74c3c', 
-          marginBottom: '10px',
-          fontWeight: 'bold'
-        }}>
-          Tin tức
-        </h1>
-        <p style={{ 
-          fontSize: '1.1rem', 
-          color: '#666',
-          lineHeight: '1.6'
-        }}>
-          Cập nhật những thông tin mới nhất về hiến máu và sức khỏe cộng đồng
-        </p>
+    <div className="news-container">
+      <div className="news-header">
+        <h1>Tin tức</h1>
+        <p>Cập nhật những thông tin mới nhất về hiến máu và sức khỏe cộng đồng</p>
       </div>
 
-      {/* Category Filter */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center',
-        gap: '10px',
-        marginBottom: '30px',
-        flexWrap: 'wrap'
-      }}>
+      <div className="category-filter">
         {categories.map(category => (
           <button
             key={category}
             onClick={() => setSelectedCategory(category)}
-            style={{
-              padding: '8px 16px',
-              border: selectedCategory === category ? '2px solid #e74c3c' : '2px solid #ddd',
-              background: selectedCategory === category ? '#e74c3c' : 'white',
-              color: selectedCategory === category ? 'white' : '#333',
-              borderRadius: '20px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: '500',
-              transition: 'all 0.3s'
-            }}
+            className={`filter-button ${selectedCategory === category ? 'active' : ''}`}
           >
             {category === 'all' ? 'Tất cả' : category}
           </button>
         ))}
       </div>
 
-      {/* News Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-        gap: '25px'
-      }}>
+      <div className="news-grid">
         {filteredNews.map(item => (
           <div
             key={item.id}
+            className="news-card"
             onClick={() => setSelectedNews(item)}
-            style={{
-              background: 'white',
-              borderRadius: '12px',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-              overflow: 'hidden',
-              transition: 'transform 0.3s, box-shadow 0.3s',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
-            }}
           >
-            {/* News Image */}
-            <div style={{
-              height: '200px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '3rem'
-            }}>
-              📰
-            </div>
+            <div className="card-image">📰</div>
 
-            {/* News Content */}
-            <div style={{ padding: '20px' }}>
-              {/* Category Badge */}
-              <div style={{
-                display: 'inline-block',
-                padding: '4px 12px',
-                background: getCategoryColor(item.category),
-                color: 'white',
-                borderRadius: '15px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                marginBottom: '15px'
-              }}>
+            <div className="card-content">
+              <div
+                className="card-category"
+                style={{ background: getCategoryColor(item.category) }}
+              >
                 {item.category.toUpperCase()}
               </div>
 
-              <h3 style={{
-                fontSize: '1.3rem',
-                fontWeight: 'bold',
-                color: '#2c3e50',
-                marginBottom: '15px',
-                lineHeight: '1.4'
-              }}>
-                {item.title}
-              </h3>
+              <h3>{item.title}</h3>
+              <p>{item.summary}</p>
 
-              <p style={{
-                color: '#7f8c8d',
-                lineHeight: '1.5',
-                marginBottom: '20px'
-              }}>
-                {item.summary}
-              </p>
-
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingTop: '15px',
-                borderTop: '1px solid #eee',
-                fontSize: '13px',
-                color: '#95a5a6'
-              }}>
+              <div className="card-meta">
                 <span>👤 {item.author}</span>
                 <span>📅 {formatDate(item.publishDate)}</span>
                 <span>👁️ {item.views}</span>
@@ -311,20 +157,10 @@ const NewsList = () => {
       </div>
 
       {filteredNews.length === 0 && (
-        <div style={{
-          textAlign: 'center',
-          padding: '60px 20px',
-          background: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ fontSize: '4rem', marginBottom: '20px' }}>📰</div>
-          <h3 style={{ color: '#2c3e50', marginBottom: '10px' }}>
-            Không có tin tức nào
-          </h3>
-          <p style={{ color: '#7f8c8d' }}>
-            Hiện tại không có tin tức nào trong danh mục này
-          </p>
+        <div className="no-news">
+          <div>📰</div>
+          <h3>Không có tin tức nào</h3>
+          <p>Hiện tại không có tin tức nào trong danh mục này</p>
         </div>
       )}
     </div>

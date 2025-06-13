@@ -1,0 +1,211 @@
+/* Tổng thể navbar */
+.navbar {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+/* Logo + Sidebar toggle */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #d32f2f;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.brand-logo {
+  height: 40px;
+  margin-right: 8px;
+}
+
+.brand-text {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Sidebar toggle icon */
+.sidebar-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.hamburger {
+  width: 20px;
+  height: 2px;
+  background-color: #333;
+  margin: 4px 0;
+}
+
+/* Navigation links */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #d32f2f;
+}
+
+/* Auth buttons */
+.auth-buttons .btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline {
+  border: 1px solid #d32f2f;
+  background-color: white;
+  color: #d32f2f;
+}
+
+.btn-outline:hover {
+  background-color: #ffe5e5;
+}
+
+.btn-primary {
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #b71c1c;
+}
+
+/* User menu */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.user-info {
+  text-align: right;
+  font-size: 14px;
+}
+
+.welcome-text {
+  font-weight: 500;
+}
+
+.user-role {
+  font-size: 13px;
+  color: #777;
+}
+
+/* Avatar + dropdown */
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  background-color: #eee;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 200px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  color: #d32f2f;
+  font-weight: 500;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 6px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .auth-buttons {
+    margin-top: 8px;
+  }
+}

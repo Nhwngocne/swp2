@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import './Navbar.css'; // Import your CSS styles
+import logo from '../../assets/logo.png';
+
 
 const Navbar = ({ setSidebarOpen }) => {
   const { user, logout } = useAuth();
@@ -23,7 +26,7 @@ const Navbar = ({ setSidebarOpen }) => {
         {/* Logo and Brand */}
         <div className="navbar-brand">
           {user && (
-            <button 
+            <button
               className="sidebar-toggle"
               onClick={toggleSidebar}
               aria-label="Toggle sidebar"
@@ -34,7 +37,7 @@ const Navbar = ({ setSidebarOpen }) => {
             </button>
           )}
           <Link to="/" className="brand-link">
-            <img src="/assets/react.svg" alt="Logo" className="brand-logo" />
+            <img src={logo} alt="Logo" className="brand-logo" />
             <span className="brand-text">Hiến Máu Nhân Đạo</span>
           </Link>
         </div>
@@ -45,7 +48,7 @@ const Navbar = ({ setSidebarOpen }) => {
           <Link to="/events" className="nav-link">Sự kiện</Link>
           <Link to="/news" className="nav-link">Tin tức</Link>
           <Link to="/blog" className="nav-link">Blog</Link>
-          
+
           {!user ? (
             <div className="auth-buttons">
               <Link to="/login" className="btn btn-outline">Đăng nhập</Link>
@@ -57,9 +60,9 @@ const Navbar = ({ setSidebarOpen }) => {
                 <span className="welcome-text">Xin chào, {user.fullName}</span>
                 <div className="user-role">{getRoleText(user.role)}</div>
               </div>
-              
+
               <div className="dropdown">
-                <button 
+                <button
                   className="dropdown-toggle"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   aria-label="User menu"
@@ -74,86 +77,51 @@ const Navbar = ({ setSidebarOpen }) => {
                     )}
                   </div>
                 </button>
-                
+
                 {dropdownOpen && (
                   <div className="dropdown-menu">
-                    <Link 
-                      to="/dashboard" 
-                      className="dropdown-item"
-                      onClick={() => setDropdownOpen(false)}
-                    >
+                    <Link to="/dashboard" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                       Dashboard
                     </Link>
-                    <Link 
-                      to="/profile" 
-                      className="dropdown-item"
-                      onClick={() => setDropdownOpen(false)}
-                    >
+                    <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                       Hồ sơ cá nhân
                     </Link>
-                    
+
                     {user.role === 'member' && (
                       <>
-                        <Link 
-                          to="/donation-history" 
-                          className="dropdown-item"
-                          onClick={() => setDropdownOpen(false)}
-                        >
+                        <Link to="/donation-history" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                           Lịch sử hiến máu
                         </Link>
-                        <Link 
-                          to="/emergency" 
-                          className="dropdown-item"
-                          onClick={() => setDropdownOpen(false)}
-                        >
+                        <Link to="/emergency" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                           Cấp cứu
                         </Link>
                       </>
                     )}
-                    
+
                     {user.role === 'staff' && (
                       <>
-                        <Link 
-                          to="/manage-events" 
-                          className="dropdown-item"
-                          onClick={() => setDropdownOpen(false)}
-                        >
+                        <Link to="/manage-events" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                           Quản lý sự kiện
                         </Link>
-                        <Link 
-                          to="/blood-inventory" 
-                          className="dropdown-item"
-                          onClick={() => setDropdownOpen(false)}
-                        >
+                        <Link to="/blood-inventory" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                           Kho máu
                         </Link>
                       </>
                     )}
-                    
+
                     {user.role === 'admin' && (
                       <>
-                        <Link 
-                          to="/manage" 
-                          className="dropdown-item"
-                          onClick={() => setDropdownOpen(false)}
-                        >
+                        <Link to="/manage" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                           Quản lý hệ thống
                         </Link>
-                        <Link 
-                          to="/reports" 
-                          className="dropdown-item"
-                          onClick={() => setDropdownOpen(false)}
-                        >
+                        <Link to="/reports" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                           Báo cáo thống kê
                         </Link>
                       </>
                     )}
-                    
+
                     <div className="dropdown-divider"></div>
-                    <button 
-                      className="dropdown-item logout-btn"
-                      onClick={handleLogout}
-                    >
+                    <button className="dropdown-item logout-btn" onClick={handleLogout}>
                       Đăng xuất
                     </button>
                   </div>

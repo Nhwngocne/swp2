@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './BlogList.css'; // Import your CSS styles
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);

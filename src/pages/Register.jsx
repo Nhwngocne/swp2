@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { showNotification } from '../components/common/Notification';
+import './Register.css'; // Import your CSS styles  
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ const Register = () => {
     gender: '',
     address: '',
     job: '',
-    number_cccd: '',
+    numberCccd: '',
     agreeTerms: false
   });
   const [loading, setLoading] = useState(false);
@@ -141,12 +142,12 @@ const Register = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="number_cccd">Số CCCD/CMND *</label>
+                <label htmlFor="numberCccd">Số CCCD/CMND *</label>
                 <input
                   type="text"
-                  id="number_cccd"
-                  name="number_cccd"
-                  value={formData.number_cccd}
+                  id="numberCccd"
+                  name="numberCccd"
+                  value={formData.numberCccd}
                   onChange={handleChange}
                   pattern="[0-9]{9,12}"
                   title="Vui lòng nhập số CCCD/CMND từ 9-12 chữ số"
