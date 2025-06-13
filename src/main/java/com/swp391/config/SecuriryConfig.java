@@ -28,7 +28,7 @@ public class SecuriryConfig {
     }
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/users", "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh"
+            "/members", "/auth/login", "/auth/introspect"
     };
 
     @Autowired

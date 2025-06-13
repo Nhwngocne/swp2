@@ -91,6 +91,7 @@ public class AuthenticationService {
                 .authenticated(true)
                 .token(token)
                 .user(user)
+                .role(role)
                 .build();
     }
 
