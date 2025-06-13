@@ -44,7 +44,7 @@ import SystemSettings from './components/admin/SystemSettings';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole }) => {
-  const { user, loading } = useAuth();
+  const { user, role, loading } = useAuth();
   
   if (loading) {
     return <div className="loading">Đang tải...</div>;
@@ -54,7 +54,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <Navigate to="/login" replace />;
   }
   
-  if (requiredRole && user.role !== requiredRole) {
+  if (requiredRole && role !== requiredRole) {
     return <Navigate to="/dashboard" replace />;
   }
   
@@ -63,7 +63,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
 // Main App Component
 const AppContent = () => {
-  const { user } = useAuth();
+  const { user,role } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -74,7 +74,7 @@ const AppContent = () => {
         <Sidebar 
           isOpen={sidebarOpen} 
           setIsOpen={setSidebarOpen}
-          userRole={user.role}
+          userRole={role}
         />
       )}
       
@@ -98,17 +98,17 @@ const AppContent = () => {
           
           {/* Member Routes */}
           <Route path="/profile" element={
-            <ProtectedRoute requiredRole="member">
+            <ProtectedRoute requiredRole="MEMBER">
               <Profile />
             </ProtectedRoute>
           } />
           <Route path="/donation-history" element={
-            <ProtectedRoute requiredRole="member">
+            <ProtectedRoute requiredRole="MEMBER">
               <DonationHistory />
             </ProtectedRoute>
           } />
           <Route path="/emergency" element={
-            <ProtectedRoute requiredRole="member">
+            <ProtectedRoute requiredRole="MEMBER">
               <EmergencyList />
             </ProtectedRoute>
           } />

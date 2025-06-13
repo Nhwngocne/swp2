@@ -6,7 +6,7 @@ import logo from '../../assets/logo.png';
 
 
 const Navbar = ({ setSidebarOpen }) => {
-  const { user, logout } = useAuth();
+  const { user,role, logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -57,8 +57,8 @@ const Navbar = ({ setSidebarOpen }) => {
           ) : (
             <div className="user-menu">
               <div className="user-info">
-                <span className="welcome-text">Xin chào, {user.fullName}</span>
-                <div className="user-role">{getRoleText(user.role)}</div>
+                <span className="welcome-text">Xin chào, {user.name}</span>
+                <div className="user-role">{getRoleText(role)}</div>
               </div>
 
               <div className="dropdown">
@@ -138,11 +138,11 @@ const Navbar = ({ setSidebarOpen }) => {
 // Helper function to get role text in Vietnamese
 const getRoleText = (role) => {
   switch (role) {
-    case 'admin':
+    case 'ADMIN':
       return 'Quản trị viên';
-    case 'staff':
+    case 'STAFF':
       return 'Nhân viên';
-    case 'member':
+    case 'MEMBER':
       return 'Thành viên';
     default:
       return '';

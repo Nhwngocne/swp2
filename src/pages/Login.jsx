@@ -15,10 +15,10 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Redirect if already logged in
+  //Redirect if already logged in
   React.useEffect(() => {
     if (user) {
-      const from = location.state?.from?.pathname || '/dashboard';
+      const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }
   }, [user, navigate, location]);
@@ -71,7 +71,7 @@ const Login = () => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        const from = location.state?.from?.pathname || '/dashboard';
+        const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
       } else {
         setErrors({ general: result.error || 'Đăng nhập thất bại' });
