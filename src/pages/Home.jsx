@@ -252,51 +252,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* Blood Types Info Section */}
-      <section className="blood-types-section">
-        <div className="container">
-          <h2 className="section-title">Nhóm máu và tương thích</h2>
-          <div className="blood-types-grid">
-            <div className="blood-type-card">
-              <div className="blood-type-icon">🅾️</div>
-              <h3>Nhóm O</h3>
-              <p>Người hiến máu vạn năng</p>
-              <div className="compatibility">
-                <span className="can-donate">Có thể hiến cho: O, A, B, AB</span>
-                <span className="can-receive">Có thể nhận từ: O</span>
-              </div>
-            </div>
-            <div className="blood-type-card">
-              <div className="blood-type-icon">🅰️</div>
-              <h3>Nhóm A</h3>
-              <p>Tương thích nhóm A và AB</p>
-              <div className="compatibility">
-                <span className="can-donate">Có thể hiến cho: A, AB</span>
-                <span className="can-receive">Có thể nhận từ: O, A</span>
-              </div>
-            </div>
-            <div className="blood-type-card">
-              <div className="blood-type-icon">🅱️</div>
-              <h3>Nhóm B</h3>
-              <p>Tương thích nhóm B và AB</p>
-              <div className="compatibility">
-                <span className="can-donate">Có thể hiến cho: B, AB</span>
-                <span className="can-receive">Có thể nhận từ: O, B</span>
-              </div>
-            </div>
-            <div className="blood-type-card">
-              <div className="blood-type-icon">🆎</div>
-              <h3>Nhóm AB</h3>
-              <p>Người nhận máu vạn năng</p>
-              <div className="compatibility">
-                <span className="can-donate">Có thể hiến cho: AB</span>
-                <span className="can-receive">Có thể nhận từ: O, A, B, AB</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      
     </div>
   );
 };

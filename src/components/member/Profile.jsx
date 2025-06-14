@@ -1,63 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../services/AuthContext";
+import { authService } from "../../services/authService";
 
 const Profile = () => {
-  const { user } = useAuth();
-  const [profileData, setProfileData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    bloodType: '',
-    birthDate: '',
-    gender: '',
-    emergencyContact: '',
-    emergencyPhone: '',
-    medicalHistory: '',
-    allergies: ''
-  });
+  const { user, updateProfile } = useAuth();
+  const [profileData, setProfileData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [donationStats, setDonationStats] = useState({
-    totalDonations: 0,
-    lastDonation: null,
-    nextEligibleDate: null
-  });
 
+  
   useEffect(() => {
-    // Simulate API call to fetch profile data
+
     const fetchProfile = async () => {
-      setLoading(true);
-      // Mock data
-      const mockProfile = {
-        name: user?.name || 'Nguyễn Văn A',
-        email: user?.email || 'nguyenvana@email.com',
-        phone: '0123456789',
-        address: '123 Đường ABC, Quận 1, TP.HCM',
-        bloodType: 'O+',
-        birthDate: '1990-01-01',
-        gender: 'Nam',
-        emergencyContact: 'Nguyễn Thị B',
-        emergencyPhone: '0987654321',
-        medicalHistory: 'Không có tiền sử bệnh lí đặc biệt',
-        allergies: 'Không có dị ứng'
-      };
-
-      const mockStats = {
-        totalDonations: 5,
-        lastDonation: '2024-04-15',
-        nextEligibleDate: '2024-07-15'
-      };
-
-      setTimeout(() => {
-        setProfileData(mockProfile);
-        setDonationStats(mockStats);
+      try {
+        setLoading(true);
+        const response = await authService.getProfile();
+        setProfileData(response.data);
+      } catch (error) {
+        console.error("Lỗi khi tải thông tin cá nhân:", error);
+        alert("Không thể tải thông tin cá nhân");
+      } finally {
         setLoading(false);
-      }, 1000);
+      }
     };
 
     fetchProfile();
-  }, [user]);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -69,234 +37,70 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    
     try {
-      // Simulate API call
-      console.log('Updating profile:', profileData);
-      
-      setTimeout(() => {
+      setLoading(true);
+      const result = await updateProfile(profileData);
+      if (result.success) {
+        alert("Cập nhật thành công");
         setIsEditing(false);
-        setLoading(false);
-        alert('Cập nhật thông tin thành công!');
-      }, 1000);
-    } catch (error) {
+      } else {
+        alert("Cập nhật thất bại: " + result.error);
+      }
+    } catch (err) {
+      alert("Đã có lỗi xảy ra");
+    } finally {
       setLoading(false);
-      alert('Có lỗi xảy ra khi cập nhật thông tin!');
     }
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    // Reset form data
-  };
-
-  if (loading && !profileData.name) {
-    return <div className="loading">Đang tải thông tin cá nhân...</div>;
-  }
+  if (loading || !profileData) return <div>Đang tải...</div>;
 
   return (
     <div className="profile-container">
-      <div className="profile-header">
-        <h1>Thông Tin Cá Nhân</h1>
-        <button 
-          className="edit-btn"
-          onClick={() => setIsEditing(!isEditing)}
-        >
-          {isEditing ? 'Hủy' : 'Chỉnh sửa'}
-        </button>
-      </div>
-
-      <div className="profile-content">
-        {/* Donation Statistics */}
-        <div className="donation-stats-card">
-          <h3>Thống Kê Hiến Máu</h3>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <span className="stat-label">Tổng số lần hiến:</span>
-              <span className="stat-value">{donationStats.totalDonations}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Lần hiến gần nhất:</span>
-              <span className="stat-value">
-                {donationStats.lastDonation 
-                  ? new Date(donationStats.lastDonation).toLocaleDateString('vi-VN')
-                  : 'Chưa hiến'
-                }
-              </span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Có thể hiến tiếp:</span>
-              <span className="stat-value">
-                {donationStats.nextEligibleDate 
-                  ? new Date(donationStats.nextEligibleDate).toLocaleDateString('vi-VN')
-                  : 'Ngay bây giờ'
-                }
-              </span>
-            </div>
-          </div>
+      <h2>Thông Tin Cá Nhân</h2>
+      <button onClick={() => setIsEditing(!isEditing)}>
+        {isEditing ? "Hủy" : "Chỉnh sửa"}
+      </button>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Họ tên:</label>
+          <input
+            name="name"
+            value={profileData.name || ""}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            required
+          />
         </div>
-
-        {/* Profile Form */}
-        <div className="profile-form-card">
-          <h3>Thông Tin Chi Tiết</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Họ và tên:</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={profileData.name}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Email:</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={profileData.email}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Số điện thoại:</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={profileData.phone}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Nhóm máu:</label>
-                <select
-                  name="bloodType"
-                  value={profileData.bloodType}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  required
-                >
-                  <option value="">Chọn nhóm máu</option>
-                  <option value="A+">A+</option>
-                  <option value="A-">A-</option>
-                  <option value="B+">B+</option>
-                  <option value="B-">B-</option>
-                  <option value="AB+">AB+</option>
-                  <option value="AB-">AB-</option>
-                  <option value="O+">O+</option>
-                  <option value="O-">O-</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Ngày sinh:</label>
-                <input
-                  type="date"
-                  name="birthDate"
-                  value={profileData.birthDate}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Giới tính:</label>
-                <select
-                  name="gender"
-                  value={profileData.gender}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  required
-                >
-                  <option value="">Chọn giới tính</option>
-                  <option value="Nam">Nam</option>
-                  <option value="Nữ">Nữ</option>
-                  <option value="Khác">Khác</option>
-                </select>
-              </div>
-
-              <div className="form-group full-width">
-                <label>Địa chỉ:</label>
-                <textarea
-                  name="address"
-                  value={profileData.address}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  rows="2"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Người liên hệ khẩn cấp:</label>
-                <input
-                  type="text"
-                  name="emergencyContact"
-                  value={profileData.emergencyContact}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>SĐT người liên hệ khẩn cấp:</label>
-                <input
-                  type="tel"
-                  name="emergencyPhone"
-                  value={profileData.emergencyPhone}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                />
-              </div>
-
-              <div className="form-group full-width">
-                <label>Tiền sử bệnh lý:</label>
-                <textarea
-                  name="medicalHistory"
-                  value={profileData.medicalHistory}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  rows="3"
-                />
-              </div>
-
-              <div className="form-group full-width">
-                <label>Dị ứng:</label>
-                <textarea
-                  name="allergies"
-                  value={profileData.allergies}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  rows="2"
-                />
-              </div>
-            </div>
-
-            {isEditing && (
-              <div className="form-actions">
-                <button type="submit" className="save-btn" disabled={loading}>
-                  {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
-                </button>
-                <button type="button" className="cancel-btn" onClick={handleCancel}>
-                  Hủy
-                </button>
-              </div>
-            )}
-          </form>
+        <div>
+          <label>Email:</label>
+          <input
+            name="email"
+            value={profileData.email || ""}
+            disabled
+          />
         </div>
-      </div>
+        <div>
+          <label>Số điện thoại:</label>
+          <input
+            name="phone"
+            value={profileData.phone || ""}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+          />
+        </div>
+        <div>
+          <label>Địa chỉ:</label>
+          <input
+            name="address"
+            value={profileData.address || ""}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+          />
+        </div>
+        {/* Thêm các trường khác nếu có */}
+        {isEditing && <button type="submit">Lưu</button>}
+      </form>
     </div>
   );
 };

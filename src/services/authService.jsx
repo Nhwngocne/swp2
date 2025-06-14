@@ -82,6 +82,11 @@ export const authService = {
   // Verify email
   verifyEmail: (token) => 
     authAPI.post('/verify-email', { token }),
+
+  getAllUsers: () => 
+  authAPI.get('/users'),
 };
+
+
 
 export default authService;

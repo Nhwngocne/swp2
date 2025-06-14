@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in on app start
+  // Kiểm tra user khi app khởi động
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
@@ -24,8 +24,6 @@ export const AuthProvider = ({ children }) => {
       try {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
-        
-        // Verify token bằng cách gọi API getCurrentUser
         verifyToken();
       } catch (error) {
         console.error('Error parsing user data:', error);
@@ -35,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // Verify token với server
+  // Xác minh token với server
   const verifyToken = async () => {
     try {
       const response = await authService.getCurrentUser();
@@ -46,173 +44,153 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Clear authentication data
+  // Xóa dữ liệu xác thực
   const clearAuthData = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
   };
 
-  // Login function
+  // Đăng nhập
   const login = async (email, password) => {
     try {
       setLoading(true);
-      
       const response = await authService.login(email, password);
       const { data } = response;
-      
-      // Store token and user data
+
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      
       setUser(data.user);
+
       return { success: true };
-      
     } catch (error) {
       console.error('Login error:', error);
-      
-      // Handle different error types
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          'Đăng nhập thất bại';
-      
+      const errorMessage = error.response?.data?.message ||
+                           error.response?.data?.error ||
+                           error.message || 'Đăng nhập thất bại';
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
   };
 
-  // Register function
+  // Đăng ký
   const register = async (userData) => {
     try {
       setLoading(true);
-      
       const response = await authService.register(userData);
       const { data } = response;
-      
-      // Auto login after successful registration
+
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      
       setUser(data.user);
+
       return { success: true };
-      
     } catch (error) {
       console.error('Register error:', error);
-      
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          'Đăng ký thất bại';
-      
+      const errorMessage = error.response?.data?.message ||
+                           error.response?.data?.error ||
+                           error.message || 'Đăng ký thất bại';
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
   };
 
-  // Logout function
+  // Đăng xuất
   const logout = async () => {
     try {
-      // Gọi API logout (nếu backend có endpoint này)
-      await authService.logout();
+      await authService.logout(); // Nếu có API logout
     } catch (error) {
       console.error('Logout API error:', error);
-      // Vẫn tiếp tục logout local ngay cả khi API lỗi
     } finally {
       clearAuthData();
     }
   };
 
-  // Update profile function
+  // Cập nhật hồ sơ
   const updateProfile = async (profileData) => {
     try {
       const response = await authService.updateProfile(profileData);
       const { data } = response;
-      
-      // Update user data in localStorage and state
+
       localStorage.setItem('user', JSON.stringify(data.user));
       setUser(data.user);
-      
+
       return { success: true };
-      
     } catch (error) {
       console.error('Update profile error:', error);
-      
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          'Cập nhật thất bại';
-      
+      const errorMessage = error.response?.data?.message ||
+                           error.response?.data?.error ||
+                           error.message || 'Cập nhật thất bại';
       return { success: false, error: errorMessage };
     }
   };
 
-  // Change password function
+  // Đổi mật khẩu
   const changePassword = async (oldPassword, newPassword) => {
     try {
       await authService.changePassword(oldPassword, newPassword);
       return { success: true };
     } catch (error) {
       console.error('Change password error:', error);
-      
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          'Đổi mật khẩu thất bại';
-      
+      const errorMessage = error.response?.data?.message ||
+                           error.response?.data?.error ||
+                           error.message || 'Đổi mật khẩu thất bại';
       return { success: false, error: errorMessage };
     }
   };
 
-  // Forgot password function
+  // Quên mật khẩu
   const forgotPassword = async (email) => {
     try {
       await authService.forgotPassword(email);
       return { success: true };
     } catch (error) {
       console.error('Forgot password error:', error);
-      
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          'Gửi email thất bại';
-      
+      const errorMessage = error.response?.data?.message ||
+                           error.response?.data?.error ||
+                           error.message || 'Gửi email thất bại';
       return { success: false, error: errorMessage };
     }
   };
 
-  // Reset password function
+  // Reset mật khẩu
   const resetPassword = async (token, newPassword) => {
     try {
       await authService.resetPassword(token, newPassword);
       return { success: true };
     } catch (error) {
       console.error('Reset password error:', error);
-      
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          'Reset mật khẩu thất bại';
-      
+      const errorMessage = error.response?.data?.message ||
+                           error.response?.data?.error ||
+                           error.message || 'Reset mật khẩu thất bại';
       return { success: false, error: errorMessage };
     }
   };
 
-  // Verify email function
+  // Xác thực email
   const verifyEmail = async (token) => {
     try {
       await authService.verifyEmail(token);
       return { success: true };
     } catch (error) {
       console.error('Verify email error:', error);
-      
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          'Xác thực email thất bại';
-      
+      const errorMessage = error.response?.data?.message ||
+                           error.response?.data?.error ||
+                           error.message || 'Xác thực email thất bại';
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // Lấy danh sách tất cả user (chỉ dành cho admin)
+  const getAllUsers = async () => {
+    try {
+      const response = await authService.getAllUsers(); // phải khai báo trong authService
+      return { success: true, users: response.data };
+    } catch (error) {
+      console.error('Get all users error:', error);
+      const errorMessage = error.response?.data?.message || 'Không lấy được danh sách người dùng';
       return { success: false, error: errorMessage };
     }
   };
@@ -228,6 +206,7 @@ export const AuthProvider = ({ children }) => {
     forgotPassword,
     resetPassword,
     verifyEmail,
+    getAllUsers,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
     isStaff: user?.role === 'staff',
