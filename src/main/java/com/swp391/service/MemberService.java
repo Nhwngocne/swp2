@@ -1,6 +1,10 @@
 package com.swp391.service;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import com.swp391.dto.request.MemberCreateRequest;
+import com.swp391.dto.response.GoogleLoginResponse;
 import com.swp391.dto.response.MemberResponse;
 import com.swp391.entity.Member;
 import com.swp391.exception.AppException;
@@ -59,6 +63,35 @@ public class MemberService{
     }
 
 
+    public GoogleLoginResponse loginWithGoogle(String idToken) {
+        try {
+            // 1. Xác thực token từ Google
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+
+            String uid = decodedToken.getUid();
+            String email = decodedToken.getEmail();
+            String name = decodedToken.getName();
+
+            // 2. Tìm user theo email
+            Member member = memberRepository.findByEmail(email).orElseGet(() -> {
+                // 3. Nếu chưa có thì tạo mới Member
+                Member newMember = Member.builder()
+                        .email(email)
+                        .name(name != null ? name : "Unknown") // đề phòng name = null
+                        .build();
+                return memberRepository.save(newMember);
+            });
+
+            // 4. Tạo JWT nếu cần (ở đây chỉ dùng Firebase ID token nếu bạn chưa triển khai JWT riêng)
+            return GoogleLoginResponse.builder()
+                    .email(member.getEmail())
+                    .name(member.getName())
+                    .token(idToken) // hoặc generateJwtToken(member) nếu bạn có hệ thống JWT riêng
+                    .build();
+
+        } catch (FirebaseAuthException e) {
+            throw new AppException(ErrorCode.GOOGLE_AUTH_FAILED);        }
+    }
 
 
 
