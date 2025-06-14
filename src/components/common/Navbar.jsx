@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import { useAuth } from '../../context/AuthContext';
 import './Navbar.css'; // Import your CSS styles
 import logo from '../../assets/logo.png';
@@ -7,20 +8,22 @@ import logo from '../../assets/logo.png';
 
 const Navbar = ({ setSidebarOpen }) => {
   const { user,role, logout } = useAuth();
+=======
+import { useAuth } from "../../services/AuthContext";
+import './Navbar.css';
+import logo from '../../assets/logo.png';
+const Navbar = () => {
+  const { user, logout } = useAuth();
+>>>>>>> Fe_Ngoc
   const navigate = useNavigate();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/');
-    setDropdownOpen(false);
-  };
-
-  const toggleSidebar = () => {
-    setSidebarOpen(prev => !prev);
   };
 
   return (
+<<<<<<< HEAD
     <nav className="navbar">
       <div className="navbar-container">
         {/* Logo and Brand */}
@@ -150,3 +153,41 @@ const getRoleText = (role) => {
 };
 
 export default Navbar;
+=======
+    <header className="navbar-wrapper">
+      {/* ===== PHẦN TRÊN: logo giữa + auth ===== */}
+    <div className="navbar-top">
+  <div className="navbar-placeholder" /> {/* chiếm bên trái */}
+  
+  <div className="navbar-logo">
+    <Link to="/">
+                 <img src={logo} alt="Logo BloodLink" className="footer-logo" />
+    </Link>
+  </div>
+
+  <div className="navbar-auth">
+    {!user ? (
+      <>
+        <Link to="/register" className="top-link">Đăng kí</Link>
+        <Link to="/login" className="top-link login-btn">Đăng nhập</Link>
+      </>
+    ) : (
+      <button className="top-link logout-btn" onClick={handleLogout}>Đăng xuất</button>
+    )}
+  </div>
+</div>
+
+      {/* ===== PHẦN MENU DƯỚI: nền đỏ ===== */}
+      <nav className="navbar-bottom">
+        <Link to="/" className="nav-item active">Trang chủ</Link>
+        <Link to="/faq" className="nav-item">Hỏi -Đáp</Link>
+        <Link to="/news" className="nav-item">Tin tức</Link>
+        <Link to="/lookup" className="nav-item">Tra cứu</Link>
+        <Link to="/contact" className="nav-item">Liên hệ</Link>
+      </nav>
+    </header>
+  );
+};
+
+export default Navbar;
+>>>>>>> Fe_Ngoc

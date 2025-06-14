@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
-
 // Context
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from './services/AuthContext';
 
 // Common Components
 import Navbar from './components/common/Navbar';
@@ -19,6 +18,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Search from './pages/Search';
 import Manage from './pages/Manage';
+import Faq from './pages/Faq'; // ✅ Thêm Faq ở đây
+import DonationBloodForm from './pages/DonationBloodForm';
 
 // Guest Components
 import EventList from './components/guest/EventList';
@@ -44,6 +45,7 @@ import SystemSettings from './components/admin/SystemSettings';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole }) => {
+<<<<<<< HEAD
   const { user, role, loading } = useAuth();
   
   if (loading) {
@@ -58,6 +60,13 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <Navigate to="/dashboard" replace />;
   }
   
+=======
+  const { user, loading } = useAuth();
+
+  if (loading) return <div className="loading">Đang tải...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (requiredRole && user.role !== requiredRole) return <Navigate to="/dashboard" replace />;
+>>>>>>> Fe_Ngoc
   return children;
 };
 
@@ -69,15 +78,17 @@ const AppContent = () => {
   return (
     <div className="app">
       <Navbar setSidebarOpen={setSidebarOpen} />
-      
       {user && (
+<<<<<<< HEAD
         <Sidebar 
           isOpen={sidebarOpen} 
           setIsOpen={setSidebarOpen}
           userRole={role}
         />
+=======
+        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} userRole={user.role} />
+>>>>>>> Fe_Ngoc
       )}
-      
       <main className={`main-content ${user ? 'with-sidebar' : ''}`}>
         <Routes>
           {/* Public Routes */}
@@ -87,16 +98,15 @@ const AppContent = () => {
           <Route path="/events" element={<EventList />} />
           <Route path="/news" element={<NewsList />} />
           <Route path="/blog" element={<BlogList />} />
+          <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
           <Route path="/search" element={<Search />} />
-          
-          {/* Protected Routes - All Users */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
+          <Route path="/donation-blood-form" element={<DonationBloodForm />} />
+
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           
           {/* Member Routes */}
+<<<<<<< HEAD
           <Route path="/profile" element={
             <ProtectedRoute requiredRole="MEMBER">
               <Profile />
@@ -113,75 +123,43 @@ const AppContent = () => {
             </ProtectedRoute>
           } />
           
+=======
+          <Route path="/profile" element={<ProtectedRoute requiredRole="member"><Profile /></ProtectedRoute>} />
+          <Route path="/donation-history" element={<ProtectedRoute requiredRole="member"><DonationHistory /></ProtectedRoute>} />
+          <Route path="/emergency" element={<ProtectedRoute requiredRole="member"><EmergencyList /></ProtectedRoute>} />
+
+>>>>>>> Fe_Ngoc
           {/* Staff Routes */}
-          <Route path="/manage-events" element={
-            <ProtectedRoute requiredRole="staff">
-              <EventManager />
-            </ProtectedRoute>
-          } />
-          <Route path="/blood-inventory" element={
-            <ProtectedRoute requiredRole="staff">
-              <BloodInventory />
-            </ProtectedRoute>
-          } />
-          <Route path="/manage-members" element={
-            <ProtectedRoute requiredRole="staff">
-              <MemberManager />
-            </ProtectedRoute>
-          } />
-          
+          <Route path="/manage-events" element={<ProtectedRoute requiredRole="staff"><EventManager /></ProtectedRoute>} />
+          <Route path="/blood-inventory" element={<ProtectedRoute requiredRole="staff"><BloodInventory /></ProtectedRoute>} />
+          <Route path="/manage-members" element={<ProtectedRoute requiredRole="staff"><MemberManager /></ProtectedRoute>} />
+
           {/* Admin Routes */}
-          <Route path="/manage" element={
-            <ProtectedRoute requiredRole="admin">
-              <Manage />
-            </ProtectedRoute>
-          } />
-          <Route path="/manage-news" element={
-            <ProtectedRoute requiredRole="admin">
-              <NewsManager />
-            </ProtectedRoute>
-          } />
-          <Route path="/manage-forum" element={
-            <ProtectedRoute requiredRole="admin">
-              <ForumManager />
-            </ProtectedRoute>
-          } />
-          <Route path="/manage-notifications" element={
-            <ProtectedRoute requiredRole="admin">
-              <NotificationManager />
-            </ProtectedRoute>
-          } />
-          <Route path="/reports" element={
-            <ProtectedRoute requiredRole="admin">
-              <ReportStats />
-            </ProtectedRoute>
-          } />
-          <Route path="/settings" element={
-            <ProtectedRoute requiredRole="admin">
-              <SystemSettings />
-            </ProtectedRoute>
-          } />
-          
-          {/* Catch all route */}
+          <Route path="/manage" element={<ProtectedRoute requiredRole="admin"><Manage /></ProtectedRoute>} />
+          <Route path="/manage-news" element={<ProtectedRoute requiredRole="admin"><NewsManager /></ProtectedRoute>} />
+          <Route path="/manage-forum" element={<ProtectedRoute requiredRole="admin"><ForumManager /></ProtectedRoute>} />
+          <Route path="/manage-notifications" element={<ProtectedRoute requiredRole="admin"><NotificationManager /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute requiredRole="admin"><ReportStats /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute requiredRole="admin"><SystemSettings /></ProtectedRoute>} />
+
+          {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      
+
       <Footer />
       <Notification />
     </div>
   );
 };
 
-// App wrapper with providers
-const App = () => {
-  return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
-  );
-};
+// App wrapper
+const App = () => (
+  <AuthProvider>
+    <Router>
+      <AppContent />
+    </Router>
+  </AuthProvider>
+);
 
 export default App;

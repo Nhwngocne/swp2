@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import image331 from '../assets/331.jpg';
 import './Home.css';
 
+=======
+import './DonationBloodForm'; // Import your CSS styles
+>>>>>>> Fe_Ngoc
 
 const Home = () => {
   const { user } = useAuth();
@@ -117,6 +121,7 @@ const Home = () => {
             <div className="hero-actions">
               {!user ? (
                 <>
+<<<<<<< HEAD
                   <button
                     className="btn btn-primary btn-large"
                     onClick={() => {
@@ -127,6 +132,9 @@ const Home = () => {
                       }
                     }}
                   >
+=======
+                  <Link to="/donation-blood-form" className="btn btn-primary btn-large">
+>>>>>>> Fe_Ngoc
                     Đăng ký hiến máu
                   </button>
                   <Link to="/events" className="btn btn-outline btn-large">
@@ -252,7 +260,7 @@ const Home = () => {
             </p>
             <div className="cta-actions">
               {!user ? (
-                <Link to="/register" className="btn btn-primary btn-large">
+                <Link to="/donation-blood-form" className="btn btn-primary btn-large">
                   Tham gia ngay
                 </Link>
               ) : (

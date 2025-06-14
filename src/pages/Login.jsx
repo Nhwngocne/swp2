@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import './Login.css';
 
+import { useAuth } from "../../services/AuthContext";
+import './Login.css'; // Import your CSS styles
 const Login = () => {
   const { login, user } = useAuth();
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ const Login = () => {
           <div className="login-header">
             <h1 className="login-title">Đăng nhập</h1>
             <p className="login-subtitle">
-              Chào mừng bạn trở lại với cộng đồng hiến máu nhân đạo
+              Chào mừng bạn trở lại 
             </p>
           </div>
 
@@ -147,6 +147,20 @@ const Login = () => {
             </button>
           </form>
 
+
+          <div className="login-divider">
+            <span>hoặc</span>
+          </div>
+
+          <div className="social-login">
+            <button className="btn btn-social btn-google">
+              <img src="/assets/google-icon.svg" alt="Google" />
+              Đăng nhập với Google
+            </button>
+
+          </div>
+
+
           <div className="login-footer">
             <p>
               Chưa có tài khoản? 
@@ -157,6 +171,7 @@ const Login = () => {
           </div>
         </div>
 
+        
       </div>
     </div>
   );

@@ -1,63 +1,50 @@
 import React from 'react';
+<<<<<<< HEAD
 import './Footer.css'; // Import your CSS file for styling
 
 const Footer = () => {
+=======
+import './Footer.css';
+import logo from '../../assets/logo.png'; // đường dẫn logo đúng của bạn
+
+export default function Footer() {
+>>>>>>> Fe_Ngoc
   return (
     <footer className="footer">
       <div className="footer-container">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h3>Trung tâm Hiến máu</h3>
-            <p>Kết nối những trái tim nhân ái, cứu sống những sinh mạng quý giá.</p>
-            <div className="social-links">
-              <a href="#" aria-label="Facebook">
-                <i className="fab fa-facebook-f"></i>
-              </a>
-              <a href="#" aria-label="Twitter">
-                <i className="fab fa-twitter"></i>
-              </a>
-              <a href="#" aria-label="Instagram">
-                <i className="fab fa-instagram"></i>
-              </a>
-            </div>
-          </div>
-          
-          <div className="footer-section">
-            <h4>Liên kết nhanh</h4>
-            <ul>
-              <li><a href="/events">Sự kiện hiến máu</a></li>
-              <li><a href="/news">Tin tức</a></li>
-              <li><a href="/blog">Blog</a></li>
-              <li><a href="/search">Tìm kiếm</a></li>
-            </ul>
-          </div>
-          
-          <div className="footer-section">
-            <h4>Hỗ trợ</h4>
-            <ul>
-              <li><a href="/help">Trợ giúp</a></li>
-              <li><a href="/faq">Câu hỏi thường gặp</a></li>
-              <li><a href="/contact">Liên hệ</a></li>
-              <li><a href="/privacy">Chính sách bảo mật</a></li>
-            </ul>
-          </div>
-          
-          <div className="footer-section">
-            <h4>Liên hệ</h4>
+        {/* Phần trên: logo + thông tin + liên kết */}
+        <div className="footer-top">
+          {/* Bên trái */}
+         <div className="footer-left">
+          <div className="footer-logo-info">
+            <img src={logo} alt="Logo BloodLink" className="footer-logo" />
             <div className="contact-info">
-              <p><i className="fas fa-phone"></i> (84) 123-456-789</p>
-              <p><i className="fas fa-envelope"></i> info@hienmauvietnam.org</p>
-              <p><i className="fas fa-map-marker-alt"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
+              <h4>Thông tin liên hệ</h4>
+              <ul>
+                <li>• 3541 Đường Fort Meade, Laurel, MD 20724</li>
+                <li>• Số điện thoại: (301) 490-5050</li>
+                <li>• Mở cửa 24/7 tất cả các ngày</li>
+              </ul>
             </div>
           </div>
         </div>
-        
-        <div className="footer-bottom">
-          <p>&copy; 2024 Trung tâm Hiến máu Việt Nam. Tất cả quyền được bảo lưu.</p>
+
+          {/* Bên phải */}
+          <div className="footer-right">
+            <h4>Liên kết hữu ích</h4>
+            <ul className="footer-links-list">
+              <li><a href="#">Chính sách bảo mật</a></li>
+              <li><a href="#">Điều khoản sử dụng</a></li>
+            </ul>
+          </div>
         </div>
+
+        {/* Đường kẻ */}
+        <hr className="footer-divider" />
+
+    
+       
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

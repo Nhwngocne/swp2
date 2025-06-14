@@ -62,7 +62,11 @@ const Register = () => {
       showNotification('Vui lòng nhập nghề nghiệp', 'error');
       return false;
     }
+<<<<<<< HEAD
     if (!formData.numberCccd.trim() || !/^[0-9]{9,12}$/.test(formData.numberCccd)) {
+=======
+    if (!formData.number_cccd.trim() || !/^[0-9]{9,12}$/.test(formData.number_cccd)) {
+>>>>>>> Fe_Ngoc
       showNotification('Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)', 'error');
       return false;
     }
