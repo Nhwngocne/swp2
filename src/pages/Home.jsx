@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import './DonationBloodForm'; // Import your CSS styles
 
 const Home = () => {
   const { user } = useAuth();
@@ -112,7 +113,7 @@ const Home = () => {
             <div className="hero-actions">
               {!user ? (
                 <>
-                  <Link to="/register" className="btn btn-primary btn-large">
+                  <Link to="/donation-blood-form" className="btn btn-primary btn-large">
                     Đăng ký hiến máu
                   </Link>
                   <Link to="/events" className="btn btn-outline btn-large">
@@ -238,7 +239,7 @@ const Home = () => {
             </p>
             <div className="cta-actions">
               {!user ? (
-                <Link to="/register" className="btn btn-primary btn-large">
+                <Link to="/donation-blood-form" className="btn btn-primary btn-large">
                   Tham gia ngay
                 </Link>
               ) : (

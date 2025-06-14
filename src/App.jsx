@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Context
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from './services/AuthContext';
 
 // Common Components
 import Navbar from './components/common/Navbar';
@@ -18,6 +18,7 @@ import Dashboard from './pages/Dashboard';
 import Search from './pages/Search';
 import Manage from './pages/Manage';
 import Faq from './pages/Faq'; // ✅ Thêm Faq ở đây
+import DonationBloodForm from './pages/DonationBloodForm';
 
 // Guest Components
 import EventList from './components/guest/EventList';
@@ -73,6 +74,7 @@ const AppContent = () => {
           <Route path="/blog" element={<BlogList />} />
           <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
           <Route path="/search" element={<Search />} />
+          <Route path="/donation-blood-form" element={<DonationBloodForm />} />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
