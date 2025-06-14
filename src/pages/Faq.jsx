@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Faq.css';
+import '../css/Faq.css'; // Assuming you have a CSS file for styling
 
 const faqList = [
   {
