@@ -21,7 +21,8 @@ public enum ErrorCode {
     Donation_HISTORY_NOT_EXISTED(1002, "Donation history does not exist", HttpStatus.NOT_FOUND),
     Donation_RECEIVE_NOT_EXISTED(1002, "Donation receive does not exist", HttpStatus.NOT_FOUND),
     Donation_REGISTRATION_OFFLINE_NOT_EXISTED(1002, "Donation registration offline does not exist", HttpStatus.NOT_FOUND),
-
+    INVALID_TOKEN(1002, "Invalid token", HttpStatus.UNAUTHORIZED),
+    GOOGLE_AUTH_FAILED(1002, "Google authentication failed", HttpStatus.UNAUTHORIZED),
     //1006:Unauthenticated
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     ;

@@ -43,6 +43,7 @@ public class Member {
     @Column(length = 20)
     String numberCccd;
 
+
     @ManyToOne
     Admin admin;
 
