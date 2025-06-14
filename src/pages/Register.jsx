@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../services/AuthContext';
 import { showNotification } from '../components/common/Notification';
 import './Register.css'; // Import your CSS styles  
 
@@ -62,11 +62,8 @@ const Register = () => {
       showNotification('Vui lòng nhập nghề nghiệp', 'error');
       return false;
     }
-<<<<<<< HEAD
-    if (!formData.numberCccd.trim() || !/^[0-9]{9,12}$/.test(formData.numberCccd)) {
-=======
-    if (!formData.number_cccd.trim() || !/^[0-9]{9,12}$/.test(formData.number_cccd)) {
->>>>>>> Fe_Ngoc
+
+    if (!/^[0-9]{9,12}$/.test(formData.numberCccd)) {
       showNotification('Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)', 'error');
       return false;
     }
@@ -79,7 +76,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setLoading(true);
@@ -269,4 +266,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+  export default Register;

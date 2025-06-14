@@ -45,28 +45,13 @@ import SystemSettings from './components/admin/SystemSettings';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole }) => {
-<<<<<<< HEAD
-  const { user, role, loading } = useAuth();
-  
-  if (loading) {
-    return <div className="loading">Đang tải...</div>;
-  }
-  
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  if (requiredRole && role !== requiredRole) {
-    return <Navigate to="/dashboard" replace />;
-  }
-  
-=======
+
   const { user, loading } = useAuth();
 
   if (loading) return <div className="loading">Đang tải...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (requiredRole && user.role !== requiredRole) return <Navigate to="/dashboard" replace />;
->>>>>>> Fe_Ngoc
+
   return children;
 };
 
@@ -79,15 +64,9 @@ const AppContent = () => {
     <div className="app">
       <Navbar setSidebarOpen={setSidebarOpen} />
       {user && (
-<<<<<<< HEAD
-        <Sidebar 
-          isOpen={sidebarOpen} 
-          setIsOpen={setSidebarOpen}
-          userRole={role}
-        />
-=======
+
         <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} userRole={user.role} />
->>>>>>> Fe_Ngoc
+
       )}
       <main className={`main-content ${user ? 'with-sidebar' : ''}`}>
         <Routes>
@@ -106,29 +85,12 @@ const AppContent = () => {
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           
           {/* Member Routes */}
-<<<<<<< HEAD
-          <Route path="/profile" element={
-            <ProtectedRoute requiredRole="MEMBER">
-              <Profile />
-            </ProtectedRoute>
-          } />
-          <Route path="/donation-history" element={
-            <ProtectedRoute requiredRole="MEMBER">
-              <DonationHistory />
-            </ProtectedRoute>
-          } />
-          <Route path="/emergency" element={
-            <ProtectedRoute requiredRole="MEMBER">
-              <EmergencyList />
-            </ProtectedRoute>
-          } />
-          
-=======
+
           <Route path="/profile" element={<ProtectedRoute requiredRole="member"><Profile /></ProtectedRoute>} />
           <Route path="/donation-history" element={<ProtectedRoute requiredRole="member"><DonationHistory /></ProtectedRoute>} />
           <Route path="/emergency" element={<ProtectedRoute requiredRole="member"><EmergencyList /></ProtectedRoute>} />
 
->>>>>>> Fe_Ngoc
+
           {/* Staff Routes */}
           <Route path="/manage-events" element={<ProtectedRoute requiredRole="staff"><EventManager /></ProtectedRoute>} />
           <Route path="/blood-inventory" element={<ProtectedRoute requiredRole="staff"><BloodInventory /></ProtectedRoute>} />

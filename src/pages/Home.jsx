@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-<<<<<<< HEAD
-import { useNavigate } from 'react-router-dom';
-import image331 from '../assets/331.jpg';
-import './Home.css';
-
-=======
-import './DonationBloodForm'; // Import your CSS styles
->>>>>>> Fe_Ngoc
+import { useAuth } from '../services/AuthContext';
+import './DonationBloodForm'; 
 
 const Home = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth(); 
+
   const [stats, setStats] = useState({
     totalDonations: 0,
     activeDonors: 0,
@@ -115,28 +108,15 @@ const Home = () => {
               <span className="hero-subtitle">Cứu người - Giúp đời</span>
             </h1>
             <p className="hero-description">
-              Mỗi giọt máu bạn hiến tặng có thể cứu sống 3 người.
+              Mỗi giọt máu bạn hiến tặng có thể cứu sống 3 người. 
               Hãy tham gia cùng chúng tôi để lan tỏa tình yêu thương và chia sẻ cuộc sống.
             </p>
             <div className="hero-actions">
               {!user ? (
                 <>
-<<<<<<< HEAD
-                  <button
-                    className="btn btn-primary btn-large"
-                    onClick={() => {
-                      if (user) {
-                        navigate('/donation/register'); // chuyển đến form đăng ký hiến máu
-                      } else {
-                        navigate('/login'); // chuyển đến login
-                      }
-                    }}
-                  >
-=======
                   <Link to="/donation-blood-form" className="btn btn-primary btn-large">
->>>>>>> Fe_Ngoc
                     Đăng ký hiến máu
-                  </button>
+                  </Link>
                   <Link to="/events" className="btn btn-outline btn-large">
                     Xem sự kiện
                   </Link>
@@ -154,7 +134,7 @@ const Home = () => {
             </div>
           </div>
           <div className="hero-image">
-            <img src={image331} alt="331" />
+            <img src="/assets/hero-blood-donation.jpg" alt="Hiến máu nhân đạo" />
           </div>
         </div>
       </section>
@@ -255,7 +235,7 @@ const Home = () => {
           <div className="cta-content">
             <h2 className="cta-title">Bạn đã sẵn sàng cứu sống một người?</h2>
             <p className="cta-description">
-              Việc hiến máu không chỉ giúp cứu sống người khác mà còn có lợi cho sức khỏe của chính bạn.
+              Việc hiến máu không chỉ giúp cứu sống người khác mà còn có lợi cho sức khỏe của chính bạn. 
               Hãy tham gia cùng chúng tôi ngay hôm nay!
             </p>
             <div className="cta-actions">

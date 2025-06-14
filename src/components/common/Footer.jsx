@@ -1,14 +1,10 @@
-import React from 'react';
-<<<<<<< HEAD
-import './Footer.css'; // Import your CSS file for styling
 
-const Footer = () => {
-=======
+
 import './Footer.css';
 import logo from '../../assets/logo.png'; // đường dẫn logo đúng của bạn
 
 export default function Footer() {
->>>>>>> Fe_Ngoc
+
   return (
     <footer className="footer">
       <div className="footer-container">
