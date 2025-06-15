@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from "../../services/AuthContext";
-import { authService } from "../../services/authService";
+import { GetInfoMemberAPI, UpdateInfoMemberAPI } from '../../services/member';
+import Header from '../common/Navbar';
+import Footer from '../common/Footer';
 
 const Profile = () => {
-  const { user, updateProfile } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  
   useEffect(() => {
-
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const response = await authService.getProfile();
+        const response = await GetInfoMemberAPI();
         setProfileData(response.data);
       } catch (error) {
         console.error("Lỗi khi tải thông tin cá nhân:", error);
@@ -29,9 +27,9 @@ const Profile = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfileData(prev => ({
+    setProfileData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -39,69 +37,83 @@ const Profile = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const result = await updateProfile(profileData);
-      if (result.success) {
-        alert("Cập nhật thành công");
-        setIsEditing(false);
-      } else {
-        alert("Cập nhật thất bại: " + result.error);
-      }
-    } catch (err) {
-      alert("Đã có lỗi xảy ra");
+      await UpdateInfoMemberAPI(profileData);
+      alert("Cập nhật thành công");
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Lỗi cập nhật thông tin:", error);
+      alert("Đã có lỗi xảy ra khi cập nhật");
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading || !profileData) return <div>Đang tải...</div>;
+  if (loading) return <div className="loading">Đang tải thông tin...</div>;
+  if (!profileData) return <div className="error">Không có dữ liệu</div>;
 
   return (
-    <div className="profile-container">
-      <h2>Thông Tin Cá Nhân</h2>
-      <button onClick={() => setIsEditing(!isEditing)}>
-        {isEditing ? "Hủy" : "Chỉnh sửa"}
-      </button>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Họ tên:</label>
-          <input
-            name="name"
-            value={profileData.name || ""}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            name="email"
-            value={profileData.email || ""}
-            disabled
-          />
-        </div>
-        <div>
-          <label>Số điện thoại:</label>
-          <input
-            name="phone"
-            value={profileData.phone || ""}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-          />
-        </div>
-        <div>
-          <label>Địa chỉ:</label>
-          <input
-            name="address"
-            value={profileData.address || ""}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-          />
-        </div>
-        {/* Thêm các trường khác nếu có */}
-        {isEditing && <button type="submit">Lưu</button>}
-      </form>
-    </div>
+    <>
+      <Header />
+      <div className="profile-container">
+        <h2>Thông Tin Cá Nhân</h2>
+        <button onClick={() => setIsEditing((prev) => !prev)} className="edit-button">
+          {isEditing ? "Hủy" : "Chỉnh sửa"}
+        </button>
+
+        <form onSubmit={handleSubmit} className="profile-form">
+          <div className="form-group">
+            <label>Họ tên:</label>
+            <input
+              type="text"
+              name="name"
+              value={profileData.name || ''}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={profileData.email || ''}
+              disabled
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Số điện thoại:</label>
+            <input
+              type="text"
+              name="phone"
+              value={profileData.phone || ''}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Địa chỉ:</label>
+            <input
+              type="text"
+              name="address"
+              value={profileData.address || ''}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+            />
+          </div>
+
+          {isEditing && (
+            <button type="submit" className="save-button">
+              Lưu
+            </button>
+          )}
+        </form>
+      </div>
+      <Footer />
+    </>
   );
 };
 

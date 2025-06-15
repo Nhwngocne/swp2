@@ -1,10 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+// main.jsx (Vite)
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import AppContent from './App'; // hoặc App nếu bạn export default AppContent
+import { BrowserRouter } from 'react-router-dom';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  </React.StrictMode>
+);
