@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.GetMapping;
+import com.swp391.exception.AppException;
+import com.swp391.exception.ErrorCode;
 
 import java.text.ParseException;
 import java.util.Map;
@@ -61,4 +65,21 @@ public class AuthenticationController {
                             .build());
         }
     }
+    @GetMapping("/me")
+    public ApiResponse<AuthenticationResponse> getCurrentUser(@RequestHeader("Authorization") String authHeader)
+            throws JOSEException, ParseException {
+
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+
+        String token = authHeader.substring(7); // Remove "Bearer "
+        var result = authenticationService.getCurrentUserFromToken(token);
+
+
+        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
+    }
+
 }

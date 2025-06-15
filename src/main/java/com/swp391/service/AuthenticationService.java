@@ -146,16 +146,30 @@ public class AuthenticationService {
         return "ROLE_" + role;
     }
 
-//    public Object getUserFromToken(String token) throws ParseException, JOSEException {
-//        SignedJWT jwt = verifyToken(token);
-//        String email = jwt.getJWTClaimsSet().getSubject();
-//        String role = jwt.getJWTClaimsSet().getStringClaim("role");
-//
-//        return switch (role) {
-//            case "MEMBER" -> memberRepository.findByEmail(email).orElse(null);
-//            case "STAFF" -> staffRepository.findByEmail(email).orElse(null);
-//            case "ADMIN" -> adminRepository.findByEmail(email).orElse(null);
-//            default -> null;
-//        };
-//    }
+    public AuthenticationResponse getCurrentUserFromToken(String token) throws ParseException, JOSEException {
+        SignedJWT jwt = verifyToken(token);
+        String email = jwt.getJWTClaimsSet().getSubject();
+        String scope = jwt.getJWTClaimsSet().getStringClaim("scope"); // "ROLE_STAFF"
+        String role = scope.replace("ROLE_", ""); // "STAFF"
+
+
+        Object user = switch (role) {
+            case "MEMBER" -> memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            case "STAFF" -> staffRepository.findByEmail(email)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            case "ADMIN" -> adminRepository.findByEmail(email)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            default -> throw new AppException(ErrorCode.UNAUTHENTICATED);
+        };
+
+
+        return AuthenticationResponse.builder()
+                .user(user)
+                .token(token)
+                .role(role)
+                .authenticated(true)
+                .build();
+    }
+
 }
