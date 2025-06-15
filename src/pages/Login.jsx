@@ -153,7 +153,7 @@ const Login = () => {
 
           <div className="social-login">
             <button className="btn btn-social btn-google">
-              <img src="/assets/google-icon.svg" alt="Google" />
+              <img src="/assets/logogg.webp" alt="Google" />
               Đăng nhập với Google
             </button>
 
