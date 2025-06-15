@@ -46,6 +46,7 @@ public class AuthenticationController {
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder().result(result).build();
     }
+
     @PostMapping("/loginGoogle")
     public ResponseEntity<ApiResponse<GoogleLoginResponse>> loginGoogle(@RequestBody Map<String, String> body) {
         try {
