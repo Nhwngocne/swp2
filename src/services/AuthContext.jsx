@@ -12,18 +12,30 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
+  //change 
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  //add roleAdd
+  const [role, setRole] = useState(() => {
+    return localStorage.getItem("role") || null;
+  });
   const [loading, setLoading] = useState(true);
 
   // Kiểm tra user khi app khởi động
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
+    const storedRole = localStorage.getItem("role");
     
-    if (token && userData) {
+    if (token && userData && storedRole) {
       try {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
+        //add role
+        setRole(storedRole);
         verifyToken();
       } catch (error) {
         console.error('Error parsing user data:', error);
@@ -37,7 +49,15 @@ export const AuthProvider = ({ children }) => {
   const verifyToken = async () => {
     try {
       const response = await authService.getCurrentUser();
-      setUser(response.data.user || response.data);
+      const userFromServer = response.data.result.user || response.data;
+      const roleFromServer = response.data.result.role;
+
+      setUser(userFromServer);
+      setRole(roleFromServer);
+
+      // đồng bộ lại localStorage
+      localStorage.setItem('user', JSON.stringify(userFromServer));
+      localStorage.setItem('role', roleFromServer);
     } catch (error) {
       console.error('Token verification failed:', error);
       clearAuthData();
@@ -48,7 +68,9 @@ export const AuthProvider = ({ children }) => {
   const clearAuthData = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('role');
     setUser(null);
+    setRole(null);
   };
 
   // Đăng nhập
@@ -58,9 +80,11 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.login(email, password);
       const { data } = response;
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
+      localStorage.setItem('token', data.result.token);
+      localStorage.setItem('user', JSON.stringify(data.result.user));
+      localStorage.setItem("role", data.result.role);
+      setUser(data.result.user);
+      setRole(data.result.role);
 
       return { success: true };
     } catch (error) {
@@ -79,13 +103,13 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await authService.register(userData);
-      const { data } = response;
+      ////REGIST NOT ALLOW LOGIN
+      //const { data } = response;
+      // localStorage.setItem('token', data.token);
+      // localStorage.setItem('user', JSON.stringify(data.user));
+      // setUser(data.user);
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
-
-      return { success: true };
+      return { success: true, message: "Đăng ký thành công. Vui lòng đăng nhập."  };
     } catch (error) {
       console.error('Register error:', error);
       const errorMessage = error.response?.data?.message ||
@@ -99,13 +123,14 @@ export const AuthProvider = ({ children }) => {
 
   // Đăng xuất
   const logout = async () => {
-    try {
-      await authService.logout(); // Nếu có API logout
-    } catch (error) {
-      console.error('Logout API error:', error);
-    } finally {
-      clearAuthData();
-    }
+    clearAuthData();
+    // try {
+    //   await authService.logout(); // Nếu có API logout
+    // } catch (error) {
+    //   console.error('Logout API error:', error);
+    // } finally {
+    //   clearAuthData();
+    // }
   };
 
   // Cập nhật hồ sơ
@@ -197,6 +222,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    role,
     loading,
     login,
     register,
@@ -208,9 +234,9 @@ export const AuthProvider = ({ children }) => {
     verifyEmail,
     getAllUsers,
     isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
-    isStaff: user?.role === 'staff',
-    isMember: user?.role === 'member',
+    isAdmin: role === 'ADMIN',
+    isStaff: role === 'STAFF',
+    isMember: role === 'MEMBER',
   };
 
   return (

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Base URL cho API
-const REST_API_BASE_URL = 'http://localhost:8080/swp391/auth';
+const REST_API_BASE_URL = 'http://localhost:8080/swp391';
 
 // Tạo axios instance với cấu hình mặc định
 const authAPI = axios.create({
@@ -35,7 +35,7 @@ authAPI.interceptors.response.use(
       // Token hết hạn hoặc không hợp lệ
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      window.location.href = '/auth/login';
     }
     return Promise.reject(error);
   }
@@ -45,11 +45,11 @@ authAPI.interceptors.response.use(
 export const authService = {
   // Đăng nhập
   login: (email, password) => 
-    authAPI.post('/login', { email, password }),
+    authAPI.post('/auth/login', { email, password }),
 
   // Đăng ký
   register: (userData) => 
-    authAPI.post('/register', userData),
+    authAPI.post('/members', userData),
 
   // Cập nhật profile
   updateProfile: (profileData) => 
@@ -59,13 +59,13 @@ export const authService = {
   logout: () => 
     authAPI.post('/logout'),
 
-  // Refresh token
+  // Refresh tokenx`
   refreshToken: (refreshToken) => 
     authAPI.post('/refresh-token', { refreshToken }),
 
   // Lấy thông tin user hiện tại
   getCurrentUser: () => 
-    authAPI.get('/me'),
+    authAPI.get('/auth/me'),
 
   // Đổi mật khẩu
   changePassword: (oldPassword, newPassword) => 
@@ -84,7 +84,7 @@ export const authService = {
     authAPI.post('/verify-email', { token }),
 
   getAllUsers: () => 
-  authAPI.get('/users'),
+  authAPI.get('/members'),
 };
 
 
