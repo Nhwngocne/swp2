@@ -1,0 +1,71 @@
+[33m43867f8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDEV_Hien[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/DEV_Hien[m[33m)[m HEAD@{0}: reset: moving to origin/master
+[33m5306754[m HEAD@{1}: checkout: moving from master to DEV_Hien
+[33mbddf1fd[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{2}: checkout: moving from DEV_Hien to master
+[33m5306754[m HEAD@{3}: commit: error
+[33m43867f8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDEV_Hien[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/DEV_Hien[m[33m)[m HEAD@{4}: pull: Fast-forward
+[33mbddf1fd[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{5}: reset: moving to HEAD
+[33mbddf1fd[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{6}: checkout: moving from master to DEV_Hien
+[33mbddf1fd[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{7}: merge DEV_Hien: Fast-forward
+[33mc7b7877[m HEAD@{8}: checkout: moving from DEV_Hien to master
+[33mbddf1fd[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{9}: commit: fix token and add introspect for check
+[33mc7b7877[m HEAD@{10}: checkout: moving from master to DEV_Hien
+[33mc7b7877[m HEAD@{11}: merge DEV_Hien: Fast-forward
+[33m110aef1[m HEAD@{12}: pull: Fast-forward
+[33m4adf90e[m HEAD@{13}: checkout: moving from DEV_Hien to master
+[33mc7b7877[m HEAD@{14}: commit: config token
+[33m110aef1[m HEAD@{15}: pull: Fast-forward
+[33m0d8ea56[m HEAD@{16}: pull: Fast-forward
+[33m4adf90e[m HEAD@{17}: checkout: moving from master to DEV_Hien
+[33m4adf90e[m HEAD@{18}: merge DEV_Hien: Fast-forward
+[33m6625f0d[m HEAD@{19}: checkout: moving from DEV_Hien to master
+[33m4adf90e[m HEAD@{20}: commit: fix mapper for dtoResponse
+[33m6625f0d[m HEAD@{21}: checkout: moving from master to DEV_Hien
+[33m6625f0d[m HEAD@{22}: merge DEV_Hien: Fast-forward
+[33mf526fc0[m HEAD@{23}: checkout: moving from DEV_Hien to master
+[33m6625f0d[m HEAD@{24}: commit: fix name errorCode
+[33mf526fc0[m HEAD@{25}: checkout: moving from master to DEV_Hien
+[33mf526fc0[m HEAD@{26}: merge DEV_Hien: Fast-forward
+[33m5f00ae8[m HEAD@{27}: checkout: moving from DEV_Hien to master
+[33mf526fc0[m HEAD@{28}: commit: add controller
+[33m5f00ae8[m HEAD@{29}: checkout: moving from master to DEV_Hien
+[33m5f00ae8[m HEAD@{30}: merge DEV_Hien: Fast-forward
+[33m85dfee6[m HEAD@{31}: checkout: moving from DEV_Hien to master
+[33m5f00ae8[m HEAD@{32}: commit: create package exception
+[33m85dfee6[m HEAD@{33}: checkout: moving from master to DEV_Hien
+[33m85dfee6[m HEAD@{34}: merge DEV_Hien: Fast-forward
+[33ma779fb1[m HEAD@{35}: pull: Fast-forward
+[33mc57db94[m HEAD@{36}: checkout: moving from DEV_Hien to master
+[33m85dfee6[m HEAD@{37}: commit: create service for staff
+[33ma779fb1[m HEAD@{38}: pull: Fast-forward
+[33mc57db94[m HEAD@{39}: checkout: moving from master to DEV_Hien
+[33mc57db94[m HEAD@{40}: merge DEV_Hien: Fast-forward
+[33m8b2325e[m HEAD@{41}: checkout: moving from DEV_Hien to master
+[33mc57db94[m HEAD@{42}: commit: fix Long to int
+[33mc6eb172[m HEAD@{43}: pull: Merge made by the 'ort' strategy.
+[33m8b2325e[m HEAD@{44}: checkout: moving from master to DEV_Hien
+[33m8b2325e[m HEAD@{45}: merge DEV_Hien: Fast-forward
+[33mc617e24[m HEAD@{46}: checkout: moving from DEV_Hien to master
+[33m8b2325e[m HEAD@{47}: commit: update member service
+[33m2bdbc94[m HEAD@{48}: pull: Fast-forward
+[33mc617e24[m HEAD@{49}: checkout: moving from master to DEV_Hien
+[33mc617e24[m HEAD@{50}: merge DEV_Hien: Fast-forward
+[33m0cc5128[m HEAD@{51}: pull: Fast-forward
+[33m7f66dcd[m HEAD@{52}: checkout: moving from DEV_Hien to master
+[33mc617e24[m HEAD@{53}: commit: encode password & create member
+[33m0cc5128[m HEAD@{54}: pull: Fast-forward
+[33m7f66dcd[m HEAD@{55}: pull origin master: Fast-forward
+[33mf0c657e[m HEAD@{56}: checkout: moving from master to DEV_Hien
+[33m7f66dcd[m HEAD@{57}: checkout: moving from DEV_Hien to master
+[33mf0c657e[m HEAD@{58}: checkout: moving from master to DEV_Hien
+[33m7f66dcd[m HEAD@{59}: checkout: moving from DEV_Hien to master
+[33mf0c657e[m HEAD@{60}: checkout: moving from DEV_Sang to DEV_Hien
+[33m3513208[m[33m ([m[1;32mDEV_Sang[m[33m)[m HEAD@{61}: checkout: moving from DEV_Hien to DEV_Sang
+[33mf0c657e[m HEAD@{62}: checkout: moving from master to DEV_Hien
+[33m7f66dcd[m HEAD@{63}: checkout: moving from DEV_Sang to master
+[33m3513208[m[33m ([m[1;32mDEV_Sang[m[33m)[m HEAD@{64}: checkout: moving from DEV_Hien to DEV_Sang
+[33mf0c657e[m HEAD@{65}: checkout: moving from master to DEV_Hien
+[33m7f66dcd[m HEAD@{66}: merge origin/master: Fast-forward
+[33m7e2822e[m HEAD@{67}: checkout: moving from DEV_Hien to master
+[33mf0c657e[m HEAD@{68}: commit: relationship_tab
+[33m7e2822e[m HEAD@{69}: checkout: moving from master to DEV_Hien
+[33m7e2822e[m HEAD@{70}: commit (initial): swp_be

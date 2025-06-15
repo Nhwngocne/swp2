@@ -146,7 +146,6 @@ public class AuthenticationService {
         return "ROLE_" + role;
     }
 
-
 //    public Object getUserFromToken(String token) throws ParseException, JOSEException {
 //        SignedJWT jwt = verifyToken(token);
 //        String email = jwt.getJWTClaimsSet().getSubject();
