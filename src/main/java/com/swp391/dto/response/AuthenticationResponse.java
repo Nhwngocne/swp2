@@ -1,5 +1,7 @@
 package com.swp391.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -8,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(Include.NON_NULL)
 public class AuthenticationResponse {
     String token;
     boolean authenticated;

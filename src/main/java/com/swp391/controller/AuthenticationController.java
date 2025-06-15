@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
+import com.swp391.dto.request.RefreshRequest;
 
 import java.text.ParseException;
 import java.util.Map;
@@ -68,18 +69,17 @@ public class AuthenticationController {
     @GetMapping("/me")
     public ApiResponse<AuthenticationResponse> getCurrentUser(@RequestHeader("Authorization") String authHeader)
             throws JOSEException, ParseException {
-
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-
-
         String token = authHeader.substring(7); // Remove "Bearer "
         var result = authenticationService.getCurrentUserFromToken(token);
-
-
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
-
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request)
+            throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
+    }
 }
