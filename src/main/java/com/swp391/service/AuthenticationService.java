@@ -10,17 +10,14 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.swp391.dto.request.AuthenticationRequest;
 import com.swp391.dto.request.IntrospectRequest;
-import com.swp391.dto.request.RefreshRequest;
 import com.swp391.dto.response.AuthenticationResponse;
 import com.swp391.dto.response.IntrospectResponse;
 import com.swp391.entity.Admin;
-import com.swp391.entity.InvalidatedToken;
 import com.swp391.entity.Member;
 import com.swp391.entity.Staff;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.repository.AdminRepository;
-import com.swp391.repository.InvalidatedTokenRepository;
 import com.swp391.repository.MemberRepository;
 import com.swp391.repository.StaffRepository;
 import lombok.AccessLevel;
@@ -48,7 +45,6 @@ public class AuthenticationService {
     MemberRepository memberRepository;
     StaffRepository staffRepository;
     AdminRepository adminRepository;
-    InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -57,10 +53,6 @@ public class AuthenticationService {
     @NonFinal
     @Value("${jwt.valid-duration}")
     protected long VALID_DURATION;
-
-    @NonFinal
-    @Value("${jwt.refreshable-duration}")
-    protected long REFRESHABLE_DURATION;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         PasswordEncoder encoder = new BCryptPasswordEncoder(10);
@@ -104,16 +96,12 @@ public class AuthenticationService {
     }
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
-        var token = request.getToken();
-        boolean isValid = true;
-
         try {
-            verifyToken(token, false);
-        } catch (AppException e) {
-            isValid = false;
+            verifyToken(request.getToken());
+            return IntrospectResponse.builder().valid(true).build();
+        } catch (Exception e) {
+            return IntrospectResponse.builder().valid(false).build();
         }
-
-        return IntrospectResponse.builder().valid(isValid).build();
     }
 
     private String generateToken(String email, String role) {
@@ -140,27 +128,17 @@ public class AuthenticationService {
         }
     }
 
-    private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
-        //xác thực chữ ký của token
+    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+        SignedJWT signedJWT = SignedJWT.parse(token);
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
 
-        SignedJWT signedJWT = SignedJWT.parse(token);
+        boolean verified = signedJWT.verify(verifier);
+        Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        Date expiryTime = (isRefresh)
-                ? new Date(signedJWT
-                .getJWTClaimsSet()
-                .getIssueTime()
-                .toInstant()
-                .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
-                .toEpochMilli())
-                : signedJWT.getJWTClaimsSet().getExpirationTime();
-
-        var verified = signedJWT.verify(verifier);
-
-        if (!(verified && expiryTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
-
-        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+        if (!(verified && expiration.after(new Date()))) {
+            log.info("Token verification failed or token expired");
             throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
 
         return signedJWT;
     }
@@ -168,55 +146,16 @@ public class AuthenticationService {
         return "ROLE_" + role;
     }
 
-    public AuthenticationResponse getCurrentUserFromToken(String token) throws ParseException, JOSEException {
-        SignedJWT jwt = verifyToken(token, false);
-        String email = jwt.getJWTClaimsSet().getSubject();
-        String scope = jwt.getJWTClaimsSet().getStringClaim("scope"); // "ROLE_STAFF"
-        String role = scope.replace("ROLE_", ""); // "STAFF"
-
-        Object user = switch (role) {
-            case "MEMBER" -> memberRepository.findByEmail(email)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-            case "STAFF" -> staffRepository.findByEmail(email)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-            case "ADMIN" -> adminRepository.findByEmail(email)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-            default -> throw new AppException(ErrorCode.UNAUTHENTICATED);
-        };
-        return AuthenticationResponse.builder()
-                .user(user)
-                .token(token)
-                .role(role)
-                .authenticated(true)
-                .build();
-    }
-    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
-        var signedJWT = verifyToken(request.getToken(), true);
-
-        var jit = signedJWT.getJWTClaimsSet().getJWTID();
-        var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-        // Lưu token cũ vào bảng invalidated
-        InvalidatedToken invalidatedToken =
-                InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
-        invalidatedTokenRepository.save(invalidatedToken);
-
-        // Lấy email và scope (để xác định role)
-        var email = signedJWT.getJWTClaimsSet().getSubject();
-        var scope = signedJWT.getJWTClaimsSet().getStringClaim("scope"); // VD: "ROLE_MEMBER"
-        var role = scope.replace("ROLE_", ""); // VD: "MEMBER"
-
-        Object user = switch (role) {
-            case "MEMBER" -> memberRepository.findByEmail(email)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-            case "STAFF" -> staffRepository.findByEmail(email)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-            case "ADMIN" -> adminRepository.findByEmail(email)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-            default -> throw new AppException(ErrorCode.UNAUTHENTICATED);
-        };
-
-        var newToken = generateToken(email, role);
-
-        return AuthenticationResponse.builder().token(newToken).authenticated(true).build();
-    }
+//    public Object getUserFromToken(String token) throws ParseException, JOSEException {
+//        SignedJWT jwt = verifyToken(token);
+//        String email = jwt.getJWTClaimsSet().getSubject();
+//        String role = jwt.getJWTClaimsSet().getStringClaim("role");
+//
+//        return switch (role) {
+//            case "MEMBER" -> memberRepository.findByEmail(email).orElse(null);
+//            case "STAFF" -> staffRepository.findByEmail(email).orElse(null);
+//            case "ADMIN" -> adminRepository.findByEmail(email).orElse(null);
+//            default -> null;
+//        };
+//    }
 }

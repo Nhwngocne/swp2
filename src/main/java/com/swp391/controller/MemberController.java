@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,10 @@ import java.util.List;
 public class MemberController {
     MemberService memberService;
 
+    @GetMapping("/my-profile")
+    public ResponseEntity<MemberResponse> getMyProfile() {
+        return ResponseEntity.ok(memberService.myInfor());
+    }
     //create
     @PostMapping
     public ApiResponse<MemberResponse> createMember(@RequestBody @Valid MemberCreateRequest request) {
