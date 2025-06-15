@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../services/AuthContext';
 import './DonationBloodForm'; 
-import '../css/Home.css'; // Assuming you have a CSS file for styling
+import '../assets/css/pages/Home.css'; // Assuming you have a CSS file for styling
 
 const Home = () => {
   const { user } = useAuth(); 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import '../css/Manage.css'; // Assuming you have a CSS file for styling
-
+import '../assets/css/pages/Manage.css'; //
 const Manage = () => {
   const [stats] = useState({
     totalUsers: 1250,

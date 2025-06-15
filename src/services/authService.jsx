@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Base URL cho API
-const REST_API_BASE_URL = 'http://localhost:8080/api/auth';
+const REST_API_BASE_URL = 'http://localhost:8080/swp391/auth';
 
 // Tạo axios instance với cấu hình mặc định
 const authAPI = axios.create({

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './BlogList.css'; // Import your CSS styles
-
+import '../../assets/css/components/guest/BlogList.css'; // Adjust the path as necessary
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import '../css/Faq.css'; // Assuming you have a CSS file for styling
-
+import '../assets/css/pages/Faq.css'; //
 const faqList = [
   {
     question: 'Ai có thể tham gia hiến máu?',

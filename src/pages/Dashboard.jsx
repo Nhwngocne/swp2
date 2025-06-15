@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../services/AuthContext";
 import { Link } from 'react-router-dom';
-import '../css/Dashboard.css'; // Assuming you have a CSS file for styling
-
+import '../assets/css/pages/Dashboard.css'; //
 const Dashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState({

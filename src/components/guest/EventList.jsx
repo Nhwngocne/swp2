@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import './EventList.css'; // Assuming you have a CSS file for styles
-
+import '../../assets/css/components/guest/EventList.css'; // Adjust the path as necessary
 const EventList = () => {
   const [events] = useState([
     {

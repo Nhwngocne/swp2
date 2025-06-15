@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import '../css/Search.css'; // Assuming you have a CSS file for styling
-
+import '../assets/css/pages/Search.css'; //
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('all');

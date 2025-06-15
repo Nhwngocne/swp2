@@ -1,7 +1,7 @@
 
 
-import './Footer.css';
-import logo from '../../assets/logo.png'; // đường dẫn logo đúng của bạn
+import '../../assets/css/components/common/Footer.css';
+import logo from '../../assets/img/logo.png'; // đường dẫn logo đúng của bạn
 
 export default function Footer() {
 

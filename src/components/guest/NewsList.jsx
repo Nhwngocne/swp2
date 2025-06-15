@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './NewsList.css';
+import '../../assets/css/components/guest/NewsList.css'; // Adjust the path as necessary
 
 const NewsList = () => {
   const [news] = useState([

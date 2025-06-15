@@ -2,8 +2,9 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuth } from "../../services/AuthContext.jsx";
-import './Navbar.css';
-import logo from '../../assets/logo.png';
+
+import '../../assets/css/components/common/navbar.css';
+import logo from '../../assets/img/logo.png';
 const Navbar = () => {
   const { user, logout } = useAuth();
 
