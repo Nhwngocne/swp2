@@ -105,11 +105,11 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
 // Helper function to get role text in Vietnamese
 const getRoleText = (role) => {
   switch (role) {
-    case 'ADMINADMIN':
+    case 'ADMIN':
       return 'Quản trị viên';
-    case 'STAFFSTAFF':
+    case 'STAFF':
       return 'Nhân viên';
-    case 'MEMBERMEMBER':
+    case 'MEMBER':
       return 'Thành viên';
     default:
       return 'Người dùng';

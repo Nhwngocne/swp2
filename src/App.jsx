@@ -43,11 +43,12 @@ import Dashboard from './pages/Dashboard';
 
 // Protected Route component (customized)
 const ProtectedRoute = ({ children, requiredRole }) => {
-  const token = localStorage.getItem('token');
-  const role = localStorage.getItem('rolename');
 
-  if (!token) return <Navigate to="/login" replace />;
-  if (requiredRole && role !== requiredRole) return <Navigate to="/dashboard" replace />;
+  const { user, loading } = useAuth();
+
+  if (loading) return <div className="loading">Đang tải...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (requiredRole && user.role !== requiredRole) return <Navigate to="/dashboard" replace />;
 
   return children;
 };
@@ -62,8 +63,8 @@ const AppContent = () => {
     <div className="app">
       <Navbar setSidebarOpen={setSidebarOpen} />
 
-      {isLoggedIn && (
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} userRole={role} />
+        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} userRole={user.role} />
+
       )}
 
       <main className={`main-content ${isLoggedIn ? 'with-sidebar' : ''}`}>
@@ -87,70 +88,24 @@ const AppContent = () => {
           } />
 
           {/* Member Routes */}
-          <Route path="/profile" element={
-            <ProtectedRoute requiredRole="member">
-              <Profile />
-            </ProtectedRoute>
-          } />
-          <Route path="/donation-history" element={
-            <ProtectedRoute requiredRole="member">
-              <DonationHistory />
-            </ProtectedRoute>
-          } />
-          <Route path="/emergency" element={
-            <ProtectedRoute requiredRole="member">
-              <EmergencyList />
-            </ProtectedRoute>
-          } />
+
+          <Route path="/profile" element={<ProtectedRoute requiredRole="member"><Profile /></ProtectedRoute>} />
+          <Route path="/donation-history" element={<ProtectedRoute requiredRole="member"><DonationHistory /></ProtectedRoute>} />
+          <Route path="/emergency" element={<ProtectedRoute requiredRole="member"><EmergencyList /></ProtectedRoute>} />
+
 
           {/* Staff Routes */}
-          <Route path="/manage-events" element={
-            <ProtectedRoute requiredRole="staff">
-              <EventManager />
-            </ProtectedRoute>
-          } />
-          <Route path="/blood-inventory" element={
-            <ProtectedRoute requiredRole="staff">
-              <BloodInventory />
-            </ProtectedRoute>
-          } />
-          <Route path="/manage-members" element={
-            <ProtectedRoute requiredRole="staff">
-              <MemberManager />
-            </ProtectedRoute>
-          } />
+          <Route path="/manage-events" element={<ProtectedRoute requiredRole="staff"><EventManager /></ProtectedRoute>} />
+          <Route path="/blood-inventory" element={<ProtectedRoute requiredRole="staff"><BloodInventory /></ProtectedRoute>} />
+          <Route path="/manage-members" element={<ProtectedRoute requiredRole="staff"><MemberManager /></ProtectedRoute>} />
 
           {/* Admin Routes */}
-          <Route path="/manage" element={
-            <ProtectedRoute requiredRole="admin">
-              <Manage />
-            </ProtectedRoute>
-          } />
-          <Route path="/manage-news" element={
-            <ProtectedRoute requiredRole="admin">
-              <NewsManager />
-            </ProtectedRoute>
-          } />
-          <Route path="/manage-forum" element={
-            <ProtectedRoute requiredRole="admin">
-              <ForumManager />
-            </ProtectedRoute>
-          } />
-          <Route path="/manage-notifications" element={
-            <ProtectedRoute requiredRole="admin">
-              <NotificationManager />
-            </ProtectedRoute>
-          } />
-          <Route path="/reports" element={
-            <ProtectedRoute requiredRole="admin">
-              <ReportStats />
-            </ProtectedRoute>
-          } />
-          <Route path="/settings" element={
-            <ProtectedRoute requiredRole="admin">
-              <SystemSettings />
-            </ProtectedRoute>
-          } />
+          <Route path="/manage" element={<ProtectedRoute requiredRole="admin"><Manage /></ProtectedRoute>} />
+          <Route path="/manage-news" element={<ProtectedRoute requiredRole="admin"><NewsManager /></ProtectedRoute>} />
+          <Route path="/manage-forum" element={<ProtectedRoute requiredRole="admin"><ForumManager /></ProtectedRoute>} />
+          <Route path="/manage-notifications" element={<ProtectedRoute requiredRole="admin"><NotificationManager /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute requiredRole="admin"><ReportStats /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute requiredRole="admin"><SystemSettings /></ProtectedRoute>} />
 
           {/* Fallback Route */}
           <Route path="*" element={<Navigate to="/" replace />} />
