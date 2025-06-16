@@ -10,7 +10,9 @@ import com.swp391.entity.Member;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.MemberMapper;
+import com.swp391.repository.AdminRepository;
 import com.swp391.repository.MemberRepository;
+import com.swp391.repository.StaffRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,7 +29,10 @@ import java.util.UUID;
 public class MemberService{
     MemberRepository memberRepository;
     MemberMapper memberMapper;
+    StaffRepository staffRepository;
+    AdminRepository adminRepository;
     PasswordEncoder passwordEncoder;
+    AuthenticationService authenticationService;
 
     //create member
     public MemberResponse createMember(MemberCreateRequest request){
@@ -64,36 +69,49 @@ public class MemberService{
     }
     public GoogleLoginResponse loginWithGoogle(String idToken) {
         try {
-            // 1. Xác thực token từ Google
+            // 1. Verify Firebase token
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-
-            String uid = decodedToken.getUid();
             String email = decodedToken.getEmail();
             String name = decodedToken.getName();
-            // 2. Tìm user theo email
-            Member member = memberRepository.findByEmail(email).orElseGet(() -> {
-                // 3. Nếu chưa có thì tạo mới Member
-                Member newMember = Member.builder()
-                        .email(email)
-                        .name(name != null ? name : "Unknown") // đề phòng name = null
-                        .password(passwordEncoder.encode(UUID.randomUUID().toString()))
-                        .build();
-                return memberRepository.save(newMember);
-            });
 
-            // 4. Tạo JWT nếu cần (ở đây chỉ dùng Firebase ID token nếu bạn chưa triển khai JWT riêng)
+            // 2. Determine user type and role
+            Object user;
+            String role;
+
+            if (adminRepository.findByEmail(email).isPresent()) {
+                user = adminRepository.findByEmail(email).get();
+                role = "ADMIN";
+            } else if (staffRepository.findByEmail(email).isPresent()) {
+                user = staffRepository.findByEmail(email).get();
+                role = "STAFF";
+            } else {
+                // If not admin or staff, treat as member
+                user = memberRepository.findByEmail(email).orElseGet(() -> {
+                    Member newMember = Member.builder()
+                            .email(email)
+                            .name(name != null ? name : "Unknown")
+                            .password(passwordEncoder.encode(UUID.randomUUID().toString()))
+                            .build();
+                    return memberRepository.save(newMember);
+                });
+                role = "MEMBER";
+            }
+
+            // 3. Generate JWT token
+            String token = authenticationService.generateToken(email, role);
+
+            // 4. Return response
             return GoogleLoginResponse.builder()
-                    .email(member.getEmail())
-                    .name(member.getName())
-                    .token(idToken) // hoặc generateJwtToken(member) nếu bạn có hệ thống JWT riêng
+                    .authenticated(true)
+                    .token(token)
+                    .user(user)
+                    .role(role)
                     .build();
 
         } catch (FirebaseAuthException e) {
-            throw new AppException(ErrorCode.GOOGLE_AUTH_FAILED);        }
+            throw new AppException(ErrorCode.GOOGLE_AUTH_FAILED);
+        }
     }
-
-
-
 
 
 }
