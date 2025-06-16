@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../services/AuthContext";
 import { authService } from "../../services/authService";
+import "../../assets/css/member/profile.css";
+
 const Profile = () => {
-  const { user, updateProfile } = useAuth();
+  const { updateProfile } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  
   useEffect(() => {
-
     const fetchProfile = async () => {
       try {
-        setLoading(true);
         const response = await authService.getCurrentUser();
-        setProfileData(response.data);
+        setProfileData(response.data); // chứa name, email, phone, address,...
       } catch (error) {
-        console.error("Lỗi khi tải thông tin cá nhân:", error);
         alert("Không thể tải thông tin cá nhân");
       } finally {
         setLoading(false);
@@ -28,9 +26,9 @@ const Profile = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfileData(prev => ({
+    setProfileData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -54,54 +52,59 @@ const Profile = () => {
 
   if (loading || !profileData) return <div>Đang tải...</div>;
 
+
   return (
-    <div className="profile-container">
-      <h2>Thông Tin Cá Nhân</h2>
-      <button onClick={() => setIsEditing(!isEditing)}>
-        {isEditing ? "Hủy" : "Chỉnh sửa"}
-      </button>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Họ tên:</label>
+  <div className="profile-container">
+    <form onSubmit={handleSubmit}>
+      <div className="profile-grid">
+        <div className="profile-column">
+          <h3>Thông tin cá nhân</h3>
+          {renderField("Họ và tên", "name", profileData.name)}
+          {renderField("Số CCCD", "citizenId", profileData.citizenId)}
+          {renderField("Ngày sinh", "dob", profileData.dob)}
+          {renderField("Giới tính", "gender", profileData.gender)}
+        </div>
+
+        <div className="profile-column">
+          <div className="column-header">
+            <h3>Thông tin liên hệ</h3>
+            <button className="edit-btn" onClick={() => setIsEditing(!isEditing)}>
+              {isEditing ? "Hủy" : (<><i className="fa-solid fa-pen"></i> Chỉnh sửa</>)}
+            </button>
+          </div>
+          {renderField("Địa chỉ liên hệ", "address", profileData.address, true)}
+          {renderField("Điện thoại di động", "phone", profileData.phone, true)}
+          {renderField("Email", "email", profileData.email, true)}
+          {renderField("Nghề nghiệp", "job", profileData.job, true)}
+        </div>
+      </div>
+
+      {isEditing && (
+        <div className="form-actions">
+          <button type="submit" className="save-btn">Lưu thay đổi</button>
+        </div>
+      )}
+    </form>
+  </div>
+);
+
+  function renderField(label, name, value, allowEdit = false) {
+    return (
+      <div className="profile-field">
+        <label>{label}</label>
+        {isEditing && allowEdit ? (
           <input
-            name="name"
-            value={user.name || ""}
+            type="text"
+            name={name}
+            value={value || ""}
             onChange={handleInputChange}
-            disabled={!isEditing}
-            required
           />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            name="email"
-            value={user.email || ""}
-            disabled
-          />
-        </div>
-        <div>
-          <label>Số điện thoại:</label>
-          <input
-            name="phone"
-            value={user.phone || ""}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-          />
-        </div>
-        <div>
-          <label>Địa chỉ:</label>
-          <input
-            name="address"
-            value={user.address || ""}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-          />
-        </div>
-        {/* Thêm các trường khác nếu có */}
-        {isEditing && <button type="submit">Lưu</button>}
-      </form>
-    </div>
-  );
+        ) : (
+          <span className="field-value">{value || "-"}</span>
+        )}
+      </div>
+    );
+  }
 };
 
 export default Profile;
