@@ -116,7 +116,7 @@ public class AuthenticationService {
         return IntrospectResponse.builder().valid(isValid).build();
     }
 
-    private String generateToken(String email, String role) {
+   public String generateToken(String email, String role) {
         try {
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                     .subject(email)
