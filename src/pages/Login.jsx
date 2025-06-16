@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../services/AuthContext";
-import { signInWithGoogle } from "../services/firebaseConfig";
+//import { signInWithGoogle } from "../services/firebaseConfig";
 import '../assets/css/pages/Login.css';
+import ForgotPassword from './ForgotPassword';
 
 const Login = () => {
   const { login, loginWithGoogle } = useAuth(); // ✅ Lấy login và loginWithGoogle từ context
@@ -160,7 +161,7 @@ const Login = () => {
           <div className="login-divider"><span>hoặc</span></div>
 
           <div className="social-login">
-            
+
             <button
               className="btn btn-social btn-google"
               onClick={handleGoogleLogin}
@@ -173,7 +174,11 @@ const Login = () => {
           </div>
 
           <div className="login-footer">
+
             <p>
+              <div className="forgot-password">
+                <Link to="/forgotPassword" className="forgot-link">Quên mật khẩu?</Link>
+              </div>
               Chưa có tài khoản?
               <Link to="/register" className="register-link"> Đăng ký ngay</Link>
             </p>

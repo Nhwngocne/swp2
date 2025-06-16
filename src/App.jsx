@@ -20,6 +20,7 @@ import Search from './pages/Search';
 import Manage from './pages/Manage';
 import Faq from './pages/Faq'; // ✅ Thêm Faq ở đây
 import DonationBloodForm from './pages/DonationBloodForm';
+import ForgotPassword from './pages/ForgotPassword';
 
 // Guest Components
 import EventList from './components/guest/EventList';
@@ -79,6 +80,7 @@ const AppContent = () => {
           <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
           <Route path="/search" element={<Search />} />
           <Route path="/donation-blood-form" element={<DonationBloodForm />} />
+          <Route path="/forgotPassword" element={<ForgotPassword />} />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
