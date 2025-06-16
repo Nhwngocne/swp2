@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -69,4 +70,8 @@ public class Staff {
 
     @ManyToMany
     Set<Member> members;
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Event> createdEvents = new HashSet<>();
+
 }
