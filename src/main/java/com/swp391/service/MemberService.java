@@ -61,16 +61,6 @@ public class MemberService{
                     .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return memberMapper.toMemberResponse(member);
     }
-    //get my profile
-    public MemberResponse myInfor() {
-        // Giả sử bạn đã có cơ chế lấy thông tin người dùng hiện tại (ví dụ từ SecurityContextHolder)
-        // Ở đây chỉ là ví dụ, bạn cần thay thế bằng cách lấy thông tin người dùng thực tế
-        int currentUserId = 1; // Thay thế bằng ID của người dùng hiện tại
-        Member member = memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        return memberMapper.toMemberResponse(member);
-    }
-
     public GoogleLoginResponse loginWithGoogle(String idToken) {
         try {
             // 1. Xác thực token từ Google
