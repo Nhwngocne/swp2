@@ -94,7 +94,7 @@ const Register = () => {
 
   return (
     <div className="register-page">
-      <div className="register-container">
+<div className="register-container">
         <div className="register-header">
           <h1>Đăng ký tài khoản</h1>
           <p>Tham gia cộng đồng hiến máu nhân đạo</p>
@@ -178,7 +178,7 @@ const Register = () => {
                   type="text"
                   id="job"
                   name="job"
-                  value={formData.job}
+value={formData.job}
                   onChange={handleChange}
                   placeholder="Ví dụ: Sinh viên, Kỹ sư, Bác sĩ..."
                   required

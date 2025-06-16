@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
 // Context
@@ -38,6 +38,7 @@ import BloodInventory from './components/staff/BloodInventory';
 import MemberManager from './components/staff/MemberManager';
 
 // Admin Components
+
 import NewsManager from './components/admin/NewsManager';
 import ForumManager from './components/admin/ForumManager';
 import NotificationManager from './components/admin/NotificationManager';
@@ -60,6 +61,7 @@ const AppContent = () => {
   const { user,role } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+
   return (
     <div className="app">
       <Navbar setSidebarOpen={setSidebarOpen} />
@@ -78,7 +80,7 @@ const AppContent = () => {
           <Route path="/news" element={<NewsList />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
-          <Route path="/search" element={<Search />} />
+<Route path="/search" element={<Search />} />
           <Route path="/donation-blood-form" element={<DonationBloodForm />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
 
@@ -118,9 +120,7 @@ const AppContent = () => {
 // App wrapper
 const App = () => (
   <AuthProvider>
-    <Router>
-      <AppContent />
-    </Router>
+    <AppContent />
   </AuthProvider>
 );
 

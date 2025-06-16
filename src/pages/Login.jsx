@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../services/AuthContext";
 //import { signInWithGoogle } from "../services/firebaseConfig";
 import '../assets/css/pages/Login.css';
-import ForgotPassword from './ForgotPassword';
 
 const Login = () => {
   const { login, loginWithGoogle } = useAuth(); // ✅ Lấy login và loginWithGoogle từ context
@@ -174,11 +173,9 @@ const Login = () => {
           </div>
 
           <div className="login-footer">
-
+            <Link to="/forgotPassword" className="forgotPassword">Quên mật khẩu?</Link>
             <p>
-              <div className="forgot-password">
-                <Link to="/forgotPassword" className="forgot-link">Quên mật khẩu?</Link>
-              </div>
+              
               Chưa có tài khoản?
               <Link to="/register" className="register-link"> Đăng ký ngay</Link>
             </p>

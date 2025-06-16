@@ -36,21 +36,19 @@ const Profile = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const result = await updateProfile(profileData);
-      if (result.success) {
-        alert("Cập nhật thành công");
-        setIsEditing(false);
-      } else {
-        alert("Cập nhật thất bại: " + result.error);
-      }
-    } catch (err) {
-      alert("Đã có lỗi xảy ra");
+      await UpdateInfoMemberAPI(profileData);
+      alert("Cập nhật thành công");
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Lỗi cập nhật thông tin:", error);
+      alert("Đã có lỗi xảy ra khi cập nhật");
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading || !profileData) return <div>Đang tải...</div>;
+  if (loading) return <div className="loading">Đang tải thông tin...</div>;
+  if (!profileData) return <div className="error">Không có dữ liệu</div>;
 
 
   return (
