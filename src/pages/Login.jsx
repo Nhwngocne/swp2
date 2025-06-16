@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../services/AuthContext";
-import '../assets/css/pages/Login.css'; //
+import { signInWithGoogle } from "../services/firebaseConfig";
+import '../assets/css/pages/Login.css';
+
 const Login = () => {
-  const { login, user } = useAuth();
+  const { login, loginWithGoogle } = useAuth(); // ✅ Lấy login và loginWithGoogle từ context
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -14,13 +16,14 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  //Redirect if already logged in
-  React.useEffect(() => {
+  // Nếu đã đăng nhập thì chuyển hướng về trang trước đó hoặc trang chủ
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }
-  }, [user, navigate, location]);
+  }, [navigate, location]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,8 +31,7 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
-    
-    // Clear error when user starts typing
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -59,16 +61,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
 
+    if (!validateForm()) return;
     setLoading(true);
-    
+
     try {
       const result = await login(formData.email, formData.password);
-      
+
       if (result.success) {
         const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
@@ -82,28 +81,45 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithGoogle();
+      const firebaseUser = result.user;
+      const idToken = await firebaseUser.getIdToken();
+
+      const response = await loginWithGoogle(idToken); // ✅ Gọi hàm context
+
+      if (response.success) {
+        const from = location.state?.from?.pathname || '/';
+        navigate(from, { replace: true });
+      } else {
+        setErrors({ general: response.error || "Đăng nhập Google thất bại" });
+      }
+    } catch (error) {
+      console.error("Đăng nhập Google thất bại:", error);
+      setErrors({ general: "Đăng nhập Google thất bại. Vui lòng thử lại." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-page">
       <div className="login-container">
         <div className="login-card">
           <div className="login-header">
             <h1 className="login-title">Đăng nhập</h1>
-            <p className="login-subtitle">
-              Chào mừng bạn trở lại 
-            </p>
+            <p className="login-subtitle">Chào mừng bạn trở lại</p>
           </div>
 
           {errors.general && (
-            <div className="alert alert-error">
-              {errors.general}
-            </div>
+            <div className="alert alert-error">{errors.general}</div>
           )}
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
-              <label htmlFor="email" className="form-label">
-                Email *
-              </label>
+              <label htmlFor="email" className="form-label">Email *</label>
               <input
                 type="email"
                 id="email"
@@ -114,15 +130,11 @@ const Login = () => {
                 placeholder="Nhập địa chỉ email của bạn"
                 disabled={loading}
               />
-              {errors.email && (
-                <span className="error-message">{errors.email}</span>
-              )}
+              {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Mật khẩu *
-              </label>
+              <label htmlFor="password" className="form-label">Mật khẩu *</label>
               <input
                 type="password"
                 id="password"
@@ -133,12 +145,11 @@ const Login = () => {
                 placeholder="Nhập mật khẩu của bạn"
                 disabled={loading}
               />
-              {errors.password && (
-                <span className="error-message">{errors.password}</span>
-              )}
+              {errors.password && <span className="error-message">{errors.password}</span>}
             </div>
-            <button 
-              type="submit" 
+
+            <button
+              type="submit"
               className="btn btn-primary btn-full"
               disabled={loading}
             >
@@ -146,31 +157,31 @@ const Login = () => {
             </button>
           </form>
 
-
-          <div className="login-divider">
-            <span>hoặc</span>
-          </div>
+          <div className="login-divider"><span>hoặc</span></div>
 
           <div className="social-login">
+<<<<<<< HEAD
+            <button
+              className="btn btn-social btn-google"
+              onClick={handleGoogleLogin}
+              disabled={loading}
+            >
+              <img src="/assets/google-icon.svg" alt="Google" />
+=======
             <button className="btn btn-social btn-google">
               <img src="/assets/logogg.webp" alt="Google" />
+>>>>>>> ae37349b0c489bc1a2b3c9da970d159c978045bc
               Đăng nhập với Google
             </button>
-
           </div>
-
 
           <div className="login-footer">
             <p>
-              Chưa có tài khoản? 
-              <Link to="/register" className="register-link">
-                Đăng ký ngay
-              </Link>
+              Chưa có tài khoản?
+              <Link to="/register" className="register-link"> Đăng ký ngay</Link>
             </p>
           </div>
         </div>
-
-        
       </div>
     </div>
   );
