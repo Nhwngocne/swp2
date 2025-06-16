@@ -1,13 +1,4 @@
-Xem trang authcontext.jxs có mấy dòng này chưa
-chưa có
-Hình như t chưa git push
-Mới git commit =))
-Đi ăn r tí push lại sau
-Alo
-Lại đi
-Mới push r đó
-Check nha r báo t
-oke
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from "./authService";
 

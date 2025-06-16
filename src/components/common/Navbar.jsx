@@ -8,6 +8,7 @@ import logo from '../../assets/img/logo.png';
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const isLoggedIn = !!user; // ✅ Thêm dòng này
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
