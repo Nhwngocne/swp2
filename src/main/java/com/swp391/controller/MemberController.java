@@ -20,10 +20,6 @@ import java.util.List;
 public class MemberController {
     MemberService memberService;
 
-    @GetMapping("/my-profile")
-    public ResponseEntity<MemberResponse> getMyProfile() {
-        return ResponseEntity.ok(memberService.myInfor());
-    }
     //create
     @PostMapping
     public ApiResponse<MemberResponse> createMember(@RequestBody @Valid MemberCreateRequest request) {
