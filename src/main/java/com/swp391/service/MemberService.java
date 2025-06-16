@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -69,13 +70,13 @@ public class MemberService{
             String uid = decodedToken.getUid();
             String email = decodedToken.getEmail();
             String name = decodedToken.getName();
-
             // 2. Tìm user theo email
             Member member = memberRepository.findByEmail(email).orElseGet(() -> {
                 // 3. Nếu chưa có thì tạo mới Member
                 Member newMember = Member.builder()
                         .email(email)
                         .name(name != null ? name : "Unknown") // đề phòng name = null
+                        .password(passwordEncoder.encode(UUID.randomUUID().toString()))
                         .build();
                 return memberRepository.save(newMember);
             });
