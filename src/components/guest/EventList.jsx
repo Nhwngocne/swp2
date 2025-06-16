@@ -1,40 +1,50 @@
 import React, { useState } from 'react';
-import '../../assets/css/components/guest/EventList.css'; // Adjust the path as necessary
-const EventList = () => {
-  const [events] = useState([
-    {
-      id: 1,
-      title: 'Hiến máu nhân đạo tại Bệnh viện Chợ Rẫy',
-      date: '2024-06-15',
-      time: '08:00 - 17:00',
-      location: '201B Nguyễn Chí Thanh, Q.5, TP.HCM',
-      description: 'Chương trình hiến máu nhân đạo nhằm cứu giúp các bệnh nhân cần máu cấp cứu',
-      image: '/api/placeholder/400/200',
-      status: 'upcoming'
-    },
-    {
-      id: 2,
-      title: 'Ngày hội hiến máu tình nguyện',
-      date: '2024-06-20',
-      time: '07:00 - 16:00',
-      location: 'Công viên Tao Đàn, Q.1, TP.HCM',
-      description: 'Ngày hội hiến máu lớn với sự tham gia của nhiều tình nguyện viên',
-      image: '/api/placeholder/400/200',
-      status: 'upcoming'
-    },
-    {
-      id: 3,
-      title: 'Hiến máu cứu người - Vì một cộng đồng khỏe mạnh',
-      date: '2024-05-30',
-      time: '08:30 - 16:30',
-      location: 'Trường ĐH Bách khoa TP.HCM',
-      description: 'Chương trình hiến máu tại trường đại học với sự tham gia của sinh viên',
-      image: '/api/placeholder/400/200',
-      status: 'completed'
-    }
-  ]);
+import { useNavigate } from 'react-router-dom';
+import '../../assets/css/components/guest/EventList.css';
 
+// Dữ liệu sự kiện
+const eventsData = [
+  {
+    id: 1,
+    title: 'Hiến máu nhân đạo tại Bệnh viện Chợ Rẫy',
+    date: '2024-06-15',
+    time: '08:00 - 17:00',
+    location: '201B Nguyễn Chí Thanh, Q.5, TP.HCM',
+    description: 'Chương trình hiến máu nhân đạo nhằm cứu giúp các bệnh nhân cần máu cấp cứu',
+    image: '/api/placeholder/400/200',
+    status: 'upcoming'
+  },
+  {
+    id: 2,
+    title: 'Ngày hội hiến máu tình nguyện',
+    date: '2024-06-20',
+    time: '07:00 - 16:00',
+    location: 'Công viên Tao Đàn, Q.1, TP.HCM',
+    description: 'Ngày hội hiến máu lớn với sự tham gia của nhiều tình nguyện viên',
+    image: '/api/placeholder/400/200',
+    status: 'upcoming'
+  },
+  {
+    id: 3,
+    title: 'Hiến máu cứu người - Vì một cộng đồng khỏe mạnh',
+    date: '2024-05-30',
+    time: '08:30 - 16:30',
+    location: 'Trường ĐH Bách khoa TP.HCM',
+    description: 'Chương trình hiến máu tại trường đại học với sự tham gia của sinh viên',
+    image: '/api/placeholder/400/200',
+    status: 'completed'
+  }
+];
+
+// Export function để lấy dữ liệu events
+export const getEventsData = () => {
+  return eventsData;
+};
+
+const EventList = () => {
+  const [events] = useState(eventsData);
   const [filter, setFilter] = useState('all');
+  const navigate = useNavigate();
 
   const filteredEvents = events.filter(event => {
     if (filter === 'all') return true;
@@ -49,6 +59,12 @@ const EventList = () => {
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  // Hàm xử lý khi click đăng ký tham gia
+  const handleRegisterClick = (eventId) => {
+    // Chuyển hướng đến trang form hiến máu và truyền eventId
+    navigate('/donation-form', { state: { eventId: eventId } });
   };
 
   return (
@@ -223,28 +239,31 @@ const EventList = () => {
                 {event.description}
               </p>
 
-              <button style={{
-                width: '100%',
-                padding: '12px',
-                background: event.status === 'upcoming' ? '#e74c3c' : '#95a5a6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: '500',
-                cursor: event.status === 'upcoming' ? 'pointer' : 'not-allowed',
-                transition: 'background 0.3s'
-              }}
-              onMouseEnter={(e) => {
-                if (event.status === 'upcoming') {
-                  e.target.style.background = '#c0392b';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (event.status === 'upcoming') {
-                  e.target.style.background = '#e74c3c';
-                }
-              }}>
+              <button 
+                onClick={() => event.status === 'upcoming' && handleRegisterClick(event.id)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: event.status === 'upcoming' ? '#e74c3c' : '#95a5a6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  cursor: event.status === 'upcoming' ? 'pointer' : 'not-allowed',
+                  transition: 'background 0.3s'
+                }}
+                onMouseEnter={(e) => {
+                  if (event.status === 'upcoming') {
+                    e.target.style.background = '#c0392b';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (event.status === 'upcoming') {
+                    e.target.style.background = '#e74c3c';
+                  }
+                }}
+              >
                 {event.status === 'upcoming' ? 'Đăng ký tham gia' : 'Đã kết thúc'}
               </button>
             </div>
