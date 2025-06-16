@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../services/AuthContext";
 import { authService } from "../../services/authService";
-
 const Profile = () => {
   const { user, updateProfile } = useAuth();
   const [profileData, setProfileData] = useState(null);
@@ -14,7 +13,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const response = await authService.getProfile();
+        const response = await authService.getCurrentUser();
         setProfileData(response.data);
       } catch (error) {
         console.error("Lỗi khi tải thông tin cá nhân:", error);
@@ -66,7 +65,7 @@ const Profile = () => {
           <label>Họ tên:</label>
           <input
             name="name"
-            value={profileData.name || ""}
+            value={user.name || ""}
             onChange={handleInputChange}
             disabled={!isEditing}
             required
@@ -76,7 +75,7 @@ const Profile = () => {
           <label>Email:</label>
           <input
             name="email"
-            value={profileData.email || ""}
+            value={user.email || ""}
             disabled
           />
         </div>
@@ -84,7 +83,7 @@ const Profile = () => {
           <label>Số điện thoại:</label>
           <input
             name="phone"
-            value={profileData.phone || ""}
+            value={user.phone || ""}
             onChange={handleInputChange}
             disabled={!isEditing}
           />
@@ -93,7 +92,7 @@ const Profile = () => {
           <label>Địa chỉ:</label>
           <input
             name="address"
-            value={profileData.address || ""}
+            value={user.address || ""}
             onChange={handleInputChange}
             disabled={!isEditing}
           />
