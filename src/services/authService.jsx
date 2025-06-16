@@ -1,20 +1,20 @@
 import axios from "axios";
 
 // Base URL cho API
-const REST_API_BASE_URL = 'http://localhost:8080/swp391';
+const REST_API_BASE_URL = "http://localhost:8080/swp391";
 
 // Tạo axios instance với cấu hình mặc định
 const authAPI = axios.create({
   baseURL: REST_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Interceptor để tự động thêm token vào header
 authAPI.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,9 +33,9 @@ authAPI.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token hết hạn hoặc không hợp lệ
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/auth/login';
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/auth/login";
     }
     return Promise.reject(error);
   }
@@ -44,49 +44,43 @@ authAPI.interceptors.response.use(
 // Auth API functions
 export const authService = {
   // Đăng nhập
-  login: (email, password) => 
-    authAPI.post('/auth/login', { email, password }),
+  login: (email, password) => authAPI.post("/auth/login", { email, password }),
 
   // Đăng ký
-  register: (userData) => 
-    authAPI.post('/members', userData),
+  register: (userData) => authAPI.post("/members", userData),
 
   // Cập nhật profile
-  updateProfile: (profileData) => 
-    authAPI.put('/profile', profileData),
+  updateProfile: (profileData) => authAPI.put("/profile", profileData),
 
   // Đăng xuất (nếu cần gọi API)
-  logout: () => 
-    authAPI.post('/logout'),
+  logout: () => authAPI.post("/logout"),
 
   // Refresh tokenx`
-  refreshToken: (refreshToken) => 
-    authAPI.post('/refresh-token', { refreshToken }),
+  refreshToken: (refreshToken) =>
+    authAPI.post("/refresh-token", { refreshToken }),
 
   // Lấy thông tin user hiện tại
-  getCurrentUser: () => 
-    authAPI.get('/auth/me'),
+  getCurrentUser: () => authAPI.get("/auth/me"),
 
   // Đổi mật khẩu
-  changePassword: (oldPassword, newPassword) => 
-    authAPI.put('/change-password', { oldPassword, newPassword }),
+  changePassword: (oldPassword, newPassword) =>
+    authAPI.put("/change-password", { oldPassword, newPassword }),
 
   // Quên mật khẩu
-  forgotPassword: (email) => 
-    authAPI.post('/forgot-password', { email }),
+  forgotPassword: (email) => authAPI.post("/forgot-password", { email }),
 
   // Reset mật khẩu
-  resetPassword: (token, newPassword) => 
-    authAPI.post('/reset-password', { token, newPassword }),
+  resetPassword: (token, newPassword) =>
+    authAPI.post("/reset-password", { token, newPassword }),
 
   // Verify email
-  verifyEmail: (token) => 
-    authAPI.post('/verify-email', { token }),
+  verifyEmail: (token) => authAPI.post("/verify-email", { token }),
 
-  getAllUsers: () => 
-  authAPI.get('/members'),
+  getAllUsers: () => authAPI.get("/members"),
+  // Đăng nhập bằng Google
+  
+  loginWithGoogle: (idToken) =>
+    authAPI.post("/auth/loginGoogle", { token: idToken }),
 };
-
-
 
 export default authService;
