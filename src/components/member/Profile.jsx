@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { GetInfoMemberAPI, UpdateInfoMemberAPI } from '../../services/member';
-import Header from '../common/Navbar';
-import Footer from '../common/Footer';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../services/AuthContext";
+import { authService } from "../../services/authService";
+import "../../assets/css/member/profile.css";
 
 const Profile = () => {
+  const { updateProfile } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -11,11 +12,9 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        setLoading(true);
-        const response = await GetInfoMemberAPI();
-        setProfileData(response.data);
+        const response = await authService.getCurrentUser();
+        setProfileData(response.data); // chứa name, email, phone, address,...
       } catch (error) {
-        console.error("Lỗi khi tải thông tin cá nhân:", error);
         alert("Không thể tải thông tin cá nhân");
       } finally {
         setLoading(false);
@@ -51,70 +50,59 @@ const Profile = () => {
   if (loading) return <div className="loading">Đang tải thông tin...</div>;
   if (!profileData) return <div className="error">Không có dữ liệu</div>;
 
+
   return (
-    <>
-      <Header />
-      <div className="profile-container">
-        <h2>Thông Tin Cá Nhân</h2>
-        <button onClick={() => setIsEditing((prev) => !prev)} className="edit-button">
-          {isEditing ? "Hủy" : "Chỉnh sửa"}
-        </button>
+  <div className="profile-container">
+    <form onSubmit={handleSubmit}>
+      <div className="profile-grid">
+        <div className="profile-column">
+          <h3>Thông tin cá nhân</h3>
+          {renderField("Họ và tên", "name", profileData.name)}
+          {renderField("Số CCCD", "citizenId", profileData.citizenId)}
+          {renderField("Ngày sinh", "dob", profileData.dob)}
+          {renderField("Giới tính", "gender", profileData.gender)}
+        </div>
 
-        <form onSubmit={handleSubmit} className="profile-form">
-          <div className="form-group">
-            <label>Họ tên:</label>
-            <input
-              type="text"
-              name="name"
-              value={profileData.name || ''}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={profileData.email || ''}
-              disabled
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Số điện thoại:</label>
-            <input
-              type="text"
-              name="phone"
-              value={profileData.phone || ''}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Địa chỉ:</label>
-            <input
-              type="text"
-              name="address"
-              value={profileData.address || ''}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          {isEditing && (
-            <button type="submit" className="save-button">
-              Lưu
+        <div className="profile-column">
+          <div className="column-header">
+            <h3>Thông tin liên hệ</h3>
+            <button className="edit-btn" onClick={() => setIsEditing(!isEditing)}>
+              {isEditing ? "Hủy" : (<><i className="fa-solid fa-pen"></i> Chỉnh sửa</>)}
             </button>
-          )}
-        </form>
+          </div>
+          {renderField("Địa chỉ liên hệ", "address", profileData.address, true)}
+          {renderField("Điện thoại di động", "phone", profileData.phone, true)}
+          {renderField("Email", "email", profileData.email, true)}
+          {renderField("Nghề nghiệp", "job", profileData.job, true)}
+        </div>
       </div>
-      <Footer />
-    </>
-  );
+
+      {isEditing && (
+        <div className="form-actions">
+          <button type="submit" className="save-btn">Lưu thay đổi</button>
+        </div>
+      )}
+    </form>
+  </div>
+);
+
+  function renderField(label, name, value, allowEdit = false) {
+    return (
+      <div className="profile-field">
+        <label>{label}</label>
+        {isEditing && allowEdit ? (
+          <input
+            type="text"
+            name={name}
+            value={value || ""}
+            onChange={handleInputChange}
+          />
+        ) : (
+          <span className="field-value">{value || "-"}</span>
+        )}
+      </div>
+    );
+  }
 };
 
 export default Profile;

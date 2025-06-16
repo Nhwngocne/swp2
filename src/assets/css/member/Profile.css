@@ -1,0 +1,125 @@
+.profile-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #f9fafb;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* === PROFILE GRID: 2 CỘT === */
+.profile-grid {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+/* === MỖI BẢNG (CỘT) === */
+.profile-column {
+  flex: 1;
+  min-width: 320px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.profile-column:hover {
+  transform: translateY(-2px);
+}
+
+/* === TIÊU ĐỀ CỘT === */
+.profile-column h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e3a8a;
+  margin-bottom: 18px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e2e8f0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* === FIELD LABEL & GIÁ TRỊ === */
+.profile-field {
+  margin-bottom: 16px;
+}
+
+.profile-field label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.profile-field .field-value {
+  display: block;
+  padding: 8px 0;
+  color: #111827;
+  font-weight: 500;
+}
+
+/* === INPUT CHỈNH SỬA === */
+.profile-field input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-field input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  outline: none;
+}
+
+/* === NÚT CHỈNH SỬA (GÓC PHẢI) === */
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.edit-btn i {
+  margin-right: 6px;
+}
+
+.edit-btn:hover {
+  color: #1e40af;
+}
+
+/* === NÚT LƯU === */
+.form-actions {
+  margin-top: 24px;
+  text-align: right;
+}
+
+.save-btn {
+  padding: 12px 22px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: background-color 0.2s;
+}
+
+.save-btn:hover {
+  background-color: #1e40af;
+}

@@ -19,7 +19,7 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
     ];
 
     switch (userRole) {
-      case 'member':
+      case 'MEMBER':
         return [
           ...commonItems,
           { path: '/donation-history', label: 'Lịch sử hiến máu', icon: '🩸' },
@@ -27,7 +27,7 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
           { path: '/events', label: 'Sự kiện hiến máu', icon: '📅' },
         ];
 
-      case 'staff':
+      case 'STAFF':
         return [
           ...commonItems,
           { path: '/manage-events', label: 'Quản lý sự kiện', icon: '📅' },
@@ -35,7 +35,7 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
           { path: '/manage-members', label: 'Quản lý thành viên', icon: '👥' },
         ];
 
-      case 'admin':
+      case 'ADMIN':
         return [
           ...commonItems,
           { path: '/manage', label: 'Quản lý hệ thống', icon: '⚙️' },
