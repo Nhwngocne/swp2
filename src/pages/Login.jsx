@@ -160,14 +160,12 @@ const Login = () => {
           <div className="login-divider"><span>hoặc</span></div>
 
           <div className="social-login">
-
             <button
               className="btn btn-social btn-google"
               onClick={handleGoogleLogin}
               disabled={loading}
             >
               <img src="/assets/google-icon.svg" alt="Google" />
-
               Đăng nhập với Google
             </button>
           </div>

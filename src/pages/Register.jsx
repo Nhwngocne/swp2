@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../services/AuthContext';
 import { showNotification } from '../components/common/Notification';
 import '../assets/css/pages/Register.css'; //
+
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -14,8 +15,10 @@ const Register = () => {
     address: '',
     job: '',
     numberCccd: '',
+    dob: '', // ✅ Thêm ngày sinh
     agreeTerms: false
   });
+
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -41,6 +44,10 @@ const Register = () => {
       showNotification('Vui lòng nhập số điện thoại hợp lệ', 'error');
       return false;
     }
+    if (!formData.dob.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(formData.dob)) {
+      showNotification('Vui lòng nhập ngày sinh đúng định dạng YYYY-MM-DD', 'error');
+      return false;
+    }
     if (!formData.password || formData.password.length < 6) {
       showNotification('Mật khẩu phải có ít nhất 6 ký tự', 'error');
       return false;
@@ -61,7 +68,6 @@ const Register = () => {
       showNotification('Vui lòng nhập nghề nghiệp', 'error');
       return false;
     }
-
     if (!/^[0-9]{9,12}$/.test(formData.numberCccd)) {
       showNotification('Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)', 'error');
       return false;
@@ -80,7 +86,6 @@ const Register = () => {
 
     setLoading(true);
     try {
-      // Prepare data for API (exclude confirmPassword and agreeTerms)
       const { confirmPassword, agreeTerms, ...registerData } = formData;
       await register(registerData);
       showNotification('Đăng ký thành công!', 'success');
@@ -94,7 +99,7 @@ const Register = () => {
 
   return (
     <div className="register-page">
-<div className="register-container">
+      <div className="register-container">
         <div className="register-header">
           <h1>Đăng ký tài khoản</h1>
           <p>Tham gia cộng đồng hiến máu nhân đạo</p>
@@ -104,6 +109,7 @@ const Register = () => {
           {/* Personal Information */}
           <div className="form-section">
             <h3>Thông tin cá nhân</h3>
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="name">Họ và tên *</label>
@@ -158,6 +164,19 @@ const Register = () => {
 
             <div className="form-row">
               <div className="form-group">
+                <label htmlFor="dob">Ngày sinh *</label>
+                <input
+                  type="text"
+                  id="dob"
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleChange}
+                  placeholder="dd/mm/yyyy"
+                  pattern="\d{2}/\d{2}/\d{4}"
+                  required
+                />
+              </div>
+              <div className="form-group">
                 <label htmlFor="gender">Giới tính *</label>
                 <select
                   id="gender"
@@ -172,18 +191,19 @@ const Register = () => {
                   <option value="Khác">Khác</option>
                 </select>
               </div>
-              <div className="form-group">
-                <label htmlFor="job">Nghề nghiệp *</label>
-                <input
-                  type="text"
-                  id="job"
-                  name="job"
-value={formData.job}
-                  onChange={handleChange}
-                  placeholder="Ví dụ: Sinh viên, Kỹ sư, Bác sĩ..."
-                  required
-                />
-              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="job">Nghề nghiệp *</label>
+              <input
+                type="text"
+                id="job"
+                name="job"
+                value={formData.job}
+                onChange={handleChange}
+                placeholder="Ví dụ: Sinh viên, Kỹ sư, Bác sĩ..."
+                required
+              />
             </div>
 
             <div className="form-group">
@@ -265,4 +285,4 @@ value={formData.job}
   );
 };
 
-  export default Register;
+export default Register;

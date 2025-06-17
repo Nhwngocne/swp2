@@ -1,67 +1,28 @@
-.login-container {
-  max-width: 400px;
-  margin: 4rem auto;
-  padding: 2rem;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.login-container h2 {
-  text-align: center;
-  color: #e74c3c;
-  margin-bottom: 1.5rem;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.login-form input {
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.login-form button {
-  padding: 0.75rem;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.login-form button:hover {
-  background: #c0392b;
-}
-
-.login-error {
-  color: red;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-=======
 .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f6f6f6;
+  background: linear-gradient(135deg, #f6f6f6, #ffe5e5);
+  padding: 20px;
 }
 
+/* Khối container chính */
 .login-container {
-  border: none; 
-  padding: 40px;
   background-color: #fff;
-  border-radius: 10px;
-  width: 100%;
+  padding: 40px;
+  border-radius: 16px;
   max-width: 400px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.6s ease-in-out;
+  transition: transform 0.3s ease;
+}
+.login-container:hover {
+  transform: translateY(-4px);
 }
 
+/* Header */
 .login-header {
   text-align: center;
   margin-bottom: 30px;
@@ -69,15 +30,23 @@
 
 .login-title {
   font-size: 32px;
-  font-weight: 800;
-  margin-bottom: 5px;
+  font-weight: bold;
+  color: #d63031;
+  margin-bottom: 8px;
 }
 
 .login-subtitle {
-  font-size: 16px;
-  color: #333;
+  font-size: 15px;
+  color: #555;
 }
 
+/* Form */
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nhóm ô nhập */
 .form-group {
   margin-bottom: 20px;
 }
@@ -86,6 +55,7 @@
   font-weight: 500;
   margin-bottom: 8px;
   display: block;
+  color: #333;
 }
 
 .form-input {
@@ -93,13 +63,14 @@
   padding: 12px 16px;
   font-size: 16px;
   border: 1.5px solid #ccc;
-  border-radius: 30px;
+  border-radius: 8px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-input:focus {
-  border-color: #943f3f;
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
 }
 
 .form-input.error {
@@ -109,42 +80,19 @@
 .error-message {
   color: red;
   font-size: 13px;
-  margin-top: 5px;
+  margin-top: 6px;
+  display: block;
 }
 
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  margin-bottom: 20px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-}
-
-.checkbox-label input[type="checkbox"] {
-  margin-right: 6px;
-}
-
-.forgot-password-link {
-  color: #333;
-  text-decoration: none;
-}
-
-.forgot-password-link:hover {
-  text-decoration: underline;
-}
-
+/* Nút */
 .btn {
   border: none;
   padding: 12px 18px;
   font-size: 16px;
+  font-weight: 500;
   border-radius: 30px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .btn-full {
@@ -152,14 +100,16 @@
 }
 
 .btn-primary {
-  background-color: #000;
+  background-color: #e74c3c;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #333;
+  background-color: #c0392b;
+  transform: translateY(-1px);
 }
 
+/* Divider */
 .login-divider {
   text-align: center;
   margin: 25px 0;
@@ -171,6 +121,7 @@
   padding: 0 10px;
   position: relative;
   z-index: 2;
+  color: #666;
 }
 
 .login-divider::before {
@@ -184,6 +135,7 @@
   z-index: 1;
 }
 
+/* Đăng nhập xã hội */
 .social-login {
   display: flex;
   flex-direction: column;
@@ -202,15 +154,19 @@
 }
 
 .btn-google {
-  background-color: #000;
+  background-color: #4285F4;
 }
 
-.btn-google img,
-.btn-facebook img {
+.btn-google:hover {
+  background-color: #3367d6;
+}
+
+.btn-google img {
   height: 20px;
   margin-right: 10px;
 }
 
+/* Footer */
 .login-footer {
   text-align: center;
   font-size: 14px;
@@ -220,10 +176,32 @@
   margin-left: 5px;
   font-weight: bold;
   text-decoration: none;
-  color: #000;
+  color: #e74c3c;
 }
 
 .register-link:hover {
   text-decoration: underline;
 }
->>>>>>> Fe_Ngoc
+
+/* Hiệu ứng fade-in khi mở trang */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Thông báo lỗi chung */
+.alert-error {
+  background: #ffe3e3;
+  color: #d63031;
+  border: 1px solid #ffa3a3;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+}

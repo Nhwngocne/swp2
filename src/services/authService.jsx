@@ -50,7 +50,8 @@ export const authService = {
   register: (userData) => authAPI.post("/members", userData),
 
   // Cập nhật profile
-  updateProfile: (profileData) => authAPI.put("/profile", profileData),
+  updateProfile: (memberId, profileData) =>
+    authAPI.put(`/members/${memberId}`, profileData),
 
   // Đăng xuất (nếu cần gọi API)
   logout: () => authAPI.post("/logout"),

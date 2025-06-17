@@ -137,11 +137,17 @@ export const AuthProvider = ({ children }) => {
   // Cập nhật hồ sơ
   const updateProfile = async (profileData) => {
     try {
-      const response = await authService.updateProfile(profileData);
+      const response = await authService.updateProfile(profileData.id,profileData);
       const { data } = response;
 
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
+      // localStorage.setItem('user', JSON.stringify(data.result.user));
+      // setUser(data.result.user);
+
+      const updatedUser = data?.result?.user;
+      if (updatedUser) {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      }
 
       return { success: true };
     } catch (error) {

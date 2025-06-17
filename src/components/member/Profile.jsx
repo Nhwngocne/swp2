@@ -24,6 +24,28 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
+  const fieldLabels = {
+    address: "Địa chỉ liên hệ",
+    phone: "Điện thoại di động",
+    email: "Email",
+    job: "Nghề nghiệp",
+  };
+
+  const validateProfileData = (data) => {
+    const requiredFields = Object.keys(fieldLabels);
+
+    for (let field of requiredFields) {
+      if (!data[field] || data[field].toString().trim() === "") {
+        return {
+          success: false,
+          message: `Vui lòng nhập trường: ${fieldLabels[field]}`,
+        };
+      }
+    }
+
+    return { success: true };
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfileData((prev) => ({
@@ -34,14 +56,24 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const validation = validateProfileData(profileData);
+    if (!validation.success) {
+      alert(validation.message);
+      return;
+    }
+
     try {
       setLoading(true);
-      await UpdateInfoMemberAPI(profileData);
-      alert("Cập nhật thành công");
-      setIsEditing(false);
-    } catch (error) {
-      console.error("Lỗi cập nhật thông tin:", error);
-      alert("Đã có lỗi xảy ra khi cập nhật");
+      const result = await updateProfile(profileData);
+      if (result.success) {
+        alert("Cập nhật thành công");
+        setIsEditing(false);
+      } else {
+        alert("Cập nhật thất bại: " + result.error);
+      }
+    } catch (err) {
+      alert("Đã có lỗi xảy ra");
     } finally {
       setLoading(false);
     }
