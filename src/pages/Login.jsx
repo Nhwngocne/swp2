@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../services/AuthContext";
-//import { signInWithGoogle } from "../services/firebaseConfig";
+import { signInWithGoogle } from "../services/firebaseConfig";
 import '../assets/css/pages/Login.css';
 
 const Login = () => {

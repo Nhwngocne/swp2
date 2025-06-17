@@ -121,6 +121,35 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
+  // Đăng nhập với Google
+  const loginWithGoogle = async (idToken) => {
+  try {
+    setLoading(true);
+    const response = await authService.loginWithGoogle(idToken);
+
+    console.log("Google login response:", response.data); // ✅ Thêm dòng này để kiểm tra
+
+    const { token, user, role } = response.data.result;
+
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('role', role);
+
+    setUser(user);
+    setRole(role);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Google login error:", error);
+    return {
+      success: false,
+      error: error.response?.data?.message || "Google login failed"
+    };
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Đăng xuất
   const logout = async () => {
@@ -232,6 +261,7 @@ return { success: true };
     role,
     loading,
     login,
+    loginWithGoogle,
     register,
     logout,
     updateProfile,
