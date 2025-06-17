@@ -7,13 +7,16 @@ const Profile = () => {
   const { updateProfile } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [originalProfile, setOriginalProfile] = useState(null);//back data when click Hủy
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await authService.getCurrentUser();
-        setProfileData(response.data); // chứa name, email, phone, address,...
+        const userData = response.data.result.user;
+        setProfileData(userData);
+        setOriginalProfile(userData); // lưu bản gốc
       } catch (error) {
         alert("Không thể tải thông tin cá nhân");
       } finally {
@@ -36,6 +39,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       setLoading(true);
+      console.log("Profile data trước khi gửi:", profileData);
       const result = await updateProfile(profileData);
       if (result.success) {
         alert("Cập nhật thành công");
@@ -60,7 +64,7 @@ const Profile = () => {
         <div className="profile-column">
           <h3>Thông tin cá nhân</h3>
           {renderField("Họ và tên", "name", profileData.name)}
-          {renderField("Số CCCD", "citizenId", profileData.citizenId)}
+          {renderField("Số CCCD", "numberCccd", profileData.numberCccd)}
           {renderField("Ngày sinh", "dob", profileData.dob)}
           {renderField("Giới tính", "gender", profileData.gender)}
         </div>
@@ -68,7 +72,10 @@ const Profile = () => {
         <div className="profile-column">
           <div className="column-header">
             <h3>Thông tin liên hệ</h3>
-            <button className="edit-btn" onClick={() => setIsEditing(!isEditing)}>
+            <button type="button" className="edit-btn" onClick={() =>{
+              setProfileData(originalProfile); // khôi phục lại
+              setIsEditing(!isEditing)
+            }}>
               {isEditing ? "Hủy" : (<><i className="fa-solid fa-pen"></i> Chỉnh sửa</>)}
             </button>
           </div>
