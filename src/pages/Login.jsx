@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../services/AuthContext";
-//import { signInWithGoogle } from "../services/firebaseConfig";
+import { signInWithGoogle } from "../services/firebaseConfig";
 import '../assets/css/pages/Login.css';
+import googleLogo from '../assets/img/logo-gg.png'; // ✅ đúng tên
 
 const Login = () => {
-  const { login, loginWithGoogle } = useAuth(); // ✅ Lấy login và loginWithGoogle từ context
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,7 +17,6 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Nếu đã đăng nhập thì chuyển hướng về trang trước đó hoặc trang chủ
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
@@ -52,7 +52,7 @@ const Login = () => {
     if (!formData.password) {
       newErrors.password = 'Mật khẩu là bắt buộc';
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+      newErrors.password = 'Mật khẩu sai';
     }
 
     setErrors(newErrors);
@@ -72,7 +72,15 @@ const Login = () => {
         const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
       } else {
-        setErrors({ general: result.error || 'Đăng nhập thất bại' });
+        // Phân loại lỗi theo mã
+        if (result.code === 1002) {
+          setErrors({ email: result.error });
+        } else if (result.error.toLowerCase().includes("mật khẩu")) {
+          setErrors({ password: result.error });
+        } else {
+          setErrors({ general: result.error });
+        }
+        //setErrors({ general: result.error || 'Đăng nhập thất bại' });
       }
     } catch (error) {
       setErrors({ general: 'Có lỗi xảy ra. Vui lòng thử lại.' });
@@ -88,7 +96,7 @@ const Login = () => {
       const firebaseUser = result.user;
       const idToken = await firebaseUser.getIdToken();
 
-      const response = await loginWithGoogle(idToken); // ✅ Gọi hàm context
+      const response = await loginWithGoogle(idToken);
 
       if (response.success) {
         const from = location.state?.from?.pathname || '/';
@@ -165,7 +173,11 @@ const Login = () => {
               onClick={handleGoogleLogin}
               disabled={loading}
             >
-              <img src="/assets/google-icon.svg" alt="Google" />
+              <img
+                src={googleLogo}
+                alt="Google"
+                style={{ width: "20px", height: "20px" }}
+              />
               Đăng nhập với Google
             </button>
           </div>
@@ -173,7 +185,7 @@ const Login = () => {
           <div className="login-footer">
             <Link to="/forgotPassword" className="forgotPassword">Quên mật khẩu?</Link>
             <p>
-              
+
               Chưa có tài khoản?
               <Link to="/register" className="register-link"> Đăng ký ngay</Link>
             </p>

@@ -123,3 +123,43 @@
 .save-btn:hover {
   background-color: #1e40af;
 }
+.profile-field-inline {
+  display: grid;
+  grid-template-columns: 150px 10px 1fr; /* label | ":" | value */
+  align-items: center;
+  margin-bottom: 14px;
+  column-gap: 4px;
+}
+
+.profile-field-inline .label {
+  font-weight: 500;
+  color: #374151;
+  text-align: left;
+}
+
+.profile-field-inline .colon {
+  text-align: center;
+  font-weight: 500;
+  color: #374151;
+}
+
+.profile-field-inline .value {
+  font-weight: 600;
+  color: #111827;
+}
+
+
+.profile-field-inline input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.profile-field-inline input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}

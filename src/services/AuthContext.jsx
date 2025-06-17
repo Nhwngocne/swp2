@@ -26,45 +26,52 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Kiểm tra user khi app khởi động
-  useEffect(() => {
+useEffect(() => {
+  const initAuth = async () => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     const storedRole = localStorage.getItem("role");
-    
+
     if (token && userData && storedRole) {
       try {
         const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        //add role
-        setRole(storedRole);
-        verifyToken();
+        const success = await verifyToken(); // ✅ cần await
+        if (success) {
+          setUser(parsedUser);
+          setRole(storedRole);
+        } else {
+          clearAuthData();
+        }
       } catch (error) {
         console.error('Error parsing user data:', error);
         clearAuthData();
       }
     }
     setLoading(false);
-  }, []);
-
-  // Xác minh token với server
-  const verifyToken = async () => {
-    try {
-      const response = await authService.getCurrentUser();
-      const userFromServer = response.data.result.user || response.data;
-      const roleFromServer = response.data.result.role;
-
-      setUser(userFromServer);
-      setRole(roleFromServer);
-
-      // đồng bộ lại localStorage
-      localStorage.setItem('user', JSON.stringify(userFromServer));
-      localStorage.setItem('role', roleFromServer);
-    } catch (error) {
-      console.error('Token verification failed:', error);
-      clearAuthData();
-    }
   };
 
+  initAuth();
+}, []);
+
+
+  // Xác minh token với server
+const verifyToken = async () => {
+  try {
+    const response = await authService.getCurrentUser();
+    const userFromServer = response.data.result.user || response.data;
+    const roleFromServer = response.data.result.role;
+
+    setUser(userFromServer);
+    setRole(roleFromServer);
+    localStorage.setItem('user', JSON.stringify(userFromServer));
+    localStorage.setItem('role', roleFromServer);
+    return true;
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    clearAuthData();
+    return false;
+  }
+};
   // Xóa dữ liệu xác thực
   const clearAuthData = () => {
     localStorage.removeItem('token');
@@ -75,36 +82,58 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Đăng nhập
-  const login = async (email, password) => {
-    try {
-      setLoading(true);
-      const response = await authService.login(email, password);
-      const { data } = response;
+const login = async (email, password) => {
+  try {
+    setLoading(true);
+    const response = await authService.login(email, password);
+    const { data } = response;
 
-      localStorage.setItem('token', data.result.token);
-      localStorage.setItem('user', JSON.stringify(data.result.user));
-      localStorage.setItem("role", data.result.role);
-      setUser(data.result.user);
-      setRole(data.result.role);
+    // Nếu BE trả code khác 1000 thì không phải đăng nhập thành công
+    if (data.code !== 1000) {
+      let errorMessage = data.message || "Đăng nhập thất bại";
 
-      return { success: true };
-    } catch (error) {
-      console.error('Login error:', error);
-      const errorMessage = error.response?.data?.message ||
-                           error.response?.data?.error ||
-                           error.message || 'Đăng nhập thất bại';
-      return { success: false, error: errorMessage };
-} finally {
-      setLoading(false);
+      if (data.code === 1002) {
+        errorMessage = "Tài khoản không tồn tại";
+      }
+
+      return { success: false, error: errorMessage, code: data.code };
     }
-  };
 
+    localStorage.setItem('token', data.result.token);
+    localStorage.setItem('user', JSON.stringify(data.result.user));
+    localStorage.setItem("role", data.result.role);
+    setUser(data.result.user);
+    setRole(data.result.role);
+
+    return { success: true };
+  } catch (error) {
+    console.error('Login error:', error);
+    let errorMessage = error.response?.data?.message ||
+                       error.response?.data?.error ||
+                       error.message || 'Đăng nhập thất bại';
+
+    // ✅ Dịch lỗi sang tiếng Việt
+    if (errorMessage.includes("User does not exist")) {
+      errorMessage = "Tài khoản không tồn tại";
+    } else if (errorMessage.includes("Invalid credentials")) {
+      errorMessage = "Email hoặc mật khẩu không đúng";
+    } else if (errorMessage.includes("Network Error")) {
+      errorMessage = "Không thể kết nối đến máy chủ";
+    } else {
+      errorMessage = "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
+    }
+
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
   // Đăng ký
   const register = async (userData) => {
     try {
       setLoading(true);
       const response = await authService.register(userData);
-      ////REGIST NOT ALLOW LOGIN
+      ////REGIST NOT ALLOW LOGINLOGIN
       //const { data } = response;
       // localStorage.setItem('token', data.token);
       // localStorage.setItem('user', JSON.stringify(data.user));
@@ -121,19 +150,48 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
+  // Dăng ký với Google
+  const loginWithGoogle = async (idToken) => {
+  try {
+    setLoading(true);
+    const response = await authService.loginWithGoogle(idToken);
+
+    console.log("Google login response:", response.data); // ✅ Thêm dòng này để kiểm tra
+
+    const { token, user, role } = response.data.result;
+
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('role', role);
+
+    setUser(user);
+    setRole(role);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Google login error:", error);
+    return {
+      success: false,
+      error: error.response?.data?.message || "Google login failed"
+    };
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Đăng xuất
   const logout = async () => {
-  const token = localStorage.getItem("token");
-  try {
-    if (token) {
-      await authService.logout(token); // Truyền token
-    }
-  } catch (error) {
-    console.error("Logout API error:", error);
-  } finally {
     clearAuthData();
-  }
+  // const token = localStorage.getItem("token");
+  // try {
+  //   if (token) {
+  //     await authService.logout(token); // Truyền token
+  //   }
+  // } catch (error) {
+  //   console.error("Logout API error:", error);
+  // } finally {
+  //   clearAuthData();
+  // }
 };
 
   // Cập nhật hồ sơ
@@ -234,6 +292,7 @@ return { success: true };
     role,
     loading,
     login,
+    loginWithGoogle,
     register,
     logout,
     updateProfile,
