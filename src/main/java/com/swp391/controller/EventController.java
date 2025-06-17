@@ -8,15 +8,10 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -24,10 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EventController {
-
     EventService eventService;
 
-    // Create a new event
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<EventResponse> createEvent(@ModelAttribute @Valid EventCreateRequest request) throws IOException {
         return ApiResponse.<EventResponse>builder()
@@ -35,17 +28,15 @@ public class EventController {
                 .build();
     }
 
-    // Update an existing event
-    @PutMapping("/{eventId}")
+    @PutMapping(value = "/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<EventResponse> updateEvent(
             @PathVariable int eventId,
-            @RequestBody @Valid EventCreateRequest request) {
+            @ModelAttribute @Valid EventCreateRequest request) throws IOException {
         return ApiResponse.<EventResponse>builder()
                 .result(eventService.updateEvent(eventId, request))
                 .build();
     }
 
-    // Delete an event
     @DeleteMapping("/{eventId}")
     public ApiResponse<String> deleteEvent(@PathVariable int eventId) {
         eventService.deleteEvent(eventId);
@@ -54,7 +45,6 @@ public class EventController {
                 .build();
     }
 
-    // Get all events
     @GetMapping
     public ApiResponse<List<EventResponse>> getAllEvents() {
         return ApiResponse.<List<EventResponse>>builder()
@@ -62,26 +52,10 @@ public class EventController {
                 .build();
     }
 
-    // Get an event by ID
     @GetMapping("/{eventId}")
     public ApiResponse<EventResponse> getEventById(@PathVariable int eventId) {
         return ApiResponse.<EventResponse>builder()
                 .result(eventService.getEventById(eventId))
                 .build();
-    }
-
-    // Serve images
-    @GetMapping("/images/{filename}")
-    public ResponseEntity<Resource> serveImage(@PathVariable String filename) throws IOException {
-        Path imagePath = Paths.get("uploads/images/" + filename);
-        Resource resource = new UrlResource(imagePath.toUri());
-
-        if (!resource.exists() || !resource.isReadable()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(resource);
     }
 }

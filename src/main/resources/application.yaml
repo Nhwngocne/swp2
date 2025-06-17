@@ -44,3 +44,7 @@ fcm:
   credentials:
     file:
       path: firebase-admin.json
+cloudinary:
+  cloud-name: dkfolzb8m
+  api-key: 231453775362129
+  api-secret: 0rsj4eImS-2gpngR2IuDfERT7XE
