@@ -10,6 +10,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.swp391.dto.request.AuthenticationRequest;
 import com.swp391.dto.request.IntrospectRequest;
+import com.swp391.dto.request.LogoutRequest;
 import com.swp391.dto.request.RefreshRequest;
 import com.swp391.dto.response.AuthenticationResponse;
 import com.swp391.dto.response.IntrospectResponse;
@@ -218,5 +219,20 @@ public class AuthenticationService {
         var newToken = generateToken(email, role);
 
         return AuthenticationResponse.builder().token(newToken).authenticated(true).build();
+    }
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        try {
+            var signToken = verifyToken(request.getToken(), false);
+
+            String jit = signToken.getJWTClaimsSet().getJWTID();
+            Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+
+            InvalidatedToken invalidatedToken =
+                    InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+
+            invalidatedTokenRepository.save(invalidatedToken);
+        } catch (AppException exception) {
+            log.info("Token already expired");
+        }
     }
 }

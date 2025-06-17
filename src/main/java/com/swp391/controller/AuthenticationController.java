@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.dto.request.RefreshRequest;
+import com.swp391.dto.request.LogoutRequest;
+
 
 import java.text.ParseException;
 import java.util.Map;
@@ -82,5 +84,10 @@ public class AuthenticationController {
             throws ParseException, JOSEException {
         var result = authenticationService.refreshToken(request);
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
+    }
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder().build();
     }
 }
