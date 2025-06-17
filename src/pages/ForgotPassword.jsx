@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
-import "../assets/css/pages/Login.css";
+import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
+import "../assets/css/pages/ForgotPassword.css";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -22,7 +23,7 @@ const ForgotPassword = () => {
       const res = await authService.verifyEmail(email);
       if (res.data?.code === 1000) {
         setStep(2);
-        setSuccessMessage("✅ Mã OTP đã được gửi về email của bạn.");
+        setSuccessMessage("Mã OTP đã được gửi về email của bạn.");
       } else {
         setError(res.data?.message || "Không thể gửi email xác thực.");
       }
@@ -34,26 +35,28 @@ const ForgotPassword = () => {
     }
   };
 
-  const handleVerifyOtp = async () => {
-    if (!otp) return setError("Vui lòng nhập mã OTP");
-    setLoading(true);
-    try {
-      const res = await authService.verifyOtp(otp, email);
-      if (res.data?.code === 1000 && res.data?.result?.verified) {
-        setStep(3);
-        setSuccessMessage(
-          "✅ Mã OTP xác thực thành công. Vui lòng nhập mật khẩu mới."
-        );
-      } else {
-        setError(res.data?.message || "Mã OTP không chính xác.");
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || "Mã OTP không chính xác.");
-      setSuccessMessage("");
-    } finally {
-      setLoading(false);
+const handleVerifyOtp = async () => {
+  if (!otp) return setError("Vui lòng nhập mã OTP");
+  setLoading(true);
+  setError("");
+  setSuccessMessage("");
+  try {
+    const res = await authService.verifyOtp(otp, email);
+
+    if (res.data?.code === 1000 && res.data?.result?.verified) {
+      setSuccessMessage("Mã OTP xác thực thành công. Vui lòng nhập mật khẩu mới.");
+      setStep(3);
+    } else {
+      setError(res.data?.message || "Mã OTP không chính xác.");
+      // ❌ KHÔNG setStep(3) ở đây
     }
-  };
+  } catch (err) {
+    setError(err.response?.data?.message || "Mã OTP không chính xác.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleChangePassword = async () => {
     if (!newPassword || newPassword.length < 6) {
@@ -70,9 +73,7 @@ const ForgotPassword = () => {
         repeatPassword: repeatPassword,
       });
       if (res.data?.code === 1000 && res.data?.result?.changed) {
-        setSuccessMessage(
-          "✅ Đổi mật khẩu thành công. Đang chuyển hướng đến trang đăng nhập..."
-        );
+        setSuccessMessage("Đổi mật khẩu thành công. Đang chuyển hướng...");
         setTimeout(() => {
           navigate("/login");
         }, 2000);
@@ -88,27 +89,38 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <div className="login-card">
-          <h2 className="login-title">Quên mật khẩu</h2>
-          {error && <div className="alert alert-error">{error}</div>}
+    <div className="forgot-page">
+      <div className="forgot-container">
+        <div className="forgot-card">
+          <h2 className="forgot-title">Quên mật khẩu</h2>
+
           {successMessage && (
-            <div className="alert alert-success">{successMessage}</div>
+            <div className="forgot-alert forgot-alert-success">
+              <FaCheckCircle className="icon-success" />
+              <span>{successMessage}</span>
+            </div>
           )}
+
+          {error && (
+            <div className="forgot-alert forgot-alert-error">
+              <FaExclamationCircle className="icon-error" />
+              <span>{error}</span>
+            </div>
+          )}
+
           {step === 1 && (
             <>
-              <p className="login-subtitle">Nhập email để nhận mã OTP</p>
+              <p className="forgot-subtitle">Nhập email để nhận mã OTP</p>
               <input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="form-input"
+                className="forgot-input"
               />
               <button
                 onClick={handleVerifyEmail}
-                className="btn btn-primary btn-full"
+                className="forgot-btn"
                 disabled={loading}
               >
                 {loading ? "Đang gửi..." : "Gửi mã OTP"}
@@ -118,17 +130,17 @@ const ForgotPassword = () => {
 
           {step === 2 && (
             <>
-              <p className="login-subtitle">Nhập mã OTP đã gửi đến email</p>
+              <p className="forgot-subtitle">Nhập mã OTP đã gửi đến email</p>
               <input
                 type="text"
                 placeholder="Nhập OTP"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                className="form-input"
+                className="forgot-input"
               />
               <button
                 onClick={handleVerifyOtp}
-                className="btn btn-primary btn-full"
+                className="forgot-btn"
                 disabled={loading}
               >
                 {loading ? "Đang xác minh..." : "Xác minh OTP"}
@@ -138,27 +150,24 @@ const ForgotPassword = () => {
 
           {step === 3 && (
             <>
-              <p className="login-subtitle">Nhập mật khẩu mới</p>
-
+              <p className="forgot-subtitle">Nhập mật khẩu mới</p>
               <input
                 type="password"
                 placeholder="Mật khẩu mới"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="form-input"
+                className="forgot-input"
               />
-
               <input
                 type="password"
                 placeholder="Nhập lại mật khẩu mới"
                 value={repeatPassword}
                 onChange={(e) => setRepeatPassword(e.target.value)}
-                className="form-input"
+                className="forgot-input"
               />
-
               <button
                 onClick={handleChangePassword}
-                className="btn btn-primary btn-full"
+                className="forgot-btn"
                 disabled={loading}
               >
                 {loading ? "Đang cập nhật..." : "Đổi mật khẩu"}
@@ -166,11 +175,9 @@ const ForgotPassword = () => {
             </>
           )}
 
-          <div className="login-footer">
+          <div className="forgot-footer">
             <p>
-              <Link to="/login" className="register-link">
-                Quay lại đăng nhập
-              </Link>
+              <Link to="/login" className="forgot-link">Quay lại đăng nhập</Link>
             </p>
           </div>
         </div>

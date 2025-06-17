@@ -26,45 +26,52 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Kiểm tra user khi app khởi động
-  useEffect(() => {
+useEffect(() => {
+  const initAuth = async () => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     const storedRole = localStorage.getItem("role");
-    
+
     if (token && userData && storedRole) {
       try {
         const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        //add role
-        setRole(storedRole);
-        verifyToken();
+        const success = await verifyToken(); // ✅ cần await
+        if (success) {
+          setUser(parsedUser);
+          setRole(storedRole);
+        } else {
+          clearAuthData();
+        }
       } catch (error) {
         console.error('Error parsing user data:', error);
         clearAuthData();
       }
     }
     setLoading(false);
-  }, []);
-
-  // Xác minh token với server
-  const verifyToken = async () => {
-    try {
-      const response = await authService.getCurrentUser();
-      const userFromServer = response.data.result.user || response.data;
-      const roleFromServer = response.data.result.role;
-
-      setUser(userFromServer);
-      setRole(roleFromServer);
-
-      // đồng bộ lại localStorage
-      localStorage.setItem('user', JSON.stringify(userFromServer));
-      localStorage.setItem('role', roleFromServer);
-    } catch (error) {
-      console.error('Token verification failed:', error);
-      clearAuthData();
-    }
   };
 
+  initAuth();
+}, []);
+
+
+  // Xác minh token với server
+const verifyToken = async () => {
+  try {
+    const response = await authService.getCurrentUser();
+    const userFromServer = response.data.result.user || response.data;
+    const roleFromServer = response.data.result.role;
+
+    setUser(userFromServer);
+    setRole(roleFromServer);
+    localStorage.setItem('user', JSON.stringify(userFromServer));
+    localStorage.setItem('role', roleFromServer);
+    return true;
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    clearAuthData();
+    return false;
+  }
+};
   // Xóa dữ liệu xác thực
   const clearAuthData = () => {
     localStorage.removeItem('token');
