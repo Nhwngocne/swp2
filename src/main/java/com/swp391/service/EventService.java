@@ -12,6 +12,7 @@ package com.swp391.service;
         import lombok.experimental.FieldDefaults;
         import org.springframework.stereotype.Service;
 
+        import java.io.IOException;
         import java.util.List;
 
         @Service
@@ -22,9 +23,17 @@ package com.swp391.service;
             EventRepository eventRepository;
             EventMapper eventMapper;
 
-            // Create new event
-            public EventResponse createEvent(EventCreateRequest request) {
+            ImageService imageService;
+
+            public EventResponse createEvent(EventCreateRequest request) throws IOException {
                 var event = eventMapper.toEvent(request);
+
+                // Save image and get its path
+                if (request.getImage() != null && !request.getImage().isEmpty()) {
+                    String imagePath = imageService.saveImage(request.getImage());
+                    event.setImageUrl(imagePath);
+                }
+
                 event = eventRepository.save(event);
                 return eventMapper.toEventResponse(event);
             }

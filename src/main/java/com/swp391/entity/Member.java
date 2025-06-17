@@ -1,9 +1,11 @@
 package com.swp391.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +41,10 @@ public class Member {
 
     @Column(length = 20)
     String phone;
+
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    LocalDate dob;
 
     @Column(length = 20)
     String numberCccd;
