@@ -181,16 +181,17 @@ const login = async (email, password) => {
 
   // Đăng xuất
   const logout = async () => {
-  const token = localStorage.getItem("token");
-  try {
-    if (token) {
-      await authService.logout(token); // Truyền token
-    }
-  } catch (error) {
-    console.error("Logout API error:", error);
-  } finally {
     clearAuthData();
-  }
+  // const token = localStorage.getItem("token");
+  // try {
+  //   if (token) {
+  //     await authService.logout(token); // Truyền token
+  //   }
+  // } catch (error) {
+  //   console.error("Logout API error:", error);
+  // } finally {
+  //   clearAuthData();
+  // }
 };
 
   // Cập nhật hồ sơ

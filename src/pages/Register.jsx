@@ -14,6 +14,7 @@ const Register = () => {
     address: '',
     job: '',
     numberCccd: '',
+    dob: '',
     agreeTerms: false
   });
   const [loading, setLoading] = useState(false);
@@ -37,10 +38,11 @@ const Register = () => {
       showNotification('Vui lòng nhập email hợp lệ', 'error');
       return false;
     }
-    if (!formData.phone.trim() || !/^[0-9]{10,11}$/.test(formData.phone)) {
-      showNotification('Vui lòng nhập số điện thoại hợp lệ', 'error');
+    if (!/^0\d{9}$/.test(formData.phone)) {
+      showNotification('Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số', 'error');
       return false;
     }
+
     if (!formData.password || formData.password.length < 6) {
       showNotification('Mật khẩu phải có ít nhất 6 ký tự', 'error');
       return false;
@@ -70,6 +72,15 @@ const Register = () => {
       showNotification('Vui lòng đồng ý với điều khoản sử dụng', 'error');
       return false;
     }
+    if (!formData.dob || formData.dob.trim() === '') {
+      showNotification('Vui lòng chọn ngày sinh', 'error');
+      return false;
+    }
+    if (!formData.agreeTerms) {
+    showNotification('Vui lòng đồng ý với điều khoản sử dụng', 'error');
+    return false;
+  }
+
     return true;
   };
 
@@ -94,7 +105,7 @@ const Register = () => {
 
   return (
     <div className="register-page">
-<div className="register-container">
+      <div className="register-container">
         <div className="register-header">
           <h1>Đăng ký tài khoản</h1>
           <p>Tham gia cộng đồng hiến máu nhân đạo</p>
@@ -133,14 +144,17 @@ const Register = () => {
               <div className="form-group">
                 <label htmlFor="phone">Số điện thoại *</label>
                 <input
-                  type="tel"
+                  type="text"
                   id="phone"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
+                  pattern="0[1-9][0-9]{8}"
+                  title="Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số"
                   required
                 />
               </div>
+
               <div className="form-group">
                 <label htmlFor="numberCccd">Số CCCD/CMND *</label>
                 <input
@@ -178,13 +192,27 @@ const Register = () => {
                   type="text"
                   id="job"
                   name="job"
-value={formData.job}
+                  value={formData.job}
                   onChange={handleChange}
                   placeholder="Ví dụ: Sinh viên, Kỹ sư, Bác sĩ..."
                   required
                 />
               </div>
             </div>
+
+            <div className="form-group">
+              <label htmlFor="dob">Ngày sinh *</label>
+              <input
+                type="date"
+                id="dob"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                max={new Date().toISOString().split('T')[0]}
+                required
+              />
+            </div>
+
 
             <div className="form-group">
               <label htmlFor="address">Địa chỉ *</label>
@@ -215,7 +243,6 @@ value={formData.job}
                   minLength="6"
                   required
                 />
-                <small>Mật khẩu phải có ít nhất 6 ký tự</small>
               </div>
               <div className="form-group">
                 <label htmlFor="confirmPassword">Xác nhận mật khẩu *</label>
@@ -227,6 +254,9 @@ value={formData.job}
                   onChange={handleChange}
                   required
                 />
+                {formData.confirmPassword && formData.confirmPassword !== formData.password && (
+                  <small style={{ color: 'red' }}>Mật khẩu xác nhận không khớp</small>
+                )}
               </div>
             </div>
           </div>
@@ -265,4 +295,4 @@ value={formData.job}
   );
 };
 
-  export default Register;
+export default Register;
