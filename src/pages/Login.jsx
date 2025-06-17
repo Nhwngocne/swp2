@@ -3,11 +3,10 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../services/AuthContext";
 import { signInWithGoogle } from "../services/firebaseConfig";
 import '../assets/css/pages/Login.css';
-import googleLogo from '../assets/img/logo-gg.png';
-
+import googleLogo from '../assets/img/logo-gg.png'; // ✅ đúng tên
 
 const Login = () => {
-  const { login, loginWithGoogle } = useAuth(); // ✅ Lấy login và loginWithGoogle từ context
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,7 +17,6 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Nếu đã đăng nhập thì chuyển hướng về trang trước đó hoặc trang chủ
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
@@ -90,7 +88,7 @@ const Login = () => {
       const firebaseUser = result.user;
       const idToken = await firebaseUser.getIdToken();
 
-      const response = await loginWithGoogle(idToken); // ✅ Gọi hàm context
+      const response = await loginWithGoogle(idToken);
 
       if (response.success) {
         const from = location.state?.from?.pathname || '/';
@@ -167,11 +165,11 @@ const Login = () => {
               onClick={handleGoogleLogin}
               disabled={loading}
             >
-<img
-  src={googleLogo}
-  alt="Google"
-  style={{ width: "20px", height: "20px" }}
-/>
+              <img
+                src={googleLogo}
+                alt="Google"
+                style={{ width: "20px", height: "20px" }}
+              />
               Đăng nhập với Google
             </button>
           </div>
