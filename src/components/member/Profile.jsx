@@ -54,7 +54,8 @@ const Profile = () => {
     }
   };
 
-  if (loading || !profileData) return <div>Đang tải...</div>;
+  if (loading) return <div className="loading">Đang tải thông tin...</div>;
+  if (!profileData) return <div className="error">Không có dữ liệu</div>;
 
 
   return (

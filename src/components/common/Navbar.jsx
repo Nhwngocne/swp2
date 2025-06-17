@@ -4,10 +4,12 @@ import { useAuth } from "../../services/AuthContext.jsx";
 
 import '../../assets/css/components/common/navbar.css';
 import logo from '../../assets/img/logo.png';
+import Register from '../../pages/Register.jsx';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const isLoggedIn = !!user; // ✅ Thêm dòng này
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -16,8 +18,13 @@ const Navbar = () => {
   const notifDropdownRef = useRef(null);
 
   const handleLogout = () => {
-    logout();
+    // Xóa localStorage khi logout
+    localStorage.removeItem('token');
+    localStorage.removeItem('rolename');
+    localStorage.removeItem('name');
+
     navigate('/');
+    window.location.reload(); // reload để cập nhật giao diện
   };
 
   const getInitials = (fullName) => {
@@ -87,7 +94,7 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-auth">
-          {!user ? (
+          {!isLoggedIn ? (
             <>
               <Link to="/register" className="top-link">Đăng kí</Link>
               <Link to="/login" className="top-link login-btn">Đăng nhập</Link>
@@ -155,9 +162,9 @@ const Navbar = () => {
 {/* thanh headr */}
       <nav className="navbar-bottom">
         <Link to="/" className="nav-item active">Trang chủ</Link>
-        <Link to="/faq" className="nav-item">Hỏi -Đáp</Link>
+        <Link to="/faq" className="nav-item">Hỏi - Đáp</Link>
         <Link to="/news" className="nav-item">Tin tức</Link>
-        <Link to="/lookup" className="nav-item">Tra cứu</Link>
+        <Link to="/search" className="nav-item">Tra cứu</Link>
         <Link to="/contact" className="nav-item">Liên hệ</Link>
       </nav>
     </header>

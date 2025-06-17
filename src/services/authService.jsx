@@ -68,11 +68,19 @@ export const authService = {
     authAPI.put("/change-password", { oldPassword, newPassword }),
 
   // Quên mật khẩu
-  forgotPassword: (email) => authAPI.post("/forgot-password", { email }),
+  forgotPassword: (email) => authAPI.post("/forgotPasword", { email }),
+
+  // Thay đổi mật khẩu sau khi quên
+  changeForgottenPassword: (email, newPassword) =>
+    authAPI.post(`/forgotPassword/changePassword/${email}`, { newPassword }),
 
   // Reset mật khẩu
   resetPassword: (token, newPassword) =>
     authAPI.post("/reset-password", { token, newPassword }),
+
+  // Gửi mã OTP để xác thực email
+  verifyOtp: (otp, email) => 
+    authAPI.post(`/forgotPassword/verifyOtp/${otp}/${email}`),
 
   // Verify email
   verifyEmail: (token) => authAPI.post("/verify-email", { token }),
