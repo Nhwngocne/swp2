@@ -14,16 +14,20 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
 
   const getMenuItems = () => {
     const commonItems = [
-      { path: '/dashboard', label: 'Dashboard', icon: '📊' },
+      //{ path: '/dashboard', label: 'Dashboard', icon: '📊' },
       { path: '/profile', label: 'Hồ sơ cá nhân', icon: '👤' },
     ];
+
+      const dashboardItem = userRole === 'ADMIN'
+    ? [{ path: '/dashboard', label: 'Dashboard', icon: '📊' }]
+    : [];
 
     switch (userRole) {
       case 'MEMBER':
         return [
           ...commonItems,
           { path: '/donation-history', label: 'Lịch sử hiến máu', icon: '🩸' },
-          { path: '/emergency', label: 'Yêu cầu cấp cứu', icon: '🚨' },
+          //{ path: '/emergency', label: 'Yêu cầu cấp cứu', icon: '🚨' },
           { path: '/events', label: 'Sự kiện hiến máu', icon: '📅' },
         ];
 
@@ -32,6 +36,7 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
           ...commonItems,
           { path: '/manage-events', label: 'Quản lý sự kiện', icon: '📅' },
           { path: '/blood-inventory', label: 'Kho máu', icon: '🏥' },
+          { path: '/emergency', label: 'Yêu cầu cấp cứu', icon: '🚨' },
           { path: '/manage-members', label: 'Quản lý thành viên', icon: '👥' },
         ];
 
