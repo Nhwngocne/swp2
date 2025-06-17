@@ -43,7 +43,7 @@ public class Member {
     String phone;
 
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate dob;
 
     @Column(length = 20)
