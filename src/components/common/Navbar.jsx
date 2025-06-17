@@ -19,10 +19,11 @@ const Navbar = () => {
 
   const handleLogout = () => {
     // Xóa localStorage khi logout
-    localStorage.removeItem('token');
-    localStorage.removeItem('rolename');
-    localStorage.removeItem('name');
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('rolename');
+    // localStorage.removeItem('name');
 
+    logout();
     navigate('/');
     window.location.reload(); // reload để cập nhật giao diện
   };

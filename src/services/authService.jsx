@@ -67,27 +67,24 @@ export const authService = {
   changePassword: (oldPassword, newPassword) =>
     authAPI.put("/change-password", { oldPassword, newPassword }),
 
-  // Quên mật khẩu
-  forgotPassword: (email) => authAPI.post("/forgotPasword", { email }),
-
   // Thay đổi mật khẩu sau khi quên
-  changeForgottenPassword: (email, newPassword) =>
-    authAPI.post(`/forgotPassword/changePassword/${email}`, { newPassword }),
+  changeForgottenPassword: (email, passwordData) =>
+    authAPI.post(`/forgotPassword/changePassword/${email}`, passwordData),
 
   // Reset mật khẩu
   resetPassword: (token, newPassword) =>
     authAPI.post("/reset-password", { token, newPassword }),
 
   // Gửi mã OTP để xác thực email
-  verifyOtp: (otp, email) => 
+  verifyOtp: (otp, email) =>
     authAPI.post(`/forgotPassword/verifyOtp/${otp}/${email}`),
 
   // Verify email
-  verifyEmail: (token) => authAPI.post("/verify-email", { token }),
+  verifyEmail: (email) => authAPI.post(`/forgotPassword/verifyMail/${email}`),
 
   getAllUsers: () => authAPI.get("/members"),
   // Đăng nhập bằng Google
-  
+
   loginWithGoogle: (idToken) =>
     authAPI.post("/auth/loginGoogle", { token: idToken }),
 };
