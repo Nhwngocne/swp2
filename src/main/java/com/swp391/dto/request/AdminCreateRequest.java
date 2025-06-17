@@ -1,5 +1,6 @@
 package com.swp391.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.swp391.Enum.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 
 @Data
@@ -35,5 +38,8 @@ public class AdminCreateRequest {
     String numberCccd;
 
     String address;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    LocalDate dob;
 }
 

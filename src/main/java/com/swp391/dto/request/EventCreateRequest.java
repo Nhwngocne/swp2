@@ -2,9 +2,7 @@ package com.swp391.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -13,10 +11,10 @@ import java.time.LocalTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventCreateRequest {
     String title;
-    LocalDate date;
-    LocalTime startTime;
-    LocalTime endTime;
+    String date;
+    String startTime;
+    String endTime;
     String location;
     String description;
-    String imageUrl;
+    MultipartFile image;
 }

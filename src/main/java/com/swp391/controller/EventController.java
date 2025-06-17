@@ -8,8 +8,15 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -21,8 +28,8 @@ public class EventController {
     EventService eventService;
 
     // Create a new event
-    @PostMapping
-    public ApiResponse<EventResponse> createEvent(@RequestBody @Valid EventCreateRequest request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<EventResponse> createEvent(@ModelAttribute @Valid EventCreateRequest request) throws IOException {
         return ApiResponse.<EventResponse>builder()
                 .result(eventService.createEvent(request))
                 .build();
@@ -61,5 +68,20 @@ public class EventController {
         return ApiResponse.<EventResponse>builder()
                 .result(eventService.getEventById(eventId))
                 .build();
+    }
+
+    // Serve images
+    @GetMapping("/images/{filename}")
+    public ResponseEntity<Resource> serveImage(@PathVariable String filename) throws IOException {
+        Path imagePath = Paths.get("uploads/images/" + filename);
+        Resource resource = new UrlResource(imagePath.toUri());
+
+        if (!resource.exists() || !resource.isReadable()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(resource);
     }
 }

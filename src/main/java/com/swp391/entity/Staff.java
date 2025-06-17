@@ -1,9 +1,11 @@
 package com.swp391.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +42,9 @@ public class Staff {
 
     @Column(length = 100)
     String job;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    LocalDate dob;
 
     @Column(name = "work_time_per_day")
     Double workTimePerDay;
