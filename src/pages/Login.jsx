@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../services/AuthContext";
-import { signInWithGoogle } from "../services/firebaseConfig";
+//import { signInWithGoogle } from "../services/firebaseConfig";
 import '../assets/css/pages/Login.css';
 import googleLogo from '../assets/img/logo-gg.png'; // ✅ đúng tên
 
@@ -175,7 +175,9 @@ const Login = () => {
           </div>
 
           <div className="login-footer">
+            <Link to="/forgotPassword" className="forgotPassword">Quên mật khẩu?</Link>
             <p>
+              
               Chưa có tài khoản?
               <Link to="/register" className="register-link"> Đăng ký ngay</Link>
             </p>

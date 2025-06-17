@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../services/AuthContext';
 import './DonationBloodForm'; 
-import '../assets/css/pages/Home.css'; // Assuming you have a CSS file for styling
+import '../assets/css/pages/Home.css';
+
+// Import dữ liệu từ EventList và NewsList
+import { getEventsData } from '../components/guest/EventList';
+import { getNewsData } from '../components/guest/NewsList';
 
 const Home = () => {
   const { user } = useAuth(); 
@@ -18,20 +22,42 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    
     // Fetch homepage data
     fetchHomeData();
   }, []);
 
   const fetchHomeData = async () => {
     try {
-      // Simulate API calls
-      const [statsResponse, eventsResponse, newsResponse] = await Promise.all([
-        fetch('/api/stats/homepage'),
-        fetch('/api/events/upcoming?limit=3'),
-        fetch('/api/news/latest?limit=3')
-      ]);
+      // Lấy dữ liệu từ EventList và NewsList
+      const eventsData = getEventsData();
+      const newsData = getNewsData();
 
-      // Mock data for demonstration
+      // Lọc 3 sự kiện sắp tới
+      const upcomingEventsData = eventsData
+        .filter(event => event.status === 'upcoming')
+        .slice(0, 3)
+        .map(event => ({
+          id: event.id,
+          title: event.title,
+          date: event.date,
+          location: event.location,
+          image: event.image || '/assets/event-default.jpg'
+        }));
+
+      // Lấy 3 tin tức mới nhất
+      const latestNewsData = newsData
+        .sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate))
+        .slice(0, 3)
+        .map(news => ({
+          id: news.id,
+          title: news.title,
+          excerpt: news.summary,
+          date: news.publishDate,
+          image: news.image || '/assets/news-default.jpg'
+        }));
+
+      // Mock data cho stats (có thể thay thế bằng API thực tế)
       setStats({
         totalDonations: 12450,
         activeDonors: 3567,
@@ -39,53 +65,8 @@ const Home = () => {
         livesHelped: 25380
       });
 
-      setUpcomingEvents([
-        {
-          id: 1,
-          title: 'Ngày hội hiến máu tình nguyện',
-          date: '2024-12-15',
-          location: 'Bệnh viện Chợ Rẫy',
-          image: '/assets/event1.jpg'
-        },
-        {
-          id: 2,
-          title: 'Hiến máu cứu người - Chủ nhật đỏ',
-          date: '2024-12-18',
-          location: 'Trường ĐH Bách Khoa',
-          image: '/assets/event2.jpg'
-        },
-        {
-          id: 3,
-          title: 'Tiếp sức mùa thi với giọt máu hồng',
-          date: '2024-12-22',
-          location: 'Hội trường Thống Nhất',
-          image: '/assets/event3.jpg'
-        }
-      ]);
-
-      setLatestNews([
-        {
-          id: 1,
-          title: 'Tăng cường hoạt động hiến máu trong mùa dịch',
-          excerpt: 'Các biện pháp an toàn mới được áp dụng để đảm bảo việc hiến máu diễn ra an toàn...',
-          date: '2024-12-01',
-          image: '/assets/news1.jpg'
-        },
-        {
-          id: 2,
-          title: 'Khánh thành trung tâm hiến máu mới tại TP.HCM',
-          excerpt: 'Trung tâm hiến máu hiện đại với công nghệ tiên tiến nhất được đưa vào hoạt động...',
-          date: '2024-11-28',
-          image: '/assets/news2.jpg'
-        },
-        {
-          id: 3,
-          title: 'Chiến dịch "Giọt máu hồng - Tình người Việt" thành công',
-          excerpt: 'Hơn 10,000 đơn vị máu đã được thu thập trong chiến dịch kéo dài 3 tháng...',
-          date: '2024-11-25',
-          image: '/assets/news3.jpg'
-        }
-      ]);
+      setUpcomingEvents(upcomingEventsData);
+      setLatestNews(latestNewsData);
 
     } catch (error) {
       console.error('Error fetching home data:', error);
@@ -177,26 +158,32 @@ const Home = () => {
             <Link to="/events" className="section-link">Xem tất cả</Link>
           </div>
           <div className="events-grid">
-            {upcomingEvents.map(event => (
-              <div key={event.id} className="event-card">
-                <div className="event-image">
-                  <img src={event.image} alt={event.title} />
-                  <div className="event-date">
-                    {new Date(event.date).toLocaleDateString('vi-VN')}
+            {upcomingEvents.length > 0 ? (
+              upcomingEvents.map(event => (
+                <div key={event.id} className="event-card">
+                  <div className="event-image">
+                    <img src={event.image} alt={event.title} />
+                    <div className="event-date">
+                      {new Date(event.date).toLocaleDateString('vi-VN')}
+                    </div>
+                  </div>
+                  <div className="event-content">
+                    <h3 className="event-title">{event.title}</h3>
+                    <p className="event-location">
+                      <span className="location-icon">📍</span>
+                      {event.location}
+                    </p>
+                    <Link to={`/events/${event.id}`} className="btn btn-outline btn-small">
+                      Chi tiết
+                    </Link>
                   </div>
                 </div>
-                <div className="event-content">
-                  <h3 className="event-title">{event.title}</h3>
-                  <p className="event-location">
-                    <span className="location-icon">📍</span>
-                    {event.location}
-                  </p>
-                  <Link to={`/events/${event.id}`} className="btn btn-outline btn-small">
-                    Chi tiết
-                  </Link>
-                </div>
+              ))
+            ) : (
+              <div className="no-events">
+                <p>Hiện tại chưa có sự kiện nào sắp diễn ra</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -209,23 +196,29 @@ const Home = () => {
             <Link to="/news" className="section-link">Xem tất cả</Link>
           </div>
           <div className="news-grid">
-            {latestNews.map(news => (
-              <div key={news.id} className="news-card">
-                <div className="news-image">
-                  <img src={news.image} alt={news.title} />
-                </div>
-                <div className="news-content">
-                  <div className="news-date">
-                    {new Date(news.date).toLocaleDateString('vi-VN')}
+            {latestNews.length > 0 ? (
+              latestNews.map(news => (
+                <div key={news.id} className="news-card">
+                  <div className="news-image">
+                    <img src={news.image} alt={news.title} />
                   </div>
-                  <h3 className="news-title">{news.title}</h3>
-                  <p className="news-excerpt">{news.excerpt}</p>
-                  <Link to={`/news/${news.id}`} className="news-link">
-                    Đọc thêm →
-                  </Link>
+                  <div className="news-content">
+                    <div className="news-date">
+                      {new Date(news.date).toLocaleDateString('vi-VN')}
+                    </div>
+                    <h3 className="news-title">{news.title}</h3>
+                    <p className="news-excerpt">{news.excerpt}</p>
+                    <Link to={`/news/${news.id}`} className="news-link">
+                      Đọc thêm →
+                    </Link>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="no-news">
+                <p>Hiện tại chưa có tin tức mới</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>
