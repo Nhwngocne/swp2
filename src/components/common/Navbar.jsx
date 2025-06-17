@@ -17,15 +17,9 @@ const Navbar = () => {
   const userDropdownRef = useRef(null);
   const notifDropdownRef = useRef(null);
 
-  const handleLogout = () => {
-    // Xóa localStorage khi logout
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('rolename');
-    // localStorage.removeItem('name');
-
-    logout();
-    navigate('/');
-    window.location.reload(); // reload để cập nhật giao diện
+  const handleLogout = async () => {
+    await logout(); // Đợi logout xong
+    navigate("/"); // Điều hướng về trang home
   };
 
   const getInitials = (fullName) => {

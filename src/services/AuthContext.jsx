@@ -75,36 +75,58 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Đăng nhập
-  const login = async (email, password) => {
-    try {
-      setLoading(true);
-      const response = await authService.login(email, password);
-      const { data } = response;
+const login = async (email, password) => {
+  try {
+    setLoading(true);
+    const response = await authService.login(email, password);
+    const { data } = response;
 
-      localStorage.setItem('token', data.result.token);
-      localStorage.setItem('user', JSON.stringify(data.result.user));
-      localStorage.setItem("role", data.result.role);
-      setUser(data.result.user);
-      setRole(data.result.role);
+    // Nếu BE trả code khác 1000 thì không phải đăng nhập thành công
+    if (data.code !== 1000) {
+      let errorMessage = data.message || "Đăng nhập thất bại";
 
-      return { success: true };
-    } catch (error) {
-      console.error('Login error:', error);
-      const errorMessage = error.response?.data?.message ||
-                           error.response?.data?.error ||
-                           error.message || 'Đăng nhập thất bại';
-      return { success: false, error: errorMessage };
-} finally {
-      setLoading(false);
+      if (data.code === 1002) {
+        errorMessage = "Tài khoản không tồn tại";
+      }
+
+      return { success: false, error: errorMessage, code: data.code };
     }
-  };
 
+    localStorage.setItem('token', data.result.token);
+    localStorage.setItem('user', JSON.stringify(data.result.user));
+    localStorage.setItem("role", data.result.role);
+    setUser(data.result.user);
+    setRole(data.result.role);
+
+    return { success: true };
+  } catch (error) {
+    console.error('Login error:', error);
+    let errorMessage = error.response?.data?.message ||
+                       error.response?.data?.error ||
+                       error.message || 'Đăng nhập thất bại';
+
+    // ✅ Dịch lỗi sang tiếng Việt
+    if (errorMessage.includes("User does not exist")) {
+      errorMessage = "Tài khoản không tồn tại";
+    } else if (errorMessage.includes("Invalid credentials")) {
+      errorMessage = "Email hoặc mật khẩu không đúng";
+    } else if (errorMessage.includes("Network Error")) {
+      errorMessage = "Không thể kết nối đến máy chủ";
+    } else {
+      errorMessage = "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
+    }
+
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
   // Đăng ký
   const register = async (userData) => {
     try {
       setLoading(true);
       const response = await authService.register(userData);
-      ////REGIST NOT ALLOW LOGIN
+      ////REGIST NOT ALLOW LOGINLOGIN
       //const { data } = response;
       // localStorage.setItem('token', data.token);
       // localStorage.setItem('user', JSON.stringify(data.user));

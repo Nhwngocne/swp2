@@ -52,7 +52,7 @@ const Login = () => {
     if (!formData.password) {
       newErrors.password = 'Mật khẩu là bắt buộc';
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+      newErrors.password = 'Mật khẩu sai';
     }
 
     setErrors(newErrors);
@@ -72,7 +72,15 @@ const Login = () => {
         const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
       } else {
-        setErrors({ general: result.error || 'Đăng nhập thất bại' });
+        // Phân loại lỗi theo mã
+        if (result.code === 1002) {
+          setErrors({ email: result.error });
+        } else if (result.error.toLowerCase().includes("mật khẩu")) {
+          setErrors({ password: result.error });
+        } else {
+          setErrors({ general: result.error });
+        }
+        //setErrors({ general: result.error || 'Đăng nhập thất bại' });
       }
     } catch (error) {
       setErrors({ general: 'Có lỗi xảy ra. Vui lòng thử lại.' });
@@ -177,7 +185,7 @@ const Login = () => {
           <div className="login-footer">
             <Link to="/forgotPassword" className="forgotPassword">Quên mật khẩu?</Link>
             <p>
-              
+
               Chưa có tài khoản?
               <Link to="/register" className="register-link"> Đăng ký ngay</Link>
             </p>
