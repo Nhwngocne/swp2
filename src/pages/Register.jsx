@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../services/AuthContext';
 import { showNotification } from '../components/common/Notification';
 import '../assets/css/pages/Register.css'; //
+import VerifyGmail from './VerifyGmail';
+
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -20,6 +22,8 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -77,31 +81,29 @@ const Register = () => {
       return false;
     }
     if (!formData.agreeTerms) {
-    showNotification('Vui lòng đồng ý với điều khoản sử dụng', 'error');
-    return false;
-  }
+      showNotification('Vui lòng đồng ý với điều khoản sử dụng', 'error');
+      return false;
+    }
 
     return true;
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
+  try {
     setLoading(true);
-    try {
-      // Prepare data for API (exclude confirmPassword and agreeTerms)
-      const { confirmPassword, agreeTerms, ...registerData } = formData;
-      await register(registerData);
-      showNotification('Đăng ký thành công!', 'success');
-      navigate('/dashboard');
-    } catch (error) {
-      showNotification(error.message || 'Đăng ký thất bại', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
+    // ✅ Không gọi API đăng ký ở đây nữa
+    showNotification("Vui lòng xác minh email để hoàn tất đăng ký", "info");
+    navigate("/verifyGmail", { state: formData }); // Truyền dữ liệu sang verify
+  } catch (error) {
+    showNotification("Đã xảy ra lỗi. Vui lòng thử lại.", "error");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="register-page">
