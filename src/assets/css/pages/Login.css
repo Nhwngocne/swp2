@@ -1,59 +1,69 @@
 .login-page {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f6f6f6, #ffe5e5);
-  padding: 20px;
+  min-height: 85vh;
+  padding: 16px;
+  background: url('../../img/nen.png') no-repeat center/cover;
+  overflow: hidden;
 }
 
-/* Khối container chính */
+.login-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7); /* Lớp phủ trắng mờ */
+  backdrop-filter: blur(4px);
+  z-index: 0;
+}
+
 .login-container {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 16px;
+  position: relative;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 32px;
+  border-radius: 20px;
   max-width: 400px;
   width: 100%;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  animation: fadeIn 0.6s ease-in-out;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
 }
+
 .login-container:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 
-/* Header */
 .login-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .login-title {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: bold;
-  color: #d63031;
-  margin-bottom: 8px;
+  color: #74221D; /* Màu tiêu đề chính */
+  margin-bottom: 4px;
 }
 
 .login-subtitle {
-  font-size: 15px;
+  font-size: 14px;
   color: #555;
 }
 
-/* Form */
 .login-form {
   display: flex;
   flex-direction: column;
 }
 
-/* Nhóm ô nhập */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .form-label {
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   display: block;
   color: #333;
 }
@@ -63,56 +73,58 @@
   padding: 12px 16px;
   font-size: 16px;
   border: 1.5px solid #ccc;
-  border-radius: 8px;
+  border-radius: 12px;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-input:focus {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+  border-color: #74221D;
+  box-shadow: 0 0 0 2px rgba(116, 34, 29, 0.2);
 }
 
 .form-input.error {
-  border-color: rgb(242, 64, 64);
+  border-color: #e74c3c;
 }
 
 .error-message {
   color: red;
   font-size: 13px;
-  margin-top: 6px;
+  margin-top: 5px;
   display: block;
 }
 
-/* Nút */
 .btn {
-  border: none;
-  padding: 12px 18px;
   font-size: 16px;
-  font-weight: 500;
-  border-radius: 30px;
+  font-weight: 600;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  border-radius: 30px;
+  padding: 12px 18px;
+  transition: all 0.3s ease;
 }
 
 .btn-full {
   width: 100%;
+  display: block;
+  margin: 0 auto;
 }
 
+/* Nút Đăng nhập */
 .btn-primary {
-  background-color: #e74c3c;
+  background-color: #74221D;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #c0392b;
-  transform: translateY(-1px);
+  transform: scale(1.02);
+  background-color: #5c1a17;
 }
 
-/* Divider */
+/* Divider "hoặc" */
 .login-divider {
   text-align: center;
-  margin: 25px 0;
+  margin: 16px 0;
   position: relative;
 }
 
@@ -121,7 +133,8 @@
   padding: 0 10px;
   position: relative;
   z-index: 2;
-  color: #666;
+  color: #888;
+  font-size: 14px;
 }
 
 .login-divider::before {
@@ -135,38 +148,35 @@
   z-index: 1;
 }
 
-/* Đăng nhập xã hội */
+/* Đăng nhập với Google */
 .social-login {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .btn-social {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 500;
-  color: white;
+  gap: 10px;
   padding: 12px;
   border-radius: 30px;
-}
-
-.btn-google {
   background-color: #4285F4;
+  color: white;
+  font-weight: 500;
 }
 
-.btn-google:hover {
+.btn-social:hover {
   background-color: #3367d6;
 }
 
-.btn-google img {
+.btn-social img {
   height: 20px;
-  margin-right: 10px;
 }
 
-/* Footer */
+/* Footer đăng ký */
 .login-footer {
   text-align: center;
   font-size: 14px;
@@ -176,32 +186,30 @@
   margin-left: 5px;
   font-weight: bold;
   text-decoration: none;
-  color: #e74c3c;
+  color: #74221D;
 }
 
 .register-link:hover {
   text-decoration: underline;
 }
 
-/* Hiệu ứng fade-in khi mở trang */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Alert lỗi */
+.alert-error {
+  background: #ffe5e5;
+  color: #c0392b;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.btn-google {
+  background-color: #ffffff;
+  color: #444;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Thông báo lỗi chung */
-.alert-error {
-  background: #ffe3e3;
-  color: #d63031;
-  border: 1px solid #ffa3a3;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  text-align: center;
+.btn-google:hover {
+  background-color: #f7f7f7;
 }

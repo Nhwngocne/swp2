@@ -3,6 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../services/AuthContext";
 import { signInWithGoogle } from "../services/firebaseConfig";
 import '../assets/css/pages/Login.css';
+import googleLogo from '../assets/img/logo-gg.png';
+
 
 const Login = () => {
   const { login, loginWithGoogle } = useAuth(); // ✅ Lấy login và loginWithGoogle từ context
@@ -165,7 +167,11 @@ const Login = () => {
               onClick={handleGoogleLogin}
               disabled={loading}
             >
-              <img src="/assets/google-icon.svg" alt="Google" />
+<img
+  src={googleLogo}
+  alt="Google"
+  style={{ width: "20px", height: "20px" }}
+/>
               Đăng nhập với Google
             </button>
           </div>
