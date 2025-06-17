@@ -21,6 +21,7 @@ import Manage from './pages/Manage';
 import Faq from './pages/Faq'; // ✅ Thêm Faq ở đây
 import DonationBloodForm from './pages/DonationBloodForm';
 import ForgotPassword from './pages/ForgotPassword';
+import VerifyGmail from './pages/VerifyGmail';
 
 // Guest Components
 import EventList from './components/guest/EventList';
@@ -48,7 +49,7 @@ import SystemSettings from './components/admin/SystemSettings';
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole }) => {
 
-  const { user,role, loading } = useAuth();
+  const { user, role, loading } = useAuth();
 
   if (loading) return <div className="loading">Đang tải...</div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -58,7 +59,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
 // Main App Component
 const AppContent = () => {
-  const { user,role } = useAuth();
+  const { user, role } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
 
@@ -80,13 +81,14 @@ const AppContent = () => {
           <Route path="/news" element={<NewsList />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
-<Route path="/search" element={<Search />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/donation-blood-form" element={<DonationBloodForm />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
+          <Route path="/verifyGmail" element={<VerifyGmail />} />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          
+
           {/* Member Routes */}
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />
           <Route path="/donation-history" element={<ProtectedRoute requiredRole="MEMBER"><DonationHistory /></ProtectedRoute>} />
