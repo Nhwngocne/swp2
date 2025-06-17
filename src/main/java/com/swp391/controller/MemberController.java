@@ -1,6 +1,7 @@
 package com.swp391.controller;
 
 import com.swp391.dto.request.MemberCreateRequest;
+import com.swp391.dto.request.MemberUpdateRequest;
 import com.swp391.dto.response.ApiResponse;
 import com.swp391.dto.response.MemberResponse;
 import com.swp391.service.MemberService;
@@ -31,7 +32,7 @@ public class MemberController {
     @PutMapping("/{memberId}")
     public ApiResponse<MemberResponse> updateMember(
             @PathVariable int memberId,
-            @RequestBody @Valid MemberCreateRequest request) {
+            @RequestBody @Valid MemberUpdateRequest request) {
         return ApiResponse.<MemberResponse>builder()
                 .result(memberService.updateMember(request, memberId))
                 .build();

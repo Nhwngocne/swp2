@@ -49,9 +49,9 @@ public class Member {
     @Column(length = 20)
     String numberCccd;
 
-    public String getRole(){
-        return "MEMBER";
-    }
+
+    @OneToOne(mappedBy = "member")
+    ForgotPassword forgotPassword;
 
     @ManyToOne
     Admin admin;

@@ -12,14 +12,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MemberUpdateRequest {
-    String name;
     String email;
-    String password;
-    String gender;
     String job;
     String address;
     String phone;
-    String numberCccd;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate dob;

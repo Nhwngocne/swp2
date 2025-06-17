@@ -5,7 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,8 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
-//@EnableWebSecurity
-//@EnableMethodSecurity
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecuriryConfig {
 
     //encode password
@@ -28,7 +30,10 @@ public class SecuriryConfig {
     }
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/members", "/auth/login", "/auth/introspect", "/auth/loginGoogle", "/auth/refresh","/staffs","/admins"
+            "/members", "/auth/login", "/auth/introspect", "/auth/loginGoogle", "/auth/refresh","/staffs","/admins",
+            "/forgotPassword/verifyMail/**",
+            "/forgotPassword/verifyOtp/**",
+            "/forgotPassword/changePassword/**"
     };
 
     @Autowired

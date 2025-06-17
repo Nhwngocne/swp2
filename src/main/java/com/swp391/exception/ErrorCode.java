@@ -26,6 +26,8 @@ public enum ErrorCode {
     EVENT_NOT_EXISTED(1002, "Event does not exist", HttpStatus.NOT_FOUND),
     //1006:Unauthenticated
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    //1003:Password does not match
+    PASSWORD_NOT_MATCHED(1003, "Password does not match", HttpStatus.BAD_REQUEST),
     ;
 
     private final int code;

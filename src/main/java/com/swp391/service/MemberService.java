@@ -3,7 +3,9 @@ package com.swp391.service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.swp391.dto.request.ChangePassword;
 import com.swp391.dto.request.MemberCreateRequest;
+import com.swp391.dto.request.MemberUpdateRequest;
 import com.swp391.dto.response.GoogleLoginResponse;
 import com.swp391.dto.response.MemberResponse;
 import com.swp391.entity.Member;
@@ -46,11 +48,12 @@ public class MemberService{
         return memberMapper.toMemberResponse(member);
     }
     //update member
-    public MemberResponse updateMember(MemberCreateRequest request, int id) {
+    public MemberResponse updateMember(MemberUpdateRequest request, int id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         memberMapper.updateMember(member, request);
-        member.setPassword(passwordEncoder.encode(request.getPassword()));
+//        member.setPassword(passwordEncoder.encode(request.getPassword()));
+        memberRepository.save(member);
         return memberMapper.toMemberResponse(member);
     }
     //delete member
@@ -112,6 +115,18 @@ public class MemberService{
             throw new AppException(ErrorCode.GOOGLE_AUTH_FAILED);
         }
     }
+    //change password
+    public void changePassword(String email, ChangePassword changePassword) {
+        if (!changePassword.password().equals(changePassword.repeatPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCHED);
+        }
 
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        String encodedPassword = passwordEncoder.encode(changePassword.password());
+        member.setPassword(encodedPassword);
+        memberRepository.save(member);
+    }
 
 }
