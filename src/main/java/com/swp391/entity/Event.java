@@ -51,7 +51,9 @@ public class Event {
     @JoinColumn(name = "staff_id", nullable = false)
     Staff createdBy;
 
-    // For member registration to events
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<Img> images = new HashSet<>();
+
     @ManyToMany
     @JoinTable(
             name = "event_registrations",

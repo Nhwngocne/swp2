@@ -24,6 +24,11 @@ public enum ErrorCode {
     INVALID_TOKEN(1002, "Invalid token", HttpStatus.UNAUTHORIZED),
     GOOGLE_AUTH_FAILED(1002, "Google authentication failed", HttpStatus.UNAUTHORIZED),
     EVENT_NOT_EXISTED(1002, "Event does not exist", HttpStatus.NOT_FOUND),
+    FILE_UPLOAD_FAILED(1002, "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    BLOG_NOT_FOUND(1002, "Blog not found", HttpStatus.NOT_FOUND),
+    IMAGE_NOT_FOUND(1002, "Image not found", HttpStatus.NOT_FOUND),
+    EVENT_NOT_FOUND(1002, "Event not found", HttpStatus.NOT_FOUND),
+    FILE_DELETE_FAILED(1002, "File delete failed", HttpStatus.INTERNAL_SERVER_ERROR),
     //1006:Unauthenticated
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     ;
