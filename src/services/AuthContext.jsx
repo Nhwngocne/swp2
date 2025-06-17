@@ -152,15 +152,17 @@ export const AuthProvider = ({ children }) => {
 
   // Đăng xuất
   const logout = async () => {
+  const token = localStorage.getItem("token");
+  try {
+    if (token) {
+      await authService.logout(token); // Truyền token
+    }
+  } catch (error) {
+    console.error("Logout API error:", error);
+  } finally {
     clearAuthData();
-    // try {
-    //   await authService.logout(); // Nếu có API logout
-    // } catch (error) {
-    //   console.error('Logout API error:', error);
-    // } finally {
-    //   clearAuthData();
-    // }
-  };
+  }
+};
 
   // Cập nhật hồ sơ
   const updateProfile = async (profileData) => {

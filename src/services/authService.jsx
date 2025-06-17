@@ -54,7 +54,7 @@ export const authService = {
     authAPI.put(`/members/${memberId}`, profileData),
 
   // Đăng xuất (nếu cần gọi API)
-  logout: () => authAPI.post("/logout"),
+  logout: (token) => authAPI.post("/auth/logout", { token }),
 
   // Refresh tokenx`
   refreshToken: (refreshToken) =>
