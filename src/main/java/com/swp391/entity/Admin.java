@@ -35,6 +35,7 @@ public class Admin {
     @Column(length = 20)
     String phone;
 
+    @Column(name = "dob")
     @JsonFormat(pattern = "dd-MM-yyyy")
      LocalDate dob;
 

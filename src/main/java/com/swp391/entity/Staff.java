@@ -50,6 +50,7 @@ public class Staff {
     Double workTimePerDay;
 
     @ManyToOne
+    @JoinColumn(name = "admin_id", nullable = false) // Quan trọng
     Admin admin;
 
     @OneToMany(mappedBy = "staff")
@@ -77,6 +78,5 @@ public class Staff {
     Set<Member> members;
 
     @OneToMany(mappedBy = "createdBy")
-    private Set<Event> createdEvents = new HashSet<>();
-
+    Set<Event> createdEvents = new HashSet<>();
 }

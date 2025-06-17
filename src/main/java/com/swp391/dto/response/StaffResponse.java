@@ -15,13 +15,15 @@ public class StaffResponse {
     int id;
     String name;
     String numberCccd;
-    // Note: password is intentionally excluded for security
     String phone;
     String gender;
     String email;
     String job;
-    Double workTimePerDay;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate dob;
+
+    Double workTimePerDay;
+
+    AdminShortResponse admin; // ✅ Thêm dòng này
 }
