@@ -2,10 +2,12 @@ package com.swp391.service;
 
 import com.swp391.dto.request.StaffCreateRequest;
 import com.swp391.dto.response.StaffResponse;
+import com.swp391.entity.Admin;
 import com.swp391.entity.Staff;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.StaffMapper;
+import com.swp391.repository.AdminRepository;
 import com.swp391.repository.StaffRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,40 +21,66 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StaffService {
+
     StaffRepository staffRepository;
+    AdminRepository adminRepository;
     StaffMapper staffMapper;
     PasswordEncoder passwordEncoder;
 
-    //create staff
-    public StaffResponse createStaff(StaffCreateRequest request){
+    // Create staff
+    public StaffResponse createStaff(StaffCreateRequest request) {
+        // 1. Convert request -> entity
         Staff staff = staffMapper.toStaff(request);
-        staff.setPassword(passwordEncoder.encode(staff.getPassword()));
-        try{
-            staff = staffRepository.save(staff);
 
+        // 2. Encode password
+        staff.setPassword(passwordEncoder.encode(staff.getPassword()));
+
+        // 3. Tìm Admin từ adminId và set vào Staff
+        Admin admin = adminRepository.findById(request.getAdminId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        staff.setAdmin(admin);
+
+        try {
+            // 4. Lưu staff
+            staff = staffRepository.save(staff);
         } catch (Exception e) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
+
         return staffMapper.toStaffResponse(staff);
     }
-    //update staff
+
+    // Update staff
     public StaffResponse updateStaff(int id, StaffCreateRequest request) {
         Staff staff = staffRepository.findById(id)
-                .orElseThrow(() ->  new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         staffMapper.updateStaff(staff, request);
         staff.setPassword(passwordEncoder.encode(staff.getPassword()));
+
+        // Nếu cần cập nhật lại adminId
+        Admin admin = adminRepository.findById(request.getAdminId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        staff.setAdmin(admin);
+
+        staff = staffRepository.save(staff);
         return staffMapper.toStaffResponse(staff);
     }
-    //delete staff
+
+    // Delete staff
     public void deleteStaff(int id) {
         staffRepository.deleteById(id);
     }
-    //get all staff
+
+    // Get all staff
     public List<StaffResponse> getAllStaff() {
-        return staffRepository.findAll().stream().map(staffMapper::toStaffResponse).toList();
+        return staffRepository.findAll()
+                .stream()
+                .map(staffMapper::toStaffResponse)
+                .toList();
     }
-    // get staff by id
+
+    // Get staff by ID
     public StaffResponse getStaffById(int id) {
         Staff staff = staffRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
