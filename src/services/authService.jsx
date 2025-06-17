@@ -27,19 +27,25 @@ authAPI.interceptors.request.use(
 
 // Interceptor để xử lý response và error
 authAPI.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Token hết hạn hoặc không hợp lệ
+    const isAuthFreeEndpoint =
+      error.config?.url?.includes("/forgotPassword") ||
+      error.config?.url?.includes("/auth/login") ||
+      error.config?.url?.includes("/auth/register") ||
+      error.config?.url?.includes("/auth/loginGoogle") ||
+      error.config?.url?.includes("/reset-password");
+
+    if (error.response?.status === 401 && !isAuthFreeEndpoint) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/auth/login";
     }
+
     return Promise.reject(error);
   }
 );
+
 
 // Auth API functions
 export const authService = {
