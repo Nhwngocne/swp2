@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -14,4 +15,7 @@ public class BlogCreateRequest {
     String title;
     String content;
     LocalDate publishedDate;
+    Integer memberId; // ID của Member tạo blog
+    Integer adminId;  // nếu có admin liên quan
+    List<String> imageUrls; // danh sách đường dẫn ảnh
 }

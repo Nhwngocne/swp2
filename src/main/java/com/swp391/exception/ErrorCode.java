@@ -29,7 +29,10 @@ public enum ErrorCode {
     IMAGE_NOT_FOUND(1002, "Image not found", HttpStatus.NOT_FOUND),
     EVENT_NOT_FOUND(1002, "Event not found", HttpStatus.NOT_FOUND),
     FILE_DELETE_FAILED(1002, "File delete failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    FORBIDDEN(1002, "Forbidden", HttpStatus.FORBIDDEN),
+    STAFF_NOT_FOUND(1002, "Staff not found", HttpStatus.NOT_FOUND),
     //1006:Unauthenticated
+    UNAUTHORIZED(1006, "Unauthorized", HttpStatus.UNAUTHORIZED),
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     //1003:Password does not match
     PASSWORD_NOT_MATCHED(1003, "Password does not match", HttpStatus.BAD_REQUEST),
