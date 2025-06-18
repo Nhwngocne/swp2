@@ -3,6 +3,7 @@ package com.swp391.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -28,12 +29,15 @@ public class Blog {
 
     LocalDate publishedDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
     Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
     Admin admin;
 
     @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     Set<Img> images = new HashSet<>();
 }

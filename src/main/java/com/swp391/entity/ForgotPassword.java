@@ -13,7 +13,6 @@ import java.util.Date;
 @Setter
 @Builder
 public class ForgotPassword {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer fpid;
@@ -25,6 +24,6 @@ public class ForgotPassword {
     private Date expirationTime;
 
     @OneToOne
-    @JsonIgnore
+    @JsonIgnore // Không serialize Member
     private Member member;
 }
