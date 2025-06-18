@@ -7,6 +7,7 @@ import "../assets/css/pages/Home.css";
 import imgMain from '../assets/img/home2.jpg';
 import imgSub1 from '../assets/img/hom1.jpg';
 import imgSub2 from '../assets/img/hien-mau-nhan-dao.webp';
+import FeedbackList from "./FeedbackList";
 // import heartImg from "../assets/img/heart-in-hand.jpg";
 
 const benefitSlides = [
@@ -100,20 +101,6 @@ const achievements = [
   { icon: "❤️", label: "Mạng sống được cứu", value: 25380 }
 ];
 
-const feedbackList = [
-  {
-    name: "Nguyễn Văn A",
-    content: "Tôi đã hiến máu 5 lần và cảm thấy rất vui khi giúp được cộng đồng. Quy trình rất nhanh chóng, an toàn."
-  },
-  {
-    name: "Trần Thị B",
-    content: "Cảm ơn chương trình đã tạo điều kiện để tôi được chia sẻ sự sống với những người cần máu."
-  },
-  {
-    name: "Lê Văn C",
-    content: "Mỗi lần hiến máu là một lần tôi thấy ý nghĩa. Hẹn gặp lại ở chương trình năm sau!"
-  }
-];
 
 const Home = () => {
   const settings = {
@@ -203,38 +190,7 @@ const Home = () => {
         </div>
       </section>
       {/* Achievements */}
-<section className="feedback-section">
-  <h3 className="section-title">Feedback</h3>
-<Slider
-  dots={true}
-  infinite={true}
-  speed={500}
-  slidesToShow={3}
-  slidesToScroll={1}
-  arrows={false}
-  autoplay={true}              // ✅ tự động chạy
-  autoplaySpeed={4000}         // ✅ sau mỗi 2s sẽ chuyển slide
-  responsive={[
-    {
-      breakpoint: 1024,
-      settings: { slidesToShow: 2 }
-    },
-    {
-      breakpoint: 600,
-      settings: { slidesToShow: 1 }
-    }
-  ]}
->
-    {feedbackList.map((fb, idx) => (
-      <div key={idx}>
-        <div className="feedback-card">
-          <div className="feedback-content">“{fb.content}”</div>
-          <div className="feedback-user">- {fb.name}</div>
-        </div>
-      </div>
-    ))}
-  </Slider>
-</section>
+      <FeedbackList />
     </div>
   );
 };

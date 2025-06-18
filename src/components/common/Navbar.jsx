@@ -5,6 +5,7 @@ import { useAuth } from "../../services/AuthContext.jsx";
 import '../../assets/css/components/common/navbar.css';
 import logo from '../../assets/img/logo.png';
 import Register from '../../pages/Register.jsx';
+import LookUp from '../../pages/LookUp.jsx';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -159,7 +160,7 @@ const Navbar = () => {
         <Link to="/" className="nav-item active">Trang chủ</Link>
         <Link to="/faq" className="nav-item">Hỏi - Đáp</Link>
         <Link to="/news" className="nav-item">Tin tức</Link>
-        <Link to="/search" className="nav-item">Tra cứu</Link>
+        <Link to="/lookUp" className="nav-item">Tra cứu</Link>
         <Link to="/contact" className="nav-item">Liên hệ</Link>
       </nav>
     </header>
