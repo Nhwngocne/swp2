@@ -1,6 +1,7 @@
 package com.swp391.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -50,6 +51,7 @@ public class Staff {
     Double workTimePerDay;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "admin_id", nullable = false) // Quan trọng
     Admin admin;
 

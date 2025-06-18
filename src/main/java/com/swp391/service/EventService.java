@@ -1,19 +1,25 @@
 package com.swp391.service;
 
-import com.swp391.dto.request.EventCreateRequest;
-import com.swp391.dto.response.EventResponse;
-import com.swp391.entity.Event;
-import com.swp391.exception.AppException;
-import com.swp391.exception.ErrorCode;
-import com.swp391.mapper.EventMapper;
-import com.swp391.repository.EventRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
+    import com.swp391.Enum.EventStatus;
+    import com.swp391.dto.request.EventCreateRequest;
+    import com.swp391.dto.response.EventResponse;
+    import com.swp391.entity.Event;
+    import com.swp391.entity.Staff;
+    import com.swp391.exception.AppException;
+    import com.swp391.exception.ErrorCode;
+    import com.swp391.mapper.EventMapper;
+    import com.swp391.repository.EventRepository;
+    import com.swp391.repository.StaffRepository;
+    import lombok.AccessLevel;
+    import lombok.RequiredArgsConstructor;
+    import lombok.experimental.FieldDefaults;
+    import org.springframework.security.core.Authentication;
+    import org.springframework.security.core.context.SecurityContextHolder;
+    import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+    import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.List;
+    import java.io.IOException;
+    import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +28,27 @@ public class EventService {
     EventRepository eventRepository;
     EventMapper eventMapper;
     ImageService imageService;
+    StaffRepository staffRepository; // Add this
 
     public EventResponse createEvent(EventCreateRequest request) throws IOException {
         var event = eventMapper.toEvent(request);
+
+        // Get staff ID from JWT token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof JwtAuthenticationToken jwtToken)) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+
+        String staffId = jwtToken.getToken().getClaimAsString("id");
+        if (staffId == null) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+
+        // Find staff and set to event
+        Staff staff = staffRepository.findById(Integer.parseInt(staffId))
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+        event.setCreatedBy(staff);
+        event.setStatus(EventStatus.UPCOMING); // Set initial status
 
         // Upload image to Cloudinary and get URL
         if (request.getImage() != null && !request.getImage().isEmpty()) {
@@ -40,20 +64,27 @@ public class EventService {
         var event = eventRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EVENT_NOT_EXISTED));
 
-        // 1. Nếu có ảnh mới => upload và update imageUrl
-        if (request.getImage() != null && !request.getImage().isEmpty()) {
-            String imageUrl = imageService.uploadImage(request.getImage());
-            event.setImageUrl(imageUrl); // cập nhật image mới
+        // Verify staff ownership
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof JwtAuthenticationToken jwtToken)) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
         }
 
-        // 2. Cập nhật các field khác (title, time, v.v.) từ request
-        eventMapper.updateEvent(event, request);
+        String staffId = jwtToken.getToken().getClaimAsString("id");
+        if (!String.valueOf(event.getCreatedBy().getId()).equals(staffId)) {
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
 
-        // 3. Lưu lại
+        // Rest of the update logic remains the same
+        if (request.getImage() != null && !request.getImage().isEmpty()) {
+            String imageUrl = imageService.uploadImage(request.getImage());
+            event.setImageUrl(imageUrl);
+        }
+
+        eventMapper.updateEvent(event, request);
         event = eventRepository.save(event);
         return eventMapper.toEventResponse(event);
     }
-
     public void deleteEvent(int id) {
         eventRepository.deleteById(id);
     }
