@@ -37,6 +37,7 @@ public class SecuriryConfig {
             "/register/send-otp",
             "/register/verify-otp"
 
+
     };
 
     @Autowired
