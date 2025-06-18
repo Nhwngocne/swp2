@@ -1,38 +1,81 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "../assets/css/pages/Home.css"; // Đảm bảo file này chứa style cho hero section và các section sau
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "../assets/css/pages/Home.css";
 import imgMain from '../assets/img/home2.jpg';
 import imgSub1 from '../assets/img/hom1.jpg';
 import imgSub2 from '../assets/img/hien-mau-nhan-dao.webp';
+// import heartImg from "../assets/img/heart-in-hand.jpg";
 
-const rightsList = [
+const benefitSlides = [
   {
-    img: "/assets/heart-in-hand.jpg",
-    title: "Quyền lợi của người hiến máu",
-    left: [
-      "Được khám sức khỏe và tư vấn miễn phí.",
-      "Được cấp Giấy chứng nhận hiến máu tình nguyện.",
-      "Được phục vụ ăn nhẹ, bồi dưỡng bằng tiền mặt.",
-      "Được cấp giấy chứng nhận để được nhận máu miễn phí (nếu cần).",
-      "Được nhận quà tặng lưu niệm của chương trình."
-    ],
-    right: [
-      "Tiền bồi dưỡng: 50.000-100.000 VNĐ tuỳ lượng máu.",
-      "Ăn nhẹ sau khi hiến máu.",
-      "Hỗ trợ viện phí theo quy định Nhà nước.",
-      "Ưu tiên truyền máu khi cần thiết.",
-      "Được tư vấn sức khoẻ định kỳ."
+    title: "Được bồi dưỡng trực tiếp",
+    content: [
+      "- Ăn nhẹ, nước uống tại chỗ: tương đương 30.000 đồng (1 chai trà xanh không độ, 01 hộp chocopie 66gram, 01 hộp bánh Goute 35,5gram).",
+      "- Hỗ trợ chi phí đi lại (bằng tiền mặt): 50.000 đồng.",
+      "- Nhận phần quà tặng giá trị tương đương: 100.000đ khi hiến máu 250ml, 150.000đ khi hiến máu 350ml, 180.000đ khi hiến máu 450ml."
+    ]
+  },
+  {
+    title: "Được cấp Giấy chứng nhận hiến máu tình nguyện",
+    content: [
+      "1. Giấy chứng nhận được trao cho người hiến máu sau mỗi lần hiến máu tình nguyện.",
+      "2. Có giá trị để được truyền máu miễn phí bằng số lượng máu đã hiến, khi bản thân người hiến có nhu cầu sử dụng máu tại tất cả các cơ sở y tế công lập trên toàn quốc.",
+      "3. Người hiến máu cần xuất trình Giấy chứng nhận để làm cơ sở cho các cơ sở y tế thực hiện việc truyền máu miễn phí.",
+      "4. Cơ sở y tế có trách nhiệm ký, đóng dấu, xác nhận số lượng máu đã truyền miễn phí cho người hiến máu vào giấy chứng nhận."
+    ]
+  },
+  {
+    title: "Được tư vấn về sức khoẻ",
+    content: [
+      "- Được giải thích về quy trình hiến máu và các tai biến có thể xảy ra trong và sau khi hiến máu.",
+      "- Được cung cấp thông tin về dấu hiệu, triệu chứng do nhiễm vi rút viêm gan, HIV và một số bệnh lây qua đường truyền máu, tình dục khác.",
+      "- Được xét nghiệm sàng lọc một số vi rút lây qua đường truyền máu, tình dục (HIV, Giang mai, viêm gan,...) sau khi hiến máu.",
+      "- Được tư vấn hướng dẫn cách chăm sóc sức khỏe, tư vấn về kết quả bất thường sau hiến máu.",
+      "- Được bảo mật về kết quả khám lâm sàng, kết quả xét nghiệm."
     ]
   }
 ];
 
 const standardsList = [
-  "Mang theo chứng minh nhân dân/căn cước công dân.",
-  "Tuổi từ 18 đến 60, cân nặng nam >= 45kg, nữ >= 42kg.",
-  "Không mắc các bệnh lây truyền qua đường máu.",
-  "Không sử dụng chất kích thích, rượu bia trước ngày hiến.",
-  "Nghỉ ngơi đầy đủ, không làm việc quá sức trước khi hiến.",
-  "Không bị cảm sốt hoặc có triệu chứng bệnh.",
+  {
+    icon: "📇",
+    text: "Mang theo chứng minh nhân dân/hộ chiếu"
+  },
+  {
+    icon: "💉",
+    text: "Không nghiện ma túy, rượu bia và các chất kích thích"
+  },
+  {
+    icon: "🦠",
+    text: "Không mắc hoặc không có các hành vi nguy cơ lây nhiễm HIV, không nhiễm viêm gan B, viêm gan C, và các virus lây qua đường truyền máu"
+  },
+  {
+    icon: "⚖️",
+    text: "Cân nặng: Nam ≥ 45 kg Nữ ≥ 45 kg"
+  },
+  {
+    icon: "❤️",
+    text: "Không mắc các bệnh mạn tính hoặc cấp tính về tim mạch, huyết áp, hô hấp, dạ dày…"
+  },
+  {
+    icon: "🧪",
+    text: "Chỉ số huyết sắc tố (Hb) ≥120g/l (≥125g/l nếu hiến từ 350ml trở lên)."
+  },
+  {
+    icon: "🔞",
+    text: "Người khỏe mạnh trong độ tuổi từ đủ 18 đến 60 tuổi"
+  },
+  {
+    icon: "📅",
+    text: "Thời gian tối thiểu giữa 2 lần hiến máu là 12 tuần đối với cả Nam và Nữ"
+  },
+  {
+    icon: "🧬",
+    text: "Kết quả test nhanh âm tính với kháng nguyên bề mặt của siêu vi B"
+  }
 ];
 
 const importantNotes = [
@@ -60,103 +103,94 @@ const achievements = [
 const feedbackList = [
   {
     name: "Nguyễn Văn A",
-    content: "Tôi đã hiến máu 5 lần và cảm thấy rất vui khi giúp được cộng đồng. Quy trình rất nhanh chóng, an toàn.",
+    content: "Tôi đã hiến máu 5 lần và cảm thấy rất vui khi giúp được cộng đồng. Quy trình rất nhanh chóng, an toàn."
   },
   {
     name: "Trần Thị B",
-    content: "Cảm ơn chương trình đã tạo điều kiện để tôi được chia sẻ sự sống với những người cần máu.",
+    content: "Cảm ơn chương trình đã tạo điều kiện để tôi được chia sẻ sự sống với những người cần máu."
   },
   {
     name: "Lê Văn C",
-    content: "Mỗi lần hiến máu là một lần tôi thấy ý nghĩa. Hẹn gặp lại ở chương trình năm sau!",
-  },
+    content: "Mỗi lần hiến máu là một lần tôi thấy ý nghĩa. Hẹn gặp lại ở chương trình năm sau!"
+  }
 ];
+
 const Home = () => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true
+  };
+
   return (
     <div className="home-page">
-
-      {/* Hero Section ĐẦU TRANG */}
-<section className="hero-section-implant">
-  <div className="container hero-layout">
-    <div className="hero-content-left">
-      <span className="hero-brand">BỆNH VIỆN</span>
-      <h1>
-        <span className="highlight">HIẾN MÁU VÌ CỘNG ĐỒNG </span><br />
-        
-      </h1>
-      <div className="hero-description">
-        Hiến máu không chỉ là một hành động nhân văn cao cả, mà còn là cầu nối yêu thương giữa những trái tim đang cần sự sống.<br /> 
-        Mỗi giọt máu bạn trao đi hôm nay có thể đem lại hy vọng sống cho một người bệnh, một đứa trẻ, hoặc một người mẹ đang giành giật sự sống từng giây.<br />
-        <b>Hãy cùng chúng tôi lan tỏa thông điệp nhân ái và xây dựng một cộng đồng khoẻ mạnh – nơi mà mỗi người đều có thể trở thành người hùng thầm lặng chỉ bằng một hành động đơn giản.</b>
-
-      </div>
-      <div className="hero-actions">
-        <button className="btn red">Đặt Lịch Khám</button>
-        <button className="btn white">Tìm Hiểu Thêm</button>
-      </div>
-    </div>
-
-      <div className="hero-image-group">
-        <img src={imgMain} alt="..." className="hero-img main" />
-        <img src={imgSub1} alt="..." className="hero-img sub1" />
-        <img src={imgSub2} alt="..." className="hero-img sub2" />
-      </div>
-  </div>
-</section>
-
-            {/* Quyền lợi của người hiến máu */}
-      <section className="benefit-section">
-        <div className="benefit-container">
-          <div className="benefit-left">
-            <img src={rightsList[0].img} alt="Quyền lợi" className="benefit-img" />
+      {/* Hero Section */}
+      <section className="hero-section-implant">
+        <div className="container hero-layout">
+          <div className="hero-content-left">
+            <span className="hero-brand">BỆNH VIỆN</span>
+            <h1><span className="highlight">HIẾN MÁU VÌ CỘNG ĐỒNG</span></h1>
+            <div className="hero-description">
+              Hiến máu không chỉ là một hành động nhân văn cao cả, mà còn là cầu nối yêu thương giữa những trái tim đang cần sự sống.<br />
+              Mỗi giọt máu bạn trao đi hôm nay có thể đem lại hy vọng sống cho một người bệnh, một đứa trẻ, hoặc một người mẹ đang giành giật sự sống từng giây.<br />
+              <b>Hãy cùng chúng tôi lan tỏa thông điệp nhân ái và xây dựng một cộng đồng khoẻ mạnh – nơi mà mỗi người đều có thể trở thành người hùng thầm lặng chỉ bằng một hành động đơn giản.</b>
+            </div>
+            <div className="hero-actions">
+              <button className="btn red">Đặt Lịch Khám</button>
+              <button className="btn white">Tìm Hiểu Thêm</button>
+            </div>
           </div>
-          <div className="benefit-right">
-            <h3 className="section-title yellow">{rightsList[0].title}</h3>
-            <div className="benefit-content">
-              <ul>
-                {rightsList[0].left.map((item, idx) => <li key={idx}>{item}</li>)}
-              </ul>
-            </div>
-            <div className="benefit-extra">
-              <ul>
-                {rightsList[0].right.map((item, idx) => <li key={idx}>{item}</li>)}
-              </ul>
-            </div>
+          <div className="hero-image-group">
+            <img src={imgMain} alt="..." className="hero-img main" />
+            <img src={imgSub1} alt="..." className="hero-img sub1" />
+            <img src={imgSub2} alt="..." className="hero-img sub2" />
           </div>
         </div>
       </section>
 
-      {/* Tiêu chuẩn tham gia hiến máu */}
+      {/* Benefit Section - Carousel */}
+      <section className="benefit-section slider">
+        <div className="benefit-container">
+          <div className="benefit-left">
+            {/* <img src={heartImg} alt="Quyền lợi hiến máu" className="benefit-img" /> */}
+            <h2 className="section-title yellow">Quyền lợi của người hiến máu</h2>
+            <p>Người hiến máu tình nguyện sẽ được những quyền lợi sau:</p>
+          </div>
+
+          <div className="benefit-right">
+            <Slider {...settings}>
+              {benefitSlides.map((slide, index) => (
+                <div key={index} className="benefit-slide">
+                  <h3>{slide.title}</h3>
+                  <ul>
+                    {slide.content.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </Slider>
+          </div>
+        </div>
+      </section>
+
+      {/* Standards */}
       <section className="standards-section blue-bg">
         <h3 className="section-title">Tiêu chuẩn tham gia ghi hiến máu</h3>
         <div className="standards-grid">
           {standardsList.map((item, idx) => (
             <div className="standard-card" key={idx}>
-              <span className="standard-icon">✔️</span>
-              <p>{item}</p>
+              <span className="standard-icon">{item.icon}</span>
+              <p>{item.text}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* FAQ / Lưu ý quan trọng */}
-      <section className="faq-section">
-        <h3 className="section-title">Lưu ý quan trọng</h3>
-        <div className="faq-list">
-          {importantNotes.map((note, idx) => (
-            <details key={idx} className="faq-item">
-              <summary>{note.q}</summary>
-              <div className="faq-answer">{note.a}</div>
-            </details>
-          ))}
-          <div style={{ textAlign: "center", marginTop: 12 }}>
-            <Link to="/faq" className="see-more">Xem thêm &gt;</Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Thành tựu */}
-      <section className="achievements-section">
+ <section className="achievements-section">
         <h3 className="section-title">Thành tựu của chúng ta</h3>
         <div className="achievements-grid">
           {achievements.map((ach, idx) => (
@@ -168,19 +202,39 @@ const Home = () => {
           ))}
         </div>
       </section>
-
-      {/* Feedback */}
-      <section className="feedback-section">
-        <h3 className="section-title">Feedback</h3>
-        <div className="feedback-grid">
-          {feedbackList.map((fb, idx) => (
-            <div className="feedback-card" key={idx}>
-              <div className="feedback-content">“{fb.content}”</div>
-              <div className="feedback-user">- {fb.name}</div>
-            </div>
-          ))}
+      {/* Achievements */}
+<section className="feedback-section">
+  <h3 className="section-title">Feedback</h3>
+<Slider
+  dots={true}
+  infinite={true}
+  speed={500}
+  slidesToShow={3}
+  slidesToScroll={1}
+  arrows={false}
+  autoplay={true}              // ✅ tự động chạy
+  autoplaySpeed={4000}         // ✅ sau mỗi 2s sẽ chuyển slide
+  responsive={[
+    {
+      breakpoint: 1024,
+      settings: { slidesToShow: 2 }
+    },
+    {
+      breakpoint: 600,
+      settings: { slidesToShow: 1 }
+    }
+  ]}
+>
+    {feedbackList.map((fb, idx) => (
+      <div key={idx}>
+        <div className="feedback-card">
+          <div className="feedback-content">“{fb.content}”</div>
+          <div className="feedback-user">- {fb.name}</div>
         </div>
-      </section>
+      </div>
+    ))}
+  </Slider>
+</section>
     </div>
   );
 };
