@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,7 +38,7 @@ public class Admin {
 
     @Column(name = "dob")
     @JsonFormat(pattern = "dd-MM-yyyy")
-     LocalDate dob;
+    LocalDate dob;
 
     @Column(length = 20)
     String numberCccd;
@@ -46,33 +47,42 @@ public class Admin {
     String address;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     List<Reminder> reminders;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     List<RegisReceive> regisReceives;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     List<DonationRegistration> registrations;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     List<EmergencyRequest> emergencyRequests;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     List<BloodType> bloodTypes;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     List<DonationHistory> donationHistories;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     List<Member> members;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     List<Staff> staffList;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     List<Blog> blogs;
 
     @OneToOne(mappedBy = "admin")
+    @JsonIgnore // Không serialize
     BloodInventory bloodInventory;
 }
-

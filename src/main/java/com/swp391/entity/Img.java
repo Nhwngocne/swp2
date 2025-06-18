@@ -1,5 +1,6 @@
 package com.swp391.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,9 +22,11 @@ public class Img {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blog_id")
+    @JsonBackReference // Không serialize Blog
     Blog blog;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
+    @JsonBackReference // Không serialize Event
     Event event;
 }

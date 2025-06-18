@@ -1,6 +1,7 @@
 package com.swp391.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -42,47 +43,57 @@ public class Member {
     @Column(length = 20)
     String phone;
 
-
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate dob;
 
     @Column(length = 20)
     String numberCccd;
 
-
     @OneToOne(mappedBy = "member")
+    @JsonIgnore // Không serialize ForgotPassword
     ForgotPassword forgotPassword;
 
     @ManyToOne
+    @JsonIgnore // Không serialize Admin
     Admin admin;
 
     @OneToOne
+    @JsonIgnore // Không serialize BloodType
     BloodType bloodType;
 
     @OneToOne
+    @JsonIgnore // Không serialize DonationHistory
     DonationHistory donationHistory;
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore // Không serialize
     List<Feedback> feedbacks;
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore // Không serialize
     List<Blog> blogs;
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore // Không serialize
     List<Reminder> reminders;
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore // Không serialize
     List<RegisReceive> regisReceives;
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore // Không serialize
     List<DonationRegistration> registrations;
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore // Không serialize
     List<EmergencyRequest> emergencyRequests;
 
     @OneToOne(mappedBy = "member")
+    @JsonIgnore // Không serialize
     NearbyDonor nearbyDonor;
 
     @ManyToMany(mappedBy = "members")
+    @JsonIgnore // Không serialize Staff để tránh vòng lặp
     Set<Staff> staff;
 }

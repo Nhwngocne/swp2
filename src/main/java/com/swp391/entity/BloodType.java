@@ -3,6 +3,8 @@ package com.swp391.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.util.List;
 
@@ -28,26 +30,34 @@ public class BloodType {
     String canReceiveFrom;
 
     @OneToMany(mappedBy = "bloodType")
+    @JsonIgnore // Không serialize
     List<EmergencyRequest> emergencyRequests;
 
     @OneToMany(mappedBy = "bloodType")
+    @JsonIgnore // Không serialize
     List<DonationRegistration> donationRegistrations;
 
     @OneToMany(mappedBy = "bloodType")
+    @JsonIgnore // Không serialize
     List<RegisReceive> regisReceives;
 
     @OneToMany(mappedBy = "bloodType")
+    @JsonIgnore // Không serialize
     List<DonationHistory> donationHistories;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference // Không serialize
     BloodInventory bloodInventory;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore // Không serialize
     Admin admin;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore // Không serialize
     Staff staff;
 
     @OneToOne(mappedBy = "bloodType")
+    @JsonIgnore // Không serialize
     Member member;
 }

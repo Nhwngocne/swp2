@@ -3,6 +3,8 @@ package com.swp391.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,11 +29,14 @@ public class BloodInventory {
     LocalDate lastUpdated;
 
     @OneToMany(mappedBy = "bloodInventory")
+    @JsonIgnore // Không serialize
     List<BloodType> bloodTypes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
     Staff staff;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
     Admin admin;
 }

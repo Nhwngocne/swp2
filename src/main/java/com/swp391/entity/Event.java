@@ -4,6 +4,8 @@ import com.swp391.Enum.EventStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -49,9 +51,11 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id", nullable = false)
+    @JsonManagedReference // Serialize Staff
     Staff createdBy;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // Serialize Img
     Set<Img> images = new HashSet<>();
 
     @ManyToMany
@@ -60,5 +64,6 @@ public class Event {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id")
     )
+    @JsonIgnore // Không serialize Member để tránh vòng lặp
     Set<Member> registeredMembers = new HashSet<>();
 }
