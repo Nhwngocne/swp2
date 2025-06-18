@@ -34,6 +34,8 @@ public class SecuriryConfig {
             "/forgotPassword/verifyMail/**",
             "/forgotPassword/verifyOtp/**",
             "/forgotPassword/changePassword/**",
+            "/register/send-otp",
+            "/register/verify-otp"
 
 
     };
