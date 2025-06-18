@@ -4,6 +4,7 @@ import './App.css';
 
 // Context
 import { AuthProvider, useAuth } from './services/AuthContext';
+import { EventProvider } from './services/EventContext'; 
 
 // Common Components
 import Navbar from './components/common/Navbar';
@@ -77,7 +78,7 @@ const AppContent = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/events" element={<EventList />} />
+          
           <Route path="/news" element={<NewsList />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
@@ -88,6 +89,7 @@ const AppContent = () => {
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/events" element={<ProtectedRoute><EventProvider><EventList /></EventProvider></ProtectedRoute>}/>
 
           {/* Member Routes */}
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />
@@ -121,9 +123,9 @@ const AppContent = () => {
 
 // App wrapper
 const App = () => (
-  <AuthProvider>
-    <AppContent />
-  </AuthProvider>
+    <AuthProvider>
+        <AppContent />
+    </AuthProvider>
 );
 
 export default App;

@@ -91,7 +91,7 @@ const Home = () => {
 
       </div>
       <div className="hero-actions">
-        <button className="btn red">Đặt Lịch Khám</button>
+        <Link to="/events" className="btn red">Đặt Lịch Khám</Link>
         <button className="btn white">Tìm Hiểu Thêm</button>
       </div>
     </div>

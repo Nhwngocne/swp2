@@ -14,13 +14,32 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   // const [user, setUser] = useState(null);
   //change
+  // const [user, setUser] = useState(() => {
+  //   const storedUser = localStorage.getItem("user");
+  //   return storedUser ? JSON.parse(storedUser) : null;
+  // });
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
+    try {
+      const storedUser = localStorage.getItem("user");
+      // Kiểm tra storedUser tồn tại và không phải "undefined"
+      if (storedUser && storedUser !== "undefined") {
+        return JSON.parse(storedUser);
+      }
+      return null;
+    } catch (error) {
+      console.error("Error parsing user from localStorage:", error);
+      // Xóa dữ liệu hỏng để tránh lỗi tái diễn
+      localStorage.removeItem("user");
+      return null;
+    }
   });
   //add roleAdd
+  // const [role, setRole] = useState(() => {
+  //   return localStorage.getItem("role") || null;
+  // });
   const [role, setRole] = useState(() => {
-    return localStorage.getItem("role") || null;
+    const storedRole = localStorage.getItem("role");
+    return storedRole && storedRole !== "undefined" ? storedRole : null;
   });
   const [loading, setLoading] = useState(true);
 
