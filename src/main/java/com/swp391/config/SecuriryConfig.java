@@ -33,7 +33,8 @@ public class SecuriryConfig {
             "/members", "/auth/login", "/auth/introspect", "/auth/loginGoogle", "/auth/refresh","/staffs","/admins",
             "/forgotPassword/verifyMail/**",
             "/forgotPassword/verifyOtp/**",
-            "/forgotPassword/changePassword/**"
+            "/forgotPassword/changePassword/**",
+
     };
 
     @Autowired

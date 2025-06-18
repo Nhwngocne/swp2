@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -23,6 +24,6 @@ public class EventResponse {
     private String description;
     private String imageUrl;
     private EventStatus status;
-    private StaffDto createdBy;
+    private StaffDto staff;
     private int registeredMemberCount;
 }
