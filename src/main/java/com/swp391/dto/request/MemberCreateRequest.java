@@ -20,6 +20,6 @@ public class MemberCreateRequest {
     String phone;
     String numberCccd;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate dob;
 }

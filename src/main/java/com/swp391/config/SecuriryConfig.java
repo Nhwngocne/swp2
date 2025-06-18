@@ -35,6 +35,7 @@ public class SecuriryConfig {
             "/forgotPassword/verifyOtp/**",
             "/forgotPassword/changePassword/**",
 
+
     };
 
     @Autowired

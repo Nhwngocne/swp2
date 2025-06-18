@@ -17,6 +17,6 @@ public class MemberUpdateRequest {
     String address;
     String phone;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate dob;
 }
