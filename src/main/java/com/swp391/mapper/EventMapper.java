@@ -15,5 +15,6 @@ public interface EventMapper {
     Event toEvent(EventCreateRequest request);
     // Converts Event entity to EventResponse DTO
     EventResponse toEventResponse(Event event);
+    @Mapping(target = "imageUrl", ignore = true)
     void updateEvent(@MappingTarget Event entity, EventCreateRequest request);
 }

@@ -40,13 +40,16 @@ public class EventService {
         var event = eventRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EVENT_NOT_EXISTED));
 
-        // Upload new image if provided
+        // 1. Nếu có ảnh mới => upload và update imageUrl
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             String imageUrl = imageService.uploadImage(request.getImage());
-            event.setImageUrl(imageUrl);
+            event.setImageUrl(imageUrl); // cập nhật image mới
         }
 
+        // 2. Cập nhật các field khác (title, time, v.v.) từ request
         eventMapper.updateEvent(event, request);
+
+        // 3. Lưu lại
         event = eventRepository.save(event);
         return eventMapper.toEventResponse(event);
     }
