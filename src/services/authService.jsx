@@ -37,7 +37,7 @@ authAPI.interceptors.response.use(
       error.config?.url?.includes("/reset-password") ||
 
       error.config?.url?.includes("/register/send-otp") ||    
-      error.config?.url?.includes("/register/verify-otp");
+      error.config?.url?.includes("/register/verify-otp")||
 
        error.config?.url?.includes("/feedback");
 // >>>>>>> origin/FE_Moi
