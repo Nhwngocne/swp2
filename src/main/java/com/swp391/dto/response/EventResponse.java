@@ -23,7 +23,7 @@ public class EventResponse {
     private String location;
     private String description;
     private String imageUrl;
-    private EventStatus status = EventStatus.UPCOMING;
+    private String status;
     private StaffDto staff;
     private int registeredMemberCount;
 }

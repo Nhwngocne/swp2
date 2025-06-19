@@ -1,22 +1,18 @@
 package com.swp391.service;
 
-    import com.swp391.Enum.EventStatus;
-    import com.swp391.dto.request.EventCreateRequest;
-    import com.swp391.dto.response.EventResponse;
-    import com.swp391.entity.Event;
-    import com.swp391.entity.Staff;
-    import com.swp391.exception.AppException;
-    import com.swp391.exception.ErrorCode;
-    import com.swp391.mapper.EventMapper;
-    import com.swp391.repository.EventRepository;
-    import com.swp391.repository.StaffRepository;
-    import lombok.AccessLevel;
-    import lombok.RequiredArgsConstructor;
-    import lombok.experimental.FieldDefaults;
-    import org.springframework.security.core.Authentication;
-    import org.springframework.security.core.context.SecurityContextHolder;
-    import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-    import org.springframework.stereotype.Service;
+import com.swp391.dto.request.EventCreateRequest;
+import com.swp391.dto.response.EventResponse;
+import com.swp391.entity.Event;
+import com.swp391.exception.AppException;
+import com.swp391.exception.ErrorCode;
+import com.swp391.mapper.EventMapper;
+import com.swp391.repository.EventRepository;
+import com.swp391.repository.StaffRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
 
     import java.io.IOException;
     import java.util.List;
@@ -28,28 +24,14 @@ public class EventService {
     EventRepository eventRepository;
     EventMapper eventMapper;
     ImageService imageService;
-    StaffRepository staffRepository; // Add this
+    StaffRepository staffRepository;
 
+    @PreAuthorize("hasRole('STAFF')")
     public EventResponse createEvent(EventCreateRequest request) throws IOException {
         var event = eventMapper.toEvent(request);
-
-        // Get staff ID from JWT token
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof JwtAuthenticationToken jwtToken)) {
-            throw new AppException(ErrorCode.UNAUTHORIZED);
-        }
-
-        String staffId = jwtToken.getToken().getClaimAsString("id");
-        if (staffId == null) {
-            throw new AppException(ErrorCode.UNAUTHORIZED);
-        }
-
-        // Find staff and set to event
-        Staff staff = staffRepository.findById(Integer.parseInt(staffId))
-                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+        var staff = staffRepository.findById(request.getStaffId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         event.setCreatedBy(staff);
-        event.setStatus(EventStatus.UPCOMING); // Set initial status
-
         // Upload image to Cloudinary and get URL
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             String imageUrl = imageService.uploadImage(request.getImage());
