@@ -46,8 +46,8 @@ public class Event {
     String imageUrl;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    EventStatus status;
+    //@Enumerated(EnumType.STRING)
+    String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id", nullable = false)

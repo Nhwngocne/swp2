@@ -7,9 +7,11 @@ import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.EventMapper;
 import com.swp391.repository.EventRepository;
+import com.swp391.repository.StaffRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,10 +24,14 @@ public class EventService {
     EventRepository eventRepository;
     EventMapper eventMapper;
     ImageService imageService;
+    StaffRepository staffRepository;
 
+    @PreAuthorize("hasRole('STAFF')")
     public EventResponse createEvent(EventCreateRequest request) throws IOException {
         var event = eventMapper.toEvent(request);
-
+        var staff = staffRepository.findById(request.getStaffId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        event.setCreatedBy(staff);
         // Upload image to Cloudinary and get URL
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             String imageUrl = imageService.uploadImage(request.getImage());

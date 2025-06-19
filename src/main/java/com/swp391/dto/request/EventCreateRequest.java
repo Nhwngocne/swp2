@@ -1,5 +1,6 @@
 package com.swp391.dto.request;
 
+import com.swp391.Enum.EventStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,4 +18,6 @@ public class EventCreateRequest {
     String location;
     String description;
     MultipartFile image;
+    String status;
+    int staffId; // ID của nhân viên tạo sự kiện
 }
