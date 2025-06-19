@@ -35,8 +35,12 @@ authAPI.interceptors.response.use(
       error.config?.url?.includes("/auth/register") ||
       error.config?.url?.includes("/auth/loginGoogle") ||
       error.config?.url?.includes("/reset-password") ||
+
       error.config?.url?.includes("/register/send-otp") ||    
       error.config?.url?.includes("/register/verify-otp");
+
+       error.config?.url?.includes("/feedback");
+// >>>>>>> origin/FE_Moi
 
     if (error.response?.status === 401 && !isAuthFreeEndpoint) {
       console.log("401 Unauthorized - URL:", error.config?.url, "Redirecting to /auth/login"); // Debug
@@ -107,6 +111,15 @@ export const authService = {
 
   loginWithGoogle: (idToken) =>
     authAPI.post("/auth/loginGoogle", { token: idToken }),
+
+  // Lấy danh sách tất cả feedback
+  getAllFeedback: () => authAPI.get("/feedbacks"),
+
+  // Gửi feedback
+  sendFeedback: (feedbackData) => authAPI.post("/feedbacks", feedbackData),
+
+  
+
 };
 
 export default authService;

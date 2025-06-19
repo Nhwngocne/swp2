@@ -1,0 +1,109 @@
+.feedback-section {
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.feedback-card {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.feedback-content {
+  font-style: italic;
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.feedback-user {
+  font-weight: bold;
+  color: #888;
+}
+
+.show-form-button {
+  margin-top: 30px;
+}
+
+.btn.red {
+  background-color: #e74c3c;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn.red:hover {
+  background-color: #c0392b;
+}
+
+.add-feedback-form {
+  margin-top: 40px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.add-feedback-form h4 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #333;
+}
+
+.add-feedback-form input,
+.add-feedback-form textarea,
+.add-feedback-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: none;
+}
+
+.add-feedback-form button[type="submit"] {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-feedback-form button[type="submit"]:hover {
+  background-color: #27ae60;
+}
+
+.success-message {
+  color: #27ae60;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.error-message {
+  color: #e74c3c;
+  margin-top: 10px;
+  font-weight: bold;
+}
