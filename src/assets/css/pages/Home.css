@@ -44,12 +44,14 @@
 .hero-actions .btn.red {
   background: #b93a3a;
   color: white;
+  text-decoration: none;
 }
 
 .hero-actions .btn.white {
   border: 2px solid #b93a3a;
   background: white;
   color: #b93a3a;
+  text-decoration: none;
 }
 
 .hero-content-right {
