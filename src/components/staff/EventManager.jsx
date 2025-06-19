@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import "../../assets/css/components/staff/EventManager.css";
 
 const EventManager = () => {
   const [events, setEvents] = useState([]);
@@ -6,17 +7,16 @@ const EventManager = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    date: '',
-    time: '',
-    location: '',
-    address: '',
-    capacity: '',
-    requirements: '',
-    contact: '',
-    status: 'active'
+    title: "",
+    description: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    location: "",
+    status: "UPCOMING",
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
     fetchEvents();
@@ -28,68 +28,81 @@ const EventManager = () => {
       const mockEvents = [
         {
           id: 1,
-          title: 'Ngày hội hiến máu nhân đạo 2024',
-          description: 'Chương trình hiến máu lớn nhất trong năm',
-          date: '2024-04-15',
-          time: '08:00',
-          location: 'Công viên Tao Đàn',
-          address: '37 Điện Biên Phủ, Quận 1, TP.HCM',
-          capacity: 500,
-          registered: 245,
-          requirements: 'Độ tuổi 18-60, cân nặng trên 45kg',
-          contact: '0901234567',
-          status: 'active',
-          createdAt: '2024-03-01T10:00:00Z'
+          title: "Ngày hội hiến máu nhân đạo 2024",
+          description: "Chương trình hiến máu lớn nhất trong năm",
+          date: "2024-08-05",
+          startTime: "08:00",
+          endTime: "16:00",
+          location: "Công viên Tao Đàn",
+          status: "UPCOMING",
+          imageUrl: "",
         },
         {
           id: 2,
-          title: 'Hiến máu tình nguyện tại trường ĐH',
-          description: 'Chương trình hiến máu cho sinh viên',
-          date: '2024-04-20',
-          time: '09:00',
-          location: 'Đại học Bách Khoa',
-          address: '268 Lý Thường Kiệt, Quận 10, TP.HCM',
-          capacity: 200,
-          registered: 89,
-          requirements: 'Sinh viên, độ tuổi 18-25',
-          contact: '0987654321',
-          status: 'active',
-          createdAt: '2024-03-05T14:30:00Z'
-        }
+          title: "Hiến máu tình nguyện tại trường ĐH",
+          description: "Chương trình hiến máu cho sinh viên",
+          date: "2024-08-10",
+          startTime: "09:00",
+          endTime: "15:00",
+          location: "Đại học Bách Khoa",
+          status: "UPCOMING",
+          imageUrl: "",
+        },
       ];
       setEvents(mockEvents);
     } catch (error) {
-      console.error('Error fetching events:', error);
+      console.error("Error fetching events:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewUrl(URL.createObjectURL(file)); // Tạo URL xem trước
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const form = new FormData();
+      Object.keys(formData).forEach((key) => {
+        form.append(key, formData[key]);
+      });
+      if (imageFile) {
+        form.append("image", imageFile);
+      }
+
       if (editingEvent) {
-        const updatedEvents = events.map(event =>
+        // Update (giả lập)
+        const updatedEvents = events.map((event) =>
           event.id === editingEvent.id
-            ? { ...event, ...formData, id: editingEvent.id }
+            ? {
+                ...formData,
+                id: editingEvent.id,
+                imageUrl: previewUrl || event.imageUrl,
+              }
             : event
         );
         setEvents(updatedEvents);
-        alert('Cập nhật sự kiện thành công!');
+        alert("Cập nhật sự kiện thành công!");
       } else {
+        // Create (giả lập)
         const newEvent = {
           ...formData,
           id: Date.now(),
-          registered: 0,
-          createdAt: new Date().toISOString()
+          imageUrl: previewUrl,
         };
         setEvents([newEvent, ...events]);
-        alert('Tạo sự kiện thành công!');
+        alert("Tạo sự kiện thành công!");
       }
       resetForm();
     } catch (error) {
-      console.error('Error saving event:', error);
-      alert('Có lỗi xảy ra. Vui lòng thử lại.');
+      console.error("Error saving event:", error);
+      alert("Có lỗi xảy ra. Vui lòng thử lại.");
     }
   };
 
@@ -99,51 +112,49 @@ const EventManager = () => {
       title: event.title,
       description: event.description,
       date: event.date,
-      time: event.time,
+      startTime: event.startTime,
+      endTime: event.endTime,
       location: event.location,
-      address: event.address,
-      capacity: event.capacity.toString(),
-      requirements: event.requirements,
-      contact: event.contact,
-      status: event.status
+      status: event.status,
     });
+    setPreviewUrl(event.imageUrl || "");
+    setImageFile(null);
     setShowForm(true);
   };
 
   const handleDelete = async (eventId) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa sự kiện này?')) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
       try {
-        setEvents(events.filter(event => event.id !== eventId));
-        alert('Xóa sự kiện thành công!');
+        setEvents(events.filter((event) => event.id !== eventId));
+        alert("Xóa sự kiện thành công!");
       } catch (error) {
-        console.error('Error deleting event:', error);
-        alert('Có lỗi xảy ra khi xóa sự kiện.');
+        console.error("Error deleting event:", error);
+        alert("Có lỗi xảy ra khi xóa sự kiện.");
       }
     }
   };
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      description: '',
-      date: '',
-      time: '',
-      location: '',
-      address: '',
-      capacity: '',
-      requirements: '',
-      contact: '',
-      status: 'active'
+      title: "",
+      description: "",
+      date: "",
+      startTime: "",
+      endTime: "",
+      location: "",
+      status: "UPCOMING",
     });
+    setImageFile(null);
+    setPreviewUrl("");
     setEditingEvent(null);
     setShowForm(false);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -155,10 +166,7 @@ const EventManager = () => {
     <div className="event-manager">
       <div className="page-header">
         <h1>Quản Lý Sự Kiện</h1>
-        <button 
-          className="add-btn"
-          onClick={() => setShowForm(true)}
-        >
+        <button className="add-btn" onClick={() => setShowForm(true)}>
           Thêm Sự Kiện Mới
         </button>
       </div>
@@ -167,48 +175,127 @@ const EventManager = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>{editingEvent ? 'Chỉnh Sửa Sự Kiện' : 'Thêm Sự Kiện Mới'}</h2>
-              <button className="close-btn" onClick={resetForm}>×</button>
+              <h2>{editingEvent ? "Chỉnh Sửa Sự Kiện" : "Thêm Sự Kiện Mới"}</h2>
+              <button className="close-btn" onClick={resetForm}>
+                ×
+              </button>
             </div>
 
             <form onSubmit={handleSubmit} className="event-form">
-              {/* ... giữ nguyên phần form input giống như bạn đã viết */}
+              <input
+                type="text"
+                name="title"
+                placeholder="Tiêu đề"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+              />
+              <textarea
+                name="description"
+                placeholder="Mô tả"
+                value={formData.description}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="time"
+                name="startTime"
+                value={formData.startTime}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="time"
+                name="endTime"
+                value={formData.endTime}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="text"
+                name="location"
+                placeholder="Địa điểm"
+                value={formData.location}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              {previewUrl && (
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="event-image-preview"
+                />
+              )}
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+              >
+                <option value="UPCOMING">Sắp diễn ra</option>
+                <option value="ONGOING">Đang diễn ra</option>
+                <option value="COMPLETED">Đã kết thúc</option>
+              </select>
+              <button type="submit">
+                {editingEvent ? "Cập nhật" : "Tạo sự kiện"}
+              </button>
             </form>
           </div>
         </div>
       )}
 
       <div className="events-grid">
-        {events.map(event => (
+        {events.map((event) => (
           <div key={event.id} className="event-card">
             <div className="event-header">
               <h3>{event.title}</h3>
-              <div className={`status-badge status-${event.status}`}>
-                {event.status === 'active' ? 'Hoạt động' : 
-                 event.status === 'inactive' ? 'Tạm dừng' : 'Hoàn thành'}
+              <div
+                className={`status-badge status-${event.status.toLowerCase()}`}
+              >
+                {event.status === "UPCOMING"
+                  ? "Sắp diễn ra"
+                  : event.status === "ONGOING"
+                  ? "Đang diễn ra"
+                  : "Đã kết thúc"}
               </div>
             </div>
 
             <div className="event-content">
               <p className="description">{event.description}</p>
               <div className="event-details">
-                <div><strong>Thời gian:</strong> {event.date} lúc {event.time}</div>
-                <div><strong>Địa điểm:</strong> {event.location}</div>
-                <div><strong>Địa chỉ:</strong> {event.address}</div>
-                <div><strong>Đăng ký:</strong> {event.registered}/{event.capacity} người</div>
-                <div><strong>Liên hệ:</strong> {event.contact}</div>
+                <div>
+                  <strong>Ngày:</strong> {event.date}
+                </div>
+                <div>
+                  <strong>Giờ:</strong> {event.startTime} - {event.endTime}
+                </div>
+                <div>
+                  <strong>Địa điểm:</strong> {event.location}
+                </div>
               </div>
-              <div className="progress-bar">
-                <div 
-                  className="progress-fill"
-                  style={{ width: `${(event.registered / event.capacity) * 100}%` }}
-                />
-              </div>
+              {event.imageUrl && (
+                <img src={event.imageUrl} alt="Event" className="event-image" />
+              )}
             </div>
 
             <div className="event-actions">
               <button onClick={() => handleEdit(event)}>Chỉnh sửa</button>
-              <button onClick={() => handleDelete(event.id)} className="delete-btn">
+              <button
+                onClick={() => handleDelete(event.id)}
+                className="delete-btn"
+              >
                 Xóa
               </button>
             </div>

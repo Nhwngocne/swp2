@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../services/AuthContext.jsx";
 
-import '../../assets/css/components/common/navbar.css';
-import logo from '../../assets/img/logo.png';
-import Register from '../../pages/Register.jsx';
+import "../../assets/css/components/common/navbar.css";
+import logo from "../../assets/img/logo.png";
+import Register from "../../pages/Register.jsx";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -16,14 +16,19 @@ const Navbar = () => {
 
   const userDropdownRef = useRef(null);
   const notifDropdownRef = useRef(null);
-
+  
   const handleLogout = async () => {
     await logout(); // Đợi logout xong
     navigate("/"); // Điều hướng về trang home
   };
 
   const getInitials = (fullName) => {
-    return fullName?.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+    return fullName
+      ?.split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   // Dummy notifications
@@ -64,16 +69,22 @@ const Navbar = () => {
   // Auto-close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target)
+      ) {
         setDropdownOpen(false);
       }
-      if (notifDropdownRef.current && !notifDropdownRef.current.contains(event.target)) {
+      if (
+        notifDropdownRef.current &&
+        !notifDropdownRef.current.contains(event.target)
+      ) {
         setNotifOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -91,31 +102,43 @@ const Navbar = () => {
         <div className="navbar-auth">
           {!isLoggedIn ? (
             <>
-              <Link to="/register" className="top-link">Đăng kí</Link>
-              <Link to="/login" className="top-link login-btn">Đăng nhập</Link>
+              <Link to="/register" className="top-link">
+                Đăng kí
+              </Link>
+              <Link to="/login" className="top-link login-btn">
+                Đăng nhập
+              </Link>
             </>
           ) : (
             <div className="user-dropdown" ref={userDropdownRef}>
-              <div className="user-toggle" onClick={() => {
-                      setDropdownOpen(!dropdownOpen);
-                      setNotifOpen(false); // 🔒 Tắt dropdown thông báo
-                    }}>
-                <div className="user-avatar">{getInitials(user.fullName || user.name)}</div>
+              <div
+                className="user-toggle"
+                onClick={() => {
+                  setDropdownOpen(!dropdownOpen);
+                  setNotifOpen(false); // 🔒 Tắt dropdown thông báo
+                }}
+              >
+                <div className="user-avatar">
+                  {getInitials(user.fullName || user.name)}
+                </div>
                 <span className="user-name">{user.fullName || user.name}</span>
                 <span className="dropdown-icon">
                   <i className="fa-solid fa-chevron-down"></i>
-                </span>            
+                </span>
               </div>
 
               <div className="notification-wrapper" ref={notifDropdownRef}>
-           <div className="notification-bell" onClick={() => {
-                        setNotifOpen(!notifOpen);
-                        setDropdownOpen(false); // 🔒 Tắt dropdown user
-                      }}>
+                <div
+                  className="notification-bell"
+                  onClick={() => {
+                    setNotifOpen(!notifOpen);
+                    setDropdownOpen(false); // 🔒 Tắt dropdown user
+                  }}
+                >
                   <i className="fa-solid fa-bell notification-icon"></i>
-                  {notifications.filter(n => !n.read).length > 0 && (
+                  {notifications.filter((n) => !n.read).length > 0 && (
                     <span className="notification-badge">
-                      {notifications.filter(n => !n.read).length}
+                      {notifications.filter((n) => !n.read).length}
                     </span>
                   )}
                 </div>
@@ -124,7 +147,7 @@ const Navbar = () => {
                   <div className="notification-dropdown">
                     <strong>Thông báo</strong>
                     <div className="notification-list">
-                      {notifications.map(n => (
+                      {notifications.map((n) => (
                         <div key={n.id} className="notification-item">
                           <div className="noti-title">{n.title}</div>
                           <div className="noti-content">{n.content}</div>
@@ -138,15 +161,21 @@ const Navbar = () => {
 
               {dropdownOpen && (
                 <div className="user-dropdown-menu">
-                <Link to="/profile" className="dropdown-btn">
-  <i className="fa-solid fa-user" style={{ marginRight: 8 }}></i>
-  Thông tin cá nhân
-</Link>
+                  <Link to="/profile" className="dropdown-btn">
+                    <i
+                      className="fa-solid fa-user"
+                      style={{ marginRight: 8 }}
+                    ></i>
+                    Thông tin cá nhân
+                  </Link>
 
-<button className="dropdown-btn" onClick={handleLogout}>
-  <i className="fa-solid fa-right-from-bracket" style={{ marginRight: 8 }}></i>
-  Đăng xuất
-</button>
+                  <button className="dropdown-btn" onClick={handleLogout}>
+                    <i
+                      className="fa-solid fa-right-from-bracket"
+                      style={{ marginRight: 8 }}
+                    ></i>
+                    Đăng xuất
+                  </button>
                 </div>
               )}
             </div>
@@ -154,19 +183,33 @@ const Navbar = () => {
         </div>
       </div>
 
-{/* thanh headr */}
+      {/* thanh headr */}
       <nav className="navbar-bottom">
-        <Link to="/" className="nav-item active">Trang chủ</Link>
-        <Link to="/faq" className="nav-item">Hỏi - Đáp</Link>
-        <Link to="/news" className="nav-item">Tin tức</Link>
-        <Link to="/search" className="nav-item">Tra cứu</Link>
-        <Link to="/contact" className="nav-item">Liên hệ</Link>
-        {user?.role === 'MEMBER' && (
-    <Link to="/donation-history" className="nav-item">Lịch sử hiến máu</Link>
-  )}
 
+        <Link to="/" className="nav-item active">
+          Trang chủ
+        </Link>
+        <Link to="/faq" className="nav-item">
+          Hỏi - Đáp
+        </Link>
+        <Link to="/news" className="nav-item">
+          Tin tức
+        </Link>
+        <Link to="/search" className="nav-item">
+          Tra cứu
+        </Link>
+         <Link to="/contact" className="nav-item">
+          Liên hệ
+        </Link>
+
+        {user?.role === 'MEMBER' && (
+          <Link to="/donation-history" className="nav-item">
+            Lịch sử hiến máu
+          </Link>
+        )}
       </nav>
     </header>
+  
   );
 };
 

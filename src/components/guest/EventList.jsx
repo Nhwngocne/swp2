@@ -1,48 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEvents } from '../../services/EventContext'; // Import context
 import '../../assets/css/components/guest/EventList.css';
 
-// Dữ liệu sự kiện
-const eventsData = [
-  {
-    id: 1,
-    title: 'Hiến máu nhân đạo tại Bệnh viện Chợ Rẫy',
-    date: '2024-06-15',
-    time: '08:00 - 17:00',
-    location: '201B Nguyễn Chí Thanh, Q.5, TP.HCM',
-    description: 'Chương trình hiến máu nhân đạo nhằm cứu giúp các bệnh nhân cần máu cấp cứu',
-    image: '/api/placeholder/400/200',
-    status: 'upcoming'
-  },
-  {
-    id: 2,
-    title: 'Ngày hội hiến máu tình nguyện',
-    date: '2024-06-20',
-    time: '07:00 - 16:00',
-    location: 'Công viên Tao Đàn, Q.1, TP.HCM',
-    description: 'Ngày hội hiến máu lớn với sự tham gia của nhiều tình nguyện viên',
-    image: '/api/placeholder/400/200',
-    status: 'upcoming'
-  },
-  {
-    id: 3,
-    title: 'Hiến máu cứu người - Vì một cộng đồng khỏe mạnh',
-    date: '2024-05-30',
-    time: '08:30 - 16:30',
-    location: 'Trường ĐH Bách khoa TP.HCM',
-    description: 'Chương trình hiến máu tại trường đại học với sự tham gia của sinh viên',
-    image: '/api/placeholder/400/200',
-    status: 'completed'
-  }
-];
-
-// Export function để lấy dữ liệu events
-export const getEventsData = () => {
-  return eventsData;
-};
-
 const EventList = () => {
-  const [events] = useState(eventsData);
+  const { events, loading, error } = useEvents(); // Lấy dữ liệu từ context
   const [filter, setFilter] = useState('all');
   const navigate = useNavigate();
 
@@ -66,6 +28,16 @@ const EventList = () => {
     // Chuyển hướng đến trang form hiến máu và truyền eventId
     navigate('/donation-form', { state: { eventId: eventId } });
   };
+
+  // Hiển thị trạng thái loading
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '20px' }}>Đang tải...</div>;
+  }
+
+  // Hiển thị lỗi nếu có
+  if (error) {
+    return <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>Lỗi: {error}</div>;
+  }
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -277,7 +249,7 @@ const EventList = () => {
           padding: '60px 20px',
           background: 'white',
           borderRadius: '12px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+          boxShadow: '0 2 alone:10px rgba(0,0,0,0.1)'
         }}>
           <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🔍</div>
           <h3 style={{ color: '#2c3e50', marginBottom: '10px' }}>

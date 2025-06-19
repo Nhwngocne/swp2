@@ -127,8 +127,9 @@ const Home = () => {
 
   return (
     <div className="home-page">
+{/* <<<<<<< HEAD
       {/* Hero Section */}
-      <section className="hero-section-implant">
+      {/* <section className="hero-section-implant">
         <div className="container hero-layout">
           <div className="hero-content-left">
             <span className="hero-brand">BỆNH VIỆN</span>
@@ -141,13 +142,46 @@ const Home = () => {
             <div className="hero-actions">
               <button className="btn red">Đặt Lịch Khám</button>
               <button className="btn white">Tìm Hiểu Thêm</button>
-            </div>
+            </div> */}
+{/* ======= */} 
+
+      {/* Hero Section ĐẦU TRANG */}
+<section className="hero-section-implant">
+  <div className="container hero-layout">
+    <div className="hero-content-left">
+      <span className="hero-brand">BỆNH VIỆN</span>
+      <h1>
+        <span className="highlight">HIẾN MÁU VÌ CỘNG ĐỒNG </span><br />
+        
+      </h1>
+      <div className="hero-description">
+        Hiến máu không chỉ là một hành động nhân văn cao cả, mà còn là cầu nối yêu thương giữa những trái tim đang cần sự sống.<br /> 
+        Mỗi giọt máu bạn trao đi hôm nay có thể đem lại hy vọng sống cho một người bệnh, một đứa trẻ, hoặc một người mẹ đang giành giật sự sống từng giây.<br />
+        <b>Hãy cùng chúng tôi lan tỏa thông điệp nhân ái và xây dựng một cộng đồng khoẻ mạnh – nơi mà mỗi người đều có thể trở thành người hùng thầm lặng chỉ bằng một hành động đơn giản.</b>
+
+      </div>
+      <div className="hero-actions">
+        <Link to="/events" className="btn red">Đặt Lịch Khám</Link>
+        <button className="btn white">Tìm Hiểu Thêm</button>
+      </div>
+    </div>
+
+      <div className="hero-image-group">
+        <img src={imgMain} alt="..." className="hero-img main" />
+        <img src={imgSub1} alt="..." className="hero-img sub1" />
+        <img src={imgSub2} alt="..." className="hero-img sub2" />
+      </div>
+  </div>
+</section>
+
+            {/* Quyền lợi của người hiến máu */}
+      <section className="benefit-section">
+        <div className="benefit-container">
+          <div className="benefit-left">
+            {/* <img src={rightsList[0].img} alt="Quyền lợi" className="benefit-img" /> */}
+
           </div>
-          <div className="hero-image-group">
-            <img src={imgMain} alt="..." className="hero-img main" />
-            <img src={imgSub1} alt="..." className="hero-img sub1" />
-            <img src={imgSub2} alt="..." className="hero-img sub2" />
-          </div>
+          
         </div>
       </section>
 

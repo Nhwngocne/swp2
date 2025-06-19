@@ -34,12 +34,17 @@ authAPI.interceptors.response.use(
       error.config?.url?.includes("/auth/login") ||
       error.config?.url?.includes("/auth/register") ||
       error.config?.url?.includes("/auth/loginGoogle") ||
-      error.config?.url?.includes("/reset-password");
+      error.config?.url?.includes("/reset-password") ||
+      error.config?.url?.includes("/register/send-otp") ||    
+      error.config?.url?.includes("/register/verify-otp");
 
     if (error.response?.status === 401 && !isAuthFreeEndpoint) {
+      console.log("401 Unauthorized - URL:", error.config?.url, "Redirecting to /auth/login"); // Debug
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/auth/login";
+    }else if (error.response) {
+      console.log("API error:", error.config?.url, error.response.status, error.response.data); // Debug
     }
 
     return Promise.reject(error);
@@ -81,12 +86,21 @@ export const authService = {
   resetPassword: (token, newPassword) =>
     authAPI.post("/reset-password", { token, newPassword }),
 
-  // Gửi mã OTP để xác thực email
+  // verify otp(forget password)
   verifyOtp: (otp, email) =>
     authAPI.post(`/forgotPassword/verifyOtp/${otp}/${email}`),
 
-  // Verify email
-  verifyEmail: (email) => authAPI.post(`/forgotPassword/verifyMail/${email}`),
+  // Verify email(forget password)
+  verifyEmail: (email) => 
+    authAPI.post(`/forgotPassword/verifyMail/${email}`),
+
+  //Verify email(register)
+  sendOtp: (email) => 
+    authAPI.post("/register/send-otp", { email }),
+
+  // verify otp(register)
+  verifyOtpRegis: (otp, email) => 
+    authAPI.post("/register/verify-otp", { otp, email }),
 
   getAllUsers: () => authAPI.get("/members"),
   // Đăng nhập bằng Google
