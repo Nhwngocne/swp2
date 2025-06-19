@@ -18,7 +18,7 @@ const Navbar = () => {
 
   const userDropdownRef = useRef(null);
   const notifDropdownRef = useRef(null);
-  
+
   const handleLogout = async () => {
     await logout(); // Đợi logout xong
     navigate("/"); // Điều hướng về trang home
@@ -197,21 +197,22 @@ const Navbar = () => {
         <Link to="/news" className="nav-item">
           Tin tức
         </Link>
-               <Link to="/lookUp" className="nav-item">Tra cứu</Link>
+        <Link to="/lookUp" className="nav-item">Tra cứu</Link>
 
-         <Link to="/contact" className="nav-item">
+        <Link to="/contact" className="nav-item">
           Liên hệ
         </Link>
 
-        {user?.role === 'MEMBER' && (
-          <Link to="/donation-history" className="nav-item">
+       
+          <Link to="/donationHistory" className="nav-item">
             Lịch sử hiến máu
           </Link>
-        )}
+        
+
 
       </nav>
     </header>
-  
+
   );
 };
 

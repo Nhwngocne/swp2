@@ -94,8 +94,9 @@ const AppContent = () => {
           <Route path="/events" element={<ProtectedRoute><EventProvider><EventList /></EventProvider></ProtectedRoute>}/>
 
           {/* Member Routes */}
+          
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />
-          <Route path="/donation-history" element={<ProtectedRoute requiredRole="MEMBER"><DonationHistory /></ProtectedRoute>} />
+          <Route path="/donationHistory" element={<ProtectedRoute requiredRole="MEMBER"><DonationHistory /></ProtectedRoute>} />
           <Route path="/emergency" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyList /></ProtectedRoute>} />
 
 
