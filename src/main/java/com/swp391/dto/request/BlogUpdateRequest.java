@@ -2,6 +2,7 @@ package com.swp391.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -12,6 +13,12 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BlogUpdateRequest {
     String title;
+    String summary;
     String content;
+    String author;
+    String category;
     LocalDate publishedDate;
+
+    MultipartFile image;              // Ảnh đại diện chính
+   // Danh sách ảnh phụ
 }
