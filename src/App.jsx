@@ -89,7 +89,7 @@ const AppContent = () => {
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/events" element={<ProtectedRoute><EventProvider><EventList /></EventProvider></ProtectedRoute>}/>
+          <Route path="/events" element={<EventProvider><EventList /></EventProvider>}/>
 
           {/* Member Routes */}
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />

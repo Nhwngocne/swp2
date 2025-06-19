@@ -54,13 +54,11 @@ export const EventProvider = ({ children }) => {
       setLoading(true);
       console.log("Fetching events from /swp391/events");
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found. Please login.");
-      }
       const source = axios.CancelToken.source();
       const response = await eventService.getEvents({
-        cancelToken: source.token,
-      });
+      cancelToken: source.token,
+      headers: token ? { Authorization: `Bearer ${token}` } : {}, // Chỉ thêm header nếu có token
+    });
       console.log("API response:", response.data);
       const mappedEvents = response.data.result.map(mapEvent);
       setEvents(mappedEvents);
@@ -281,14 +279,6 @@ export const EventProvider = ({ children }) => {
 
   useEffect(() => {
     console.log("EventProvider mounted");
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.log("No token found, skipping fetchEvents");
-      setError("Vui lòng đăng nhập để xem sự kiện");
-      setLoading(false);
-      return;
-    }
-
     fetchEvents();
 
     return () => {

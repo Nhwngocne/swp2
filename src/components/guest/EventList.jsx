@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../../services/EventContext'; // Import context
 import '../../assets/css/components/guest/EventList.css';
+import { useAuth } from '../../services/AuthContext';
 
 const EventList = () => {
+  const { user } = useAuth();
   const { events, loading, error } = useEvents(); // Lấy dữ liệu từ context
   const [filter, setFilter] = useState('all');
   const navigate = useNavigate();
@@ -25,8 +27,13 @@ const EventList = () => {
 
   // Hàm xử lý khi click đăng ký tham gia
   const handleRegisterClick = (eventId) => {
-    // Chuyển hướng đến trang form hiến máu và truyền eventId
-    navigate('/donation-form', { state: { eventId: eventId } });
+    if (!user) {
+      // Nếu chưa đăng nhập, chuyển hướng đến trang login với state để quay lại
+      navigate('/login', { state: { from: '/donation-form', eventId } });
+    } else {
+      // Nếu đã đăng nhập, chuyển hướng đến donation-form
+      navigate('/donation-form', { state: { eventId } });
+    }
   };
 
   // Hiển thị trạng thái loading
@@ -70,7 +77,7 @@ const EventList = () => {
       }}>
         {[
           { key: 'all', label: 'Tất cả' },
-          { key: 'upcoming', label: 'Sắp diễn ra' },
+          { key: 'UPCOMING', label: 'Sắp diễn ra' },
           { key: 'completed', label: 'Đã hoàn thành' }
         ].map(btn => (
           <button
@@ -150,14 +157,14 @@ const EventList = () => {
               <div style={{
                 display: 'inline-block',
                 padding: '4px 12px',
-                background: event.status === 'upcoming' ? '#2ecc71' : '#95a5a6',
+                background: event.status === 'UPCOMING' ? '#2ecc71' : '#95a5a6',
                 color: 'white',
                 borderRadius: '15px',
                 fontSize: '12px',
                 fontWeight: 'bold',
                 marginBottom: '15px'
               }}>
-                {event.status === 'upcoming' ? 'SẮP DIỄN RA' : 'ĐÃ HOÀN THÀNH'}
+                {event.status === 'UPCOMING' ? 'SẮP DIỄN RA' : 'ĐÃ HOÀN THÀNH'}
               </div>
 
               <h3 style={{
@@ -212,31 +219,31 @@ const EventList = () => {
               </p>
 
               <button 
-                onClick={() => event.status === 'upcoming' && handleRegisterClick(event.id)}
+                onClick={() => event.status === 'UPCOMING' && handleRegisterClick(event.id)}
                 style={{
                   width: '100%',
                   padding: '12px',
-                  background: event.status === 'upcoming' ? '#e74c3c' : '#95a5a6',
+                  background: event.status === 'UPCOMING' ? '#e74c3c' : '#95a5a6',
                   color: 'white',
                   border: 'none',
                   borderRadius: '8px',
                   fontSize: '16px',
                   fontWeight: '500',
-                  cursor: event.status === 'upcoming' ? 'pointer' : 'not-allowed',
+                  cursor: event.status === 'UPCOMING' ? 'pointer' : 'not-allowed',
                   transition: 'background 0.3s'
                 }}
                 onMouseEnter={(e) => {
-                  if (event.status === 'upcoming') {
+                  if (event.status === 'UPCOMING') {
                     e.target.style.background = '#c0392b';
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (event.status === 'upcoming') {
+                  if (event.status === 'UPCOMING') {
                     e.target.style.background = '#e74c3c';
                   }
                 }}
               >
-                {event.status === 'upcoming' ? 'Đăng ký tham gia' : 'Đã kết thúc'}
+                {event.status === 'UPCOMING' ? 'Đăng ký tham gia' : 'Đã kết thúc'}
               </button>
             </div>
           </div>
