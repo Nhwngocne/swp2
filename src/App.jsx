@@ -98,7 +98,7 @@ const AppContent = () => {
 
 
           {/* Staff Routes */}
-          <Route path="/manage-events" element={<ProtectedRoute requiredRole="STAFF"><EventManager /></ProtectedRoute>} />
+          <Route path="/manage-events" element={<ProtectedRoute requiredRole="STAFF"><EventProvider><EventManager /></EventProvider></ProtectedRoute>} />
           <Route path="/blood-inventory" element={<ProtectedRoute requiredRole="STAFF"><BloodInventory /></ProtectedRoute>} />
           <Route path="/manage-members" element={<ProtectedRoute requiredRole="STAFF"><MemberManager /></ProtectedRoute>} />
 

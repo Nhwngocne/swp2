@@ -1,108 +1,60 @@
-import React, { useState, useEffect } from "react";
-import "../../assets/css/components/staff/EventManager.css";
+import React, { useState, useEffect } from 'react';
+import { useEvents } from '../../services/EventContext';
+import { useAuth } from '../../services/AuthContext';
+import '../../assets/css/components/staff/EventManager.css';
 
 const EventManager = () => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { events, loading, error, fetchEvents, createEvent, updateEvent, deleteEvent } = useEvents();
+  const { isStaff, isAdmin } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    date: "",
-    startTime: "",
-    endTime: "",
-    location: "",
-    status: "UPCOMING",
+    title: '',
+    description: '',
+    date: '',
+    startTime: '',
+    endTime: '',
+    location: '',
+    status: 'UPCOMING',
   });
   const [imageFile, setImageFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewUrl, setPreviewUrl] = useState('');
 
   useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
-    try {
-      setLoading(true);
-      const mockEvents = [
-        {
-          id: 1,
-          title: "Ngày hội hiến máu nhân đạo 2024",
-          description: "Chương trình hiến máu lớn nhất trong năm",
-          date: "2024-08-05",
-          startTime: "08:00",
-          endTime: "16:00",
-          location: "Công viên Tao Đàn",
-          status: "UPCOMING",
-          imageUrl: "",
-        },
-        {
-          id: 2,
-          title: "Hiến máu tình nguyện tại trường ĐH",
-          description: "Chương trình hiến máu cho sinh viên",
-          date: "2024-08-10",
-          startTime: "09:00",
-          endTime: "15:00",
-          location: "Đại học Bách Khoa",
-          status: "UPCOMING",
-          imageUrl: "",
-        },
-      ];
-      setEvents(mockEvents);
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    } finally {
-      setLoading(false);
+    if (isStaff || isAdmin) {
+      fetchEvents();
+    } else {
+      console.log('Unauthorized access to EventManager');
     }
-  };
+  }, [isStaff, isAdmin]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file)); // Tạo URL xem trước
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const form = new FormData();
-      Object.keys(formData).forEach((key) => {
-        form.append(key, formData[key]);
-      });
-      if (imageFile) {
-        form.append("image", imageFile);
-      }
-
+      const data = { ...formData, image: imageFile };
+      let result;
       if (editingEvent) {
-        // Update (giả lập)
-        const updatedEvents = events.map((event) =>
-          event.id === editingEvent.id
-            ? {
-                ...formData,
-                id: editingEvent.id,
-                imageUrl: previewUrl || event.imageUrl,
-              }
-            : event
-        );
-        setEvents(updatedEvents);
-        alert("Cập nhật sự kiện thành công!");
+        result = await updateEvent(editingEvent.id, data);
       } else {
-        // Create (giả lập)
-        const newEvent = {
-          ...formData,
-          id: Date.now(),
-          imageUrl: previewUrl,
-        };
-        setEvents([newEvent, ...events]);
-        alert("Tạo sự kiện thành công!");
+        result = await createEvent(data);
       }
-      resetForm();
+      if (result.success) {
+        alert(result.message);
+        resetForm();
+      } else {
+        alert(result.error);
+      }
     } catch (error) {
-      console.error("Error saving event:", error);
-      alert("Có lỗi xảy ra. Vui lòng thử lại.");
+      console.error('Error saving event:', error);
+      alert('Có lỗi xảy ra. Vui lòng thử lại.');
     }
   };
 
@@ -112,40 +64,44 @@ const EventManager = () => {
       title: event.title,
       description: event.description,
       date: event.date,
-      startTime: event.startTime,
-      endTime: event.endTime,
+      startTime: event.startTime.split(':').slice(0, 2).join(':'), // HH:mm
+      endTime: event.endTime.split(':').slice(0, 2).join(':'), // HH:mm
       location: event.location,
       status: event.status,
     });
-    setPreviewUrl(event.imageUrl || "");
+    setPreviewUrl(event.image || '');
     setImageFile(null);
     setShowForm(true);
   };
 
   const handleDelete = async (eventId) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
+    if (window.confirm('Bạn có chắc chắn muốn xóa sự kiện này?')) {
       try {
-        setEvents(events.filter((event) => event.id !== eventId));
-        alert("Xóa sự kiện thành công!");
+        const result = await deleteEvent(eventId);
+        if (result.success) {
+          alert(result.message);
+        } else {
+          alert(result.error);
+        }
       } catch (error) {
-        console.error("Error deleting event:", error);
-        alert("Có lỗi xảy ra khi xóa sự kiện.");
+        console.error('Error deleting event:', error);
+        alert('Có lỗi xảy ra khi xóa sự kiện.');
       }
     }
   };
 
   const resetForm = () => {
     setFormData({
-      title: "",
-      description: "",
-      date: "",
-      startTime: "",
-      endTime: "",
-      location: "",
-      status: "UPCOMING",
+      title: '',
+      description: '',
+      date: '',
+      startTime: '',
+      endTime: '',
+      location: '',
+      status: 'UPCOMING',
     });
     setImageFile(null);
-    setPreviewUrl("");
+    setPreviewUrl('');
     setEditingEvent(null);
     setShowForm(false);
   };
@@ -158,8 +114,16 @@ const EventManager = () => {
     }));
   };
 
+  if (!(isStaff || isAdmin)) {
+    return <div>Bạn không có quyền truy cập trang này.</div>;
+  }
+
   if (loading) {
     return <div className="loading">Đang tải danh sách sự kiện...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
   }
 
   return (
@@ -175,7 +139,7 @@ const EventManager = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>{editingEvent ? "Chỉnh Sửa Sự Kiện" : "Thêm Sự Kiện Mới"}</h2>
+              <h2>{editingEvent ? 'Chỉnh Sửa Sự Kiện' : 'Thêm Sự Kiện Mới'}</h2>
               <button className="close-btn" onClick={resetForm}>
                 ×
               </button>
@@ -249,7 +213,7 @@ const EventManager = () => {
                 <option value="COMPLETED">Đã kết thúc</option>
               </select>
               <button type="submit">
-                {editingEvent ? "Cập nhật" : "Tạo sự kiện"}
+                {editingEvent ? 'Cập nhật' : 'Tạo sự kiện'}
               </button>
             </form>
           </div>
@@ -264,11 +228,11 @@ const EventManager = () => {
               <div
                 className={`status-badge status-${event.status.toLowerCase()}`}
               >
-                {event.status === "UPCOMING"
-                  ? "Sắp diễn ra"
-                  : event.status === "ONGOING"
-                  ? "Đang diễn ra"
-                  : "Đã kết thúc"}
+                {event.status === 'UPCOMING'
+                  ? 'Sắp diễn ra'
+                  : event.status === 'ONGOING'
+                  ? 'Đang diễn ra'
+                  : 'Đã kết thúc'}
               </div>
             </div>
 
@@ -279,14 +243,14 @@ const EventManager = () => {
                   <strong>Ngày:</strong> {event.date}
                 </div>
                 <div>
-                  <strong>Giờ:</strong> {event.startTime} - {event.endTime}
+                  <strong>Giờ:</strong> {event.time}
                 </div>
                 <div>
                   <strong>Địa điểm:</strong> {event.location}
                 </div>
               </div>
-              {event.imageUrl && (
-                <img src={event.imageUrl} alt="Event" className="event-image" />
+              {event.image && (
+                <img src={event.image} alt="Event" className="event-image" />
               )}
             </div>
 

@@ -4,23 +4,67 @@ const REST_API_BASE_URL = 'http://localhost:8080/swp391';
 
 const eventAPI = axios.create({
   baseURL: REST_API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 30000, // 30 giây
+  // headers: {
+  //   'Content-Type': 'application/json',
+  // },
+  timeout: 30000,
 });
 
 eventAPI.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    console.log('eventService request:', config.url, 'Token:', token || 'No token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else if (!config.url.includes('/auth')) {
+      console.warn('No token found for request:', config.url);
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('eventService request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+eventAPI.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('eventService error:', {
+      status: error.response?.status,
+      message: error.message,
+      url: error.config?.url,
+    });
+    if (error.response?.status === 401 && window.location.pathname !== '/login') {
+      console.log('401 detected, clearing auth data');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('role');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
 );
 
 export const eventService = {
+  // Lấy tất cả sự kiện
   getEvents: (config = {}) => eventAPI.get('/events', config),
+
+  // Lấy sự kiện theo ID
+  getEventById: (eventId, config = {}) => eventAPI.get(`/events/${eventId}`, config),
+
+  // Tạo sự kiện
+  createEvent: (formData, config = {}) =>
+  eventAPI.post('/events', formData, config), // Không cần headers ở đây
+
+
+  // Cập nhật sự kiện
+  updateEvent: (eventId, formData, config = {}) =>
+    eventAPI.put(`/events/${eventId}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      ...config,
+    }),
+
+  // Xóa sự kiện
+  deleteEvent: (eventId, config = {}) => eventAPI.delete(`/events/${eventId}`, config),
 };
