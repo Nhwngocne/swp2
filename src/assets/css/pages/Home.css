@@ -44,12 +44,14 @@
 .hero-actions .btn.red {
   background: #b93a3a;
   color: white;
+  text-decoration: none;
 }
 
 .hero-actions .btn.white {
   border: 2px solid #b93a3a;
   background: white;
   color: #b93a3a;
+  text-decoration: none;
 }
 
 .hero-content-right {
@@ -100,7 +102,29 @@
   z-index: 2;
 }
 
+.standards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
 
+.standard-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.standard-icon {
+  font-size: 1.6rem;
+  color: #375dc2;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
 @media (max-width: 900px) {
   .hero-section-implant {
     flex-direction: column;
@@ -119,4 +143,85 @@
   .img-main { width: 150px; height: 100px; left: 60px; }
   .img-sub1 { width: 100px; height: 80px; left: 0; top: 90px; }
   .img-sub2 { width: 100px; height: 80px; left: 120px; top: 120px; }
+}
+.achievements-section {
+  padding: 60px 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: 40px auto 0;
+}
+
+.achievement-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.achievement-card:hover {
+  transform: translateY(-6px);
+}
+
+.achievement-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.achievement-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #b93a3a;
+}
+
+.achievement-label {
+  font-size: 1rem;
+  margin-top: 6px;
+  color: #333;
+}
+.feedback-section {
+  padding: 60px 20px;
+  background: #fff;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feedback-card {
+  background-color: #fdfdfd;
+  margin: 16px;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+  transition: transform 0.3s;
+  height: 100%;
+}
+
+.feedback-card:hover {
+  transform: translateY(-5px);
+}
+
+.feedback-content {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.feedback-user {
+  font-weight: bold;
+  color: #b93a3a;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
 }

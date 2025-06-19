@@ -23,6 +23,7 @@ import Faq from './pages/Faq'; // ✅ Thêm Faq ở đây
 import DonationBloodForm from './pages/DonationBloodForm';
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyGmail from './pages/VerifyGmail';
+import LookUp from './pages/LookUp';
 
 // Guest Components
 import EventList from './components/guest/EventList';
@@ -86,6 +87,7 @@ const AppContent = () => {
           <Route path="/donation-blood-form" element={<DonationBloodForm />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/verifyGmail" element={<VerifyGmail />} />
+          <Route path="/lookUp" element={<LookUp />} />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

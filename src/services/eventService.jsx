@@ -14,10 +14,12 @@ eventAPI.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     console.log('eventService request:', config.url, 'Token:', token || 'No token');
-    // Bỏ qua yêu cầu token cho API lấy danh sách sự kiện
-    if (token && !config.url.includes('/events') && !config.url.includes('/auth')) {
+    // Chỉ bỏ qua token cho GET /events hoặc GET /events/:id
+    const isGetEvents = config.method === 'get' && 
+                       (config.url === '/events' || config.url.match(/^\/events\/\d+$/));
+    if (token && !isGetEvents && !config.url.includes('/auth')) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else if (!token && !config.url.includes('/events') && !config.url.includes('/auth')) {
+    } else if (!token && !isGetEvents && !config.url.includes('/auth')) {
       console.warn('No token found for request:', config.url);
     }
     return config;

@@ -2,9 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../services/AuthContext.jsx";
 
-import "../../assets/css/components/common/navbar.css";
-import logo from "../../assets/img/logo.png";
-import Register from "../../pages/Register.jsx";
+
+import '../../assets/css/components/common/navbar.css';
+import logo from '../../assets/img/logo.png';
+import Register from '../../pages/Register.jsx';
+import LookUp from '../../pages/LookUp.jsx';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -185,6 +187,7 @@ const Navbar = () => {
 
       {/* thanh headr */}
       <nav className="navbar-bottom">
+
         <Link to="/" className="nav-item active">
           Trang chủ
         </Link>
@@ -194,14 +197,21 @@ const Navbar = () => {
         <Link to="/news" className="nav-item">
           Tin tức
         </Link>
-        <Link to="/search" className="nav-item">
-          Tra cứu
-        </Link>
-        <Link to="/contact" className="nav-item">
+               <Link to="/lookUp" className="nav-item">Tra cứu</Link>
+
+         <Link to="/contact" className="nav-item">
           Liên hệ
         </Link>
+
+        {user?.role === 'MEMBER' && (
+          <Link to="/donation-history" className="nav-item">
+            Lịch sử hiến máu
+          </Link>
+        )}
+
       </nav>
     </header>
+  
   );
 };
 

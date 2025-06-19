@@ -4,6 +4,9 @@ import { Link, useLocation } from 'react-router-dom';
 const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
   const location = useLocation();
 
+  // 🚫 Không hiển thị sidebar nếu role là MEMBER
+  if (userRole === 'MEMBER') return null;
+
   const handleLinkClick = () => {
     setIsOpen(false);
   };
@@ -14,23 +17,10 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
 
   const getMenuItems = () => {
     const commonItems = [
-      //{ path: '/dashboard', label: 'Dashboard', icon: '📊' },
       { path: '/profile', label: 'Hồ sơ cá nhân', icon: '👤' },
     ];
 
-      const dashboardItem = userRole === 'ADMIN'
-    ? [{ path: '/dashboard', label: 'Dashboard', icon: '📊' }]
-    : [];
-
     switch (userRole) {
-      case 'MEMBER':
-        return [
-          ...commonItems,
-          { path: '/donation-history', label: 'Lịch sử hiến máu', icon: '🩸' },
-          //{ path: '/emergency', label: 'Yêu cầu cấp cứu', icon: '🚨' },
-          { path: '/events', label: 'Sự kiện hiến máu', icon: '📅' },
-        ];
-
       case 'STAFF':
         return [
           ...commonItems,
@@ -120,5 +110,4 @@ const getRoleText = (role) => {
       return 'Người dùng';
   }
 };
-
 export default Sidebar;
