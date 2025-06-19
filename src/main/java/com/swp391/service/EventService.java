@@ -12,6 +12,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
     import java.io.IOException;
@@ -45,17 +48,6 @@ public class EventService {
     public EventResponse updateEvent(int id, EventCreateRequest request) throws IOException {
         var event = eventRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EVENT_NOT_EXISTED));
-
-        // Verify staff ownership
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof JwtAuthenticationToken jwtToken)) {
-            throw new AppException(ErrorCode.UNAUTHORIZED);
-        }
-
-        String staffId = jwtToken.getToken().getClaimAsString("id");
-        if (!String.valueOf(event.getCreatedBy().getId()).equals(staffId)) {
-            throw new AppException(ErrorCode.FORBIDDEN);
-        }
 
         // Rest of the update logic remains the same
         if (request.getImage() != null && !request.getImage().isEmpty()) {
