@@ -2,6 +2,7 @@ package com.swp391.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,9 +14,11 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BlogCreateRequest {
     String title;
+    String summary;
     String content;
+    String author;
+    String category;
     LocalDate publishedDate;
-    Integer memberId; // ID của Member tạo blog
-    Integer adminId;  // nếu có admin liên quan
-    List<String> imageUrls; // danh sách đường dẫn ảnh
+
+    MultipartFile image;              // Ảnh đại diện chính
 }

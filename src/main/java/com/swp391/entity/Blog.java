@@ -17,27 +17,43 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Blog {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(length = 255)
+    @Column(length = 255, nullable = false)
     String title;
 
-    @Column(length = 5000)
+    @Column(length = 1000)
+    String summary;
+
+    @Column(length = 5000, nullable = false)
     String content;
+
+    @Column(length = 255)
+    String author;
+
+    @Column(length = 100)
+    String category;
+
+    @Column
+    int views;
+
+    @Column(length = 1000)
+    String image; // ảnh đại diện chính cho blog
 
     LocalDate publishedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin_id")
+    @JsonManagedReference
+    Admin admin;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
     Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
-    Admin admin;
-
-    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     Set<Img> images = new HashSet<>();
 }

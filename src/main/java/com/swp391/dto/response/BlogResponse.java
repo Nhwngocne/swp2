@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -13,7 +14,13 @@ import java.time.LocalDate;
 public class BlogResponse {
     int id;
     String title;
+    String summary;
     String content;
+    String author;
+    String category;
+    String image; // ảnh đại diện
+    List<String> imageUrls; // ảnh phụ
+    int views;
     LocalDate publishedDate;
-    String createdBy;
+    String createdBy; // tên người tạo (admin name)
 }
