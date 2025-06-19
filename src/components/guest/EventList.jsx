@@ -29,10 +29,10 @@ const EventList = () => {
   const handleRegisterClick = (eventId) => {
     if (!user) {
       // Nếu chưa đăng nhập, chuyển hướng đến trang login với state để quay lại
-      navigate('/login', { state: { from: '/donation-form', eventId } });
+      navigate('/login', { state: { from: '/donation-blood-form', eventId } });
     } else {
       // Nếu đã đăng nhập, chuyển hướng đến donation-form
-      navigate('/donation-form', { state: { eventId } });
+      navigate('/donation-blood-form', { state: { eventId } });
     }
   };
 

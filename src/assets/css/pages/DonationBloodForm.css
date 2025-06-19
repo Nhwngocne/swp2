@@ -1,0 +1,97 @@
+/* DonationBloodForm.css */
+
+.donation-form-container {
+  max-width: 960px;
+  margin: 40px auto;
+  padding: 32px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.donation-form-container h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #dc2626;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.donation-form-container h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 16px;
+}
+
+.donation-form-container label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.donation-form-container input[type="text"],
+.donation-form-container input[type="date"],
+.donation-form-container select,
+.donation-form-container textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f9fafb;
+}
+
+.donation-form-container input[type="radio"],
+.donation-form-container input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.donation-form-container .form-section {
+  margin-bottom: 24px;
+}
+
+.donation-form-container .form-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.donation-form-container button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.donation-form-container button[type="submit"] {
+  background-color: #dc2626;
+  color: white;
+}
+
+.donation-form-container button[type="submit"]:hover {
+  background-color: #b91c1c;
+}
+
+.donation-form-container button[type="button"] {
+  background-color: #6b7280;
+  color: white;
+}
+
+.donation-form-container button[type="button"]:hover {
+  background-color: #4b5563;
+}
+
+.donation-form-container .form-description {
+  background-color: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
