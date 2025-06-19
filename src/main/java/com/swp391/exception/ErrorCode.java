@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ErrorCode {
     //1001: already existed
-    USER_EXISTED(1001,"User already exists", HttpStatus.BAD_REQUEST),
+    USER_EXISTED(1001, "User already exists", HttpStatus.BAD_REQUEST),
 
     //1002: not existed
     USER_NOT_EXISTED(1002, "User does not exist", HttpStatus.NOT_FOUND),
@@ -36,7 +36,14 @@ public enum ErrorCode {
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     //1003:Password does not match
     PASSWORD_NOT_MATCHED(1003, "Password does not match", HttpStatus.BAD_REQUEST),
+    //BloodDDonationForm
+    MEMBER_NOT_FOUND(1002,"Member not found",HttpStatus.NOT_FOUND),
+    FORM_NOT_FOUND(1002,"FORM not found",HttpStatus.NOT_FOUND),
+    FORM_ALREADY_APPROVED(1001,"FORM alreadyt approved_Can't Update",HttpStatus.BAD_REQUEST)
+
+
     ;
+
 
     private final int code;
     private final String message;
