@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -43,12 +44,17 @@ public class Blog {
     @Column(length = 1000)
     String image; // ảnh đại diện chính cho blog
 
+    @ElementCollection
+    @Column
+    List<String> imageUrls;
+
+
     LocalDate publishedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id")
     @JsonManagedReference
-    Admin admin;
+    Admin createdBy;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
     Member member;

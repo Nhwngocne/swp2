@@ -1,5 +1,6 @@
 package com.swp391.dto.response;
 
+import com.swp391.entity.Admin;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -22,5 +23,5 @@ public class BlogResponse {
     List<String> imageUrls; // ảnh phụ
     int views;
     LocalDate publishedDate;
-    String createdBy; // tên người tạo (admin name)
+    Admin createdBy; // tên người tạo (admin name)
 }

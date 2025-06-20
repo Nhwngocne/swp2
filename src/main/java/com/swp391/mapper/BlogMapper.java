@@ -4,16 +4,26 @@ import com.swp391.dto.request.BlogCreateRequest;
 import com.swp391.dto.response.BlogResponse;
 import com.swp391.entity.Blog;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper (componentModel = "spring")
+@Mapper(componentModel = "spring")
 public interface BlogMapper {
-    // Converts BlogCreateRequest to Blog entity
+
+    // Convert BlogCreateRequest to Blog entity, ignore fields to be handled manually
+    @Mapping(target = "image", ignore = true)
+    @Mapping(target = "imageUrls", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "views", ignore = true)
     Blog toBlog(BlogCreateRequest request);
-    // Converts Blog entity to BlogResponse DTO
+
+    // Convert Blog entity to BlogResponse DTO
     BlogResponse toBlogResponse(Blog entity);
 
-    // Updates an existing Blog entity with data from BlogCreateRequest
-        void updateBlog(@MappingTarget Blog entity, BlogCreateRequest request);
-
+    // Update existing Blog with request data
+    @Mapping(target = "image", ignore = true)
+    @Mapping(target = "imageUrls", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "views", ignore = true)
+    void updateBlog(@MappingTarget Blog entity, BlogCreateRequest request);
 }

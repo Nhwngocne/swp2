@@ -78,9 +78,10 @@ public class Admin {
     @JsonIgnore // Không serialize
     List<Staff> staffList;
 
-    @OneToMany(mappedBy = "admin")
-    @JsonIgnore // Không serialize
-    List<Blog> blogs;
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
+    @JsonIgnore // Không ser
+    private List<Blog> blogs;
+
 
     @OneToOne(mappedBy = "admin")
     @JsonIgnore // Không serialize
