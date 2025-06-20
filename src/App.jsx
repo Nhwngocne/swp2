@@ -84,7 +84,7 @@ const AppContent = () => {
           <Route path="/blog" element={<BlogList />} />
           <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
           <Route path="/search" element={<Search />} />
-          <Route path="/donation-blood-form" element={<DonationBloodForm />} />
+          <Route path="/donation-blood-form" element={<EventProvider><DonationBloodForm /></EventProvider>} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/verifyGmail" element={<VerifyGmail />} />
           <Route path="/lookUp" element={<LookUp />} />

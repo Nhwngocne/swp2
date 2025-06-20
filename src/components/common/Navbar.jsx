@@ -9,7 +9,7 @@ import Register from '../../pages/Register.jsx';
 import LookUp from '../../pages/LookUp.jsx';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user,role, logout } = useAuth();
   const navigate = useNavigate();
   const isLoggedIn = !!user; // ✅ Thêm dòng này
 
@@ -203,7 +203,7 @@ const Navbar = () => {
           Liên hệ
         </Link>
 
-        {user?.role === 'MEMBER' && (
+        {role === 'MEMBER' && (
           <Link to="/donation-history" className="nav-item">
             Lịch sử hiến máu
           </Link>
