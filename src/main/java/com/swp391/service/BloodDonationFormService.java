@@ -41,10 +41,13 @@ public class BloodDonationFormService {
 
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
+        Staff staff = staffRepository.findById(event.getCreatedBy().getId())
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
         BloodDonationForm form = formMapper.toForm(request);
         form.setEvent(event);
         form.setMember(member);
+        form.setApprovedBy(staff);
         form.setStatus("PENDING");
         form.setCreatedAt(LocalDate.now());
 
