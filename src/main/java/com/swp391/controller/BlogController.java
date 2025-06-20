@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,17 +23,18 @@ public class BlogController {
 
     // Create a new blog
     @PostMapping
-    public ApiResponse<BlogResponse> createBlog(@RequestBody @Valid BlogCreateRequest request) {
+    public ApiResponse<BlogResponse> createBlog(@ModelAttribute @Valid BlogCreateRequest request) throws IOException {
         return ApiResponse.<BlogResponse>builder()
                 .result(blogService.createBlog(request))
                 .build();
     }
 
+
     // Update an existing blog
     @PutMapping("/{blogId}")
     public ApiResponse<BlogResponse> updateBlog(
             @PathVariable int blogId,
-            @RequestBody @Valid BlogCreateRequest request) {
+            @RequestBody @Valid BlogCreateRequest request) throws IOException {
         return ApiResponse.<BlogResponse>builder()
                 .result(blogService.updateBlog(blogId, request))
                 .build();
