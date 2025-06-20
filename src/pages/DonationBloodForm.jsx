@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../assets/css/pages/DonationBloodForm.css';
@@ -16,6 +17,7 @@ export default function DonationBloodForm() {
   const [formData, setFormData] = useState({
     eventId: eventId,
     memberId: user?.id || 0,
+
     blood_type: '',
     donated_before: '',
     current_illness: '',
@@ -47,7 +49,6 @@ export default function DonationBloodForm() {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     if (type === 'checkbox') {
       if (name === 'agreement') {
         setFormData((prev) => ({ ...prev, [name]: checked }));
@@ -149,7 +150,7 @@ export default function DonationBloodForm() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white">
+    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-white donation-form-container">
       <h1 className="text-2xl font-bold text-center mb-6">FORM ĐĂNG KÝ HIẾN MÁU</h1>
 
       {formError && <p className="text-red-500 text-center mb-4">{formError}</p>}
@@ -349,6 +350,22 @@ export default function DonationBloodForm() {
           </button>
         </div>
       </div>
-    </div>
+
+      <div className="flex gap-4">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+        >
+          Đăng ký hiến máu
+        </button>
+        <button
+          type="button"
+          onClick={handleReset}
+          className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
+        >
+          Làm lại
+        </button>
+      </div>
+    </form>
   );
 }
