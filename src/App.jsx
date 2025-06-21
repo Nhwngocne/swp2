@@ -34,6 +34,8 @@ import BlogList from './components/guest/BlogList';
 import Profile from './components/member/Profile';
 import DonationHistory from './components/member/DonationHistory';
 import EmergencyList from './components/member/EmergencyList';
+import RegisterHistory from './components/member/RegisterHistory';
+import Certificate from './components/member/Certificate';
 
 // Staff Components
 import EventManager from './components/staff/EventManager';
@@ -98,6 +100,8 @@ const AppContent = () => {
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />
           <Route path="/donationHistory" element={<ProtectedRoute requiredRole="MEMBER"><DonationHistory /></ProtectedRoute>} />
           <Route path="/emergency" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyList /></ProtectedRoute>} />
+          <Route path="/registerHistory" element={<ProtectedRoute requiredRole="MEMBER"><RegisterHistory /></ProtectedRoute>} />
+          <Route path="/certificate" element={<ProtectedRoute requiredRole="MEMBER"><Certificate /></ProtectedRoute>} />
 
 
           {/* Staff Routes */}

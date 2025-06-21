@@ -1,5 +1,5 @@
 // src/pages/DonationHistory.jsx
-
+import FeedbackList from "../../pages/FeedBackList";
 import React from "react";
 
 const DonationHistory = () => {
@@ -67,6 +67,7 @@ const DonationHistory = () => {
           ))}
         </tbody>
       </table>
+      <FeedbackList />
     </div>
   );
 };
