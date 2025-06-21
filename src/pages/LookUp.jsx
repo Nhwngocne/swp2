@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../assets/css/pages/LookUp.css';
+import Form from '../components/member/Form';
 
 const LookUp = () => {
     const [bloodType, setBloodType] = useState('');
@@ -114,9 +115,7 @@ const LookUp = () => {
                     >
                         Tra cứu
                     </button>
-                </div>
-
-                <div>
+                
                     {isSearching && (
                         <div className="loading-container">
                             <div className="loading-spinner"></div>
@@ -155,7 +154,8 @@ const LookUp = () => {
                     )}
                 </div>
             </div>
-
+            <Form />
+                    
             <div className="distance-section">
                 <h2 className="distance-title">Tìm đường đến cơ sở y tế gần nhất</h2>
                 
