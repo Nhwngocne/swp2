@@ -14,29 +14,45 @@ public class BloodDonationFormResponse {
 
     int id;
 
-    // Sự kiện
+    // Thông tin sự kiện
     int eventId;
     String eventTitle;
     LocalDate eventDate;
     String eventLocation;
 
-    // Người đăng ký
+    // Thông tin người đăng ký
     int memberId;
     String memberName;
     String memberEmail;
 
-    // Nội dung đơn
+    // Nội dung đơn đăng ký
     String bloodType;
-    String donatedBefore;
-    String currentIllness;
-    String illnessDetails;
-    String pastDiseases;
-    String diseaseDetails;
-    String pastYearActivities;
-    String femaleQuestions;
-    Boolean agreement;
 
-    // Phê duyệt
+    boolean donatedBefore;
+    boolean currentlyIll;
+    String illnessDetails;
+
+    boolean hadSeriousDisease;
+    String diseaseDetails;
+
+    boolean hadMalariaOrOtherInfectious;
+    boolean receivedBlood;
+    boolean gotVaccine;
+    boolean noneOfAbove12Months;
+
+    boolean tattooOrAcupuncture;
+    boolean hadSkinIssues;
+
+    boolean usedAntibioticsOrAntiInflammatory;
+
+    String symptomsPast2Weeks;
+    String symptomsPast1Week;
+
+    boolean isMenstruating;
+    boolean isPregnantOrRecentlyDelivered;
+    boolean noneOfFemaleConditions;
+
+    // Trạng thái phê duyệt
     String status;
     LocalDate approvedDate;
 

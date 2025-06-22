@@ -1,7 +1,6 @@
 package com.swp391.mapper;
 
 import com.swp391.dto.request.BloodDonationFormCreateRequest;
-
 import com.swp391.dto.request.BloodDonationFormUpdateRequest;
 import com.swp391.dto.response.BloodDonationFormResponse;
 import com.swp391.entity.BloodDonationForm;
@@ -20,9 +19,11 @@ public interface BloodDonationFormMapper {
     @Mapping(source = "event.title", target = "eventTitle")
     @Mapping(source = "event.date", target = "eventDate")
     @Mapping(source = "event.location", target = "eventLocation")
+
     @Mapping(source = "member.id", target = "memberId")
     @Mapping(source = "member.name", target = "memberName")
     @Mapping(source = "member.email", target = "memberEmail")
+
     @Mapping(source = "approvedBy.id", target = "approvedByStaffId")
     @Mapping(source = "approvedBy.name", target = "approvedByStaffName")
     BloodDonationFormResponse toFormResponse(BloodDonationForm form);
