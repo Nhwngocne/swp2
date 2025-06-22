@@ -1,9 +1,9 @@
+
 import React from 'react';
 
-const DonationStep2 = ({ formData, setFormData }) => {
+export default function DonationStep2({ formData, setFormData, onBack, onNext }) {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     if (type === 'checkbox') {
       setFormData((prev) => ({
         ...prev,
@@ -20,7 +20,6 @@ const DonationStep2 = ({ formData, setFormData }) => {
     <div>
       <h3 className="text-lg font-semibold mb-4">Câu hỏi sức khỏe</h3>
 
-      {/* Câu 1 */}
       <div className="mb-4">
         <p className="font-medium mb-2">1. Anh/chị từng hiến máu chưa?</p>
         <div className="flex gap-4">
@@ -39,7 +38,6 @@ const DonationStep2 = ({ formData, setFormData }) => {
         </div>
       </div>
 
-      {/* Câu 2 */}
       <div className="mb-4">
         <p className="font-medium mb-2">2. Hiện tại, anh/chị có mắc bệnh lý nào không?</p>
         <div className="flex gap-4 mb-2">
@@ -66,7 +64,6 @@ const DonationStep2 = ({ formData, setFormData }) => {
         ></textarea>
       </div>
 
-      {/* Câu 3 */}
       <div className="mb-4">
         <p className="font-medium mb-2">3. Trước đây, anh/chị có từng mắc một trong các bệnh nguy hiểm không?</p>
         <div className="flex gap-4 mb-2">
@@ -93,7 +90,6 @@ const DonationStep2 = ({ formData, setFormData }) => {
         ></textarea>
       </div>
 
-      {/* Câu 4 */}
       <div className="mb-4">
         <p className="font-medium mb-2">4. Trong 12 tháng qua, anh/chị có:</p>
         <div className="space-y-2">
@@ -117,7 +113,6 @@ const DonationStep2 = ({ formData, setFormData }) => {
         </div>
       </div>
 
-      {/* Câu 5 */}
       <div className="mb-4">
         <p className="font-medium mb-2">5. Trong 6 tháng qua, anh/chị có:</p>
         <div className="space-y-2">
@@ -139,7 +134,6 @@ const DonationStep2 = ({ formData, setFormData }) => {
         </div>
       </div>
 
-      {/* Câu 6 */}
       <div className="mb-4">
         <p className="font-medium mb-2">6. Trong 1 tháng qua, anh/chị có:</p>
         <div className="space-y-2">
@@ -160,7 +154,6 @@ const DonationStep2 = ({ formData, setFormData }) => {
         </div>
       </div>
 
-      {/* Câu 7 */}
       <div className="mb-4">
         <p className="font-medium mb-2">7. Trong 2 tuần qua, anh/chị có:</p>
         <textarea
@@ -173,7 +166,6 @@ const DonationStep2 = ({ formData, setFormData }) => {
         ></textarea>
       </div>
 
-      {/* Câu 8 */}
       <div className="mb-4">
         <p className="font-medium mb-2">8. Trong 1 tuần qua, anh/chị có:</p>
         <textarea
@@ -186,7 +178,6 @@ const DonationStep2 = ({ formData, setFormData }) => {
         ></textarea>
       </div>
 
-      {/* Câu 9 */}
       <div className="mb-4">
         <p className="font-medium mb-2">9. Đối với nữ giới:</p>
         <div className="space-y-2">
@@ -208,8 +199,36 @@ const DonationStep2 = ({ formData, setFormData }) => {
           ))}
         </div>
       </div>
+
+      <div className="mb-4">
+        <label className="flex items-start gap-2">
+          <input
+            type="checkbox"
+            name="agreement"
+            checked={formData.agreement}
+            onChange={handleInputChange}
+            required
+          />
+          <span>Tôi cam kết những thông tin trên là chính xác và đồng ý hiến máu tình nguyện.</span>
+        </label>
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="bg-gray-500 text-white font-medium py-2 px-6 rounded-md hover:bg-gray-600 transition-colors"
+        >
+          Quay lại
+        </button>
+        <button
+          type="button"
+          onClick={onNext}
+          className="bg-blue-500 text-white font-medium py-2 px-6 rounded-md hover:bg-blue-600 transition-colors"
+        >
+          Đăng ký
+        </button>
+      </div>
     </div>
   );
-};
-
-export default DonationStep2;
+}

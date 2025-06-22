@@ -149,8 +149,7 @@ const Home = () => {
       </div>
       <div className="hero-actions">
         <Link to="/events" className="btn red">Xem Sự Kiện</Link>
-        <Link to ="/Faq" className="btn white">Tìm Hiểu Thêm</Link>
-        
+        <Link to="/faq" className="btn white">Tìm Hiểu Thêm</Link>
       </div>
     </div>
 

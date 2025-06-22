@@ -20,7 +20,9 @@ import Dashboard from './pages/Dashboard';
 import Search from './pages/Search';
 import Manage from './pages/Manage';
 import Faq from './pages/Faq'; // ✅ Thêm Faq ở đây
-import DonationBloodForm from './pages/DonationBloodForm';
+import DonationBloodForm from './pages/Donation/DonationBloodForm';
+import DonationStep1 from './pages/Donation/DonationStep1'; // ✅ Thêm import
+import DonationStep2 from './pages/Donation/DonationStep2'; // ✅ Thêm import
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyGmail from './pages/VerifyGmail';
 import LookUp from './pages/LookUp';
@@ -80,18 +82,20 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
-          <Route path="/news" element={<NewsList />} />
+          <Route path="/news" element={<EventProvider><NewsList /></EventProvider>} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
           <Route path="/search" element={<Search />} />
-          <Route path="/donation-blood-form" element={<DonationBloodForm />} />
+          <Route path="/donation-blood-form" element={<EventProvider><DonationBloodForm /></EventProvider>} />
+          <Route path="/donation/step1" element={<EventProvider><DonationStep1 /></EventProvider>} /> {/* ✅ Thêm route */}
+          <Route path="/donation/step2" element={<EventProvider><DonationStep2 /></EventProvider>} /> {/* ✅ Thêm route */}
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/verifyGmail" element={<VerifyGmail />} />
           <Route path="/lookUp" element={<LookUp />} />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/events" element={<ProtectedRoute><EventProvider><EventList /></EventProvider></ProtectedRoute>}/>
+          <Route path="/events" element={<EventProvider><EventList /></EventProvider>}/>
 
           {/* Member Routes */}
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />
@@ -100,13 +104,13 @@ const AppContent = () => {
 
 
           {/* Staff Routes */}
-          <Route path="/manage-events" element={<ProtectedRoute requiredRole="STAFF"><EventManager /></ProtectedRoute>} />
+          <Route path="/manage-events" element={<ProtectedRoute requiredRole="STAFF"><EventProvider><EventManager /></EventProvider></ProtectedRoute>} />
           <Route path="/blood-inventory" element={<ProtectedRoute requiredRole="STAFF"><BloodInventory /></ProtectedRoute>} />
           <Route path="/manage-members" element={<ProtectedRoute requiredRole="STAFF"><MemberManager /></ProtectedRoute>} />
 
           {/* Admin Routes */}
           <Route path="/manage" element={<ProtectedRoute requiredRole="ADMIN"><Manage /></ProtectedRoute>} />
-          <Route path="/manage-news" element={<ProtectedRoute requiredRole="ADMIN"><NewsManager /></ProtectedRoute>} />
+          <Route path="/manage-news" element={<ProtectedRoute requiredRole="ADMIN"><EventProvider><NewsManager /></EventProvider></ProtectedRoute>} />
           <Route path="/manage-forum" element={<ProtectedRoute requiredRole="ADMIN"><ForumManager /></ProtectedRoute>} />
           <Route path="/manage-notifications" element={<ProtectedRoute requiredRole="ADMIN"><NotificationManager /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute requiredRole="ADMIN"><ReportStats /></ProtectedRoute>} />

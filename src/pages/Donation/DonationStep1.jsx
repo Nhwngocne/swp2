@@ -1,9 +1,20 @@
 import React from 'react';
 
-export default function DonationStep1({ formData, setFormData }) {
+export default function DonationStep1({ formData, setFormData, onNext }) {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'Chưa chọn ngày';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('vi-VN', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -11,37 +22,29 @@ export default function DonationStep1({ formData, setFormData }) {
       <h2 className="text-xl font-bold mb-4">Bước 1: Thông tin đặt hiến máu</h2>
 
       <div className="mb-4">
-        <label className="block mb-2 font-medium">Chọn ngày hiến máu:</label>
+        <label className="block mb-2 font-medium">Ngày hiến máu:</label>
         <input
-          type="date"
-          name="donation_date"
-          value={formData.donation_date || ''}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-          required
+          type="text"
+          value={formatDate(formData.donation_date)}
+          disabled
+          className="w-full border px-3 py-2 rounded bg-gray-100"
         />
       </div>
 
       <div className="mb-4">
         <label className="block mb-2 font-medium">Địa điểm hiến máu:</label>
-        <select
-          name="location"
-          value={formData.location || ''}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-          required
-        >
-          <option value="">-- Chọn địa điểm --</option>
-          <option value="466">466 Nguyễn Thị Minh Khai</option>
-          <option value="benhvien-a">Bệnh viện A</option>
-          <option value="benhvien-b">Bệnh viện B</option>
-        </select>
+        <input
+          type="text"
+          value={formData.location || 'Chưa chọn địa điểm'}
+          disabled
+          className="w-full border px-3 py-2 rounded bg-gray-100"
+        />
       </div>
 
       <div className="mb-4">
         <label className="block mb-2 font-medium">Nhóm máu:</label>
         <div className="flex gap-4">
-          {["A", "B", "AB", "O"].map(type => (
+          {['A', 'B', 'AB', 'O'].map((type) => (
             <label key={type} className="flex items-center gap-2">
               <input
                 type="radio"
@@ -55,7 +58,14 @@ export default function DonationStep1({ formData, setFormData }) {
           ))}
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={onNext}
+        className="bg-blue-500 text-white font-medium py-2 px-6 rounded-md hover:bg-blue-600 transition-colors"
+      >
+        Tiếp theo
+      </button>
     </div>
   );
-} 
-
+}
