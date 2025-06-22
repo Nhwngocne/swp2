@@ -21,6 +21,8 @@ import Search from './pages/Search';
 import Manage from './pages/Manage';
 import Faq from './pages/Faq'; // ✅ Thêm Faq ở đây
 import DonationBloodForm from './pages/Donation/DonationBloodForm';
+import DonationStep1 from './pages/Donation/DonationStep1'; // ✅ Thêm import
+import DonationStep2 from './pages/Donation/DonationStep2'; // ✅ Thêm import
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyGmail from './pages/VerifyGmail';
 import LookUp from './pages/LookUp';
@@ -85,6 +87,8 @@ const AppContent = () => {
           <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
           <Route path="/search" element={<Search />} />
           <Route path="/donation-blood-form" element={<EventProvider><DonationBloodForm /></EventProvider>} />
+          <Route path="/donation/step1" element={<EventProvider><DonationStep1 /></EventProvider>} /> {/* ✅ Thêm route */}
+          <Route path="/donation/step2" element={<EventProvider><DonationStep2 /></EventProvider>} /> {/* ✅ Thêm route */}
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/verifyGmail" element={<VerifyGmail />} />
           <Route path="/lookUp" element={<LookUp />} />
