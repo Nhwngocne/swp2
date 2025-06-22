@@ -13,26 +13,44 @@ import jakarta.validation.constraints.NotNull;
 public class BloodDonationFormUpdateRequest {
 
     @NotNull(message = "ID đơn đăng ký là bắt buộc")
-    int formId;
+    Integer formId;
 
     String bloodType;
 
-    String donatedBefore;
+    // Câu 1
+    Boolean donatedBefore;
 
-    String currentIllness;
-
+    // Câu 2
+    Boolean currentlyIll;
     String illnessDetails;
 
-    String pastDiseases;
-
+    // Câu 3
+    Boolean hadSeriousDisease;
     String diseaseDetails;
 
-    String pastYearActivities;
+    // Câu 4
+    Boolean hadMalariaOrOtherInfectious;
+    Boolean receivedBlood;
+    Boolean gotVaccine;
+    Boolean noneOfAbove12Months;
 
-    String femaleQuestions;
+    // Câu 5
+    Boolean tattooOrAcupuncture;
+    Boolean hadSkinIssues;
+
+    // Câu 6
+    Boolean usedAntibioticsOrAntiInflammatory;
+
+    // Câu 7 & 8
+    String symptomsPast2Weeks;
+    String symptomsPast1Week;
+
+    // Câu 9 - dành cho nữ
+    Boolean isMenstruating;
+    Boolean isPregnantOrRecentlyDelivered;
+    Boolean noneOfFemaleConditions;
 
     // Dành cho Staff duyệt
     String status; // "APPROVED", "REJECTED", "PENDING"
-
-    int approvedByStaffId;
+    Integer approvedByStaffId;
 }
