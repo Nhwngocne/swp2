@@ -39,8 +39,10 @@ public enum ErrorCode {
     //BloodDDonationForm
     MEMBER_NOT_FOUND(1002,"Member not found",HttpStatus.NOT_FOUND),
     FORM_NOT_FOUND(1002,"FORM not found",HttpStatus.NOT_FOUND),
-    FORM_ALREADY_APPROVED(1001,"FORM alreadyt approved_Can't Update",HttpStatus.BAD_REQUEST)
-
+    FORM_ALREADY_APPROVED(1001,"FORM alreadyt approved_Can't Update",HttpStatus.BAD_REQUEST),
+    //QnA
+    QNA_NOT_FOUND(1002, "QnA not found", HttpStatus.NOT_FOUND),
+    QNA_ALREADY_ANSWERED(1001, "QnA already answered", HttpStatus.BAD_REQUEST)
 
     ;
 

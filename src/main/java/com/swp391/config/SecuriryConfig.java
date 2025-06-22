@@ -32,7 +32,10 @@ public class SecuriryConfig {
     private  final String[] PUBLIC_ENDPOINTS_GET = {
             "/events",
             "/blogs",
-            "/blogs/**"
+            "/blogs/**",
+            "qna/**",
+            "/qna",
+
     };
     private final String[] PUBLIC_ENDPOINTS_POST = {
             "/members", "/auth/login", "/auth/introspect", "/auth/loginGoogle", "/auth/refresh","/staffs","/admins",
