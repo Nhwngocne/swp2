@@ -9,14 +9,18 @@ import com.swp391.dto.response.RegisReceiveResponse;
 import com.swp391.entity.BloodType;
 import com.swp391.entity.DonationHistory;
 import com.swp391.entity.DonationRegistration;
+import com.swp391.entity.Member;
 import com.swp391.entity.RegisReceive;
+import com.swp391.entity.Staff;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.DonationMapper;
 import com.swp391.repository.BloodTypeRepository;
 import com.swp391.repository.DonationHistoryRepository;
 import com.swp391.repository.DonationRegistrationRepository;
+import com.swp391.repository.MemberRepository;
 import com.swp391.repository.RegisReceiveRepository;
+import com.swp391.repository.StaffRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,12 +38,26 @@ public class DonationService {
     RegisReceiveRepository regisReceiveRepository;
     DonationMapper donationMapper;
     BloodTypeRepository bloodTypeRepository;
-
+    MemberRepository memberRepository;
+    StaffRepository staffRepository;
 
     // ==== DonationHistory ====
 
     public DonationHistoryResponse createDonationHistory(DonationHistoryCreateRequest request) {
         DonationHistory donationHistory = donationMapper.toDonationHistory(request);
+
+        // Gán liên kết thủ công
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
+        Staff staff = staffRepository.findById(request.getStaffId())
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+        BloodType bloodType = bloodTypeRepository.findById(request.getBloodTypeId())
+                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+
+        donationHistory.setMember(member);
+        donationHistory.setStaff(staff);
+        donationHistory.setBloodType(bloodType);
+
         donationHistory = donationHistoryRepository.save(donationHistory);
         return donationMapper.toDonationHistoryResponse(donationHistory);
     }
@@ -60,7 +78,21 @@ public class DonationService {
     public DonationHistoryResponse updateDonationHistory(int id, DonationHistoryCreateRequest request) {
         DonationHistory donationHistory = donationHistoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.Donation_HISTORY_NOT_EXISTED));
+
         donationMapper.updateDonationHistory(donationHistory, request);
+
+        // Cập nhật liên kết
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
+        Staff staff = staffRepository.findById(request.getStaffId())
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+        BloodType bloodType = bloodTypeRepository.findById(request.getBloodTypeId())
+                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+
+        donationHistory.setMember(member);
+        donationHistory.setStaff(staff);
+        donationHistory.setBloodType(bloodType);
+
         donationHistory = donationHistoryRepository.save(donationHistory);
         return donationMapper.toDonationHistoryResponse(donationHistory);
     }
@@ -96,17 +128,15 @@ public class DonationService {
     // ==== RegisOffline ====
 
     public RegisOfflineResponse createRegisOffline(RegisReceiveRequest request) {
-        // Lấy entity từ DB bằng code
         BloodType bloodType = bloodTypeRepository.findByName(request.getBloodType())
                 .orElseThrow(() -> new AppException(ErrorCode.Donation_REGISTRATION_OFFLINE_NOT_EXISTED));
 
         RegisReceive receive = donationMapper.toRegisReceive(request);
-        receive.setBloodType(bloodType);  // set thủ công sau khi map
+        receive.setBloodType(bloodType);
         receive = regisReceiveRepository.save(receive);
 
         return donationMapper.toRegisOfflineResponse(receive);
     }
-
 
     public RegisOfflineResponse getRegisOfflineById(int id) {
         RegisReceive receive = regisReceiveRepository.findById(id)
