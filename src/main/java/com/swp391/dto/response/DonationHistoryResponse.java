@@ -6,20 +6,20 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DonationHistoryResponse {
     int id;
     LocalDate date;
-    Integer volume;
-    String component;
     String status;
+    String location;
+    String bloodGroup;
+    Integer volume;
+    String testResult;
+    LocalDate nextEligibleDate;
 
-    // Optional thông tin liên quan
-    String staffName;
-    String adminName;
-    String bloodTypeName;
-    String memberName;
+    // Giấy chứng nhận (nếu có)
+    String certificateNumber;
 }
