@@ -1,14 +1,17 @@
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+/* ========== Hero Section ========== */
+.hero-section-implant {
+  position: relative;
+  padding: 60px 0;
 }
 
 .hero-layout {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 60px 0;
+  align-items: flex-start; /* fix kéo dãn chiều cao */
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .hero-content-left {
@@ -52,37 +55,29 @@
   color: #b93a3a;
 }
 
-.hero-content-right {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-}
-
 .hero-image-group {
   position: relative;
-  width: 360px;   /* tăng width */
-  height: 420px;  /* tăng height */
+  width: 360px;
+  height: 320px; /* Giảm để tránh đẩy xuống */
   margin-left: auto;
 }
 
 .hero-img {
   border-radius: 16px;
   object-fit: cover;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   position: absolute;
   background: #fff;
 }
 
-/* Ảnh lớn trên cùng */
 .hero-img.main {
   top: 0;
-  left: 80px;     /* căn chỉnh vị trí */
-  width: 220px;   /* to hơn */
+  left: 80px;
+  width: 220px;
   height: 160px;
   z-index: 3;
 }
 
-/* Ảnh phụ bên trái */
 .hero-img.sub1 {
   top: 180px;
   left: 0;
@@ -91,13 +86,77 @@
   z-index: 2;
 }
 
-/* Ảnh phụ bên phải */
 .hero-img.sub2 {
   top: 200px;
   left: 190px;
   width: 150px;
   height: 170px;
   z-index: 2;
+}
+
+/* ========== Benefit Section ========== */
+.benefit-section {
+  padding: 60px 20px;
+  background-color: #f8f9fa;
+}
+
+.benefit-section.slider {
+  margin-top: -60px; /* Kéo sát lên phần hero */
+}
+
+.benefit-container {
+  display: flex;
+  gap: 40px;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.benefit-left {
+  flex: 1;
+  min-width: 280px;
+}
+
+.benefit-right {
+  flex: 2;
+  min-width: 400px;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.section-title.yellow {
+  background-color: #ffcc00;
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 4px;
+  color: #333;
+}
+
+.benefit-slide h3 {
+  font-size: 22px;
+  color: #c0392b;
+  margin-bottom: 10px;
+}
+
+.benefit-slide ul {
+  padding-left: 20px;
+}
+
+.benefit-slide li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+/* ========== Standards Section ========== */
+.standards-section {
+  padding: 60px 20px;
+  background: #eef4ff;
 }
 
 .standards-grid {
@@ -111,7 +170,7 @@
   background: white;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   gap: 12px;
   align-items: flex-start;
@@ -123,25 +182,8 @@
   flex-shrink: 0;
   margin-top: 4px;
 }
-@media (max-width: 900px) {
-  .hero-section-implant {
-    flex-direction: column;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-  .hero-content-left, .hero-content-right {
-    padding: 0;
-    width: 100%;
-  }
-  .hero-image-grid {
-    margin-top: 24px;
-    width: 280px;
-    height: 240px;
-  }
-  .img-main { width: 150px; height: 100px; left: 60px; }
-  .img-sub1 { width: 100px; height: 80px; left: 0; top: 90px; }
-  .img-sub2 { width: 100px; height: 80px; left: 120px; top: 120px; }
-}
+
+/* ========== Achievements Section ========== */
 .achievements-section {
   padding: 60px 20px;
   background-color: #f9f9f9;
@@ -185,6 +227,8 @@
   margin-top: 6px;
   color: #333;
 }
+
+/* ========== Feedback Section ========== */
 .feedback-section {
   padding: 60px 20px;
   background: #fff;
@@ -222,4 +266,55 @@
   text-transform: uppercase;
   font-size: 0.95rem;
   letter-spacing: 0.5px;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 900px) {
+  .hero-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-content-left,
+  .hero-content-right {
+    width: 100%;
+    padding: 0;
+  }
+
+  .hero-image-group {
+    width: 300px;
+    height: auto;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  .hero-img.main {
+    width: 180px;
+    height: 120px;
+    left: 60px;
+  }
+
+  .hero-img.sub1 {
+    width: 120px;
+    height: 100px;
+    top: 130px;
+    left: 0;
+  }
+
+  .hero-img.sub2 {
+    width: 120px;
+    height: 100px;
+    top: 150px;
+    left: 140px;
+  }
+
+  .benefit-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .benefit-left,
+  .benefit-right {
+    width: 100%;
+  }
 }
