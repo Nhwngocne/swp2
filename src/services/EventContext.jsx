@@ -73,9 +73,7 @@ export const EventProvider = ({ children }) => {
     createdBy: blog.createdBy?.name || "Unknown",
   });
 
-  const fetchEvents = useCallback(async () => {
-    if (isFetchingRef.current) return; // Ngăn gọi API nếu đang fetch
-    //if (isFetching) return; // Ngăn gọi API nếu đang fetch
+  const fetchEvents = async () => {
     try {
       setLoading(true);
       console.log("Fetching events from /swp391/events");
@@ -108,15 +106,15 @@ export const EventProvider = ({ children }) => {
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
-      setIsFetching(false);
     }
-  }, []); // Không phụ thuộc vào bất kỳ state nào
+  }; // Không phụ thuộc vào bất kỳ state nào
 
   const fetchBlogs = useCallback(async () => {
     //if (isFetching) return; // Ngăn gọi API nếu đang fetch
     if (isFetchingRef.current) return; // Ngăn gọi API nếu đang fetch
     try {
       // setIsFetching(true);
+      isFetchingRef.current = true;
       setLoading(true);
       console.log("Fetching blogs from /swp391/blogs");
       const token = localStorage.getItem("token");
@@ -148,7 +146,8 @@ export const EventProvider = ({ children }) => {
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
-      setIsFetching(false);
+      // setIsFetching(false);
+      isFetchingRef.current = false;
     }
   }, []); // Không phụ thuộc vào bất kỳ state nào
 
