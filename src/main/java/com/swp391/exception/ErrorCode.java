@@ -42,7 +42,11 @@ public enum ErrorCode {
     FORM_ALREADY_APPROVED(1001,"FORM alreadyt approved_Can't Update",HttpStatus.BAD_REQUEST),
     //QnA
     QNA_NOT_FOUND(1002, "QnA not found", HttpStatus.NOT_FOUND),
-    QNA_ALREADY_ANSWERED(1001, "QnA already answered", HttpStatus.BAD_REQUEST)
+    QNA_ALREADY_ANSWERED(1001, "QnA already answered", HttpStatus.BAD_REQUEST),
+    //Certificate
+    DONATION_HISTORY_NOT_FOUND(1002, "Donation history not found", HttpStatus.NOT_FOUND),
+    CERTIFICATE_ALREADY_EXISTS(1001, "Certificate already exists for this donation history", HttpStatus.BAD_REQUEST),
+    CERTIFICATE_NOT_FOUND(1002, "Certificate not found", HttpStatus.NOT_FOUND),
 
     ;
 
