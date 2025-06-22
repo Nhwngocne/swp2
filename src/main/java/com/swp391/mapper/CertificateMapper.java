@@ -13,7 +13,7 @@ public interface CertificateMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "issuedDate", expression = "java(java.time.LocalDate.now())")
     @Mapping(target = "imageUrl", ignore = true) // sẽ gán sau khi upload
-    @Mapping(source = "donationHistory", target = "donationHistory")
+    @Mapping(ignore = true, target = "donationHistory")
     Certificate toEntity(CertificateCreateRequest request, DonationHistory donationHistory);
 
     // Chuyển Certificate entity sang DTO để trả ra frontend
