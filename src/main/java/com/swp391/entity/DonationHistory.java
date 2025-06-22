@@ -44,4 +44,10 @@ public class DonationHistory {
     @OneToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
     Member member;
+
+    @OneToOne(mappedBy = "donationHistory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Certificate certificate;
+
 }

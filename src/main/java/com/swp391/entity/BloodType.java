@@ -29,6 +29,8 @@ public class BloodType {
     @Column(name = "can_receive_from")
     String canReceiveFrom;
 
+    @Column(name = "description", columnDefinition = "TEXT")
+    String description;
     @OneToMany(mappedBy = "bloodType")
     @JsonIgnore // Không serialize
     List<EmergencyRequest> emergencyRequests;
