@@ -29,15 +29,18 @@ public class SecuriryConfig {
         return new BCryptPasswordEncoder(10);
     }
 
-    private final String[] PUBLIC_ENDPOINTS = {
+    private  final String[] PUBLIC_ENDPOINTS_GET = {
+            "/events",
+            "/blogs",
+            "/blogs/**"
+    };
+    private final String[] PUBLIC_ENDPOINTS_POST = {
             "/members", "/auth/login", "/auth/introspect", "/auth/loginGoogle", "/auth/refresh","/staffs","/admins",
             "/forgotPassword/verifyMail/**",
             "/forgotPassword/verifyOtp/**",
             "/forgotPassword/changePassword/**",
             "/register/send-otp",
             "/register/verify-otp"
-
-
     };
 
     @Autowired
@@ -47,10 +50,13 @@ public class SecuriryConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
-                .permitAll().requestMatchers(HttpMethod.GET, "/events").permitAll()
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS_POST)
+                            .permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_GET)
+                            .permitAll()
                         .anyRequest()
-                .authenticated());
+                            .authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJwtDecoder)

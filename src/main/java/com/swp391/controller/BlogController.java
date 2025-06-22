@@ -34,7 +34,7 @@ public class BlogController {
     @PutMapping("/{blogId}")
     public ApiResponse<BlogResponse> updateBlog(
             @PathVariable int blogId,
-            @RequestBody @Valid BlogCreateRequest request) throws IOException {
+            @ModelAttribute @Valid BlogCreateRequest request) throws IOException {
         return ApiResponse.<BlogResponse>builder()
                 .result(blogService.updateBlog(blogId, request))
                 .build();

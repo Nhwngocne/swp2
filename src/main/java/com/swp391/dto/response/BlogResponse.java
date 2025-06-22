@@ -23,5 +23,5 @@ public class BlogResponse {
     List<String> imageUrls; // ảnh phụ
     int views;
     LocalDate publishedDate;
-    Admin createdBy; // tên người tạo (admin name)
+    AdminResponse createdBy; // tên người tạo (admin name)
 }
