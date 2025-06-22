@@ -22,7 +22,10 @@ eventAPI.interceptors.request.use(
     // Chỉ bỏ qua token cho GET /events hoặc GET /events/:id
     const isGetEvents =
       config.method === "get" &&
-      (config.url === "/events" || config.url.match(/^\/events\/\d+$/));
+      (config.url === "/events" ||
+        config.url.match(/^\/events\/\d+$/) ||
+        config.url === "/blogs" ||
+        config.url.match(/^\/blogs\/\d+$/));
     if (token && !isGetEvents && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
     } else if (!token && !isGetEvents && !config.url.includes("/auth")) {
@@ -59,7 +62,7 @@ eventAPI.interceptors.response.use(
 );
 
 export const eventService = {
-  //EVENT
+  //EVENT===================================================================
   // Lấy tất cả sự kiện
   getEvents: (config = {}) => eventAPI.get("/events", config),
 
@@ -82,7 +85,7 @@ export const eventService = {
   deleteEvent: (eventId, config = {}) =>
     eventAPI.delete(`/events/${eventId}`, config),
 
-  //FORM EVENT
+  //FORM EVENT=====================================================================
   // Tạo biểu mẫu hiến máu
   createBloodDonationForm: (formData, config = {}) =>
     eventAPI.post("/forms", formData, config),
@@ -123,4 +126,28 @@ export const eventService = {
   // Lấy tất cả biểu mẫu của một sự kiện
   getBloodDonationFormsByEvent: (eventId, config = {}) =>
     eventAPI.get(`/forms/event/${eventId}`, config),
+
+  // BLOG=======================================================================
+  // Lấy tất cả blog
+  getBlogs: (config = {}) => eventAPI.get("/blogs", config),
+
+  // Lấy blog theo ID
+  getBlogById: (blogId, config = {}) => eventAPI.get(`/blogs/${blogId}`, config),
+
+  // Tạo blog
+  createBlog: (formData, config = {}) =>
+    eventAPI.post("/blogs", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      ...config,
+    }),
+
+  // Cập nhật blog
+  updateBlog: (blogId, formData, config = {}) =>
+    eventAPI.put(`/blogs/${blogId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      ...config,
+    }),
+
+  // Xóa blog
+  deleteBlog: (blogId, config = {}) => eventAPI.delete(`/blogs/${blogId}`, config),
 };

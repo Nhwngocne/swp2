@@ -351,21 +351,7 @@ export default function DonationBloodForm() {
         </div>
       </div>
 
-      <div className="flex gap-4">
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-        >
-          Đăng ký hiến máu
-        </button>
-        <button
-          type="button"
-          onClick={handleReset}
-          className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
-        >
-          Làm lại
-        </button>
-      </div>
+      
     </form>
   );
 }

@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import { eventService } from "./eventService";
 import axios from "axios";
 import { useAuth } from "./AuthContext";
@@ -16,8 +23,11 @@ export const useEvents = () => {
 export const EventProvider = ({ children }) => {
   const { user } = useAuth();
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(false); // Bắt đầu với false
   const [error, setError] = useState(null);
+  //const [isFetching, setIsFetching] = useState(false); // Thêm cờ để kiểm soát gọi API
+  const isFetchingRef = useRef(false);
 
   const getEventStatus = (eventDate, apiStatus) => {
     if (
@@ -49,16 +59,32 @@ export const EventProvider = ({ children }) => {
     createdBy: event.createdBy?.name || "Unknown",
   });
 
-  const fetchEvents = async () => {
+  const mapBlog = (blog) => ({
+    id: blog.id,
+    title: blog.title,
+    summary: blog.summary,
+    content: blog.content,
+    author: blog.author,
+    category: blog.category || "Khác",
+    image: blog.image || "/assets/blog-default.jpg",
+    imageUrls: blog.imageUrls || [],
+    views: blog.views || 0,
+    publishDate: blog.publishedDate,
+    createdBy: blog.createdBy?.name || "Unknown",
+  });
+
+  const fetchEvents = useCallback(async () => {
+    if (isFetchingRef.current) return; // Ngăn gọi API nếu đang fetch
+    //if (isFetching) return; // Ngăn gọi API nếu đang fetch
     try {
       setLoading(true);
       console.log("Fetching events from /swp391/events");
       const token = localStorage.getItem("token");
       const source = axios.CancelToken.source();
       const response = await eventService.getEvents({
-      cancelToken: source.token,
-      headers: token ? { Authorization: `Bearer ${token}` } : {}, // Chỉ thêm header nếu có token
-    });
+        cancelToken: source.token,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
       console.log("API response:", response.data);
       const mappedEvents = response.data.result.map(mapEvent);
       setEvents(mappedEvents);
@@ -82,8 +108,49 @@ export const EventProvider = ({ children }) => {
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
+      setIsFetching(false);
     }
-  };
+  }, []); // Không phụ thuộc vào bất kỳ state nào
+
+  const fetchBlogs = useCallback(async () => {
+    //if (isFetching) return; // Ngăn gọi API nếu đang fetch
+    if (isFetchingRef.current) return; // Ngăn gọi API nếu đang fetch
+    try {
+      // setIsFetching(true);
+      setLoading(true);
+      console.log("Fetching blogs from /swp391/blogs");
+      const token = localStorage.getItem("token");
+      const source = axios.CancelToken.source();
+      const response = await eventService.getBlogs({
+        cancelToken: source.token,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      console.log("API response:", response.data);
+      const mappedBlogs = response.data.result.map(mapBlog);
+      setBlogs(mappedBlogs);
+      setError(null);
+      return { success: true, blogs: mappedBlogs };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Fetch blogs cancelled:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error(
+        "Fetch blogs error:",
+        error.response?.status,
+        error.message
+      );
+      const errorMessage =
+        error.response?.status === 401
+          ? "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại."
+          : error.response?.data?.message || "Không thể tải blog";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+      setIsFetching(false);
+    }
+  }, []); // Không phụ thuộc vào bất kỳ state nào
 
   const getEventById = async (eventId) => {
     try {
@@ -118,6 +185,35 @@ export const EventProvider = ({ children }) => {
     }
   };
 
+  const getBlogById = async (blogId) => {
+    try {
+      setLoading(true);
+      console.log(`Fetching blog ${blogId} from /swp391/blogs/${blogId}`);
+      const source = axios.CancelToken.source();
+      const response = await eventService.getBlogById(blogId, {
+        cancelToken: source.token,
+      }); // Không cần gửi headers, để interceptor xử lý
+      console.log("API response:", response.data);
+      const mappedBlog = mapBlog(response.data.result);
+      setError(null);
+      return { success: true, blog: mappedBlog };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Get blog cancelled:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error("Get blog error:", error.response?.status, error.message);
+      const errorMessage =
+        error.response?.status === 401
+          ? "Không thể tải bài viết. Vui lòng thử lại." // Không yêu cầu đăng nhập
+          : error.response?.data?.message || "Không thể tải bài viết";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const createEvent = async (eventData) => {
     try {
       setLoading(true);
@@ -126,7 +222,7 @@ export const EventProvider = ({ children }) => {
       if (!token) {
         throw new Error("No token found. Please login.");
       }
-      const staffId = user.id; // Lấy từ AuthContext hoặc localStorage
+      const staffId = user.id;
       console.log("User from AuthContext:", user);
       console.log("staffId:", staffId);
       if (!staffId) {
@@ -137,8 +233,8 @@ export const EventProvider = ({ children }) => {
       const formData = new FormData();
       formData.append("title", eventData.title);
       formData.append("date", eventData.date);
-      formData.append("startTime", eventData.startTime + ":00"); // Thêm :00
-      formData.append("endTime", eventData.endTime + ":00"); // Thêm :00
+      formData.append("startTime", eventData.startTime + ":00");
+      formData.append("endTime", eventData.endTime + ":00");
       formData.append("location", eventData.location);
       formData.append("description", eventData.description);
       formData.append("status", eventData.status);
@@ -180,6 +276,64 @@ export const EventProvider = ({ children }) => {
     }
   };
 
+  const createBlog = async (blogData) => {
+    try {
+      setLoading(true);
+      console.log("Creating blog at /swp391/blogs");
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found. Please login.");
+      }
+      const adminId = user.id;
+      if (!adminId) {
+        throw new Error(
+          "Admin ID not found. Please ensure you are logged in as admin."
+        );
+      }
+      const formData = new FormData();
+      formData.append("title", blogData.title);
+      formData.append("summary", blogData.summary);
+      formData.append("content", blogData.content);
+      formData.append("author", blogData.author);
+      formData.append("category", blogData.category);
+      formData.append("publishedDate", blogData.publishDate);
+      if (blogData.image) {
+        formData.append("image", blogData.image);
+      }
+      const source = axios.CancelToken.source();
+      const response = await eventService.createBlog(formData, {
+        cancelToken: source.token,
+      });
+      console.log("API response:", response.data);
+      const newBlog = mapBlog(response.data.result);
+      setBlogs((prev) => [...prev, newBlog]);
+      setError(null);
+      return {
+        success: true,
+        message: "Tạo blog thành công",
+        blog: newBlog,
+      };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Create blog cancelled:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error(
+        "Create blog error:",
+        error.response?.status,
+        error.message
+      );
+      const errorMessage =
+        error.response?.status === 401
+          ? "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại."
+          : error.response?.data?.message || "Tạo blog thất bại";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updateEvent = async (eventId, eventData) => {
     try {
       setLoading(true);
@@ -188,7 +342,7 @@ export const EventProvider = ({ children }) => {
       if (!token) {
         throw new Error("No token found. Please login.");
       }
-      const staffId = user.id; // Lấy từ AuthContext hoặc localStorage
+      const staffId = user.id;
       if (!staffId) {
         throw new Error(
           "Staff ID not found. Please ensure you are logged in as staff."
@@ -197,8 +351,8 @@ export const EventProvider = ({ children }) => {
       const formData = new FormData();
       formData.append("title", eventData.title);
       formData.append("date", eventData.date);
-      formData.append("startTime", eventData.startTime + ":00"); // Thêm :00
-      formData.append("endTime", eventData.endTime + ":00"); // Thêm :00
+      formData.append("startTime", eventData.startTime + ":00");
+      formData.append("endTime", eventData.endTime + ":00");
       formData.append("location", eventData.location);
       formData.append("description", eventData.description);
       formData.append("status", eventData.status);
@@ -242,6 +396,66 @@ export const EventProvider = ({ children }) => {
     }
   };
 
+  const updateBlog = async (blogId, blogData) => {
+    try {
+      setLoading(true);
+      console.log(`Updating blog ${blogId} at /swp391/blogs/${blogId}`);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found. Please login.");
+      }
+      const adminId = user.id;
+      if (!adminId) {
+        throw new Error(
+          "Admin ID not found. Please ensure you are logged in as admin."
+        );
+      }
+      const formData = new FormData();
+      formData.append("title", blogData.title);
+      formData.append("summary", blogData.summary);
+      formData.append("content", blogData.content);
+      formData.append("author", blogData.author);
+      formData.append("category", blogData.category);
+      formData.append("publishedDate", blogData.publishDate);
+      if (blogData.image) {
+        formData.append("image", blogData.image);
+      }
+      const source = axios.CancelToken.source();
+      const response = await eventService.updateBlog(blogId, formData, {
+        cancelToken: source.token,
+      });
+      console.log("API response:", response.data);
+      const updatedBlog = mapBlog(response.data.result);
+      setBlogs((prev) =>
+        prev.map((blog) => (blog.id === blogId ? updatedBlog : blog))
+      );
+      setError(null);
+      return {
+        success: true,
+        message: "Cập nhật blog thành công",
+        blog: updatedBlog,
+      };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Update blog cancelled:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error(
+        "Update blog error:",
+        error.response?.status,
+        error.message
+      );
+      const errorMessage =
+        error.response?.status === 401
+          ? "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại."
+          : error.response?.data?.message || "Cập nhật blog thất bại";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const deleteEvent = async (eventId) => {
     try {
       setLoading(true);
@@ -277,9 +491,45 @@ export const EventProvider = ({ children }) => {
     }
   };
 
+  const deleteBlog = async (blogId) => {
+    try {
+      setLoading(true);
+      console.log(`Deleting blog ${blogId} at /swp391/blogs/${blogId}`);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found. Please login.");
+      }
+      const source = axios.CancelToken.source();
+      await eventService.deleteBlog(blogId, { cancelToken: source.token });
+      console.log("Blog deleted successfully");
+      setBlogs((prev) => prev.filter((blog) => blog.id !== blogId));
+      setError(null);
+      return { success: true, message: "Xóa blog thành công" };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Delete blog cancelled:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error(
+        "Delete blog error:",
+        error.response?.status,
+        error.message
+      );
+      const errorMessage =
+        error.response?.status === 401
+          ? "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại."
+          : error.response?.data?.message || "Xóa blog thất bại";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     console.log("EventProvider mounted");
     fetchEvents();
+    fetchBlogs();
 
     return () => {
       console.log("EventProvider unmounting");
@@ -288,13 +538,19 @@ export const EventProvider = ({ children }) => {
 
   const value = {
     events,
+    blogs,
     loading,
     error,
     fetchEvents,
+    fetchBlogs,
     getEventById,
+    getBlogById,
     createEvent,
+    createBlog,
     updateEvent,
+    updateBlog,
     deleteEvent,
+    deleteBlog,
   };
 
   return (

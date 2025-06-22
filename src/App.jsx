@@ -20,7 +20,7 @@ import Dashboard from './pages/Dashboard';
 import Search from './pages/Search';
 import Manage from './pages/Manage';
 import Faq from './pages/Faq'; // ✅ Thêm Faq ở đây
-import DonationBloodForm from './pages/DonationBloodForm';
+import DonationBloodForm from './pages/Donation/DonationBloodForm';
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyGmail from './pages/VerifyGmail';
 import LookUp from './pages/LookUp';
@@ -80,7 +80,7 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
-          <Route path="/news" element={<NewsList />} />
+          <Route path="/news" element={<EventProvider><NewsList /></EventProvider>} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
           <Route path="/search" element={<Search />} />
