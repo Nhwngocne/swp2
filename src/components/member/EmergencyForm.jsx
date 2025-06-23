@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { authService } from "../../services/authService";
-import "../../assets/css/member/EmergencyForm.css"; // Tuỳ chỉnh CSS của bạn
-import { useAuth } from "../../services/AuthContext"; // Giả sử bạn có AuthContext để lấy thông tin người dùng
+import "../../assets/css/member/EmergencyForm.css";
+import { useAuth } from "../../services/AuthContext";
 
 const EmergencyForm = () => {
+  const { user } = useAuth(); // Lấy thông tin người dùng
   const [showForm, setShowForm] = useState(false);
+
   const [formData, setFormData] = useState({
     component: "",
     freeday: "",
     location: "",
-    blood_type_id: "",
+    status: "PENDING",
   });
 
   const handleChange = (e) => {
@@ -18,22 +20,37 @@ const EmergencyForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await authService.createEmergency(formData);
-      alert("Đã gửi yêu cầu khẩn cấp!");
-      setFormData({
-        component: "",
-        freeday: "",
-        location: "",
-        blood_type_id: "",
-      });
-      setShowForm(false);
-    } catch (err) {
-      console.error("Lỗi gửi yêu cầu khẩn cấp:", err);
-      alert("Gửi yêu cầu thất bại.");
-    }
+  e.preventDefault();
+
+  if (!formData.component || !formData.location || !formData.freeday) {
+    alert("Vui lòng điền đầy đủ thông tin.");
+    return;
+  }
+
+  const dataToSend = {
+    component: formData.component,
+    location: formData.location,
+    // Chuyển về định dạng yyyy-MM-dd
+    freeday: new Date(formData.freeday).toISOString().split("T")[0],
+    status: formData.status,
   };
+
+  try {
+    console.log("Data gửi đi:", dataToSend);
+    await authService.createEmergency(dataToSend);
+    alert("Đã gửi yêu cầu khẩn cấp!");
+    setFormData({
+      component: "",
+      freeday: "",
+      location: "",
+      status: "PENDING",
+    });
+    setShowForm(false);
+  } catch (err) {
+    console.error("Lỗi gửi yêu cầu khẩn cấp:", err);
+    alert("Gửi yêu cầu thất bại.");
+  }
+};
 
   return (
     <div className="emergency-form-container">
@@ -44,6 +61,7 @@ const EmergencyForm = () => {
       {showForm && (
         <div className="emergency-form">
           <h2>Đăng ký khẩn cấp</h2>
+          {user && <p>Xin chào, {user.name || user.fullName || user.email}!</p>}
           <form onSubmit={handleSubmit}>
             <div>
               <label>Thành phần (component):</label>
@@ -72,17 +90,6 @@ const EmergencyForm = () => {
                 onChange={handleChange}
               />
             </div>
-           
-            <div>
-              <label>Blood Type ID:</label>
-              <input
-                type="number"
-                name="blood_type_id"
-                value={formData.blood_type_id}
-                onChange={handleChange}
-              />
-            </div>
-            
             <button type="submit">Gửi yêu cầu</button>
           </form>
         </div>

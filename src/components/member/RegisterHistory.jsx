@@ -5,45 +5,24 @@ import { useAuth } from "../../services/AuthContext";
 
 const RegisterHistory = () => {
   const [history, setHistory] = useState([]);
-  //const { user } = useContext(AuthContext);
-  const { user } = useAuth(); 
+  const { user } = useAuth(); // Lấy user từ AuthContext
   const memberId = user?.id;
 
-//   useEffect(() => {
-//     if (memberId) {
-//       authService
-//         .getDonationHistoryByMemberId(memberId)
-//         .then((res) => setHistory(res.data))
-//         .catch((err) => console.error("Lỗi lấy lịch sử:", err));
-//     }
-//   }, [memberId]);
-
-    useEffect(() => {
-    // ✅ Dữ liệu giả để hiển thị tạm thời
-    const fakeData = [
-      {
-        id: 1,
-        donate_date: "2025-05-10",
-        component: "Máu toàn phần",
-        bloodType: { name: "O+" },
-        location: "Bệnh viện Chợ Rẫy",
-        regis_time: "08:00 - 10:00",
-        status: "Đã xác nhận",
-      },
-      {
-        id: 2,
-        donate_date: "2025-03-22",
-        component: "Tiểu cầu",
-        bloodType: { name: "A-" },
-        location: "Trung tâm hiến máu Quốc gia",
-        regis_time: "13:00 - 15:00",
-        status: "Chờ xác nhận",
-      },
-    ];
-
-    // Gán dữ liệu vào state
-    setHistory(fakeData);
-  }, []);
+  useEffect(() => {
+  if (memberId) {
+    authService
+      .getAllDonationForms()
+      .then((res) => {
+        // Lọc theo memberId
+        const allForms = res.data.result || []; // lấy từ `ApiResponse`
+        const filtered = allForms.filter((form) => form.member.id === memberId);
+        setHistory(filtered);
+      })
+      .catch((err) => {
+        console.error("Lỗi lấy lịch sử:", err);
+      });
+  }
+}, [memberId]);
 
   const renderRows = () => {
     if (history.length === 0) {

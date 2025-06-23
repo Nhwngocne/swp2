@@ -36,6 +36,7 @@ const EmergencyList = () => {
   };
 
   const getUrgencyColor = (urgency) => {
+    if (!urgency) return '#6c757d';
     switch (urgency.toLowerCase()) {
       case 'critical': return '#dc3545';
       case 'high': return '#fd7e14';
@@ -43,6 +44,31 @@ const EmergencyList = () => {
       case 'low': return '#28a745';
       default: return '#6c757d';
     }
+  };
+
+  const formatLabel = (label) => {
+    const mapping = {
+      bloodType: "Nhóm máu",
+      urgency: "Mức độ khẩn cấp",
+      status: "Trạng thái",
+      hospital: "Bệnh viện",
+      location: "Địa điểm",
+      contact: "Liên hệ",
+      createdAt: "Thời gian tạo",
+      description: "Mô tả",
+      component: "Thành phần",
+      freeday: "Ngày rảnh",
+      updatedAt: "Cập nhật lúc",
+      id: "Mã yêu cầu",
+    };
+    return mapping[label] || label;
+  };
+
+  const formatValue = (key, value) => {
+    if (key === 'createdAt' || key === 'freeday' || key === 'updatedAt') {
+      return new Date(value).toLocaleString('vi-VN');
+    }
+    return value?.toString();
   };
 
   const filteredEmergencies = emergencies.filter(emergency => {
@@ -107,12 +133,15 @@ const EmergencyList = () => {
               <p className="description">{emergency.description}</p>
 
               <div className="emergency-details">
-                <div className="detail-item">
-                  <strong>Liên hệ:</strong> {emergency.contact}
-                </div>
-                <div className="detail-item">
-                  <strong>Thời gian:</strong> {new Date(emergency.createdAt).toLocaleString('vi-VN')}
-                </div>
+                {Object.entries(emergency)
+                  .filter(([key]) =>
+                    !['staffName', 'adminName', 'staff', 'admin'].includes(key)
+                  )
+                  .map(([key, value]) => (
+                    <div className="detail-item" key={key}>
+                      <strong>{formatLabel(key)}:</strong> {formatValue(key, value)}
+                    </div>
+                  ))}
               </div>
             </div>
 

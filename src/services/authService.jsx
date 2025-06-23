@@ -118,12 +118,16 @@ export const authService = {
   // Gửi feedback
   sendFeedback: (feedbackData) => authAPI.post("/feedbacks", feedbackData),
 
-  getDonationHistoryByMemberId: (memberId) =>
-  authAPI.get(`/donation-registrations/member/${memberId}`),
+  // Lấy tất cả đơn đăng ký hiến máu
+getAllDonationForms: () => authAPI.get("/forms"),
+
+getAllDonationHistories: () => authAPI.get("/donations/histories"),
   
   createEmergency: (data) => authAPI.post("/emergencies/emergency", data),
 
   getAllEmergencies: () => authAPI.get("/emergencies/emergency"),
+
+  
 };
 
 export default authService;
