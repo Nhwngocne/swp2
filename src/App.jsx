@@ -5,6 +5,7 @@ import './App.css';
 // Context
 import { AuthProvider, useAuth } from './services/AuthContext';
 import { EventProvider } from './services/EventContext'; 
+import { FeedbackProvider } from "./services/FeedbackContext";
 
 // Common Components
 import Navbar from './components/common/Navbar';
@@ -26,6 +27,7 @@ import DonationStep2 from './pages/Donation/DonationStep2'; // ✅ Thêm import
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyGmail from './pages/VerifyGmail';
 import LookUp from './pages/LookUp';
+import FeedbackList from './pages/FeedbackList';
 
 // Guest Components
 import EventList from './components/guest/EventList';
@@ -92,6 +94,7 @@ const AppContent = () => {
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/verifyGmail" element={<VerifyGmail />} />
           <Route path="/lookUp" element={<LookUp />} />
+          <Route path="/feedbacks" element={<FeedbackProvider><FeedbackList /></FeedbackProvider>}/>
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

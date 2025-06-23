@@ -12,12 +12,6 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  // const [user, setUser] = useState(null);
-  //change
-  // const [user, setUser] = useState(() => {
-  //   const storedUser = localStorage.getItem("user");
-  //   return storedUser ? JSON.parse(storedUser) : null;
-  // });
   const [user, setUser] = useState(() => {
     try {
       const storedUser = localStorage.getItem("user");
@@ -33,10 +27,6 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   });
-  //add roleAdd
-  // const [role, setRole] = useState(() => {
-  //   return localStorage.getItem("role") || null;
-  // });
   const [role, setRole] = useState(() => {
     const storedRole = localStorage.getItem("role");
     return storedRole && storedRole !== "undefined" ? storedRole : null;
@@ -152,12 +142,6 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await authService.register(userData);
-      ////REGIST NOT ALLOW LOGINLOGIN
-      //const { data } = response;
-      // localStorage.setItem('token', data.token);
-      // localStorage.setItem('user', JSON.stringify(data.user));
-      // setUser(data.user);
-
       return {
         success: true,
         message: "Đăng ký thành công. Vui lòng đăng nhập.",
@@ -206,16 +190,6 @@ export const AuthProvider = ({ children }) => {
   // Đăng xuất
   const logout = async () => {
     clearAuthData();
-    // const token = localStorage.getItem("token");
-    // try {
-    //   if (token) {
-    //     await authService.logout(token); // Truyền token
-    //   }
-    // } catch (error) {
-    //   console.error("Logout API error:", error);
-    // } finally {
-    //   clearAuthData();
-    // }
   };
 
   // Cập nhật hồ sơ
@@ -226,10 +200,6 @@ export const AuthProvider = ({ children }) => {
         profileData
       );
       const { data } = response;
-
-      // localStorage.setItem('user', JSON.stringify(data.result.user));
-      // setUser(data.result.user);
-
       const updatedUser = data?.result?.user;
       if (updatedUser) {
         localStorage.setItem("user", JSON.stringify(updatedUser));
