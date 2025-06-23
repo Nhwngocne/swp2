@@ -17,5 +17,5 @@ public class FeedbackResponse {
     LocalDateTime createdAt;
 
     // Thông tin người đánh giá
-    String memberName;
+    MemberResponse member;
 }

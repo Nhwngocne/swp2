@@ -11,4 +11,5 @@ import lombok.experimental.FieldDefaults;
 public class FeedbackRequest {
     String content;
     Integer rating;
+    int memberId; // ID của người đánh giá
 }

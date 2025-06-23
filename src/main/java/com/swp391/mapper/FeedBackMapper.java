@@ -8,11 +8,11 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface FeedBackMapper {
+    @Mapping(target = "member", ignore = true)
+    Feedback toFeedback(FeedbackRequest request);
 
-   Feedback toFeedback(FeedbackRequest request);
-
-   @Mapping(source = "member.name", target = "memberName")
-   FeedbackResponse toFeedbackResponse(Feedback feedback);
+    @Mapping(source = "member", target = "member")
+    FeedbackResponse toFeedbackResponse(Feedback feedback);
 
     void updateFeedback(@MappingTarget Feedback feedback, FeedbackRequest request);
 }
