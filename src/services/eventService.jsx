@@ -76,10 +76,7 @@ export const eventService = {
 
   // Cập nhật sự kiện
   updateEvent: (eventId, formData, config = {}) =>
-    eventAPI.put(`/events/${eventId}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-      ...config,
-    }),
+    eventAPI.put(`/events/${eventId}`, formData, config),
 
   // Xóa sự kiện
   deleteEvent: (eventId, config = {}) =>
@@ -92,17 +89,11 @@ export const eventService = {
 
   // Cập nhật biểu mẫu hiến máu (dành cho staff)
   updateBloodDonationFormByStaff: (formData, config = {}) =>
-    eventAPI.put("/forms/approve", formData, {
-      headers: { "Content-Type": "application/json" },
-      ...config,
-    }),
+    eventAPI.put("/forms/approve", formData, config),
 
   // Cập nhật biểu mẫu hiến máu (dành cho member)
   updateBloodDonationFormByMember: (formId, memberId, formData, config = {}) =>
-    eventAPI.put(`/forms/${formId}/member/${memberId}`, formData, {
-      headers: { "Content-Type": "application/json" },
-      ...config,
-    }),
+    eventAPI.put(`/forms/${formId}/member/${memberId}`, formData, config),
 
   // Xóa biểu mẫu hiến máu
   deleteBloodDonationForm: (formId, config = {}) =>
@@ -132,22 +123,18 @@ export const eventService = {
   getBlogs: (config = {}) => eventAPI.get("/blogs", config),
 
   // Lấy blog theo ID
-  getBlogById: (blogId, config = {}) => eventAPI.get(`/blogs/${blogId}`, config),
+  getBlogById: (blogId, config = {}) =>
+    eventAPI.get(`/blogs/${blogId}`, config),
 
   // Tạo blog
   createBlog: (formData, config = {}) =>
-    eventAPI.post("/blogs", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-      ...config,
-    }),
+    eventAPI.post("/blogs", formData, config),
 
   // Cập nhật blog
   updateBlog: (blogId, formData, config = {}) =>
-    eventAPI.put(`/blogs/${blogId}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-      ...config,
-    }),
+    eventAPI.put(`/blogs/${blogId}`, formData, config),
 
   // Xóa blog
-  deleteBlog: (blogId, config = {}) => eventAPI.delete(`/blogs/${blogId}`, config),
+  deleteBlog: (blogId, config = {}) =>
+    eventAPI.delete(`/blogs/${blogId}`, config),
 };

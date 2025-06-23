@@ -63,10 +63,7 @@ export const feedbackService = {
 
   // Cập nhật feedback
   updateFeedback: (feedbackId, formData, config = {}) =>
-    feedbackAPI.put(`/feedbacks/${feedbackId}`, formData, {
-      headers: { "Content-Type": "application/json" },
-      ...config,
-    }),
+    feedbackAPI.put(`/feedbacks/${feedbackId}`, formData,config),
 
   // Xóa feedback
   deleteFeedback: (feedbackId, config = {}) =>
