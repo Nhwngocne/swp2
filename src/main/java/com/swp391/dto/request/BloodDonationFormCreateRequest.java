@@ -3,7 +3,6 @@ package com.swp391.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Data
@@ -19,24 +18,41 @@ public class BloodDonationFormCreateRequest {
     @NotNull(message = "Member ID không được để trống")
     int memberId;
 
-    @NotBlank(message = "Nhóm máu không được để trống")
+    @NotNull(message = "Nhóm máu không được để trống")
     String bloodType; // A, B, AB, O, UNKNOWN
 
-    @NotBlank(message = "Trả lời câu 1 là bắt buộc")
-    String donatedBefore; // Có / Không
+    // Câu 1
+    boolean donatedBefore;
 
-    @NotBlank(message = "Trả lời câu 2 là bắt buộc")
-    String currentIllness; // Có / Không
-
+    // Câu 2
+    boolean currentlyIll;
     String illnessDetails;
 
-    @NotBlank(message = "Trả lời câu 3 là bắt buộc")
-    String pastDiseases; // Có / Không / Bệnh khác
-
+    // Câu 3
+    boolean hadSeriousDisease;
     String diseaseDetails;
 
-    String pastYearActivities; // lưu dạng JSON string hoặc chuỗi phân tách
+    // Câu 4 (checkbox)
+    boolean hadMalariaOrOtherInfectious;
+    boolean receivedBlood;
+    boolean gotVaccine;
+    boolean noneOfAbove12Months;
 
-    String femaleQuestions; // lưu nếu là nữ
+    // Câu 5
+    boolean tattooOrAcupuncture;
+    boolean hadSkinIssues;
 
+    // Câu 6
+    boolean usedAntibioticsOrAntiInflammatory;
+
+    // Câu 7
+    String symptomsPast2Weeks;
+
+    // Câu 8
+    String symptomsPast1Week;
+
+    // Câu 9 - nữ
+    boolean isMenstruating;
+    boolean isPregnantOrRecentlyDelivered;
+    boolean noneOfFemaleConditions;
 }

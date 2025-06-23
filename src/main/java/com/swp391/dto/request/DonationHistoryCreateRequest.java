@@ -11,8 +11,23 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DonationHistoryCreateRequest {
+
     LocalDate date;
-    Integer volume;
-    String component;
-    String status;
+
+    Integer volume; // ml
+
+    String component; // Hồng cầu, tiểu cầu...
+
+    String status; // VD: Hoàn thành, Đang chờ,...
+
+    String location; // Địa điểm hiến máu
+
+    String testResult; // VD: Đạt tiêu chuẩn
+
+    LocalDate nextEligibleDate;
+
+    // ID của các thực thể liên quan
+    int staffId;
+    int memberId;
+    int bloodTypeId;
 }
