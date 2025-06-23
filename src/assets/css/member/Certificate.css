@@ -1,0 +1,94 @@
+.certificate-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  font-family: "Times New Roman", serif;
+  background-color: #f8f6f1;
+}
+
+.certificate-border {
+  width: 1120px; /* phù hợp khổ A4 landscape */
+  height: 794px;
+  border: 15px double #b88b4a;
+  padding: 40px 60px;
+  background-color: #fffef9;
+  color: #5c3a1a;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.certificate-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.cert-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  color: #5c3a1a;
+}
+
+.cert-subtitle {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.cert-name {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 10px 0 30px;
+  color: #3d2b1f;
+  letter-spacing: 1px;
+}
+
+.cert-description {
+  font-size: 20px;
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.cert-signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 80px;
+  padding: 0 60px;
+}
+
+.signature-name {
+  font-weight: bold;
+  font-size: 18px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.signature-title {
+  font-size: 16px;
+  color: #333;
+}
+
+.download-section {
+  margin-top: 30px;
+}
+
+.download-btn {
+  padding: 12px 24px;
+  background-color: #b88b4a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #a1733a;
+}

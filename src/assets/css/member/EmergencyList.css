@@ -1,0 +1,171 @@
+.emergency-list {
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f5f5;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  color: #dc3545;
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  color: #555;
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.emergency-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.emergency-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.emergency-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.blood-type-badge {
+  background-color: #e60023;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.urgency-badge {
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+.status-active {
+  background-color: #28a745;
+}
+
+.status-fulfilled {
+  background-color: #6c757d;
+}
+
+.emergency-content h3 {
+  margin: 0 0 4px;
+  color: #333;
+}
+
+.location {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.description {
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.emergency-details {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 12px;
+}
+
+.detail-item {
+  margin-bottom: 4px;
+}
+
+.emergency-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.respond-btn,
+.contact-btn {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.respond-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.respond-btn:hover {
+  background-color: #0056b3;
+}
+
+.contact-btn a {
+  display: block;
+  text-align: center;
+  color: #fff;
+  text-decoration: none;
+}
+
+.contact-btn {
+  background-color: #17a2b8;
+}
+
+.contact-btn:hover {
+  background-color: #117a8b;
+}
+
+.no-data {
+  text-align: center;
+  margin-top: 40px;
+  color: #777;
+  font-size: 16px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  padding: 40px;
+}

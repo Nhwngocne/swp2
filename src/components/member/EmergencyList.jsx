@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { authService } from "../../services/authService";
+import { useAuth } from "../../services/AuthContext"; 
+import '../../assets/css/member/EmergencyList.css';
 
 const EmergencyList = () => {
   const { user } = useAuth();
@@ -13,45 +16,10 @@ const EmergencyList = () => {
   const fetchEmergencies = async () => {
     try {
       setLoading(true);
-      // Mock data - replace with actual API call
-      const mockEmergencies = [
-        {
-          id: 1,
-          bloodType: 'O-',
-          urgency: 'Critical',
-          hospital: 'Bệnh viện Chợ Rẫy',
-          location: 'TP.HCM',
-          contact: '0901234567',
-          description: 'Cần gấp máu O- cho ca phẫu thuật khẩn cấp',
-          createdAt: '2024-03-15T10:30:00Z',
-          status: 'active'
-        },
-        {
-          id: 2,
-          bloodType: 'A+',
-          urgency: 'High',
-          hospital: 'Bệnh viện Bạch Mai',
-          location: 'Hà Nội',
-          contact: '0987654321',
-          description: 'Bệnh nhân tai nạn giao thông cần máu A+',
-          createdAt: '2024-03-15T08:15:00Z',
-          status: 'active'
-        },
-        {
-          id: 3,
-          bloodType: 'B+',
-          urgency: 'Medium',
-          hospital: 'Bệnh viện Đa khoa Đồng Nai',
-          location: 'Đồng Nai',
-          contact: '0912345678',
-          description: 'Cần máu B+ cho bệnh nhân ung thư',
-          createdAt: '2024-03-14T16:45:00Z',
-          status: 'fulfilled'
-        }
-      ];
-      setEmergencies(mockEmergencies);
+      const response = await authService.getAllEmergencies();
+      setEmergencies(response.data.result);
     } catch (error) {
-      console.error('Error fetching emergencies:', error);
+      console.error('Lỗi khi tải danh sách cấp cứu:', error);
     } finally {
       setLoading(false);
     }
@@ -59,11 +27,10 @@ const EmergencyList = () => {
 
   const respondToEmergency = async (emergencyId) => {
     try {
-      // Mock API call
-      console.log('Responding to emergency:', emergencyId);
+      console.log('Phản hồi đơn khẩn cấp:', emergencyId);
       alert('Phản hồi của bạn đã được gửi! Bệnh viện sẽ liên hệ với bạn sớm.');
     } catch (error) {
-      console.error('Error responding to emergency:', error);
+      console.error('Lỗi khi phản hồi:', error);
       alert('Có lỗi xảy ra. Vui lòng thử lại.');
     }
   };
@@ -97,8 +64,8 @@ const EmergencyList = () => {
       </div>
 
       <div className="filters">
-        <select 
-          value={filter} 
+        <select
+          value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="filter-select"
         >
@@ -123,7 +90,7 @@ const EmergencyList = () => {
               <div className="blood-type-badge">
                 {emergency.bloodType}
               </div>
-              <div 
+              <div
                 className="urgency-badge"
                 style={{ backgroundColor: getUrgencyColor(emergency.urgency) }}
               >
@@ -138,7 +105,7 @@ const EmergencyList = () => {
               <h3>{emergency.hospital}</h3>
               <p className="location">{emergency.location}</p>
               <p className="description">{emergency.description}</p>
-              
+
               <div className="emergency-details">
                 <div className="detail-item">
                   <strong>Liên hệ:</strong> {emergency.contact}
@@ -151,7 +118,7 @@ const EmergencyList = () => {
 
             <div className="emergency-actions">
               {emergency.status === 'active' && (
-                <button 
+                <button
                   className="respond-btn"
                   onClick={() => respondToEmergency(emergency.id)}
                 >

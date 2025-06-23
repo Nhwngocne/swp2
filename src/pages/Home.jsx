@@ -8,7 +8,7 @@ import imgMain from '../assets/img/home2.jpg';
 import imgSub1 from '../assets/img/hom1.jpg';
 import imgSub2 from '../assets/img/hien-mau-nhan-dao.webp';
 import FeedbackList from "./FeedbackList";
-import { FeedbackProvider } from "../services/FeedbackContext";
+// import { FeedbackProvider } from "../services/FeedbackContext";
 // import heartImg from "../assets/img/heart-in-hand.jpg";
 
 const benefitSlides = [
@@ -225,9 +225,9 @@ const Home = () => {
         </div>
       </section>
       {/* Achievements */}
-      <FeedbackProvider>
+      {/* <FeedbackProvider> */}
         <FeedbackList />
-      </FeedbackProvider>
+      {/* </FeedbackProvider> */}
     </div>
   );
 };
