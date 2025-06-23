@@ -204,7 +204,7 @@ const Navbar = () => {
         </Link>
 
         {role === 'MEMBER' && (
-          <Link to="/donation-history" className="nav-item">
+          <Link to="/donationHistory" className="nav-item">
             Lịch sử hiến máu
           </Link>
         )}

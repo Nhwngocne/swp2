@@ -107,6 +107,7 @@ const FeedbackList = () => {
         <div className="add-feedback-form">
           <h4>Gửi Feedback của bạn</h4>
           <form onSubmit={handleSubmit}>
+
             <input
               type="text"
               name="name"
@@ -136,6 +137,9 @@ const FeedbackList = () => {
               <option value={1}>1 - Rất tệ</option>
             </select>
             <button type="submit">Gửi Feedback</button>
+            <button type="button" onClick={() => setShowForm(false)} className="close-button">
+              Đóng
+            </button>
             {success && <p className="success-message">Gửi thành công!</p>}
             {error && <p className="error-message">{error}</p>}
           </form>

@@ -1,0 +1,80 @@
+.emergency-form-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.toggle-button {
+  background-color: #d32f2f;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #b71c1c;
+}
+
+.emergency-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.emergency-form h2 {
+  text-align: center;
+  color: #d32f2f;
+  margin-bottom: 25px;
+}
+
+.emergency-form form div {
+  margin-bottom: 15px;
+}
+
+.emergency-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.emergency-form input,
+.emergency-form select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.emergency-form input:focus,
+.emergency-form select:focus {
+  border-color: #d32f2f;
+}
+
+.emergency-form button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #d32f2f;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.emergency-form button[type="submit"]:hover {
+  background-color: #b71c1c;
+}

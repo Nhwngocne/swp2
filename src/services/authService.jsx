@@ -118,8 +118,12 @@ export const authService = {
   // Gửi feedback
   sendFeedback: (feedbackData) => authAPI.post("/feedbacks", feedbackData),
 
+  getDonationHistoryByMemberId: (memberId) =>
+  authAPI.get(`/donation-registrations/member/${memberId}`),
   
+  createEmergency: (data) => authAPI.post("/emergencies/emergency", data),
 
+  getAllEmergencies: () => authAPI.get("/emergencies/emergency"),
 };
 
 export default authService;

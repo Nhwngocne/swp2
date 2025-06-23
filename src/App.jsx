@@ -36,6 +36,10 @@ import BlogList from './components/guest/BlogList';
 import Profile from './components/member/Profile';
 import DonationHistory from './components/member/DonationHistory';
 import EmergencyList from './components/member/EmergencyList';
+import RegisterHistory from './components/member/RegisterHistory';
+import Certificate from './components/member/Certificate';
+import Form from './components/member/Form';
+import EmergencyForm from './components/member/EmergencyForm';
 
 // Staff Components
 import EventManager from './components/staff/EventManager';
@@ -98,9 +102,14 @@ const AppContent = () => {
           <Route path="/events" element={<EventProvider><EventList /></EventProvider>}/>
 
           {/* Member Routes */}
+          
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />
-          <Route path="/donation-history" element={<ProtectedRoute requiredRole="MEMBER"><DonationHistory /></ProtectedRoute>} />
+          <Route path="/donationHistory" element={<ProtectedRoute requiredRole="MEMBER"><DonationHistory /></ProtectedRoute>} />
           <Route path="/emergency" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyList /></ProtectedRoute>} />
+          <Route path="/registerHistory" element={<ProtectedRoute requiredRole="MEMBER"><RegisterHistory /></ProtectedRoute>} />
+          <Route path="/certificate" element={<ProtectedRoute requiredRole="MEMBER"><Certificate /></ProtectedRoute>} />
+          <Route path="/form" element={<ProtectedRoute requiredRole="MEMBER"><Form /></ProtectedRoute>} />
+          <Route path="/emergencyForm" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyForm /></ProtectedRoute>} />
 
 
           {/* Staff Routes */}
