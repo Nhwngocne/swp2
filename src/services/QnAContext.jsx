@@ -21,7 +21,7 @@ export const useQnA = () => {
 };
 
 export const QnAProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
   const [pendingQuestions, setPendingQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,11 +35,11 @@ export const QnAProvider = ({ children }) => {
     answer: qna.answer || "",
     member: {
       id: qna.member?.id || 0,
-      fullName: qna.member?.fullName || "Không xác định",
+      name: qna.member?.name || "Không xác định",
     },
     staff: {
       id: qna.staff?.id || 0,
-      fullName: qna.staff?.fullName || "Không xác định",
+      name: qna.staff?.name || "Không xác định",
     },
     createdAt: qna.createdAt,
     answeredAt: qna.answeredAt,
@@ -136,7 +136,7 @@ export const QnAProvider = ({ children }) => {
     try {
       setLoading(true);
       console.log("Đang tạo câu hỏi tại /swp391/qna/ask");
-      if (!user || !user.id || !user.roles.includes("MEMBER"))
+      if (!user || !user.id || !role === 'MEMBER')
         throw new Error("Người dùng không có quyền MEMBER hoặc chưa xác thực.");
       const payload = {
         question: questionData.question,
@@ -172,7 +172,7 @@ export const QnAProvider = ({ children }) => {
     try {
       setLoading(true);
       console.log("Đang trả lời câu hỏi tại /swp391/qna/answer");
-      if (!user || !user.id || !user.roles.includes("STAFF"))
+      if (!user || !user.id || !role === 'STAFF')
         throw new Error("Người dùng không có quyền STAFF hoặc chưa xác thực.");
       const payload = {
         qnaId: answerData.qnaId,
@@ -212,7 +212,7 @@ export const QnAProvider = ({ children }) => {
 
   useEffect(() => {
     fetchAnsweredQuestions();
-    if (user && user.roles.includes("STAFF")) {
+    if (user && role === 'STAFF') {
       fetchPendingQuestions();
     }
   }, [fetchAnsweredQuestions, fetchPendingQuestions, user]);

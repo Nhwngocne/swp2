@@ -1,19 +1,65 @@
-
 import React from 'react';
 
 export default function DonationStep2({ formData, setFormData, onBack, onNext }) {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     if (type === 'checkbox') {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: checked
-          ? [...(prev[name] || []), value]
-          : (prev[name] || []).filter((item) => item !== value),
-      }));
+      if (Array.isArray(formData[name])) {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: checked
+            ? [...(prev[name] || []), value]
+            : (prev[name] || []).filter((item) => item !== value),
+        }));
+      } else {
+        setFormData((prev) => ({ ...prev, [name]: checked }));
+      }
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handleSubmit = () => {
+    if (!formData.agreement) {
+      alert('Bạn cần đồng ý cam kết trước khi đăng ký.');
+      return;
+    }
+
+    const payload = {
+      eventId: formData.eventId,
+      memberId: formData.memberId,
+      bloodType: formData.bloodType || 'UNKNOWN',
+
+      donatedBefore: formData.donated_before === 'co',
+      currentlyIll: formData.current_illness === 'co',
+      illnessDetails: formData.illness_details || '',
+
+      hadSeriousDisease:
+        formData.past_diseases === 'co' || formData.past_diseases === 'benh_khac',
+      diseaseDetails: formData.disease_details || '',
+
+      hadMalariaOrOtherInfectious: formData.past_year?.includes('sot_ret') || false,
+      receivedBlood: formData.past_year?.includes('truyen_mau') || false,
+      gotVaccine: formData.past_year?.includes('tiem_vaccine') || false,
+      noneOfAbove12Months: formData.past_year?.includes('khong') || false,
+
+      tattooOrAcupuncture: formData.past_6months?.includes('xam_hinh') || false,
+      hadSkinIssues: formData.past_6months?.includes('noi_mun') || false,
+
+      usedAntibioticsOrAntiInflammatory:
+        formData.past_month?.includes('nhan_thuoc') || false,
+
+      symptomsPast2Weeks: formData.other_2weeks || '',
+      symptomsPast1Week: formData.other_week || '',
+
+      isMenstruating: formData.female_questions?.includes('dang_co_kinh') || false,
+      isPregnantOrRecentlyDelivered:
+        formData.female_questions?.includes('co_thai') || false,
+      noneOfFemaleConditions: formData.female_questions?.includes('khong_nu') || false,
+    };
+
+    onNext(payload);
   };
 
   return (
@@ -37,7 +83,6 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
           ))}
         </div>
       </div>
-
       <div className="mb-4">
         <p className="font-medium mb-2">2. Hiện tại, anh/chị có mắc bệnh lý nào không?</p>
         <div className="flex gap-4 mb-2">
@@ -104,7 +149,7 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
                 type="checkbox"
                 name="past_year"
                 value={option.value}
-                checked={formData.past_year.includes(option.value)}
+                checked={formData.past_year?.includes(option.value)}
                 onChange={handleInputChange}
               />
               <span>{option.label}</span>
@@ -125,7 +170,7 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
                 type="checkbox"
                 name="past_6months"
                 value={option.value}
-                checked={formData.past_6months.includes(option.value)}
+                checked={formData.past_6months?.includes(option.value)}
                 onChange={handleInputChange}
               />
               <span>{option.label}</span>
@@ -136,22 +181,16 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
 
       <div className="mb-4">
         <p className="font-medium mb-2">6. Trong 1 tháng qua, anh/chị có:</p>
-        <div className="space-y-2">
-          {[
-            { value: 'nhan_thuoc', label: 'Dùng thuốc kháng sinh hoặc kháng viêm?' },
-          ].map((option) => (
-            <label key={option.value} className="flex items-start gap-2">
-              <input
-                type="checkbox"
-                name="past_month"
-                value={option.value}
-                checked={formData.past_month.includes(option.value)}
-                onChange={handleInputChange}
-              />
-              <span>{option.label}</span>
-            </label>
-          ))}
-        </div>
+        <label className="flex items-start gap-2">
+          <input
+            type="checkbox"
+            name="past_month"
+            value="nhan_thuoc"
+            checked={formData.past_month?.includes('nhan_thuoc')}
+            onChange={handleInputChange}
+          />
+          <span>Dùng thuốc kháng sinh hoặc kháng viêm?</span>
+        </label>
       </div>
 
       <div className="mb-4">
@@ -191,7 +230,7 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
                 type="checkbox"
                 name="female_questions"
                 value={option.value}
-                checked={formData.female_questions.includes(option.value)}
+                checked={formData.female_questions?.includes(option.value)}
                 onChange={handleInputChange}
               />
               <span>{option.label}</span>
@@ -205,7 +244,7 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
           <input
             type="checkbox"
             name="agreement"
-            checked={formData.agreement}
+            checked={formData.agreement || false}
             onChange={handleInputChange}
             required
           />
@@ -223,7 +262,7 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
         </button>
         <button
           type="button"
-          onClick={onNext}
+          onClick={handleSubmit}
           className="bg-blue-500 text-white font-medium py-2 px-6 rounded-md hover:bg-blue-600 transition-colors"
         >
           Đăng ký

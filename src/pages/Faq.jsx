@@ -1,59 +1,88 @@
-import React, { useState } from 'react';
-import '../assets/css/pages/Faq.css'; //
-const faqList = [
-  {
-    question: 'Ai có thể tham gia hiến máu?',
-    answer: `- Tất cả mọi người từ 18 - 60 tuổi, thực sự tình nguyện hiến máu của mình để cứu chữa người bệnh.
-- Cân nặng ít nhất là 45kg đối với phụ nữ, nam giới. Lượng máu hiến mỗi lần không quá 9ml/kg cân nặng và không quá 500ml mỗi lần.
-- Không bị nhiễm hoặc không có các hành vi lây nhiễm HIV và các bệnh lây nhiễm qua đường truyền máu khác.
-- Thời gian giữa 2 lần hiến máu là 12 tuần đối với cả Nam và Nữ.
-- Có giấy tờ tùy thân.`,
-  },
-  {
-    question: 'Ai là người không nên hiến máu',
-    answer: `- Người đã nhiễm hoặc đã thực hiện hành vi có nguy cơ nhiễm HIV, viêm gan B, C, và các virus lây qua đường truyền máu.
-- Người có các bệnh mãn tính: tim mạch, huyết áp, hô hấp, dạ dày…`,
-  },
-  {
-    question: 'Máu của tôi sẽ được làm những xét nghiệm gì?',
-    answer: `- Tất cả các đơn vị máu đều được kiểm tra nhóm máu (hệ ABO, Rh), HIV, viêm gan B, viêm gan C, giang mai, sốt rét.
-- Bạn sẽ được thông báo kết quả, được giữ kín và tư vấn (miễn phí) nếu phát hiện ra các bệnh nhiễm trùng nói trên.`,
-  },   
-     {
-    question: 'Máu gồm những thành phần và chức năng gì?',
-    answer: `Máu là một chất lỏng lưu thông trong các mạch máu của cơ thể, gồm nhiều thành phần, mỗi thành phần làm nhiệm vụ khác nhau:
-            - Hồng cầu làm nhiệm vụ chính là vận chuyển oxy.
-            - Bạch cầu làm nhiệm vụ bảo vệ cơ thể.
-            - Tiểu cầu tham gia vào quá trình đông cầm máu.
-            - Huyết tương: gồm nhiều thành phần khác nhau: kháng thể, các yếu tố đông máu, các chất dinh dưỡng...`,
-  },
-  
-
-];
+import React, { useState, useEffect } from 'react';
+import { useQnA } from '../services/QnAContext';
+import { useAuth } from '../services/AuthContext'; // Giả sử bạn có AuthContext để kiểm tra vai trò người dùng
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../assets/css/pages/Faq.css';
 
 const Faq = () => {
-  const [openIndex, setOpenIndex] = useState(null);
+  const { answeredQuestions, fetchAnsweredQuestions, createQuestion, loading, error } = useQnA();
+  const { user,role } = useAuth(); // Lấy thông tin người dùng để kiểm tra vai trò
+  const [question, setQuestion] = useState(''); // State cho form gửi câu hỏi
 
-  const toggle = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
+  // Gọi API để lấy danh sách câu hỏi đã trả lời
+  useEffect(() => {
+    fetchAnsweredQuestions();
+  }, [fetchAnsweredQuestions]);
+
+  // Xử lý gửi câu hỏi
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!user || role !== 'MEMBER') {
+      toast.error('Vui lòng đăng nhập với vai trò MEMBER để gửi câu hỏi!');
+      return;
+    }
+    const response = await createQuestion({ question });
+    if (response.success) {
+      toast.success('Câu hỏi đã được gửi!');
+      setQuestion('');
+      fetchAnsweredQuestions(); // Làm mới danh sách câu hỏi
+    } else {
+      toast.error(`Lỗi: ${response.error}`);
+    }
   };
 
   return (
     <div className="faq-page container">
-      <h2 className="faq-title">Lưu ý quan trọng</h2>
-      {faqList.map((item, index) => (
-        <div key={index} className="faq-item">
-          <div className="faq-question" onClick={() => toggle(index)}>
-            <span>{index + 1}. {item.question}</span>
-            <span>{openIndex === index ? '▲' : '▼'}</span>
-          </div>
-          {openIndex === index && (
-            <div className="faq-answer">
-              {item.answer.split('\n').map((line, idx) => <p key={idx}>- {line}</p>)}
-            </div>
-          )}
+      <h2 className="faq-title">Câu hỏi thường gặp</h2>
+
+      {/* Form gửi câu hỏi (chỉ hiển thị cho MEMBER) */}
+      {user && role === 'MEMBER' && (
+        <div className="ask-question-form">
+          <h3>Gửi câu hỏi của bạn</h3>
+          <form onSubmit={handleSubmit}>
+            <textarea
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="Nhập câu hỏi của bạn..."
+              required
+              rows="4"
+              style={{ width: '100%', marginBottom: '10px' }}
+            />
+            <button type="submit">Gửi câu hỏi</button>
+          </form>
         </div>
-      ))}
+      )}
+
+      {/* Hiển thị lỗi nếu có */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {/* Danh sách câu hỏi đã trả lời */}
+      {loading ? (
+        <p>Đang tải...</p>
+      ) : answeredQuestions.length === 0 ? (
+        <p>Chưa có câu hỏi nào được trả lời.</p>
+      ) : (
+        answeredQuestions.map((item, index) => (
+          <div key={item.id} className="faq-item">
+            <div className="faq-question">
+              <span>
+                {index + 1}. {item.question}
+              </span>
+            </div>
+            <div className="faq-answer">
+              <p>{item.answer || 'Chưa có câu trả lời'}</p>
+              <small>
+                Được hỏi bởi: {item.member?.name||"ẩn"} | Trả lời bởi:{' '}
+                {item.staff?.name}
+              </small>
+            </div>
+          </div>
+        ))
+      )}
+
+      {/* Component thông báo */}
+      <ToastContainer />
     </div>
   );
 };

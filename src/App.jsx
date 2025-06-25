@@ -6,6 +6,7 @@ import './App.css';
 import { AuthProvider, useAuth } from './services/AuthContext';
 import { EventProvider } from './services/EventContext'; 
 import { FeedbackProvider } from "./services/FeedbackContext";
+import { QnAProvider } from './services/QnAContext';
 
 // Common Components
 import Navbar from './components/common/Navbar';
@@ -90,7 +91,7 @@ const AppContent = () => {
           
           <Route path="/news" element={<EventProvider><NewsList /></EventProvider>} />
           <Route path="/blog" element={<BlogList />} />
-          <Route path="/faq" element={<Faq />} /> {/* ✅ Đã thêm route hỏi đáp */}
+          <Route path="/faq" element={<QnAProvider><Faq /></QnAProvider>} /> {/* ✅ Đã thêm route hỏi đáp */}
           <Route path="/search" element={<Search />} />
           <Route path="/donation-blood-form" element={<EventProvider><DonationBloodForm /></EventProvider>} />
           <Route path="/donation/step1" element={<EventProvider><DonationStep1 /></EventProvider>} /> {/* ✅ Thêm route */}
