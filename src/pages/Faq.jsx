@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useQnA } from '../services/QnAContext';
-import { useAuth } from '../services/AuthContext'; // Giả sử bạn có AuthContext để kiểm tra vai trò người dùng
+import { useAuth } from '../services/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../assets/css/pages/Faq.css';
 
 const Faq = () => {
   const { answeredQuestions, fetchAnsweredQuestions, createQuestion, loading, error } = useQnA();
-  const { user,role } = useAuth(); // Lấy thông tin người dùng để kiểm tra vai trò
-  const [question, setQuestion] = useState(''); // State cho form gửi câu hỏi
+  const { user, role } = useAuth();
+  const [question, setQuestion] = useState('');
+  const [openQuestionId, setOpenQuestionId] = useState(null); // ID câu hỏi đang mở
 
-  // Gọi API để lấy danh sách câu hỏi đã trả lời
   useEffect(() => {
     fetchAnsweredQuestions();
   }, [fetchAnsweredQuestions]);
 
-  // Xử lý gửi câu hỏi
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user || role !== 'MEMBER') {
@@ -26,17 +25,21 @@ const Faq = () => {
     if (response.success) {
       toast.success('Câu hỏi đã được gửi!');
       setQuestion('');
-      fetchAnsweredQuestions(); // Làm mới danh sách câu hỏi
+      fetchAnsweredQuestions();
     } else {
       toast.error(`Lỗi: ${response.error}`);
     }
+  };
+
+  const toggleAnswer = (id) => {
+    setOpenQuestionId((prevId) => (prevId === id ? null : id));
   };
 
   return (
     <div className="faq-page container">
       <h2 className="faq-title">Câu hỏi thường gặp</h2>
 
-      {/* Form gửi câu hỏi (chỉ hiển thị cho MEMBER) */}
+      {/* Form gửi câu hỏi */}
       {user && role === 'MEMBER' && (
         <div className="ask-question-form">
           <h3>Gửi câu hỏi của bạn</h3>
@@ -65,23 +68,36 @@ const Faq = () => {
       ) : (
         answeredQuestions.map((item, index) => (
           <div key={item.id} className="faq-item">
-            <div className="faq-question">
-              <span>
-                {index + 1}. {item.question}
-              </span>
+            <div
+              className="faq-question"
+              onClick={() => toggleAnswer(item.id)}
+              style={{
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                padding: '10px',
+                background: '#f2f2f2',
+                borderRadius: '5px',
+                marginBottom: '5px',
+              }}
+            >
+              {index + 1}. {item.question}
             </div>
-            <div className="faq-answer">
-              <p>{item.answer || 'Chưa có câu trả lời'}</p>
-              <small>
-                Được hỏi bởi: {item.member?.name||"ẩn"} | Trả lời bởi:{' '}
-                {item.staff?.name}
-              </small>
-            </div>
+            {openQuestionId === item.id && (
+              <div className="faq-answer" style={{ marginLeft: '15px', marginBottom: '10px' }}>
+                {(item.answer || 'Chưa có câu trả lời')
+                  .split('\n')
+                  .map((line, i) => (
+                    <p key={i} style={{ margin: 0 }}>{line}</p>
+                  ))}
+                <small>
+                  Được hỏi bởi: {item.member?.name || 'ẩn'} | Trả lời bởi: {item.staff?.name}
+                </small>
+              </div>
+            )}
           </div>
         ))
       )}
 
-      {/* Component thông báo */}
       <ToastContainer />
     </div>
   );
