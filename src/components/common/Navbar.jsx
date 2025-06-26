@@ -10,7 +10,7 @@ import Register from '../../pages/Register.jsx';
 import LookUp from '../../pages/LookUp.jsx';
 
 const Navbar = () => {
-  const { user,role, logout } = useAuth();
+  const { user, role, logout } = useAuth();
   const navigate = useNavigate();
   const isLoggedIn = !!user; // ✅ Thêm dòng này
 
@@ -19,7 +19,7 @@ const Navbar = () => {
 
   const userDropdownRef = useRef(null);
   const notifDropdownRef = useRef(null);
-  
+
   const handleLogout = async () => {
     await logout(); // Đợi logout xong
     navigate("/"); // Điều hướng về trang home
@@ -163,29 +163,32 @@ const Navbar = () => {
               </div>
 
               {dropdownOpen && (
-                <div className="user-dropdown-menu">
-                  <Link to="/profile" className="dropdown-btn">
-                    <i
-                      className="fa-solid fa-user"
-                      style={{ marginRight: 8 }}
-                    ></i>
-                    Thông tin cá nhân
-                  </Link>
-                  <Link to="/registerHistory" className="dropdown-btn">
-                    <i
-                      className="fa-solid fa-user"
-                      style={{ marginRight: 8 }}
-                    ></i>
-                    Lịch sử đăng ký
-                  </Link>
-                  <Link to="/certificate" className="dropdown-btn">
-                    <i
-                      className="fa-solid fa-user"
-                      style={{ marginRight: 8 }}
-                    ></i>
-                    chứng chỉ
-                  </Link>
 
+                <div className="user-dropdown-menu">{role !== 'ADMIN' && role !== 'STAFF' && (
+                  <>
+                    <Link to="/profile" className="dropdown-btn">
+                      <i
+                        className="fa-solid fa-user"
+                        style={{ marginRight: 8 }}
+                      ></i>
+                      Thông tin cá nhân
+                    </Link>
+                    <Link to="/registerHistory" className="dropdown-btn">
+                      <i
+                        className="fa-solid fa-user"
+                        style={{ marginRight: 8 }}
+                      ></i>
+                      Lịch sử đăng ký
+                    </Link>
+                    <Link to="/certificate" className="dropdown-btn">
+                      <i
+                        className="fa-solid fa-user"
+                        style={{ marginRight: 8 }}
+                      ></i>
+                      chứng chỉ
+                    </Link>
+                  </>
+                )}
                   <button className="dropdown-btn" onClick={handleLogout}>
                     <i
                       className="fa-solid fa-right-from-bracket"
@@ -202,31 +205,26 @@ const Navbar = () => {
 
       {/* thanh headr */}
       <nav className="navbar-bottom">
-
-        <Link to="/" className="nav-item active">
-          Trang chủ
-        </Link>
-        <Link to="/faq" className="nav-item">
-          Hỏi - Đáp
-        </Link>
-        <Link to="/news" className="nav-item">
-          Tin tức
-        </Link>
-               <Link to="/lookUp" className="nav-item">Tra cứu</Link>
-
-         <Link to="/contact" className="nav-item">
-          Liên hệ
-        </Link>
+        {role !== 'ADMIN' && role !== 'STAFF' && (
+          <>
+            <Link to="/" className="nav-item active">Trang chủ</Link>
+            <Link to="/faq" className="nav-item">Hỏi - Đáp</Link>
+            <Link to="/news" className="nav-item">Tin tức</Link>
+            <Link to="/lookUp" className="nav-item">Tra cứu</Link>
+            <Link to="/contact" className="nav-item">Liên hệ</Link>
+          </>
+        )}
 
         {role === 'MEMBER' && (
           <Link to="/donationHistory" className="nav-item">
             Lịch sử hiến máu
           </Link>
         )}
-
       </nav>
+
+
     </header>
-  
+
   );
 };
 
