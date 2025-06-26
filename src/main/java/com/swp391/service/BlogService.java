@@ -102,4 +102,14 @@ public class BlogService {
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
         return blogMapper.toBlogResponse(blog);
     }
+
+    public void incrementView(int blogId) {
+        Blog blog = blogRepository.findById(blogId)
+                .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
+
+        blog.setViews(blog.getViews() + 1);
+        blogRepository.save(blog);
+    }
+
+
 }

@@ -64,4 +64,14 @@ public class BlogController {
                 .result(blogService.getBlogById(blogId))
                 .build();
     }
+
+    // Increment view count for a blog
+    @PatchMapping("/{blogId}/view")
+    public ApiResponse<String> incrementView(@PathVariable int blogId) {
+        blogService.incrementView(blogId);
+        return ApiResponse.<String>builder()
+                .result("View count updated")
+                .build();
+    }
+
 }
