@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../services/AuthContext.jsx";
 
-
+import RegisterHistory from "../member/RegisterHistory.jsx"; // Import RegisterHistory if needed
+import Certificate from "../member/Certificate.jsx";
 import '../../assets/css/components/common/navbar.css';
 import logo from '../../assets/img/logo.png';
 import Register from '../../pages/Register.jsx';
@@ -169,6 +170,20 @@ const Navbar = () => {
                       style={{ marginRight: 8 }}
                     ></i>
                     Thông tin cá nhân
+                  </Link>
+                  <Link to="/registerHistory" className="dropdown-btn">
+                    <i
+                      className="fa-solid fa-user"
+                      style={{ marginRight: 8 }}
+                    ></i>
+                    Lịch sử đăng ký
+                  </Link>
+                  <Link to="/certificate" className="dropdown-btn">
+                    <i
+                      className="fa-solid fa-user"
+                      style={{ marginRight: 8 }}
+                    ></i>
+                    chứng chỉ
                   </Link>
 
                   <button className="dropdown-btn" onClick={handleLogout}>

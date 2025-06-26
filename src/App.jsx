@@ -28,6 +28,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import VerifyGmail from './pages/VerifyGmail';
 import LookUp from './pages/LookUp';
 import FeedbackList from './pages/FeedbackList';
+import FeedbackForm from './pages/FeedbackForm';
 
 // Guest Components
 import EventList from './components/guest/EventList';
@@ -98,6 +99,7 @@ const AppContent = () => {
           <Route path="/verifyGmail" element={<VerifyGmail />} />
           <Route path="/lookUp" element={<LookUp />} />
           <Route path="/feedbacks" element={<FeedbackProvider><FeedbackList /></FeedbackProvider>} />
+          <Route path="/feedbackForm" element={<FeedbackProvider><FeedbackForm /></FeedbackProvider>} />
 
           {/* Protected */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

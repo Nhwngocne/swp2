@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../services/AuthContext";
 import { authService } from "../../services/authService";
 import "../../assets/css/member/Profile.css";
-import RegisterHistory from "./RegisterHistory"; // Import RegisterHistory if needed
-import Certificate from "./Certificate";
+import FeedbackForm from "../../pages/FeedbackForm";
+
 
 const Profile = () => {
   const { updateProfile } = useAuth();
@@ -97,12 +97,7 @@ const Profile = () => {
           </div>
         )}
       </form>
-      <div className="register-history-section">
-      <RegisterHistory />
-    </div>
-      <div className="certificate-section">
-        <Certificate />
-      </div>
+      
     </div>
   );
 

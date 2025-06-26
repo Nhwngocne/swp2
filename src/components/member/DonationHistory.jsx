@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { authService } from "../../services/authService";
-import FeedbackList from "../../pages/FeedbackList";// Đảm bảo đường dẫn đúng
+import FeedbackForm from "../../pages/FeedbackForm";
 
 const DonationHistory = () => {
   const [donationHistory, setDonationHistory] = useState([]);
@@ -55,7 +55,7 @@ const DonationHistory = () => {
           </tbody>
         </table>
       )}
-      <FeedbackList />
+      <FeedbackForm />
     </div>
   );
 };
