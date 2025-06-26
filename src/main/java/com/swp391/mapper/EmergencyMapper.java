@@ -8,25 +8,25 @@ import com.swp391.entity.EmergencyRequest;
 import com.swp391.entity.NearbyDonor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
-@Mapper (componentModel = "spring")
+@Mapper(componentModel = "spring")
 public interface EmergencyMapper {
 
-    // EmergencyMapper
-    // Converts EmergencyRequestCreateRequest to EmergencyRequest entity
     EmergencyRequest toEmergencyRequest(EmergencyRequestCreateRequest request);
-    // Converts EmergencyRequest entity to EmergencyResponse DTO
+
     @Mapping(source = "bloodType", target = "bloodTypeName")
     @Mapping(source = "member.name", target = "memberName")
     @Mapping(source = "staff.name", target = "staffName")
     @Mapping(source = "admin.name", target = "adminName")
     EmergencyResponse toEmergencyResponse(EmergencyRequest entity);
 
-    // NearbyDonor
-    // Converts NearbyDonor entity to NearbyDonorResponse DTO
     NearbyDonorResponse toNearbyDonorResponse(NearbyDonor entity);
 
     default String map(BloodType bloodType) {
         return bloodType != null ? bloodType.getName() : null;
     }
+
+
+    void updateEmergencyRequest(@MappingTarget EmergencyRequest entity, EmergencyRequestCreateRequest request);
 }

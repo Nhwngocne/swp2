@@ -19,13 +19,20 @@ public class EmergencyRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(length = 50)
-    String component;
+    @Column(length = 200)
+    String description;
 
     @Column(length = 255)
     String location;
 
-    LocalDate freeday;
+    @Column
+    int quantity;
+
+    @Column
+    String contactPhone;
+
+    LocalDate createdAt;
+
 
     @Column(length = 20)
     String status;

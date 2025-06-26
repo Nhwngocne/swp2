@@ -51,6 +51,8 @@ public class BloodDonationFormCreateRequest {
     // Câu 8
     String symptomsPast1Week;
 
+    // Volume máu
+    int bloodVolume; // Đơn vị ml, ví dụ: 350ml, 450ml
     // Câu 9 - nữ
     boolean isMenstruating;
     boolean isPregnantOrRecentlyDelivered;

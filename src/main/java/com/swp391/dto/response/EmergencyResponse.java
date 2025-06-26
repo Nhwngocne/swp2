@@ -12,14 +12,22 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EmergencyResponse {
     int id;
-    String component;
+
+    String description;
+
     String location;
-    LocalDate freeday;
+
+    int quantity;
+
+    String contactPhone;
+
+    LocalDate createdAt;
+
     String status;
 
-    // Thông tin liên quan
     String staffName;
     String memberName;
     String adminName;
-    String bloodTypeName;
+
+    String bloodTypeName; // ví dụ: "A+", "B-"
 }
