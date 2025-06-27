@@ -1,34 +1,42 @@
-import React, { useState } from "react";
-import "../../assets/css/member/Form.css"; // tuỳ bạn tạo
-import { useAuth } from "../../services/AuthContext"; // Giả sử bạn có AuthContext để lấy thông tin người dùng
-import { authService } from "../../services/authService"; // Giả sử bạn có authService để gửi dữ liệu lên server
+import React, { useState, useContext } from "react";
+import "../../assets/css/member/Form.css";
+import { bloodIntentService } from "../../services/bloodIntentService";
+import { AuthContext } from "../../services/AuthContext";
 
 const Form = () => {
+  const { user } = useContext(AuthContext); // để lấy member_id
   const [formData, setFormData] = useState({
-    name: "",
-    dob: "",
-    gender: "",
-    numberCccd: "",
-    bloodType: "",
-    address: "",
-    phone: "",
-    email: "",
-    role: "donor", // "donor" or "receiver"
+    available_from: "",
+    available_to: "",
+    blood_type: "",
+    intent_type: "donor",
+    location: "",
   });
 
-  const [showForm, setShowForm] = useState(false); // Thêm trạng thái ẩn/hiện form
+  const [showForm, setShowForm] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Dữ liệu đăng ký:", formData);
+    const dataToSend = {
+      ...formData,
+      memberId: user?.id, // hoặc user.member_id tùy theo dữ liệu
+      status: "pending",   // hoặc "active" tùy backend quy định
+    };
 
-    // TODO: Gửi dữ liệu lên server thông qua API
-    alert("Đăng ký thành công!");
+    try {
+      await bloodIntentService.createBloodIntent(dataToSend);
+
+      alert("Đăng ký thành công!");
+      setShowForm(false);
+    } catch (error) {
+      console.error("Lỗi đăng ký:", error);
+      alert("Có lỗi xảy ra, vui lòng thử lại.");
+    }
   };
 
   return (
@@ -41,39 +49,39 @@ const Form = () => {
 
       {showForm && (
         <div className="blood-register-form">
-          <h2>Đăng ký {formData.role === "donor" ? "hiến máu" : "nhận máu"}</h2>
-
-          
+          <h2>Đăng ký {formData.intent_type === "donor" ? "hiến máu" : "nhận máu"}</h2>
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Họ và tên:</label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+              <label>Ngày bắt đầu:</label>
+              <input
+                type="date"
+                name="available_from"
+                value={formData.available_from}
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="form-group">
-              <label>Ngày sinh:</label>
-              <input type="date" name="dob" value={formData.dob} onChange={handleChange} required />
-            </div>
-
-            <div className="form-group">
-              <label>Giới tính:</label>
-              <select name="gender" value={formData.gender} onChange={handleChange} required>
-                <option value="">--Chọn--</option>
-                <option value="Nam">Nam</option>
-                <option value="Nữ">Nữ</option>
-                <option value="Khác">Khác</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Số CCCD:</label>
-              <input type="text" name="numberCccd" value={formData.numberCccd} onChange={handleChange} required />
+              <label>Ngày kết thúc:</label>
+              <input
+                type="date"
+                name="available_to"
+                value={formData.available_to}
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="form-group">
               <label>Nhóm máu:</label>
-              <select name="bloodType" value={formData.bloodType} onChange={handleChange} required>
+              <select
+                name="blood_type"
+                value={formData.blood_type}
+                onChange={handleChange}
+                required
+              >
                 <option value="">--Chọn--</option>
                 <option value="A+">A+</option>
                 <option value="A-">A-</option>
@@ -87,18 +95,14 @@ const Form = () => {
             </div>
 
             <div className="form-group">
-              <label>Địa chỉ:</label>
-              <input type="text" name="address" value={formData.address} onChange={handleChange} required />
-            </div>
-
-            <div className="form-group">
-              <label>Số điện thoại:</label>
-              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
-            </div>
-
-            <div className="form-group">
-              <label>Email:</label>
-              <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+              <label>Địa điểm:</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="form-group">
@@ -107,19 +111,19 @@ const Form = () => {
                 <label>
                   <input
                     type="radio"
-                    name="role"
+                    name="intent_type"
                     value="donor"
-                    checked={formData.role === "donor"}
+                    checked={formData.intent_type === "donor"}
                     onChange={handleChange}
                   />
-                  Người cho
+                  Người hiến
                 </label>
                 <label>
                   <input
                     type="radio"
-                    name="role"
+                    name="intent_type"
                     value="receiver"
-                    checked={formData.role === "receiver"}
+                    checked={formData.intent_type === "receiver"}
                     onChange={handleChange}
                   />
                   Người nhận
@@ -127,8 +131,11 @@ const Form = () => {
               </div>
             </div>
 
-            <button type="submit" className="submit-btn">Gửi đăng ký</button>
+            <button type="submit" className="submit-btn">
+              Gửi đăng ký
+            </button>
           </form>
+
           <button onClick={() => setShowForm(false)} className="close-form-btn">
             Đóng
           </button>

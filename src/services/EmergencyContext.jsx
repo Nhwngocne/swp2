@@ -126,9 +126,9 @@ export const EmergencyProvider = ({ children }) => {
       if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
       const payload = {
         component: requestData.component,
-        name: emergency.name, // ✅ thêm nếu chưa có
-        phone: emergency.phone, // ✅ thêm nếu chưa có
-        description: emergency.description,
+        name: requestData.name, // ✅ thêm nếu chưa có
+        phone: requestData.phone, // ✅ thêm nếu chưa có
+        description: requestData.description,
         location: requestData.location,
         status: requestData.status,
       };
@@ -165,9 +165,9 @@ export const EmergencyProvider = ({ children }) => {
       console.log(`Đang cập nhật yêu cầu khẩn cấp ${emergencyId} tại /swp391/emergencies/emergency/${emergencyId}`);
       const payload = {
         component: requestData.component,
-        name: emergency.name, // ✅ thêm nếu chưa có
-        phone: emergency.phone, // ✅ thêm nếu chưa có
-        description: emergency.description,
+        name: requestData.name, // ✅ thêm nếu chưa có
+        phone: requestData.phone, // ✅ thêm nếu chưa có
+        description: requestData.description,
         location: requestData.location,
         status: requestData.status,
       };

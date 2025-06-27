@@ -97,6 +97,7 @@ const Navbar = () => {
         <div className="navbar-placeholder" />
 
         <div className="navbar-logo">
+          
           <Link to="/">
             <img src={logo} alt="Logo BloodLink" className="footer-logo" />
           </Link>
@@ -211,7 +212,7 @@ const Navbar = () => {
             <Link to="/faq" className="nav-item">Hỏi - Đáp</Link>
             <Link to="/news" className="nav-item">Tin tức</Link>
             <Link to="/lookUp" className="nav-item">Tra cứu</Link>
-            <Link to="/contact" className="nav-item">Liên hệ</Link>
+            <Link to="/donor-search" className="nav-item">Liên hệ</Link>
           </>
         )}
 
