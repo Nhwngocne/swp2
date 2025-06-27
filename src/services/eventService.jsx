@@ -137,4 +137,14 @@ export const eventService = {
   // Xóa blog
   deleteBlog: (blogId, config = {}) =>
     eventAPI.delete(`/blogs/${blogId}`, config),
+    // Tăng lượt xem blog
+incrementBlogView: (blogId, config = {}) =>
+  eventAPI.patch(`/blogs/${blogId}/view`, null, config),
+// Upload ảnh trong blog (CKEditor hoặc ảnh đại diện)
+uploadBlogImage: (file, config = {}) => {
+  const formData = new FormData();
+  formData.append("upload", file); // Khớp với @RequestParam("upload") trong backend
+  return eventAPI.post("/blogs/upload-image", formData, config);
+},
+
 };

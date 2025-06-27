@@ -1,0 +1,61 @@
+/* NewsManager.css */
+
+.container {
+  max-width: 100%;
+}
+
+.table td img {
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.card h5 {
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+form .card {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.ck-editor__editable {
+  min-height: 200px;
+}
+
+/* Optional: responsive tweak */
+@media (max-width: 768px) {
+  .row.g-3 {
+    flex-direction: column;
+  }
+
+  .col-md-8, .col-md-4 {
+    width: 100%;
+  }
+}
+.card {
+  border: 1px solid #ddd;
+  background: #fafafa;
+  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+form .form-control, .form-select {
+  border-radius: 6px;
+}
+
+.btn {
+  min-width: 80px;
+}
+
+form .card {
+  background-color: #fdfdfd;
+}
+
+input[type="file"] {
+  border: 1px dashed #ccc;
+  padding: 6px;
+}

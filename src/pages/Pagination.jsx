@@ -1,5 +1,6 @@
 import React from "react";
 import '../assets/css/pages/Pagination.css'; // Ensure you have this CSS file for styling
+import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from "react-icons/fa";
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const MAX_PAGE_DISPLAY = 5;
@@ -26,8 +27,12 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   return (
     <div className="pagination-container">
-      <button onClick={() => onPageChange(1)} disabled={currentPage === 1}>«</button>
-      <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>‹</button>
+    <button onClick={() => onPageChange(1)} disabled={currentPage === 1}>
+  <FaAngleDoubleLeft />
+</button>
+<button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
+  <FaAngleLeft />
+</button>
 
       {pages.map((page, index) =>
         page === "..." ? (
@@ -43,8 +48,12 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         )
       )}
 
-      <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>›</button>
-      <button onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}>»</button>
+      <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+  <FaAngleRight />
+</button>
+<button onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}>
+  <FaAngleDoubleRight />
+</button>
     </div>
   );
 };

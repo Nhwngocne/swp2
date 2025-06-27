@@ -484,6 +484,8 @@ export const EventProvider = ({ children }) => {
       setLoading(false);
     }
   };
+  const incrementBlogView = (blogId) =>
+  eventService.incrementBlogView(blogId);
 
   const createBloodDonationForm = async (formData) => {
     try {
@@ -887,6 +889,7 @@ export const EventProvider = ({ children }) => {
     deleteEvent,
     deleteBlog,
     deleteBloodDonationForm,
+    incrementBlogView,
   };
 
   return (

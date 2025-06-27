@@ -338,6 +338,189 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Thêm phương thức xóa thành viên
+  const deleteMember = async (memberId) => {
+    try {
+      await authService.deleteMember(memberId);
+      return { success: true, message: "Xóa thành viên thành công" };
+    } catch (error) {
+      console.error("Delete member error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Xóa thành viên thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // Thêm phương thức lấy thông tin thành viên theo ID
+  const getMemberById = async (memberId) => {
+    try {
+      const response = await authService.getMemberById(memberId);
+      return { success: true, member: response.data.result };
+    } catch (error) {
+      console.error("Get member by ID error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Không thể lấy thông tin thành viên";
+      return { success: false, error: errorMessage };
+    }
+  };
+  // STAFF ======================================================
+  const createStaff = async (staffData) => {
+    try {
+      const response = await authService.createStaff(staffData);
+      return { success: true, staff: response.data.result };
+    } catch (error) {
+      console.error("Create staff error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Tạo nhân viên thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const updateStaff = async (staffId, staffData) => {
+    try {
+      const response = await authService.updateStaff(staffId, staffData);
+      return { success: true, staff: response.data.result };
+    } catch (error) {
+      console.error("Update staff error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Cập nhật nhân viên thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const deleteStaff = async (staffId) => {
+    try {
+      await authService.deleteStaff(staffId);
+      return { success: true, message: "Xóa nhân viên thành công" };
+    } catch (error) {
+      console.error("Delete staff error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Xóa nhân viên thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const getAllStaff = async () => {
+    try {
+      const response = await authService.getAllStaff();
+      return { success: true, staff: response.data.result };
+    } catch (error) {
+      console.error("Get all staff error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Không lấy được danh sách nhân viên";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const getStaffById = async (staffId) => {
+    try {
+      const response = await authService.getStaffById(staffId);
+      return { success: true, staff: response.data.result };
+    } catch (error) {
+      console.error("Get staff by ID error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Không thể lấy thông tin nhân viên";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const banStaff = async (memberId) => {
+    try {
+      await authService.banStaff(memberId);
+      return { success: true, message: "Thay đổi trạng thái thành viên thành công" };
+    } catch (error) {
+      console.error("Ban staff error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Thay đổi trạng thái thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // ADMIN ======================================================
+  const createAdmin = async (adminData) => {
+    try {
+      const response = await authService.createAdmin(adminData);
+      return { success: true, admin: response.data.result };
+    } catch (error) {
+      console.error("Create admin error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Tạo admin thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const updateAdmin = async (adminId, adminData) => {
+    try {
+      const response = await authService.updateAdmin(adminId, adminData);
+      return { success: true, admin: response.data.result };
+    } catch (error) {
+      console.error("Update admin error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Cập nhật admin thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const deleteAdmin = async (adminId) => {
+    try {
+      await authService.deleteAdmin(adminId);
+      return { success: true, message: "Xóa admin thành công" };
+    } catch (error) {
+      console.error("Delete admin error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Xóa admin thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const getAllAdmins = async () => {
+    try {
+      const response = await authService.getAllAdmins();
+      return { success: true, admins: response.data.result };
+    } catch (error) {
+      console.error("Get all admins error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Không lấy được danh sách admin";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const getAdminById = async (adminId) => {
+    try {
+      const response = await authService.getAdminById(adminId);
+      return { success: true, admin: response.data.result };
+    } catch (error) {
+      console.error("Get admin by ID error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Không thể lấy thông tin admin";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const banAdminStaff = async (staffId) => {
+    try {
+      await authService.banAdminStaff(staffId);
+      return { success: true, message: "Thay đổi trạng thái staff thành công" };
+    } catch (error) {
+      console.error("Ban admin staff error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Thay đổi trạng thái staff thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const banAdminMember = async (memberId) => {
+    try {
+      await authService.banAdminMember(memberId);
+      return { success: true, message: "Thay đổi trạng thái thành viên thành công" };
+    } catch (error) {
+      console.error("Ban admin member error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Thay đổi trạng thái thành viên thất bại";
+      return { success: false, error: errorMessage };
+    }
+  };
+
   const value = {
     user,
     role,
@@ -354,6 +537,21 @@ export const AuthProvider = ({ children }) => {
     sendOtp,
     verifyOtpRegis,
     getAllUsers,
+    deleteMember,
+    getMemberById,
+    createStaff,
+    updateStaff,
+    deleteStaff,
+    getAllStaff,
+    getStaffById,
+    banStaff,
+    createAdmin,
+    updateAdmin,
+    deleteAdmin,
+    getAllAdmins,
+    getAdminById,
+    banAdminStaff,
+    banAdminMember,
     isAuthenticated: !!user,
     isAdmin: role === "ADMIN",
     isStaff: role === "STAFF",
