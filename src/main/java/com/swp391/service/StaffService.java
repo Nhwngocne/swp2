@@ -3,15 +3,18 @@ package com.swp391.service;
 import com.swp391.dto.request.StaffCreateRequest;
 import com.swp391.dto.response.StaffResponse;
 import com.swp391.entity.Admin;
+import com.swp391.entity.Member;
 import com.swp391.entity.Staff;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.StaffMapper;
 import com.swp391.repository.AdminRepository;
+import com.swp391.repository.MemberRepository;
 import com.swp391.repository.StaffRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +29,7 @@ public class StaffService {
     AdminRepository adminRepository;
     StaffMapper staffMapper;
     PasswordEncoder passwordEncoder;
-
+    MemberRepository memberRepository;
     // Create staff
     public StaffResponse createStaff(StaffCreateRequest request) {
         // 1. Convert request -> entity
@@ -35,6 +38,8 @@ public class StaffService {
         // 2. Encode password
         staff.setPassword(passwordEncoder.encode(staff.getPassword()));
 
+        // Status
+        staff.setStatus("ACTIVE");
         // 3. Tìm Admin từ adminId và set vào Staff
         Admin admin = adminRepository.findById(request.getAdminId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -86,4 +91,28 @@ public class StaffService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return staffMapper.toStaffResponse(staff);
     }
+    public void banMember(int memberId) {
+        // 1. Lấy email staff đang đăng nhập từ token (SecurityContext)
+        String staffName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // 2. Kiểm tra staff tồn tại
+        Staff staff = staffRepository.findByEmail(staffName)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        // 3. Tìm member cần ban
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        // 4. Toggle trạng thái
+        if ("ACTIVE".equalsIgnoreCase(member.getStatus())) {
+            member.setStatus("BANNED");
+        } else {
+            member.setStatus("ACTIVE");
+        }
+
+        // 5. Lưu lại
+        memberRepository.save(member);
+    }
+
+
 }

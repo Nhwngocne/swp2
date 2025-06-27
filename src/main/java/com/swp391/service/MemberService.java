@@ -40,13 +40,15 @@ public class MemberService{
     public MemberResponse createMember(MemberCreateRequest request){
         Member member = memberMapper.toMember(request);
         member.setPassword(passwordEncoder.encode(member.getPassword()));
-        try{
+        member.setStatus("ACTIVE");
+        try {
             member = memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         return memberMapper.toMemberResponse(member);
     }
+
     //update member
     public MemberResponse updateMember(MemberUpdateRequest request, int id) {
         Member member = memberRepository.findById(id)
@@ -70,6 +72,7 @@ public class MemberService{
                     .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return memberMapper.toMemberResponse(member);
     }
+
     public GoogleLoginResponse loginWithGoogle(String idToken) {
         try {
             // 1. Verify Firebase token
@@ -77,38 +80,32 @@ public class MemberService{
             String email = decodedToken.getEmail();
             String name = decodedToken.getName();
 
-            // 2. Determine user type and role
-            Object user;
-            String role;
+            // 2. Always treat Google login as MEMBER
+            Member member = memberRepository.findByEmail(email).orElseGet(() -> {
+                Member newMember = Member.builder()
+                        .email(email)
+                        .name(name != null ? name : "Unknown")
+                        .password(passwordEncoder.encode(UUID.randomUUID().toString()))
+                        .status("ACTIVE") //  Set status for new member
+                        .build();
+                return memberRepository.save(newMember);
+            });
 
-            if (adminRepository.findByEmail(email).isPresent()) {
-                user = adminRepository.findByEmail(email).get();
-                role = "ADMIN";
-            } else if (staffRepository.findByEmail(email).isPresent()) {
-                user = staffRepository.findByEmail(email).get();
-                role = "STAFF";
-            } else {
-                // If not admin or staff, treat as member
-                user = memberRepository.findByEmail(email).orElseGet(() -> {
-                    Member newMember = Member.builder()
-                            .email(email)
-                            .name(name != null ? name : "Unknown")
-                            .password(passwordEncoder.encode(UUID.randomUUID().toString()))
-                            .build();
-                    return memberRepository.save(newMember);
-                });
-                role = "MEMBER";
+            // Nếu đã tồn tại thì đảm bảo status là ACTIVE
+            if (!"ACTIVE".equalsIgnoreCase(member.getStatus())) {
+                member.setStatus("ACTIVE");
+                memberRepository.save(member);
             }
 
             // 3. Generate JWT token
-            String token = authenticationService.generateToken(email, role);
+            String token = authenticationService.generateToken(email, "MEMBER");
 
             // 4. Return response
             return GoogleLoginResponse.builder()
                     .authenticated(true)
                     .token(token)
-                    .user(user)
-                    .role(role)
+                    .user(member)
+                    .role("MEMBER")
                     .build();
 
         } catch (FirebaseAuthException e) {
