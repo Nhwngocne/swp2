@@ -207,7 +207,7 @@ const Navbar = () => {
       <nav className="navbar-bottom">
         {role !== 'ADMIN' && role !== 'STAFF' && (
           <>
-            <Link to="/" className="nav-item active">Trang chủ</Link>
+            <Link to="/" className="nav-item">Trang chủ</Link>
             <Link to="/faq" className="nav-item">Hỏi - Đáp</Link>
             <Link to="/news" className="nav-item">Tin tức</Link>
             <Link to="/lookUp" className="nav-item">Tra cứu</Link>
