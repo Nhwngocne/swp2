@@ -7,19 +7,21 @@ import com.swp391.entity.Blog;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.BlogMapper;
-import com.swp391.repository.BlogRepository;
 import com.swp391.repository.AdminRepository;
+import com.swp391.repository.BlogRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -35,29 +37,26 @@ public class BlogService {
     public BlogResponse createBlog(BlogCreateRequest request) throws IOException {
         Blog blog = blogMapper.toBlog(request);
 
-
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        // Tìm Admin tương ứng
         System.out.println("Username from token: " + email);
 
         Admin admin = adminRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        // Gán người tạo là Admin
         blog.setCreatedBy(admin);
 
-        // Gán ngày đăng nếu chưa có
         if (blog.getPublishedDate() == null) {
             blog.setPublishedDate(LocalDate.now());
         }
 
-        // Upload ảnh nếu có
+        // Upload ảnh đại diện chính nếu có
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             String imageUrl = imageService.uploadImage(request.getImage());
             blog.setImage(imageUrl);
-            blog.setImageUrls(Collections.singletonList(imageUrl));
         }
+
+        // Tự động trích ảnh trong nội dung HTML
+        List<String> extractedImageUrls = extractImageUrlsFromContent(request.getContent());
+        blog.setImageUrls(extractedImageUrls);
 
         blog.setViews(0);
 
@@ -70,14 +69,19 @@ public class BlogService {
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
 
-        // Upload ảnh mới nếu có
+        // Cập nhật ảnh đại diện mới nếu có
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             String imageUrl = imageService.uploadImage(request.getImage());
             blog.setImage(imageUrl);
-            blog.setImageUrls(Collections.singletonList(imageUrl));
         }
 
+        // Cập nhật nội dung và các trường khác
         blogMapper.updateBlog(blog, request);
+
+        // Trích lại các ảnh trong nội dung mới
+        List<String> updatedImageUrls = extractImageUrlsFromContent(request.getContent());
+        blog.setImageUrls(updatedImageUrls);
+
         blog = blogRepository.save(blog);
         return blogMapper.toBlogResponse(blog);
     }
@@ -106,10 +110,20 @@ public class BlogService {
     public void incrementView(int blogId) {
         Blog blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
-
         blog.setViews(blog.getViews() + 1);
         blogRepository.save(blog);
     }
 
+    //  Trích các ảnh từ nội dung HTML CKEditor
+    private List<String> extractImageUrlsFromContent(String content) {
+        List<String> imageUrls = new ArrayList<>();
+        if (content == null) return imageUrls;
 
+        Pattern pattern = Pattern.compile("<img[^>]+src=[\"']([^\"']+)[\"']");
+        Matcher matcher = pattern.matcher(content);
+        while (matcher.find()) {
+            imageUrls.add(matcher.group(1));
+        }
+        return imageUrls;
+    }
 }

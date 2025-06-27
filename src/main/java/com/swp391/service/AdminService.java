@@ -3,11 +3,13 @@ package com.swp391.service;
 import com.swp391.dto.request.AdminCreateRequest;
 import com.swp391.dto.response.AdminResponse;
 import com.swp391.entity.Admin;
+import com.swp391.entity.Member;
 import com.swp391.entity.Staff;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.AdminMapper;
 import com.swp391.repository.AdminRepository;
+import com.swp391.repository.MemberRepository;
 import com.swp391.repository.StaffRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class AdminService {
     AdminMapper adminMapper;
     PasswordEncoder passwordEncoder;
     StaffRepository staffRepository;
+    MemberRepository memberRepository;
     // Create admin
     public AdminResponse createAdmin(AdminCreateRequest request) {
         Admin admin = adminMapper.toAdmin(request);
@@ -87,6 +90,28 @@ public class AdminService {
         }
 
         staffRepository.save(staff);
+    }
+
+    public void bannerMember(int memberId) {
+        // 1. Lấy adminEmail từ token
+        String adminEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // 2. Kiểm tra admin có tồn tại
+        Admin admin = adminRepository.findByEmail(adminEmail)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        // 3. Tìm Member theo ID
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        // 4. Toggle status
+        if ("ACTIVE".equalsIgnoreCase(member.getStatus())) {
+            member.setStatus("BANNED");
+        } else {
+            member.setStatus("ACTIVE");
+        }
+
+        memberRepository.save(member);
     }
 
 

@@ -68,5 +68,12 @@ public class AdminController {
                 .result("Status has been changed by staff.")
                 .build();
     }
+    @PatchMapping("/status/{memberId}")
+    public ApiResponse<String> banMember(@PathVariable int memberId) {
+        adminService.bannerMember(memberId);
+        return ApiResponse.<String>builder()
+                .result("Status has been changed by staff.")
+                .build();
+    }
 
 }
