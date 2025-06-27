@@ -1,13 +1,16 @@
 package com.swp391.mapper;
 
 import com.swp391.dto.request.EmergencyRequestCreateRequest;
+import com.swp391.dto.request.MemberUpdateRequest;
 import com.swp391.dto.response.EmergencyResponse;
 import com.swp391.dto.response.NearbyDonorResponse;
 import com.swp391.entity.BloodType;
 import com.swp391.entity.EmergencyRequest;
+import com.swp391.entity.Member;
 import com.swp391.entity.NearbyDonor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper (componentModel = "spring")
 public interface EmergencyMapper {
@@ -22,6 +25,7 @@ public interface EmergencyMapper {
     @Mapping(source = "admin.name", target = "adminName")
     EmergencyResponse toEmergencyResponse(EmergencyRequest entity);
 
+    void updateEmergency(@MappingTarget EmergencyRequest emergency, EmergencyRequestCreateRequest request);
     // NearbyDonor
     // Converts NearbyDonor entity to NearbyDonorResponse DTO
     NearbyDonorResponse toNearbyDonorResponse(NearbyDonor entity);

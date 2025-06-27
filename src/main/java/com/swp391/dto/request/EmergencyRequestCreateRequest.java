@@ -13,6 +13,9 @@ import java.time.LocalDate;
 public class EmergencyRequestCreateRequest {
     String component;
     String location;
-    LocalDate freeday;
+    String name;
+    String phone;
+    String description;
     String status;
+    int memberId;
 }

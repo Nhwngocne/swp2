@@ -48,18 +48,11 @@ public class EmergencyService {
     }
 
     public EmergencyResponse updateEmergencyRequest(int id, EmergencyRequestCreateRequest request) {
-        EmergencyRequest emergencyRequest = emergencyRequestRepository.findById(id)
+        EmergencyRequest emergency = emergencyRequestRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EMERGENCY_NOT_EXISTED));
-        emergencyMapper.toEmergencyRequest(request); // Nếu muốn update, cần map update, hoặc làm thủ công
-        // Nếu bạn có method update trong mapper, gọi ở đây, ví dụ:
-        // emergencyMapper.updateEmergencyRequest(emergencyRequest, request);
-        // Nếu không có, bạn cần update thủ công từng trường ở đây.
-
-        // Giả sử bạn có method updateEmergencyRequest trong mapper:
-        // emergencyMapper.updateEmergencyRequest(emergencyRequest, request);
-
-        emergencyRequest = emergencyRequestRepository.save(emergencyRequest);
-        return emergencyMapper.toEmergencyResponse(emergencyRequest);
+        emergencyMapper.updateEmergency(emergency,request);
+        emergencyRequestRepository.save(emergency);
+        return emergencyMapper.toEmergencyResponse(emergency);
     }
 
     public void deleteEmergencyRequest(int id) {

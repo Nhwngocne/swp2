@@ -1,5 +1,6 @@
 package com.swp391.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,7 +20,7 @@ public class DonationHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    LocalDate date; // Ngày hiến
+    //LocalDate date; // Ngày hiến
 
     Integer volume; // ml
 
@@ -35,6 +36,10 @@ public class DonationHistory {
     @Column(length = 255)
     String testResult; // Kết quả xét nghiệm ("Đạt tiêu chuẩn", "Không đạt",...)
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate date;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate nextEligibleDate; // Ngày có thể hiến tiếp
 
     @ManyToOne(fetch = FetchType.LAZY)

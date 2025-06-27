@@ -48,3 +48,13 @@ cloudinary:
   cloud-name: dkfolzb8m
   api-key: 231453775362129
   api-secret: 0rsj4eImS-2gpngR2IuDfERT7XE
+
+# Goong API Configuration
+goong:
+  api:
+    key: "fYkDka9BdVPjFXwOG2Yoc2gyj15vfkdfC711wR8u"
+  geocode:
+    url: "https://rsapi.goong.io/geocode"
+  distance:
+    matrix:
+      url: "https://rsapi.goong.io/DistanceMatrix"

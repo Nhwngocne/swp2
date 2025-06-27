@@ -14,7 +14,9 @@ public class EmergencyResponse {
     int id;
     String component;
     String location;
-    LocalDate freeday;
+    String name; // Thêm
+    String phone; // Thêm
+    String description;
     String status;
 
     // Thông tin liên quan

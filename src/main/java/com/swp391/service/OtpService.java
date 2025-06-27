@@ -66,7 +66,6 @@ public class OtpService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy OTP cho email: " + email));
 
         if (otpVerification.getExpirationTime().before(new Date())) {
-            otpVerificationRepository.delete(otpVerification);
             throw new RuntimeException("OTP đã hết hạn.");
         }
 
@@ -74,8 +73,6 @@ public class OtpService {
             throw new RuntimeException("OTP không đúng.");
         }
 
-        // Xóa OTP sau khi xác thực
-        otpVerificationRepository.delete(otpVerification);
         return "OTP xác thực thành công!";
     }
 

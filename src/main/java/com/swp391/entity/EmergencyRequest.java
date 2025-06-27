@@ -25,7 +25,14 @@ public class EmergencyRequest {
     @Column(length = 255)
     String location;
 
-    LocalDate freeday;
+    @Column(length = 255)
+    String name; // Thêm cột name
+
+    @Column(length = 20)
+    String phone; // Thêm cột phone
+
+    @Column(length = 5000)
+    String description;
 
     @Column(length = 20)
     String status;

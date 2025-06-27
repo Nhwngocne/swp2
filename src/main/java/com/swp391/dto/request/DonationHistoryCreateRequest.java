@@ -1,5 +1,6 @@
 package com.swp391.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DonationHistoryCreateRequest {
 
-    LocalDate date;
+//    LocalDate date;
 
     Integer volume; // ml
 
@@ -24,6 +25,10 @@ public class DonationHistoryCreateRequest {
 
     String testResult; // VD: Đạt tiêu chuẩn
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate date;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate nextEligibleDate;
 
     // ID của các thực thể liên quan
