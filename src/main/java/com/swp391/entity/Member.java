@@ -49,6 +49,9 @@ public class Member {
     @Column(length = 20)
     String numberCccd;
 
+    @Column
+    String status = "ACTIVE"; // Trạng thái của thành viên (active, inactive, banned)
+
     @OneToOne(mappedBy = "member")
     @JsonIgnore // Không serialize ForgotPassword
     ForgotPassword forgotPassword;

@@ -68,7 +68,7 @@ public class AuthenticationService {
         Object user;
         String role;
 
-        // Tự động xác định role dựa vào username
+        // Xác định người dùng và vai trò
         if (memberRepository.findByEmail(request.getEmail()).isPresent()) {
             user = memberRepository.findByEmail(request.getEmail()).get();
             role = "MEMBER";
@@ -82,6 +82,19 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
 
+        //  Kiểm tra trạng thái
+        boolean isActive = switch (role) {
+            case "MEMBER" -> "ACTIVE".equalsIgnoreCase(((Member) user).getStatus());
+            case "STAFF" -> "ACTIVE".equalsIgnoreCase(((Staff) user).getStatus());
+            case "ADMIN" -> true;
+            default -> false;
+        };
+
+        if (!isActive) {
+            throw new AppException(ErrorCode.USER_BANNED);
+        }
+
+        //  Kiểm tra mật khẩu
         String password = switch (role) {
             case "MEMBER" -> ((Member) user).getPassword();
             case "STAFF" -> ((Staff) user).getPassword();
@@ -90,10 +103,11 @@ public class AuthenticationService {
         };
 
         if (!encoder.matches(request.getPassword(), password)) {
-            log.info("weak password for user: {}", request.getEmail());
+            log.info("Weak password for user: {}", request.getEmail());
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
+        //  Sinh token và trả về
         String token = generateToken(request.getEmail(), role);
 
         return AuthenticationResponse.builder()
@@ -117,7 +131,7 @@ public class AuthenticationService {
         return IntrospectResponse.builder().valid(isValid).build();
     }
 
-   public String generateToken(String email, String role) {
+    public String generateToken(String email, String role) {
         try {
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                     .subject(email)
@@ -142,29 +156,27 @@ public class AuthenticationService {
     }
 
     private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
-        //xác thực chữ ký của token
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-
         SignedJWT signedJWT = SignedJWT.parse(token);
 
         Date expiryTime = (isRefresh)
-                ? new Date(signedJWT
-                .getJWTClaimsSet()
-                .getIssueTime()
-                .toInstant()
-                .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
-                .toEpochMilli())
+                ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
+                .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        var verified = signedJWT.verify(verifier);
+        boolean verified = signedJWT.verify(verifier);
 
-        if (!(verified && expiryTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
-
-        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+        if (!(verified && expiryTime.after(new Date()))) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
 
         return signedJWT;
     }
+
     private String buildScope(String role) {
         return "ROLE_" + role;
     }
@@ -172,8 +184,8 @@ public class AuthenticationService {
     public AuthenticationResponse getCurrentUserFromToken(String token) throws ParseException, JOSEException {
         SignedJWT jwt = verifyToken(token, false);
         String email = jwt.getJWTClaimsSet().getSubject();
-        String scope = jwt.getJWTClaimsSet().getStringClaim("scope"); // "ROLE_STAFF"
-        String role = scope.replace("ROLE_", ""); // "STAFF"
+        String scope = jwt.getJWTClaimsSet().getStringClaim("scope");
+        String role = scope.replace("ROLE_", "");
 
         Object user = switch (role) {
             case "MEMBER" -> memberRepository.findByEmail(email)
@@ -184,6 +196,7 @@ public class AuthenticationService {
                     .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
             default -> throw new AppException(ErrorCode.UNAUTHENTICATED);
         };
+
         return AuthenticationResponse.builder()
                 .user(user)
                 .token(token)
@@ -191,20 +204,21 @@ public class AuthenticationService {
                 .authenticated(true)
                 .build();
     }
+
     public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
         var signedJWT = verifyToken(request.getToken(), true);
 
         var jit = signedJWT.getJWTClaimsSet().getJWTID();
         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-        // Lưu token cũ vào bảng invalidated
-        InvalidatedToken invalidatedToken =
-                InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
-        invalidatedTokenRepository.save(invalidatedToken);
 
-        // Lấy email và scope (để xác định role)
+        invalidatedTokenRepository.save(InvalidatedToken.builder()
+                .id(jit)
+                .expiryTime(expiryTime)
+                .build());
+
         var email = signedJWT.getJWTClaimsSet().getSubject();
-        var scope = signedJWT.getJWTClaimsSet().getStringClaim("scope"); // VD: "ROLE_MEMBER"
-        var role = scope.replace("ROLE_", ""); // VD: "MEMBER"
+        var scope = signedJWT.getJWTClaimsSet().getStringClaim("scope");
+        var role = scope.replace("ROLE_", "");
 
         Object user = switch (role) {
             case "MEMBER" -> memberRepository.findByEmail(email)
@@ -218,19 +232,23 @@ public class AuthenticationService {
 
         var newToken = generateToken(email, role);
 
-        return AuthenticationResponse.builder().token(newToken).authenticated(true).build();
+        return AuthenticationResponse.builder()
+                .token(newToken)
+                .authenticated(true)
+                .build();
     }
+
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         try {
             var signToken = verifyToken(request.getToken(), false);
-
             String jit = signToken.getJWTClaimsSet().getJWTID();
             Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
-            InvalidatedToken invalidatedToken =
-                    InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+            invalidatedTokenRepository.save(InvalidatedToken.builder()
+                    .id(jit)
+                    .expiryTime(expiryTime)
+                    .build());
 
-            invalidatedTokenRepository.save(invalidatedToken);
         } catch (AppException exception) {
             log.info("Token already expired");
         }

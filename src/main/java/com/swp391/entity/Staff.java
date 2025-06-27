@@ -51,6 +51,8 @@ public class Staff {
     @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate dob;
 
+    @Column
+    String status = "ACTIVE";
     @Column(name = "work_time_per_day")
     Double workTimePerDay;
 
