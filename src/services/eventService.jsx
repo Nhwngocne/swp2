@@ -137,4 +137,8 @@ export const eventService = {
   // Xóa blog
   deleteBlog: (blogId, config = {}) =>
     eventAPI.delete(`/blogs/${blogId}`, config),
+    // Tăng lượt xem blog
+incrementBlogView: (blogId, config = {}) =>
+  eventAPI.patch(`/blogs/${blogId}/view`, null, config),
+
 };
