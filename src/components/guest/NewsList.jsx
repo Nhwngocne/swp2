@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import "../../assets/css/components/guest/NewsList.css";
 import { useEvents } from "../../services/EventContext";
 import Pagination from "../../pages/Pagination";
+import DOMPurify from "dompurify"; // ✅ Import DOMPurify
+
 const NewsList = () => {
-  const { blogs, loading, error, fetchBlogs, getBlogById,incrementBlogView } = useEvents();
+  const { blogs, loading, error, fetchBlogs, getBlogById, incrementBlogView } = useEvents();
   const [selectedNews, setSelectedNews] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
@@ -25,20 +27,18 @@ const NewsList = () => {
   };
 
   const handleBlogClick = async (blogId) => {
-  try {
-    await incrementBlogView(blogId); // Nếu lỗi thì nhảy vào catch
-
-    const { success, blog } = await getBlogById(blogId);
-    if (success) {
-      setSelectedNews(blog);
-    } else {
-      console.error("Failed to fetch blog details");
+    try {
+      await incrementBlogView(blogId);
+      const { success, blog } = await getBlogById(blogId);
+      if (success) {
+        setSelectedNews(blog);
+      } else {
+        console.error("Failed to fetch blog details");
+      }
+    } catch (err) {
+      console.error("Lỗi khi tăng lượt xem hoặc lấy blog", err);
     }
-  } catch (err) {
-    console.error("Lỗi khi tăng lượt xem hoặc lấy blog", err);
-  }
-};
-
+  };
 
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div>Lỗi: {error}</div>;
@@ -46,9 +46,14 @@ const NewsList = () => {
   if (selectedNews) {
     return (
       <div className="news-detail-container">
-        <button className="back-button" onClick={() => setSelectedNews(null)}>← Quay lại danh sách</button>
+        <button className="back-button" onClick={() => setSelectedNews(null)}>
+          ← Quay lại danh sách
+        </button>
         <article className="news-article">
-          <div className="news-category" style={{ background: getCategoryColor(selectedNews.category) }}>
+          <div
+            className="news-category"
+            style={{ background: getCategoryColor(selectedNews.category) }}
+          >
             {selectedNews.category.toUpperCase()}
           </div>
           <h1 className="news-title">{selectedNews.title}</h1>
@@ -57,11 +62,22 @@ const NewsList = () => {
             <span>📅 {formatDate(selectedNews.publishDate)}</span>
             <span>👁️ {selectedNews.views.toLocaleString()} lượt xem</span>
           </div>
-          <img src={selectedNews.image} alt={selectedNews.title} className="news-thumbnail"
-               onError={(e) => (e.target.src = "/assets/blog-default.jpg")} />
+          <img
+            src={selectedNews.image}
+            alt={selectedNews.title}
+            className="news-thumbnail"
+            onError={(e) => (e.target.src = "/assets/blog-default.jpg")}
+          />
           <div className="news-body">
             <p className="news-summary">{selectedNews.summary}</p>
-            <p>{selectedNews.content}</p>
+
+            {/* ✅ Hiển thị nội dung HTML an toàn */}
+            <div
+              className="news-content"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(selectedNews.content),
+              }}
+            />
           </div>
         </article>
       </div>
@@ -70,7 +86,10 @@ const NewsList = () => {
 
   const displayedBlogs = blogs.slice(1);
   const totalPages = Math.ceil(displayedBlogs.length / itemsPerPage);
-  const currentBlogs = displayedBlogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const currentBlogs = displayedBlogs.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="news-container">
@@ -84,7 +103,10 @@ const NewsList = () => {
               onClick={() => handleBlogClick(blogs[0].id)}
               onError={(e) => (e.target.src = "/assets/blog-default.jpg")}
             />
-            <div className="featured-content" onClick={() => handleBlogClick(blogs[0].id)}>
+            <div
+              className="featured-content"
+              onClick={() => handleBlogClick(blogs[0].id)}
+            >
               <h2>{blogs[0].title}</h2>
               <p>{blogs[0].summary}</p>
               <div className="featured-meta">
@@ -99,7 +121,11 @@ const NewsList = () => {
       <h2 className="latest-news-title">Latest news</h2>
       <div className="news-grid">
         {currentBlogs.map((item) => (
-          <div key={item.id} className="news-card" onClick={() => handleBlogClick(item.id)}>
+          <div
+            key={item.id}
+            className="news-card"
+            onClick={() => handleBlogClick(item.id)}
+          >
             <img
               src={item.image}
               alt={item.title}
@@ -111,11 +137,11 @@ const NewsList = () => {
         ))}
       </div>
 
-<Pagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  onPageChange={setCurrentPage}
-/>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };
