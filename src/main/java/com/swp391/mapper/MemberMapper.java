@@ -5,13 +5,17 @@ import com.swp391.dto.request.MemberUpdateRequest;
 import com.swp391.dto.response.MemberResponse;
 import com.swp391.entity.Member;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
     // Converts MemberCreateRequest to Member entity
+
     Member toMember(MemberCreateRequest request);
     // Converts Member entity to MemberResponse DTO
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "status", source = "status")
     MemberResponse toMemberResponse(Member member);
     // Updates an existing Member entity with data from MemberCreateRequest
 

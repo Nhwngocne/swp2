@@ -61,14 +61,14 @@ public class AdminController {
                 .result(adminService.getAdminById(adminId))
                 .build();
     }
-    @PatchMapping("/status/{staffId}")
+    @PatchMapping("/staff/{staffId}")
     public ApiResponse<String> banStaff(@PathVariable int staffId) {
         adminService.bannerStaff(staffId);
         return ApiResponse.<String>builder()
                 .result("Status has been changed by staff.")
                 .build();
     }
-    @PatchMapping("/status/{memberId}")
+    @PatchMapping("/member/{memberId}")
     public ApiResponse<String> banMember(@PathVariable int memberId) {
         adminService.bannerMember(memberId);
         return ApiResponse.<String>builder()

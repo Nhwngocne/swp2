@@ -19,6 +19,7 @@ public class StaffResponse {
     String gender;
     String email;
     String job;
+    String status;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate dob;

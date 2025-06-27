@@ -13,6 +13,7 @@ import org.mapstruct.MappingTarget;
 public interface StaffMapper {
     Staff toStaff(StaffCreateRequest request);
 
+    @Mapping(target = "status", source = "status")
     @Mapping(target = "admin", expression = "java(toAdminShortResponse(staff.getAdmin()))")
     StaffResponse toStaffResponse(Staff staff);
 

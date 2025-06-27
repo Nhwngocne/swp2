@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MemberResponse {
+    int id;
     String name;
     String email;
     String gender;
@@ -21,6 +22,7 @@ public class MemberResponse {
     String address;
     String phone;
     String numberCccd;
+    String status;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate dob;
