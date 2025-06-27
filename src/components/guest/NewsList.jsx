@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "../../assets/css/components/guest/NewsList.css";
-import { useEvents } from "../../services//EventContext";
-
+import { useEvents } from "../../services/EventContext";
+import Pagination from "../../pages/Pagination";
 const NewsList = () => {
   const { blogs, loading, error, fetchBlogs, getBlogById } = useEvents();
   const [selectedNews, setSelectedNews] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
 
   useEffect(() => {
-    fetchBlogs(); // Gọi API để lấy danh sách blog khi component mount
+    fetchBlogs();
   }, [fetchBlogs]);
 
-  const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("vi-VN");
-  };
+  const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString("vi-VN");
 
   const getCategoryColor = (category) => {
     const colors = {
@@ -27,51 +26,28 @@ const NewsList = () => {
 
   const handleBlogClick = async (blogId) => {
     const { success, blog } = await getBlogById(blogId);
-    if (success) {
-      setSelectedNews(blog);
-    } else {
-      console.error("Failed to fetch blog details");
-    }
+    if (success) setSelectedNews(blog);
   };
 
-  if (loading) {
-    return <div>Đang tải...</div>;
-  }
-
-  if (error) {
-    return <div>Lỗi: {error}</div>;
-  }
+  if (loading) return <div>Đang tải...</div>;
+  if (error) return <div>Lỗi: {error}</div>;
 
   if (selectedNews) {
     return (
       <div className="news-detail-container">
-        <button className="back-button" onClick={() => setSelectedNews(null)}>
-          ← Quay lại danh sách
-        </button>
-
+        <button className="back-button" onClick={() => setSelectedNews(null)}>← Quay lại danh sách</button>
         <article className="news-article">
-          <div
-            className="news-category"
-            style={{ background: getCategoryColor(selectedNews.category) }}
-          >
+          <div className="news-category" style={{ background: getCategoryColor(selectedNews.category) }}>
             {selectedNews.category.toUpperCase()}
           </div>
-
           <h1 className="news-title">{selectedNews.title}</h1>
-
           <div className="news-meta">
             <span>👤 {selectedNews.author}</span>
             <span>📅 {formatDate(selectedNews.publishDate)}</span>
             <span>👁️ {selectedNews.views.toLocaleString()} lượt xem</span>
           </div>
-
-          <img
-            src={selectedNews.image}
-            alt={selectedNews.title}
-            className="news-thumbnail"
-            onError={(e) => (e.target.src = "/assets/blog-default.jpg")} // Fallback nếu hình ảnh không tải được
-          />
-
+          <img src={selectedNews.image} alt={selectedNews.title} className="news-thumbnail"
+               onError={(e) => (e.target.src = "/assets/blog-default.jpg")} />
           <div className="news-body">
             <p className="news-summary">{selectedNews.summary}</p>
             <p>{selectedNews.content}</p>
@@ -81,55 +57,54 @@ const NewsList = () => {
     );
   }
 
+  const displayedBlogs = blogs.slice(1);
+  const totalPages = Math.ceil(displayedBlogs.length / itemsPerPage);
+  const currentBlogs = displayedBlogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div className="news-container">
-      <div className="news-header">
-        <h1>Tin tức</h1>
-        <p>Cập nhật những thông tin mới nhất về hiến máu và sức khỏe cộng đồng</p>
+      <div className="featured-news">
+        {blogs.length > 0 && (
+          <>
+            <img
+              src={blogs[0].image}
+              alt={blogs[0].title}
+              className="featured-image"
+              onClick={() => handleBlogClick(blogs[0].id)}
+              onError={(e) => (e.target.src = "/assets/blog-default.jpg")}
+            />
+            <div className="featured-content" onClick={() => handleBlogClick(blogs[0].id)}>
+              <h2>{blogs[0].title}</h2>
+              <p>{blogs[0].summary}</p>
+              <div className="featured-meta">
+                <span>Posted by {blogs[0].author}</span>
+                <span>👁️ {blogs[0].views.toLocaleString()}</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
+      <h2 className="latest-news-title">Latest news</h2>
       <div className="news-grid">
-        {blogs.map((item) => (
-          <div
-            key={item.id}
-            className="news-card"
-            onClick={() => handleBlogClick(item.id)}
-          >
+        {currentBlogs.map((item) => (
+          <div key={item.id} className="news-card" onClick={() => handleBlogClick(item.id)}>
             <img
               src={item.image}
               alt={item.title}
               className="card-image"
-              onError={(e) => (e.target.src = "/assets/blog-default.jpg")} // Fallback nếu hình ảnh không tải được
+              onError={(e) => (e.target.src = "/assets/blog-default.jpg")}
             />
-
-            <div className="card-content">
-              <div
-                className="card-category"
-                style={{ background: getCategoryColor(item.category) }}
-              >
-                {item.category.toUpperCase()}
-              </div>
-
-              <h3>{item.title}</h3>
-              <p>{item.summary}</p>
-
-              <div className="card-meta">
-                <span>👤 {item.author}</span>
-                <span>📅 {formatDate(item.publishDate)}</span>
-                <span>👁️ {item.views.toLocaleString()}</span>
-              </div>
-            </div>
+            <h3>{item.title}</h3>
           </div>
         ))}
       </div>
 
-      {blogs.length === 0 && (
-        <div className="no-news">
-          <div>📰</div>
-          <h3>Không có tin tức nào</h3>
-          <p>Hiện tại không có tin tức nào được hiển thị</p>
-        </div>
-      )}
+<Pagination
+  currentPage={currentPage}
+  totalPages={totalPages}
+  onPageChange={setCurrentPage}
+/>
     </div>
   );
 };
