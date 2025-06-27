@@ -90,4 +90,20 @@ public class QnAService {
                 .orElseThrow(() -> new AppException(ErrorCode.QNA_NOT_FOUND));
         return qnaMapper.toQnAResponse(qna);
     }
+    @PreAuthorize("hasRole('STAFF')")
+    public void changeQnAAnswer(int id, QnAAnswerRequest request) {
+        QnA qna = qnaRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.QNA_NOT_FOUND));
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Staff staff = staffRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        qna.setAnswer(request.getAnswer());
+        qna.setAnsweredAt(LocalDateTime.now());
+        qna.setStaff(staff); // có thể ghi đè staff trước đó
+
+        qnaRepository.save(qna);
+    }
+
 }

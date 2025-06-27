@@ -26,11 +26,11 @@ public class SecuriryConfig {
 
     //encode password
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 
-    private  final String[] PUBLIC_ENDPOINTS_GET = {
+    private final String[] PUBLIC_ENDPOINTS_GET = {
             "/events",
             "/blogs",
             "/blogs/**",
@@ -42,12 +42,15 @@ public class SecuriryConfig {
 
     };
     private final String[] PUBLIC_ENDPOINTS_POST = {
-            "/members", "/auth/login", "/auth/introspect", "/auth/loginGoogle", "/auth/refresh","/staffs","/admins",
+            "/members", "/auth/login", "/auth/introspect", "/auth/loginGoogle", "/auth/refresh", "/staffs", "/admins",
             "/forgotPassword/verifyMail/**",
             "/forgotPassword/verifyOtp/**",
             "/forgotPassword/changePassword/**",
             "/register/send-otp",
             "/register/verify-otp"
+    };
+    private final String[] PUBLIC_ENDPOINTS_PATCH = {
+            "/blogs/*/view",
     };
 
     @Autowired
@@ -58,12 +61,11 @@ public class SecuriryConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS_POST)
-                            .permitAll()
-                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_GET)
-                            .permitAll()
-                        .anyRequest()
-                            .authenticated());
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS_POST).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_GET).permitAll()
+                        .requestMatchers(HttpMethod.PATCH, PUBLIC_ENDPOINTS_PATCH).permitAll()
+                        .anyRequest().authenticated()
+                );
 
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJwtDecoder)

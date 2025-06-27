@@ -52,6 +52,9 @@ public class BloodDonationFormResponse {
     boolean isPregnantOrRecentlyDelivered;
     boolean noneOfFemaleConditions;
 
+    // Volume máu
+    int bloodVolume; // Đơn vị ml, ví dụ: 350ml, 450ml
+
     // Trạng thái phê duyệt
     String status;
     LocalDate approvedDate;

@@ -54,4 +54,14 @@ public class QnAController {
     public ResponseEntity<QnAResponse> getQnAById(@PathVariable int id) {
         return ResponseEntity.ok(qnaService.getById(id));
     }
+    // STAFF có thể thay đổi câu trả lời đã trả lời trước đó
+    @PutMapping("/{id}/change-answer")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<String> changeAnswer(
+            @PathVariable int id,
+            @RequestBody QnAAnswerRequest request) {
+        qnaService.changeQnAAnswer(id, request);
+        return ResponseEntity.ok("Câu trả lời đã được cập nhật thành công.");
+    }
+
 }

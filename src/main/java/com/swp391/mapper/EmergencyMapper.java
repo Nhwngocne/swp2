@@ -12,13 +12,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper (componentModel = "spring")
+@Mapper(componentModel = "spring")
 public interface EmergencyMapper {
 
-    // EmergencyMapper
-    // Converts EmergencyRequestCreateRequest to EmergencyRequest entity
     EmergencyRequest toEmergencyRequest(EmergencyRequestCreateRequest request);
-    // Converts EmergencyRequest entity to EmergencyResponse DTO
+
     @Mapping(source = "bloodType", target = "bloodTypeName")
     @Mapping(source = "member.name", target = "memberName")
     @Mapping(source = "staff.name", target = "staffName")

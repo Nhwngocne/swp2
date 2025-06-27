@@ -39,7 +39,7 @@ public class Blog {
     String category;
 
     @Column
-    int views;
+    int views = 0;
 
     @Column(length = 1000)
     String image; // ảnh đại diện chính cho blog

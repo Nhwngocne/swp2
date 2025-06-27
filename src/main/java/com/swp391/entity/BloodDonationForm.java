@@ -57,7 +57,9 @@ public class BloodDonationForm {
     // Câu 8: Trong 1 tuần qua
     @Column(length = 255)
     String symptomsPast1Week;
-
+    // Voluome of blood donation, if applicable
+    @Column(name = "volume_ml")
+    int volumeMl;
     // Câu 9: Chỉ dành cho nữ
     boolean isMenstruating;
     boolean isPregnantOrRecentlyDelivered;

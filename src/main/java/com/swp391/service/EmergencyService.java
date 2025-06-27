@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -30,6 +31,8 @@ public class EmergencyService {
 
     public EmergencyResponse createEmergencyRequest(EmergencyRequestCreateRequest request) {
         EmergencyRequest emergencyRequest = emergencyMapper.toEmergencyRequest(request);
+
+        emergencyRequest.setCreatedAt(LocalDate.now());
         emergencyRequest = emergencyRequestRepository.save(emergencyRequest);
         return emergencyMapper.toEmergencyResponse(emergencyRequest);
     }
@@ -54,6 +57,7 @@ public class EmergencyService {
         emergencyRequestRepository.save(emergency);
         return emergencyMapper.toEmergencyResponse(emergency);
     }
+
 
     public void deleteEmergencyRequest(int id) {
         emergencyRequestRepository.deleteById(id);

@@ -19,7 +19,7 @@ public class EmergencyRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(length = 50)
+    @Column(length = 20)
     String component;
 
     @Column(length = 255)
@@ -33,6 +33,9 @@ public class EmergencyRequest {
 
     @Column(length = 5000)
     String description;
+
+    LocalDate createdAt;
+
 
     @Column(length = 20)
     String status;
