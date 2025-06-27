@@ -140,10 +140,6 @@ const Home = () => {
     </div>
   </div>
 </section>
-
-
-   
-
       {/* Standards */}
 <section className="donation-standards">
   <div className="standards-grid-centered">
@@ -158,6 +154,7 @@ const Home = () => {
     ))}
   </div>
 </section>
+
  <section className="achievements-section">
         <h3 className="section-title">Thành tựu của chúng ta</h3>
         <div className="achievements-grid">

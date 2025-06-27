@@ -202,7 +202,7 @@
 /* ========== Standards Section ========== */
 .standards-grid-centered {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr); /* 3 cột */
   gap: 24px;
   justify-items: center;
   max-width: 960px;
@@ -220,6 +220,10 @@
   transition: transform 0.3s;
 }
 
+.standard-box:hover {
+  transform: translateY(-4px);
+}
+
 .icon-circle {
   background: #fdecec;
   border-radius: 50%;
@@ -231,16 +235,19 @@
 }
 
 .center-title-box {
-  grid-column: 2; /* nằm chính giữa */
+  grid-column: 2 / 3; /* nằm giữa hàng có 3 cột */
   background: transparent;
   box-shadow: none;
   padding: 0;
+  text-align: center;
+  margin: 12px 0;
 }
 
 .center-title-text {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: #a73737;
+  text-align: center;
 }
 
 /* ========== Feedback Section ========== */
