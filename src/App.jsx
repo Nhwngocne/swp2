@@ -11,6 +11,8 @@ import { EmergencyProvider } from './services/EmergencyContext';
 import { DonationProvider } from './services/DonationContext';
 import { DonorProvider } from './services/DonorContext'; // Thêm DonorProvider
 
+
+
 // Common Components
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
@@ -21,7 +23,6 @@ import Notification from './components/common/Notification';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
 import Search from './pages/Search';
 import Manage from './pages/Manage';
 import Faq from './pages/Faq';
@@ -56,10 +57,10 @@ import MemberManager from './components/staff/MemberManager';
 
 // Admin Components
 import NewsManager from './components/admin/NewsManager';
-import ForumManager from './components/admin/ForumManager';
+import AdminDaschboard from './components/admin/AdminDashboard';
 import NotificationManager from './components/admin/NotificationManager';
-import ReportStats from './components/admin/ReportStats';
-import SystemSettings from './components/admin/SystemSettings';
+import MemberManagerAd from './components/admin/MemberManagerAd';
+import StaffManager from './components/admin/StaffManager';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -104,8 +105,7 @@ const AppContent = () => {
           <Route path="/donor-search" element={<DonorSearch />} /> {/* Thêm route cho DonorSearch */}
 
           {/* Protected */}
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/events" element={<EventList />} />
+          <Route path="/events" element={<EventProvider><EventList /></EventProvider>} />
 
           {/* Member */}
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />
@@ -124,13 +124,15 @@ const AppContent = () => {
           {/* Admin */}
           <Route path="/manage" element={<ProtectedRoute requiredRole="ADMIN"><Manage /></ProtectedRoute>} />
           <Route path="/manage-news" element={<ProtectedRoute requiredRole="ADMIN"><NewsManager /></ProtectedRoute>} />
-          <Route path="/manage-forum" element={<ProtectedRoute requiredRole="ADMIN"><ForumManager /></ProtectedRoute>} />
           <Route path="/manage-notifications" element={<ProtectedRoute requiredRole="ADMIN"><NotificationManager /></ProtectedRoute>} />
-          <Route path="/reports" element={<ProtectedRoute requiredRole="ADMIN"><ReportStats /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute requiredRole="ADMIN"><SystemSettings /></ProtectedRoute>} />
+          <Route path="/admin-dashboard" element={<ProtectedRoute requiredRole="ADMIN"><AdminDaschboard /></ProtectedRoute>} />
+          <Route path="/memberManagerAd" element={<ProtectedRoute requiredRole="ADMIN"><MemberManagerAd /></ProtectedRoute>} />
+          <Route path="/staffmander" element={<ProtectedRoute requiredRole="ADMIN"><StaffManager /></ProtectedRoute>} />
+          
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
+          
         </Routes>
       </main>
 

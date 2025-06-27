@@ -5,6 +5,7 @@ import { signInWithGoogle } from "../services/firebaseConfig";
 import '../assets/css/pages/Login.css';
 import googleLogo from '../assets/img/logo-gg.png'; // ✅ đúng tên
 
+
 const Login = () => {
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -61,29 +62,31 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
 
     if (!validateForm()) return;
-    setLoading(true);
 
+    setLoading(true);
     try {
       const result = await login(formData.email, formData.password);
 
       if (result.success) {
-        const from = location.state?.from?.pathname || '/';
-        navigate(from, { replace: true });
-      } else {
-        // Phân loại lỗi theo mã
-        if (result.code === 1002) {
-          setErrors({ email: result.error });
-        } else if (result.error.toLowerCase().includes("mật khẩu")) {
-          setErrors({ password: result.error });
+        const role = result.role || localStorage.getItem("role"); // Lấy role từ response hoặc localStorage
+
+        if (role === "ADMIN") {
+          navigate("/admin-dashboard");
+        } else if (role === "STAFF") {
+          navigate("/staff-dashboard");
+        } else if (role === "MEMBER") {
+          navigate("/home");
         } else {
-          setErrors({ general: result.error });
+          navigate("/"); // fallback
         }
-        //setErrors({ general: result.error || 'Đăng nhập thất bại' });
+      } else {
+        setErrors({ general: result.error || "Đăng nhập thất bại" });
       }
     } catch (error) {
-      setErrors({ general: 'Có lỗi xảy ra. Vui lòng thử lại.' });
+      setErrors({ general: "Có lỗi xảy ra khi đăng nhập." });
     } finally {
       setLoading(false);
     }

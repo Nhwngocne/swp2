@@ -71,11 +71,11 @@
 .nav-item:hover {
   background-color: #5e1c17;
 }
-
-.nav-item.active {
-  background-color: #ffffff;
-  color: #74221D;
+.nav-item:hover {
+  background-color: #ffffff; /* nền trắng khi hover */
+  color: #74221D;            /* chữ đỏ */
 }
+
 .user-dropdown {
   position: relative;
   display: flex;

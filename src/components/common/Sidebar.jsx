@@ -17,29 +17,30 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
   };
 
   const getMenuItems = () => {
-    const commonItems = [
-      { path: '/profile', label: 'Hồ sơ cá nhân', icon: '👤' },
-    ];
+    let dashboardPath = '/dashboard';
+    if (userRole === 'ADMIN') dashboardPath = '/admin-dashboard';
+    if (userRole === 'STAFF') dashboardPath = '/staff-dashboard';
 
+    const commonItems = [
+    { label: "Dashboard", path: "/admin-dashboard", icon: '🏠' },
+  ];
     switch (userRole) {
       case 'STAFF':
         return [
           ...commonItems,
-          { path: '/manage-events', label: 'Quản lý sự kiện', icon: '📅' },
-          { path: '/blood-inventory', label: 'Kho máu', icon: '🏥' },
-          { path: '/emergency', label: 'Yêu cầu cấp cứu', icon: '🚨' },
-          { path: '/manage-members', label: 'Quản lý thành viên', icon: '👥' },
+          { path: '/manage-events', label: 'Quản lý sự kiện' },
+          { path: '/blood-inventory', label: 'Kho máu' },
+          { path: '/emergency', label: 'Yêu cầu cấp cứu' },
+          { path: '/manage-members', label: 'Quản lý thành viên' },
         ];
 
       case 'ADMIN':
         return [
           ...commonItems,
-          { path: '/manage', label: 'Quản lý hệ thống', icon: '⚙️' },
-          { path: '/manage-news', label: 'Quản lý tin tức', icon: '📰' },
-          { path: '/manage-forum', label: 'Quản lý diễn đàn', icon: '💬' },
-          { path: '/manage-notifications', label: 'Quản lý thông báo', icon: '🔔' },
-          { path: '/reports', label: 'Báo cáo thống kê', icon: '📈' },
-          { path: '/settings', label: 'Cài đặt hệ thống', icon: '🛠️' },
+          { path: '/manage-news', label: 'Quản lý tin tức' },
+          { path: '/manage-notifications', label: 'Quản lý thông báo' },
+          { path: '/memberManagerAd', label: 'Quản lý thành viên' },
+          { path: '/staffmander', label: 'Quản lý nhân viên' },
         ];
 
       default:
@@ -61,13 +62,7 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <h3>Menu</h3>
-          <button 
-            className="sidebar-close"
-            onClick={() => setIsOpen(false)}
-            aria-label="Close sidebar"
-          >
-            ×
-          </button>
+          
         </div>
         
         <nav className="sidebar-nav">

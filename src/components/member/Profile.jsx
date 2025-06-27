@@ -11,6 +11,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [originalProfile, setOriginalProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     const fetchProfile = async () => {
