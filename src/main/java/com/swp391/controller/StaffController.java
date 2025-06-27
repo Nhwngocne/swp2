@@ -61,4 +61,12 @@
                     .result(staffService.getStaffById(staffId))
                     .build();
         }
+        @PatchMapping("/status/{memberId}")
+        public ApiResponse<String> banStaff(@PathVariable int memberId) {
+            staffService.banMember(memberId);
+            return ApiResponse.<String>builder()
+                    .result("Status has been changed by staff.")
+                    .build();
+        }
+
     }

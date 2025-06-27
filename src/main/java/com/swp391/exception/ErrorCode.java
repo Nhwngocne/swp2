@@ -48,7 +48,9 @@ public enum ErrorCode {
     CERTIFICATE_ALREADY_EXISTS(1001, "Certificate already exists for this donation history", HttpStatus.BAD_REQUEST),
     CERTIFICATE_NOT_FOUND(1002, "Certificate not found", HttpStatus.NOT_FOUND),
     BLOOD_TYPE_NOT_FOUND(1002, "Blood type not found", HttpStatus.NOT_FOUND),
+
     INVALID_ADDRESS(1002, "Invalid address", HttpStatus.BAD_REQUEST),
+    USER_BANNED(1002, "User is Banned", HttpStatus.FORBIDDEN)
     ;
 
 
