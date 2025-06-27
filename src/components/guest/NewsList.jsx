@@ -3,7 +3,7 @@ import "../../assets/css/components/guest/NewsList.css";
 import { useEvents } from "../../services//EventContext";
 
 const NewsList = () => {
-  const { blogs, loading, error, fetchBlogs, getBlogById } = useEvents();
+  const { blogs, loading, error, fetchBlogs, getBlogById,incrementBlogView } = useEvents();
   const [selectedNews, setSelectedNews] = useState(null);
 
   useEffect(() => {
@@ -26,13 +26,20 @@ const NewsList = () => {
   };
 
   const handleBlogClick = async (blogId) => {
+  try {
+    await incrementBlogView(blogId); // Nếu lỗi thì nhảy vào catch
+
     const { success, blog } = await getBlogById(blogId);
     if (success) {
       setSelectedNews(blog);
     } else {
       console.error("Failed to fetch blog details");
     }
-  };
+  } catch (err) {
+    console.error("Lỗi khi tăng lượt xem hoặc lấy blog", err);
+  }
+};
+
 
   if (loading) {
     return <div>Đang tải...</div>;
