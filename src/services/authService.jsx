@@ -61,13 +61,6 @@ export const authService = {
   // Đăng nhập
   login: (email, password) => authAPI.post("/auth/login", { email, password }),
 
-  // Đăng ký
-  register: (userData) => authAPI.post("/members", userData),
-
-  // Cập nhật profile
-  updateProfile: (memberId, profileData) =>
-    authAPI.put(`/members/${memberId}`, profileData),
-
   // Đăng xuất (nếu cần gọi API)
   logout: (token) => authAPI.post("/auth/logout", { token }),
 
@@ -106,13 +99,70 @@ export const authService = {
   verifyOtpRegis: (otp, email) =>
     authAPI.post("/register/verify-otp", { otp, email }),
 
-  getAllUsers: () => authAPI.get("/members"),
   // Đăng nhập bằng Google
-
   loginWithGoogle: (idToken) =>
     authAPI.post("/auth/loginGoogle", { token: idToken }),
 
-  getAllDonationHistories: () => authAPI.get("/donations/histories"),
+  //MEMBER======================================================
+  // Đăng ký
+  register: (userData) => authAPI.post("/members", userData),
+
+  // Cập nhật profile
+  updateProfile: (memberId, profileData) =>
+    authAPI.put(`/members/${memberId}`, profileData),
+
+  // Xóa thành viên
+  deleteMember: (memberId) => authAPI.delete(`/members/${memberId}`),
+
+  // Lấy thông tin thành viên theo ID
+  getMemberById: (memberId) => authAPI.get(`/members/${memberId}`),
+
+  // Lấy tất cả thành viên
+  getAllUsers: () => authAPI.get("/members"),
+
+   // STAFF ======================================================
+
+  // Tạo tài khoản nhân viên mới
+  createStaff: (staffData) => authAPI.post("/staffs", staffData),
+
+  // Cập nhật thông tin của một nhân viên
+  updateStaff: (staffId, staffData) => authAPI.put(`/staffs/${staffId}`, staffData),
+
+  // Xóa tài khoản nhân viên
+  deleteStaff: (staffId) => authAPI.delete(`/staffs/${staffId}`),
+
+  // Lấy danh sách tất cả nhân viên
+  getAllStaff: () => authAPI.get("/staffs"),
+
+  // Lấy thông tin chi tiết của nhân viên theo ID
+  getStaffById: (staffId) => authAPI.get(`/staffs/${staffId}`),
+
+  // Khóa / mở khóa tài khoản nhân viên
+  banStaff: (memberId) => authAPI.patch(`/staffs/status/${memberId}`),
+
+
+  // ADMIN ======================================================
+
+  // Tạo tài khoản quản trị viên mới
+  createAdmin: (adminData) => authAPI.post("/admins", adminData),
+
+  // Cập nhật thông tin của một quản trị viên
+  updateAdmin: (adminId, adminData) => authAPI.put(`/admins/${adminId}`, adminData),
+
+  // Xóa tài khoản quản trị viên
+  deleteAdmin: (adminId) => authAPI.delete(`/admins/${adminId}`),
+
+  // Lấy danh sách tất cả quản trị viên
+  getAllAdmins: () => authAPI.get("/admins"),
+
+  // Lấy thông tin chi tiết của quản trị viên theo ID
+  getAdminById: (adminId) => authAPI.get(`/admins/${adminId}`),
+
+  // Khóa / mở khóa tài khoản nhân viên từ phía admin
+  banAdminStaff: (staffId) => authAPI.patch(`/admins/staff/${staffId}`),
+
+  // Khóa / mở khóa tài khoản thành viên từ phía admin
+  banAdminMember: (memberId) => authAPI.patch(`/admins/member/${memberId}`),
 
 };
 
