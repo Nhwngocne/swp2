@@ -1,15 +1,20 @@
 import React, { useState } from "react";
-import { authService } from "../../services/authService";
-import "../../assets/css/member/EmergencyForm.css"; // Tuỳ chỉnh CSS của bạn
-import { useAuth } from "../../services/AuthContext"; // Giả sử bạn có AuthContext để lấy thông tin người dùng
+import "../../assets/css/member/EmergencyForm.css";
+import { useAuth } from "../../services/AuthContext";
+import { useEmergency } from "../../services/EmergencyContext";
 
 const EmergencyForm = () => {
+  const { user } = useAuth();
+  const { createEmergencyRequest, fetchEmergencyRequests } = useEmergency();
   const [showForm, setShowForm] = useState(false);
+
   const [formData, setFormData] = useState({
+    name: user?.name || "",
+    phone: user?.phone || "",
+    location: user?.address || "",
     component: "",
-    freeday: "",
-    location: "",
-    blood_type_id: "",
+    description: "",
+    status: "PENDING",
   });
 
   const handleChange = (e) => {
@@ -19,16 +24,45 @@ const EmergencyForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      !formData.name ||
+      !formData.phone ||
+      !formData.location ||
+      !formData.component ||
+      !formData.description
+    ) {
+      alert("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+
+    const dataToSend = {
+      name: formData.name,
+      phone: formData.phone,
+      location: formData.location,
+      component: formData.component,
+      description: formData.description,
+      status: formData.status,
+    };
+
     try {
-      await authService.createEmergency(formData);
-      alert("Đã gửi yêu cầu khẩn cấp!");
-      setFormData({
-        component: "",
-        freeday: "",
-        location: "",
-        blood_type_id: "",
-      });
-      setShowForm(false);
+      console.log("Data gửi đi:", dataToSend);
+      const response = await createEmergencyRequest(dataToSend);
+      if (response.success) {
+        alert("Đã gửi yêu cầu khẩn cấp!");
+        setFormData({
+          name: user?.name || "",
+          phone: user?.phone || "",
+          location: user?.address || "",
+          component: "",
+          description: "",
+          status: "PENDING",
+        });
+        setShowForm(false);
+        await fetchEmergencyRequests(); // Làm mới danh sách
+      } else {
+        alert(response.error || "Gửi yêu cầu thất bại.");
+      }
     } catch (err) {
       console.error("Lỗi gửi yêu cầu khẩn cấp:", err);
       alert("Gửi yêu cầu thất bại.");
@@ -44,22 +78,23 @@ const EmergencyForm = () => {
       {showForm && (
         <div className="emergency-form">
           <h2>Đăng ký khẩn cấp</h2>
+          {user && <p>Xin chào, {user.name || user.fullName || user.email}!</p>}
           <form onSubmit={handleSubmit}>
             <div>
-              <label>Thành phần (component):</label>
+              <label>Tên (name):</label>
               <input
                 type="text"
-                name="component"
-                value={formData.component}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label>Ngày nghỉ (freeday):</label>
+              <label>Số điện thoại (phone):</label>
               <input
-                type="date"
-                name="freeday"
-                value={formData.freeday}
+                type="text"
+                name="phone"
+                value={formData.phone}
                 onChange={handleChange}
               />
             </div>
@@ -72,17 +107,25 @@ const EmergencyForm = () => {
                 onChange={handleChange}
               />
             </div>
-           
             <div>
-              <label>Blood Type ID:</label>
+              <label>Thành phần (component):</label>
               <input
-                type="number"
-                name="blood_type_id"
-                value={formData.blood_type_id}
+                type="text"
+                name="component"
+                value={formData.component}
                 onChange={handleChange}
               />
             </div>
-            
+            <div>
+              <label>Mô tả (description):</label>
+              <input
+                type="text"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                maxLength="1000"
+              />
+            </div>
             <button type="submit">Gửi yêu cầu</button>
           </form>
         </div>

@@ -1,0 +1,48 @@
+.donor-search-page {
+    padding: 20px;
+  }
+  
+  .search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .search-form input,
+  .search-form select {
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  .search-form button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .search-form button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .donor-list {
+    margin-top: 20px;
+  }
+  
+  .donor-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .donor-item a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .donor-item a:hover {
+    text-decoration: underline;
+  }

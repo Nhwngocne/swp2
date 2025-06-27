@@ -1,52 +1,68 @@
-import React, { useEffect, useState, useContext } from "react";
-import { authService } from "../../services/authService";
-import "../../assets/css/member/RegisterHistory.css";
+import React, { useEffect, useMemo, useRef } from "react";
+import { useEvents } from "../../services/EventContext"; // Đảm bảo đường dẫn đúng
 import { useAuth } from "../../services/AuthContext";
+import "../../assets/css/member/RegisterHistory.css";
 
 const RegisterHistory = () => {
-  const [history, setHistory] = useState([]);
-  //const { user } = useContext(AuthContext);
-  const { user } = useAuth(); 
-  const memberId = user?.id;
+  const { user } = useAuth();
+  const { forms, loading, error, getFormsByMember } = useEvents();
+  const memberId = useMemo(() => user?.id, [user]);
+  const hasFetchedRef = useRef(false);
+  const isMountedRef = useRef(true); // Thêm useRef để theo dõi trạng thái mount
 
-//   useEffect(() => {
-//     if (memberId) {
-//       authService
-//         .getDonationHistoryByMemberId(memberId)
-//         .then((res) => setHistory(res.data))
-//         .catch((err) => console.error("Lỗi lấy lịch sử:", err));
-//     }
-//   }, [memberId]);
+  useEffect(() => {
+    console.log("useEffect chạy, memberId:", memberId, "hasFetched:", hasFetchedRef.current);
+    if (memberId && !hasFetchedRef.current) {
+      hasFetchedRef.current = true;
+      getFormsByMember(memberId)
+        .then(() => {
+          if (isMountedRef.current) {
+            console.log("API getFormsByMember hoàn tất, memberId:", memberId);
+          }
+        })
+        .catch((err) => {
+          if (isMountedRef.current) {
+            console.error("Lỗi gọi getFormsByMember:", err);
+          }
+        })
+        .finally(() => {
+          if (isMountedRef.current) {
+            hasFetchedRef.current = false; // Reset chỉ khi component còn mounted
+          }
+        });
+      return () => {
+        isMountedRef.current = false; // Đánh dấu component đã unmount
+      };
+    }
+  }, [memberId, getFormsByMember]);
 
-    useEffect(() => {
-    // ✅ Dữ liệu giả để hiển thị tạm thời
-    const fakeData = [
-      {
-        id: 1,
-        donate_date: "2025-05-10",
-        component: "Máu toàn phần",
-        bloodType: { name: "O+" },
-        location: "Bệnh viện Chợ Rẫy",
-        regis_time: "08:00 - 10:00",
-        status: "Đã xác nhận",
-      },
-      {
-        id: 2,
-        donate_date: "2025-03-22",
-        component: "Tiểu cầu",
-        bloodType: { name: "A-" },
-        location: "Trung tâm hiến máu Quốc gia",
-        regis_time: "13:00 - 15:00",
-        status: "Chờ xác nhận",
-      },
-    ];
-
-    // Gán dữ liệu vào state
-    setHistory(fakeData);
-  }, []);
+  if (!memberId) {
+    return (
+      <div className="history-container">
+        <h2 className="history-title">LỊCH SỬ ĐĂNG KÝ HIẾN MÁU</h2>
+        <p>Vui lòng đăng nhập để xem lịch sử đăng ký.</p>
+      </div>
+    );
+  }
 
   const renderRows = () => {
-    if (history.length === 0) {
+    if (loading) {
+      return (
+        <tr>
+          <td colSpan="6">Đang tải dữ liệu...</td>
+        </tr>
+      );
+    }
+
+    if (error) {
+      return (
+        <tr>
+          <td colSpan="6">{error}</td>
+        </tr>
+      );
+    }
+
+    if (forms.length === 0) {
       return (
         <tr>
           <td colSpan="6">Không có dữ liệu hiến máu nào.</td>
@@ -54,13 +70,13 @@ const RegisterHistory = () => {
       );
     }
 
-    return history.map((entry) => (
+    return forms.map((entry) => (
       <tr key={entry.id}>
-        <td>{entry.donate_date}</td>
-        <td>{entry.component}</td>
-        <td>{entry.bloodType?.name || "Không rõ"}</td>
-        <td>{entry.location}</td>
-        <td>{entry.regis_time}</td>
+        <td>{entry.eventDate}</td>
+        <td>{entry.eventTitle?.trim() || "Không xác định"}</td>
+        <td>{entry.bloodType || "Không rõ"}</td>
+        <td>{entry.eventLocation?.trim() || "Không xác định"}</td>
+        <td>{entry.approvedDate || "Chưa xác định"}</td>
         <td>
           <span
             className={`status ${
@@ -81,7 +97,7 @@ const RegisterHistory = () => {
         <thead>
           <tr>
             <th>Ngày đăng ký</th>
-            <th>Thành phần</th>
+            <th>Tên sự kiện</th>
             <th>Nhóm máu</th>
             <th>Địa điểm</th>
             <th>Thời gian</th>

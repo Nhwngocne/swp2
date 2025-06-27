@@ -1,3 +1,5 @@
+/* App.css */
+
 /* Reset và cấu hình nền */
 html, body, #root {
   margin: 0;
@@ -6,17 +8,21 @@ html, body, #root {
   height: 100%;
   font-family: 'Segoe UI', sans-serif;
   background-color: #f9f9f9;
+  overflow-x: hidden;
 }
 
-/* Toàn bộ ứng dụng */
+* {
+  box-sizing: border-box;
+}
+
 .app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
+  overflow-x: hidden;
 }
 
-/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -44,105 +50,23 @@ html, body, #root {
   opacity: 0.9;
 }
 
-/* Nội dung chính */
 .main-content {
   flex: 1;
   padding: 0;
   width: 100%;
 }
 
-/* Phần hero/banner */
-.hero {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  padding: 50px 30px;
-  background-color: #fff5f5;
-  width: 100%;
-  box-sizing: border-box;
+.main-content.with-sidebar {
+  padding-left: 240px;
+  transition: padding-left 0.3s ease;
 }
 
-.hero-text {
-  max-width: 600px;
+@media (max-width: 768px) {
+  .main-content.with-sidebar {
+    padding-left: 0;
+  }
 }
 
-.hero h1 {
-  color: #d32f2f;
-  font-size: 36px;
-  margin-bottom: 10px;
-}
-
-.hero h2 {
-  color: #555;
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-.hero p {
-  color: #444;
-  line-height: 1.5;
-  margin-bottom: 20px;
-}
-
-.hero-buttons {
-  display: flex;
-  gap: 15px;
-}
-
-.hero-buttons .button {
-  background-color: #d32f2f;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.hero-buttons .button.secondary {
-  background-color: white;
-  color: #d32f2f;
-  border: 2px solid #d32f2f;
-}
-
-.hero img {
-  max-width: 400px;
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-
-/* Phần thành tựu */
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-  padding: 40px 20px;
-  background-color: #ffffff;
-  text-align: center;
-}
-
-.stats .stat {
-  background-color: #fff5f5;
-  padding: 20px;
-  width: 200px;
-  border-radius: 8px;
-}
-
-.stats .stat img {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 10px;
-}
-
-.stats .stat h3 {
-  font-size: 18px;
-  color: #333;
-}
-
-/* Footer */
 .footer {
   padding: 20px 30px;
   text-align: center;

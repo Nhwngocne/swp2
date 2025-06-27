@@ -1,59 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { authService } from "../../services/authService";
-import { useAuth } from "../../services/AuthContext"; 
+import React, { useState } from 'react';
+import { useEmergency } from '../../services/EmergencyContext';
+import { useAuth } from '../../services/AuthContext';
 import '../../assets/css/member/EmergencyList.css';
 
 const EmergencyList = () => {
   const { user } = useAuth();
-  const [emergencies, setEmergencies] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { emergencyRequests, loading, error, fetchEmergencyRequests } = useEmergency();
   const [filter, setFilter] = useState('all');
-
-  useEffect(() => {
-    fetchEmergencies();
-  }, []);
-
-  const fetchEmergencies = async () => {
-    try {
-      setLoading(true);
-      const response = await authService.getAllEmergencies();
-      setEmergencies(response.data.result);
-    } catch (error) {
-      console.error('Lỗi khi tải danh sách cấp cứu:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const respondToEmergency = async (emergencyId) => {
     try {
       console.log('Phản hồi đơn khẩn cấp:', emergencyId);
       alert('Phản hồi của bạn đã được gửi! Bệnh viện sẽ liên hệ với bạn sớm.');
+      await fetchEmergencyRequests(); // Làm mới sau khi phản hồi
     } catch (error) {
       console.error('Lỗi khi phản hồi:', error);
       alert('Có lỗi xảy ra. Vui lòng thử lại.');
     }
   };
 
-  const getUrgencyColor = (urgency) => {
-    switch (urgency.toLowerCase()) {
-      case 'critical': return '#dc3545';
-      case 'high': return '#fd7e14';
-      case 'medium': return '#ffc107';
-      case 'low': return '#28a745';
-      default: return '#6c757d';
-    }
+  const formatLabel = (label) => {
+    const mapping = {
+      id: "Mã yêu cầu",
+      name: "Tên",
+      phone: "Số điện thoại",
+      location: "Địa điểm",
+      component: "Thành phần",
+      description: "Mô tả",
+      status: "Trạng thái",
+      bloodTypeName: "Nhóm máu",
+      staffName: "Nhân viên",
+      memberName: "Thành viên",
+      adminName: "Quản trị viên",
+    };
+    return mapping[label] || label;
   };
 
-  const filteredEmergencies = emergencies.filter(emergency => {
+  const formatValue = (key, value) => {
+    if (!value) return "Không có";
+    return value.toString();
+  };
+
+  const filteredEmergencies = emergencyRequests.filter(emergency => {
     if (filter === 'all') return true;
-    if (filter === 'active') return emergency.status === 'active';
-    if (filter === 'fulfilled') return emergency.status === 'fulfilled';
-    return emergency.bloodType === filter;
+    if (filter === 'active') return emergency.status.toLowerCase() === 'pending';
+    if (filter === 'fulfilled') return emergency.status.toLowerCase() === 'fulfilled';
+    return emergency.bloodTypeName === filter;
   });
 
   if (loading) {
     return <div className="loading">Đang tải danh sách cấp cứu...</div>;
+  }
+
+  if (error) {
+    return <div className="error">Lỗi: {error}</div>;
   }
 
   return (
@@ -88,36 +88,33 @@ const EmergencyList = () => {
           <div key={emergency.id} className="emergency-card">
             <div className="emergency-header">
               <div className="blood-type-badge">
-                {emergency.bloodType}
+                {emergency.bloodTypeName || "Không xác định"}
               </div>
-              <div
-                className="urgency-badge"
-                style={{ backgroundColor: getUrgencyColor(emergency.urgency) }}
-              >
-                {emergency.urgency}
-              </div>
-              <div className={`status-badge status-${emergency.status}`}>
-                {emergency.status === 'active' ? 'Đang cần' : 'Đã đủ'}
+              <div className={`status-badge status-${emergency.status.toLowerCase()}`}>
+                {emergency.status === 'PENDING' ? 'Đang cần' : 'Đã đủ'}
               </div>
             </div>
 
             <div className="emergency-content">
-              <h3>{emergency.hospital}</h3>
-              <p className="location">{emergency.location}</p>
-              <p className="description">{emergency.description}</p>
+              <h3>{emergency.name || "Không xác định"}</h3>
+              <p className="location">{emergency.location || "Không xác định"}</p>
+              <p className="description">{emergency.description || "Không có mô tả"}</p>
 
               <div className="emergency-details">
-                <div className="detail-item">
-                  <strong>Liên hệ:</strong> {emergency.contact}
-                </div>
-                <div className="detail-item">
-                  <strong>Thời gian:</strong> {new Date(emergency.createdAt).toLocaleString('vi-VN')}
-                </div>
+                {Object.entries(emergency)
+                  .filter(([key]) =>
+                    !['staff', 'admin', 'member', 'bloodType'].includes(key)
+                  )
+                  .map(([key, value]) => (
+                    <div className="detail-item" key={key}>
+                      <strong>{formatLabel(key)}:</strong> {formatValue(key, value)}
+                    </div>
+                  ))}
               </div>
             </div>
 
             <div className="emergency-actions">
-              {emergency.status === 'active' && (
+              {emergency.status.toLowerCase() === 'pending' && (
                 <button
                   className="respond-btn"
                   onClick={() => respondToEmergency(emergency.id)}
@@ -126,7 +123,7 @@ const EmergencyList = () => {
                 </button>
               )}
               <button className="contact-btn">
-                <a href={`tel:${emergency.contact}`}>Gọi ngay</a>
+                <a href={`tel:${emergency.phone || '#'}`}>Gọi ngay</a>
               </button>
             </div>
           </div>

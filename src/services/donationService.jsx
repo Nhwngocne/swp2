@@ -19,7 +19,7 @@ donationAPI.interceptors.request.use(
     // Chỉ bỏ qua token cho GET /donations/histories, /donations/offline, /donations/receive/:id
     const isGetDonations =
       config.method === "get" &&
-      (config.url === "/donations/histories" ||
+      (
         config.url === "/donations/offline" ||
         config.url.match(/^\/donations\/histories\/\d+$/) ||
         config.url.match(/^\/donations\/offline\/\d+$/) ||

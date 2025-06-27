@@ -169,3 +169,16 @@
   color: #666;
   padding: 40px;
 }
+.detail-item {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}
+
+.detail-item strong {
+  min-width: 130px;
+  color: #000;
+}

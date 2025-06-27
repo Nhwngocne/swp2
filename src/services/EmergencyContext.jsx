@@ -33,7 +33,9 @@ export const EmergencyProvider = ({ children }) => {
     id: emergency.id,
     component: emergency.component || "",
     location: emergency.location || "",
-    freeday: emergency.freeday,
+    name: emergency.name, // ✅ thêm nếu chưa có
+    phone: emergency.phone, // ✅ thêm nếu chưa có
+    description: emergency.description,
     status: emergency.status || "PENDING",
     staffName: emergency.staffName || "Không xác định",
     memberName: emergency.memberName || "Không xác định",
@@ -124,8 +126,10 @@ export const EmergencyProvider = ({ children }) => {
       if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
       const payload = {
         component: requestData.component,
+        name: emergency.name, // ✅ thêm nếu chưa có
+        phone: emergency.phone, // ✅ thêm nếu chưa có
+        description: emergency.description,
         location: requestData.location,
-        freeday: requestData.freeday,
         status: requestData.status,
       };
       const source = axios.CancelToken.source();
@@ -161,8 +165,10 @@ export const EmergencyProvider = ({ children }) => {
       console.log(`Đang cập nhật yêu cầu khẩn cấp ${emergencyId} tại /swp391/emergencies/emergency/${emergencyId}`);
       const payload = {
         component: requestData.component,
+        name: emergency.name, // ✅ thêm nếu chưa có
+        phone: emergency.phone, // ✅ thêm nếu chưa có
+        description: emergency.description,
         location: requestData.location,
-        freeday: requestData.freeday,
         status: requestData.status,
       };
       const source = axios.CancelToken.source();

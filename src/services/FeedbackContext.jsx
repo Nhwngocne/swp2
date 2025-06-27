@@ -96,7 +96,7 @@ export const FeedbackProvider = ({ children }) => {
       setLoading(true);
       console.log("Đang tạo feedback tại /swp391/feedbacks");
       if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-      const payload = { content: feedbackData.content, rating: feedbackData.rating };
+      const payload = { content: feedbackData.content, rating: feedbackData.rating, memberId: user.id };
       const source = axios.CancelToken.source();
       const response = await feedbackService.createFeedback(payload, {
         cancelToken: source.token,

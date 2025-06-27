@@ -36,10 +36,10 @@ authAPI.interceptors.response.use(
       error.config?.url?.includes("/auth/loginGoogle") ||
       error.config?.url?.includes("/reset-password") ||
 
-      error.config?.url?.includes("/register/send-otp") ||    
-      error.config?.url?.includes("/register/verify-otp")||
+      error.config?.url?.includes("/register/send-otp") ||
+      error.config?.url?.includes("/register/verify-otp") ||
 
-       error.config?.url?.includes("/feedback");
+      error.config?.url?.includes("/feedback");
 
 
     if (error.response?.status === 401 && !isAuthFreeEndpoint) {
@@ -47,7 +47,7 @@ authAPI.interceptors.response.use(
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/auth/login";
-    }else if (error.response) {
+    } else if (error.response) {
       console.log("API error:", error.config?.url, error.response.status, error.response.data); // Debug
     }
 
@@ -70,7 +70,7 @@ export const authService = {
 
   // Đăng xuất (nếu cần gọi API)
   logout: (token) => authAPI.post("/auth/logout", { token }),
-  
+
   // Refresh tokenx`
   refreshToken: (refreshToken) =>
     authAPI.post("/refresh-token", { refreshToken }),
@@ -95,15 +95,15 @@ export const authService = {
     authAPI.post(`/forgotPassword/verifyOtp/${otp}/${email}`),
 
   // Verify email(forget password)
-  verifyEmail: (email) => 
+  verifyEmail: (email) =>
     authAPI.post(`/forgotPassword/verifyMail/${email}`),
 
   //Verify email(register)
-  sendOtp: (email) => 
+  sendOtp: (email) =>
     authAPI.post("/register/send-otp", { email }),
 
   // verify otp(register)
-  verifyOtpRegis: (otp, email) => 
+  verifyOtpRegis: (otp, email) =>
     authAPI.post("/register/verify-otp", { otp, email }),
 
   getAllUsers: () => authAPI.get("/members"),
@@ -112,18 +112,8 @@ export const authService = {
   loginWithGoogle: (idToken) =>
     authAPI.post("/auth/loginGoogle", { token: idToken }),
 
-  // Lấy danh sách tất cả feedback
-  getAllFeedback: () => authAPI.get("/feedbacks"),
+  getAllDonationHistories: () => authAPI.get("/donations/histories"),
 
-  // Gửi feedback
-  sendFeedback: (feedbackData) => authAPI.post("/feedbacks", feedbackData),
-
-  getDonationHistoryByMemberId: (memberId) =>
-  authAPI.get(`/donation-registrations/member/${memberId}`),
-  
-  createEmergency: (data) => authAPI.post("/emergencies/emergency", data),
-
-  getAllEmergencies: () => authAPI.get("/emergencies/emergency"),
 };
 
 export default authService;

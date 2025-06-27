@@ -283,38 +283,56 @@ export const EventProvider = ({ children }) => {
     }
   };
 
-  const getFormsByMember = async (memberId) => {
-    try {
-      setLoading(true);
-      console.log(
-        `Đang lấy biểu mẫu của thành viên ${memberId} từ /swp391/forms/member/${memberId}`
-      );
-      const source = axios.CancelToken.source();
-      const response = await eventService.getBloodDonationFormsByMember(
-        memberId,
-        {
-          cancelToken: source.token,
-        }
-      );
-      console.log("API response:", response.data);
-      const mappedForms = response.data.result.map(mapForm);
-      setForms(mappedForms);
-      setError(null);
-      return { success: true, forms: mappedForms };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy lấy biểu mẫu:", error.message);
-        return { success: false, error: error.message };
+  const getFormsByMember = useCallback(
+    async (memberId) => {
+      if (isFetchingRef.current) {
+        console.log("Bỏ qua gọi API vì đang tải, memberId:", memberId);
+        return { success: false, error: "Đang tải dữ liệu" };
       }
-      console.error("Lỗi lấy biểu mẫu:", error.response?.status, error.message);
-      const errorMessage =
-        error.response?.data?.message || "Không thể tải biểu mẫu";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
-    }
-  };
+      isFetchingRef.current = true;
+      try {
+        setLoading(true);
+        console.log(
+          `Đang lấy biểu mẫu của thành viên ${memberId} từ /swp391/forms/member/${memberId}`
+        );
+        const source = axios.CancelToken.source();
+        const response = await eventService.getBloodDonationFormsByMember(
+          memberId,
+          {
+            cancelToken: source.token,
+          }
+        );
+        console.log("API response:", response.data);
+        const mappedForms = response.data.result.map(mapForm);
+        
+        setForms((prevForms) => {
+          const isDifferent = JSON.stringify(prevForms) !== JSON.stringify(mappedForms);
+          console.log("setForms gọi, dữ liệu mới khác cũ:", isDifferent);
+          if (isDifferent) {
+            return mappedForms;
+          }
+          return prevForms;
+        });
+        
+        setError(null);
+        return { success: true, forms: mappedForms };
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log("Hủy lấy biểu mẫu:", error.message);
+          return { success: false, error: error.message };
+        }
+        console.error("Lỗi lấy biểu mẫu:", error.response?.status, error.message);
+        const errorMessage =
+          error.response?.data?.message || "Không thể tải biểu mẫu";
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      } finally {
+        setLoading(false);
+        isFetchingRef.current = false;
+      }
+    },
+    [mapForm]
+  );
 
   const getFormByMemberAndId = async (formId, memberId) => {
     try {
@@ -836,14 +854,13 @@ export const EventProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("EventProvider mounted");
+    console.log("EventProvider mounted, user:", user);
     fetchEvents();
     fetchBlogs();
-    fetchForms();
     return () => {
-      console.log("EventProvider unmounting");
+      console.log("EventProvider unmounting, user:", user);
     };
-  }, [fetchEvents, fetchBlogs, fetchForms]);
+  }, [fetchEvents, fetchBlogs]);
 
   const value = {
     events,

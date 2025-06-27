@@ -1,0 +1,117 @@
+.feedback-section {
+  padding: 40px 20px;
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  max-width: 1200px;
+  margin: auto;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.feedback-card {
+  background: white;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.feedback-content {
+  font-style: italic;
+  font-size: 16px;
+  color: #444;
+}
+
+.feedback-user {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #777;
+}
+
+.show-form-button {
+  margin-top: 20px;
+}
+
+.show-form-button .btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.show-form-button .btn:hover {
+  background-color: #b71c1c;
+}
+
+.add-feedback-form {
+  background-color: #fff;
+  padding: 20px;
+  margin-top: 30px;
+  border-radius: 12px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.add-feedback-form h4 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #333;
+}
+
+.add-feedback-form input,
+.add-feedback-form textarea,
+.add-feedback-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.add-feedback-form button {
+  padding: 10px 18px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.add-feedback-form .close-button {
+  background-color: #757575;
+}
+
+.add-feedback-form button:hover {
+  opacity: 0.9;
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}

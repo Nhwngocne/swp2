@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import '../../assets/css/components/common/Slidebar.css';
 
 const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
   const location = useLocation();
