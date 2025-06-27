@@ -97,6 +97,7 @@ const Navbar = () => {
         <div className="navbar-placeholder" />
 
         <div className="navbar-logo">
+          
           <Link to="/">
             <img src={logo} alt="Logo BloodLink" className="footer-logo" />
           </Link>

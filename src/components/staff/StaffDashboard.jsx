@@ -5,7 +5,7 @@ import { bloodService } from "../../services/BloodService";
 import { emergencyService } from "../../services/emergencyService"; // ← Thêm dòng này
 
 
-const AdminDashboard = () => {
+const StaffDashboard = () => {
     const [totalMembers, setTotalMembers] = useState(0);
     const [totalForms, setTotalForms] = useState(0);
     const [totalEmergencies, setTotalEmergencies] = useState(0);
@@ -89,4 +89,4 @@ const DashboardCard = ({ title, count }) => (
     </div>
 );
 
-export default AdminDashboard;
+export default StaffDashboard;

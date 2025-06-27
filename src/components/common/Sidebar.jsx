@@ -17,36 +17,35 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
   };
 
   const getMenuItems = () => {
-    let dashboardPath = '/dashboard';
-    if (userRole === 'ADMIN') dashboardPath = '/admin-dashboard';
-    if (userRole === 'STAFF') dashboardPath = '/staff-dashboard';
+  let dashboardPath = "/";
+  if (userRole === "ADMIN") dashboardPath = "/admin-dashboard";
+  if (userRole === "STAFF") dashboardPath = "/staffDashboard";
 
-    const commonItems = [
-    { label: "Dashboard", path: "/admin-dashboard", icon: '🏠' },
-  ];
-    switch (userRole) {
-      case 'STAFF':
-        return [
-          ...commonItems,
-          { path: '/manage-events', label: 'Quản lý sự kiện' },
-          { path: '/blood-inventory', label: 'Kho máu' },
-          { path: '/emergency', label: 'Yêu cầu cấp cứu' },
-          { path: '/manage-members', label: 'Quản lý thành viên' },
-        ];
+  const dashboardItem = { label: "Dashboard", path: dashboardPath, icon: "🏠" };
 
-      case 'ADMIN':
-        return [
-          ...commonItems,
-          { path: '/manage-news', label: 'Quản lý tin tức' },
-          { path: '/manage-notifications', label: 'Quản lý thông báo' },
-          { path: '/memberManagerAd', label: 'Quản lý thành viên' },
-          { path: '/staffmander', label: 'Quản lý nhân viên' },
-        ];
+  switch (userRole) {
+    case "STAFF":
+      return [
+        dashboardItem,
+        { path: "/eventManager", label: "Quản lý sự kiện" },
+        { path: "/bloodInventory", label: "Kho máu" },
+        { path: "/formManager", label: "Quản lý đơn đăng ký" },
+        { path: "/manage-members", label: "Quản lý thành viên" },
+      ];
 
-      default:
-        return commonItems;
-    }
-  };
+    case "ADMIN":
+      return [
+        dashboardItem,
+        { path: "/manage-news", label: "Quản lý tin tức" },
+        { path: "/manage-notifications", label: "Quản lý thông báo" },
+        { path: "/memberManagerAd", label: "Quản lý thành viên" },
+        { path: "/staffmander", label: "Quản lý nhân viên" },
+      ];
+
+    default:
+      return [dashboardItem];
+  }
+};
 
   return (
     <>
