@@ -8,6 +8,5 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface NearbyDonorMapper {
     @Mapping(target = "distance", ignore = true)
-    @Mapping(target = "routeUrl", ignore = true)
     DonorResponse toDonorResponse(NearbyDonor donor);
 }
