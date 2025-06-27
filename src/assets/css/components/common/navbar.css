@@ -31,16 +31,16 @@
 
 .top-link {
   padding: 0.4rem 1rem;
-  border: 1px solid #6b7280;
+  border: 1px solid #5e1c17;
   border-radius: 6px;
   background-color: #fff;
-  color: #6b7280;
+  color: #5e1c17;
   font-weight: 500;
   text-decoration: none;
 }
 
 .login-btn {
-  background-color: #6b7280;
+  background-color: #5e1c17;
   color: white;
   border: none;
 }
@@ -72,8 +72,8 @@
   background-color: #5e1c17;
 }
 .nav-item:hover {
-  background-color: #ffffff; /* nền trắng khi hover */
-  color: #74221D;            /* chữ đỏ */
+  background-color: #ffffff; 
+  color: #74221D;            
 }
 
 .user-dropdown {

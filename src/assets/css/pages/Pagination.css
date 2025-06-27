@@ -1,0 +1,33 @@
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.pagination-container button {
+  border: none;
+  background-color: transparent;
+  color: #333;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-container button:hover:not(.active) {
+  background-color: #f0f0f0;
+}
+
+.pagination-container button.active {
+  background-color: #444;
+  color: white;
+}
+
+.pagination-container .ellipsis {
+  padding: 8px 12px;
+  color: #777;
+}

@@ -125,8 +125,12 @@
   color: #333;
 }
 
-.checkbox-group input {
-  margin-right: 6px;
+.checkbox-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #74221D; /* Màu chủ đạo */
+  cursor: pointer;
+  vertical-align: middle;
 }
 
 .checkbox-group a {
