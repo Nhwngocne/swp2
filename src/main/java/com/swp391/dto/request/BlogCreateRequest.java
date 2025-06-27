@@ -20,5 +20,5 @@ public class BlogCreateRequest {
     String category;
     LocalDate publishedDate;
 
-    MultipartFile image;              // Ảnh đại diện chính
+    String image;
 }

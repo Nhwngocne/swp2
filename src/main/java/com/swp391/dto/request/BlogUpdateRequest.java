@@ -19,6 +19,6 @@ public class BlogUpdateRequest {
     String category;
     LocalDate publishedDate;
 
-    MultipartFile image;              // Ảnh đại diện chính
+    String image;
    // Danh sách ảnh phụ
 }
