@@ -1,27 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDonation } from "../../services/DonationContext";
 import FeedbackForm from "../../pages/FeedbackForm";
+import "../../assets/css/member/DonationHistory.css";
 
 const DonationHistory = () => {
   const { donationHistories, loading, error } = useDonation();
+  const [selectedDonation, setSelectedDonation] = useState(null);
 
   useEffect(() => {
-    console.log(
-      "DonationHistory useEffect chạy, loading:",
-      loading,
-      "error:",
-      error
-    );
+    console.log("DonationHistory useEffect chạy:", loading, error);
   }, [loading, error]);
 
-  // kiểm tra có ít nhất 1 donation đã COMPLETED không
-  const hasCompletedDonation = donationHistories.some(
-    (donation) => donation.status?.toLowerCase() === "completed"
-  );
+  const isCompleted = (status) =>
+    status?.toLowerCase() === "completed" || status?.toLowerCase() === "hoàn thành";
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Lịch sử hiến máu của bạn</h2>
+      <h2 className="text-2xl font-semibold mb-6">Lịch sử hiến máu của bạn</h2>
 
       {loading ? (
         <p>Đang tải dữ liệu...</p>
@@ -31,37 +26,71 @@ const DonationHistory = () => {
         <p>Không có lịch sử hiến máu nào.</p>
       ) : (
         <>
-          <table className="w-full border border-gray-300 mb-4">
-            <thead className="bg-red-100">
-              <tr>
-                <th className="border p-2">#</th>
-                <th className="border p-2">Thành phần</th>
-                <th className="border p-2">Ngày hiến</th>
-                <th className="border p-2">Thể tích</th>
-                <th className="border p-2">Nhóm máu</th>
-                <th className="border p-2">Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody>
-              {donationHistories.map((donation, index) => (
-                <tr key={donation.id} className="text-center">
-                  <td className="border p-2">{index + 1}</td>
-                  <td className="border p-2">{donation.component || "Không xác định"}</td>
-                  <td className="border p-2">{donation.date || "Không xác định"}</td>
-                  <td className="border p-2">{donation.volume || "Không xác định"}</td>
-                  <td className="border p-2">{donation.bloodGroup || "Không rõ"}</td>
-                  <td className="border p-2">{donation.status || "Không xác định"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {donationHistories.map((donation) => (
+            <div key={donation.id} className="card-container">
+              <div className="card-item">
+                <span className="card-label">Trạng thái: </span>
+                <span
+                  className={`card-badge ${
+                    isCompleted(donation.status) ? "completed-badge" : "pending-badge"
+                  }`}
+                >
+                  {donation.status || "Không xác định"}
+                </span>
+              </div>
 
-          {hasCompletedDonation && (
-            <>
-              <h3 className="text-xl font-semibold mb-2">Hãy để lại phản hồi sau khi hiến máu</h3>
-              <FeedbackForm />
-            </>
-          )}
+              <div className="card-item">
+                <span className="card-label">Ngày hiến máu: </span>
+                {donation.date || "Không xác định"}
+              </div>
+              <div className="card-item">
+                <span className="card-label">Lượng máu đã hiến: </span>
+                {donation.volume ? `${donation.volume} ml` : "Không xác định"}
+              </div>
+              <div className="card-item">
+                <span className="card-label">Cơ sở tiếp nhận máu: </span>
+                {donation.facility || "Không rõ"}
+              </div>
+              <div className="card-item">
+                <span className="card-label">Địa chỉ: </span>
+                {donation.address || "Không rõ"}
+              </div>
+
+              {isCompleted(donation.status) && (
+                <>
+                  <div className="card-item flex-buttons">
+                    <button
+                      className="view-result-btn"
+                      onClick={() =>
+                        alert(`📄 Kết quả hiến máu\n- Mã: ${donation.id}\n- Ngày: ${donation.date}`)
+                      }
+                    >
+                      Xem kết quả
+                    </button>
+                    <button
+                      className="feedback-btn"
+                      onClick={() =>
+                        setSelectedDonation(
+                          selectedDonation?.id === donation.id ? null : donation
+                        )
+                      }
+                    >
+                      {selectedDonation?.id === donation.id ? "Đóng đánh giá" : "Gửi đánh giá"}
+                    </button>
+                  </div>
+
+                  {selectedDonation?.id === donation.id && (
+                    <div className="card-item">
+                      <FeedbackForm
+                        donation={selectedDonation}
+                        onClose={() => setSelectedDonation(null)}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
         </>
       )}
     </div>
