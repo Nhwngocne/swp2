@@ -66,4 +66,21 @@ public class BloodIntentFormController {
                 .result("Form has been deleted successfully.")
                 .build();
     }
+    // STAFF xem các form cần xử lý (PENDING, PROCESSING)
+    @PostMapping("/approve/{id}")
+    @PreAuthorize("hasRole('STAFF')")
+    public ApiResponse<BloodIntentFormResponse> approveForm(@PathVariable int id) {
+        return ApiResponse.<BloodIntentFormResponse>builder()
+                .result(intentFormService.approveForm(id))
+                .build();
+    }
+    @PostMapping("/reject/{id}")
+    @PreAuthorize("hasRole('STAFF')")
+    public ApiResponse<BloodIntentFormResponse> rejectForm(@PathVariable int id) {
+        return ApiResponse.<BloodIntentFormResponse>builder()
+                .result(intentFormService.rejectForm(id))
+                .build();
+    }
+
+
 }

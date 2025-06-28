@@ -20,41 +20,49 @@ public class BloodIntentForm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    String intentType; // CHO hoặc NHAN
+    @Column(length = 10, nullable = false)
+    String intentType; // "CHO" hoặc "NHAN"
 
-    String bloodType; // A, B, AB, O
+    @Column(length = 5, nullable = false)
+    String bloodType; // "A+", "O-", ...
 
-    @Column(length = 255)
+    @Column(length = 255, nullable = false)
     String location;
 
-    @Column
+    @Column(length = 20, nullable = false)
     String phone;
+
     @Column(length = 500)
     String description;
-    @Column
-    int quantity ;
+
+    @Column(nullable = false)
+    int quantity;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(nullable = false)
     LocalDate availableFrom;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(nullable = false)
     LocalDate availableTo;
 
     @Column
     LocalDate approvedAt;
 
-    @Column
+    @Column(length = 255)
     String rejectReason;
-    @Column(length = 20)
-    String status = "PENDING"; // ACTIVE, EXPIRED, CANCELED...
+
+    @Column(length = 20, nullable = false, columnDefinition = "varchar(20) default 'PENDING'")
+    String status;
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     Member member;
 
     @PrePersist
-    public void setDatesOnCreate() {
-        this.availableFrom = LocalDate.now();
-        this.availableTo = LocalDate.now().plusMonths(1);
-        this.status = "ACTIVE";
+    public void prePersist() {
+        if (this.status == null) {
+            this.status = "PENDING";
+        }
     }
 }

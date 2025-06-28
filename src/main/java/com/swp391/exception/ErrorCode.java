@@ -55,6 +55,8 @@ public enum ErrorCode {
     NOTIFICATION_NOT_FOUND(1002, "Notification not found", HttpStatus.NOT_FOUND),
     INVALID_SESSION(1002, "Invalid session", HttpStatus.BAD_REQUEST),
     BLOOD_COMPONENT_NOT_FOUND(1002, "Blood component not found", HttpStatus.NOT_FOUND),
+    INVALID_INTENT_TYPE(1002, "Invalid intent type", HttpStatus.BAD_REQUEST),
+    FORM_ALREADY_PROCESSED(1001, "Form has already been processed", HttpStatus.BAD_REQUEST),
 
     ;
     private final int code;
