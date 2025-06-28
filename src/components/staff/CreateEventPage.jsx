@@ -15,6 +15,8 @@ const CreateEventPage = () => {
     endTime: '',
     location: '',
     status: 'UPCOMING',
+    donationTimes: [],   // checkbox multi
+    bloodTypes: [],      // checkbox multi
   });
 
   const [imageFile, setImageFile] = useState(null);
@@ -23,6 +25,21 @@ const CreateEventPage = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (e, field) => {
+    const value = e.target.value;
+    if (e.target.checked) {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: [...prev[field], value],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: prev[field].filter((v) => v !== value),
+      }));
+    }
   };
 
   const handleImageChange = (e) => {
@@ -40,7 +57,7 @@ const CreateEventPage = () => {
       const result = await createEvent(data);
       if (result.success) {
         alert(result.message);
-        navigate('/eventManager'); // Chuyển hướng về trang quản lý sự kiện
+        navigate('/eventManager');
       } else {
         alert(result.error);
       }
@@ -100,6 +117,46 @@ const CreateEventPage = () => {
           onChange={handleInputChange}
           required
         />
+
+        {/* khung giờ hiến máu */}
+        <label>Chọn khung giờ hiến máu:</label>
+        <div className="checkbox-group">
+          <label>
+            <input
+              type="checkbox"
+              value="7:00-11:00"
+              checked={formData.donationTimes.includes("7:00-11:00")}
+              onChange={(e) => handleCheckboxChange(e, "donationTimes")}
+            />
+            7:00 - 11:00
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              value="13:00-16:00"
+              checked={formData.donationTimes.includes("13:00-16:00")}
+              onChange={(e) => handleCheckboxChange(e, "donationTimes")}
+            />
+            13:00 - 16:00
+          </label>
+        </div>
+
+        {/* nhóm máu cần */}
+        <label>Nhóm máu cần hiến:</label>
+        <div className="checkbox-group">
+          {["A", "B", "AB", "O"].map((blood) => (
+            <label key={blood}>
+              <input
+                type="checkbox"
+                value={blood}
+                checked={formData.bloodTypes.includes(blood)}
+                onChange={(e) => handleCheckboxChange(e, "bloodTypes")}
+              />
+              {blood}
+            </label>
+          ))}
+        </div>
+
         <input
           type="file"
           name="image"

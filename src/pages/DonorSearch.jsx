@@ -7,6 +7,7 @@ import GoongMap from "./GoongMap";
 import "./DonorSearch.css";
 import { donorService } from "../services/donorService";
 import polyline from "polyline";
+import { useNavigate } from "react-router-dom";
 
 const DonorSearch = () => {
   const { searchNearestDonors, donors, loading, error } = useDonor();
@@ -15,6 +16,7 @@ const DonorSearch = () => {
   const [bloodType, setBloodType] = useState("");
   const [center, setCenter] = useState(null);
   const [selectedRoute, setSelectedRoute] = useState(null);
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,6 +66,7 @@ const DonorSearch = () => {
   
 
   return (
+    <>
     <div className="donor-search-page container">
       <h2>Tìm Nhà Tài Trợ Máu Gần Nhất</h2>
       <form onSubmit={handleSubmit} className="search-form">
@@ -116,6 +119,15 @@ const DonorSearch = () => {
       {center && <GoongMap center={center} donors={donors} selectedRoute={selectedRoute} />}
       <ToastContainer />
     </div>
+    <div className="emergency-form-link">
+        <button
+          className="btn btn-danger"
+          onClick={() => navigate("/emergencyForm")}
+        >
+          Đăng ký khẩn cấp
+        </button>
+      </div>
+    </>
   );
 };
 
