@@ -12,7 +12,12 @@ const bloodIntentAPI = axios.create({
 bloodIntentAPI.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    console.log("bloodIntentService request:", config.url, "Token:", token || "No token");
+    console.log(
+      "bloodIntentService request:",
+      config.url,
+      "Token:",
+      token || "No token"
+    );
     if (token && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
     } else if (!token && !config.url.includes("/auth")) {
@@ -32,7 +37,10 @@ bloodIntentAPI.interceptors.response.use(
       message: error.message,
       url: error.config?.url,
     });
-    if (error.response?.status === 401 && window.location.pathname !== "/login") {
+    if (
+      error.response?.status === 401 &&
+      window.location.pathname !== "/login"
+    ) {
       localStorage.clear();
       window.location.href = "/login";
     }
@@ -46,8 +54,7 @@ export const bloodIntentService = {
     bloodIntentAPI.post("/intents", formData, config),
 
   // STAFF: lấy toàn bộ
-  getAllBloodIntents: (config = {}) =>
-    bloodIntentAPI.get("/intents", config),
+  getAllBloodIntents: (config = {}) => bloodIntentAPI.get("/intents", config),
 
   // STAFF: lấy theo member
   getBloodIntentsByMember: (memberId, config = {}) =>
@@ -64,7 +71,10 @@ export const bloodIntentService = {
   approveBloodIntentForm: (formId, config = {}) =>
     bloodIntentAPI.post(`/intents/approve/${formId}`, {}, config),
   // STAFF: từ chối ý định
-  rejectBloodIntentForm: (id, config = {}) =>
-  bloodIntentAPI.post(`/intents/reject/${id}`, {}, config),
-
+  rejectBloodIntentForm: (id, reason, config = {}) =>
+    bloodIntentAPI.post(
+      `/intents/reject/${id}?reason=${encodeURIComponent(reason)}`,
+      {},
+      config
+    ),
 };
