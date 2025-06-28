@@ -13,4 +13,6 @@ public class BloodIntentFormRequest {
     String intentType;     // CHO hoặc NHAN
     String bloodType;          // A, B, AB, O
     String location;           // Địa điểm người đăng ký có mặt
+    String description;
+    String phone;
 }
