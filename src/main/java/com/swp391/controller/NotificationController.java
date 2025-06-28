@@ -23,7 +23,7 @@ public class NotificationController {
 
     // STAFF tạo thông báo cho member
     @PreAuthorize("hasRole('STAFF')")
-    @PostMapping("/notifications/member")
+    @PostMapping("/member")
     public ApiResponse<Void> createNotificationForMember(@RequestBody NotificationRequest request) {
         notificationService.createNotificationForMember(request.getMemberId(), request.getMessage());
         return ApiResponse.<Void>builder()

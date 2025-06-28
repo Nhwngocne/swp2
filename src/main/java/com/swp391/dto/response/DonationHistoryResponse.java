@@ -24,4 +24,8 @@ public class DonationHistoryResponse {
 
     // Giấy chứng nhận (nếu có)
     String certificateNumber;
+
+    // FORM
+    BloodDonationFormResponse bloodDonationFormResponse;
+    BloodIntentFormResponse bloodIntentFormResponse;
 }

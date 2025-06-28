@@ -90,4 +90,9 @@ public class BloodDonationForm {
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     Event event;
+
+    @OneToOne(mappedBy = "bloodDonationForm", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    DonationHistory donationHistory;
 }

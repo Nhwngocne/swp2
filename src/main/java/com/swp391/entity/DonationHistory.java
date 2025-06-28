@@ -62,4 +62,8 @@ public class DonationHistory {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Certificate certificate;
+
+    @OneToOne
+    @JoinColumn(name = "blood_donation_form_id", referencedColumnName = "id")
+    BloodDonationForm bloodDonationForm;
 }
