@@ -50,7 +50,8 @@ public enum ErrorCode {
     BLOOD_TYPE_NOT_FOUND(1002, "Blood type not found", HttpStatus.NOT_FOUND),
 
     INVALID_ADDRESS(1002, "Invalid address", HttpStatus.BAD_REQUEST),
-    USER_BANNED(1002, "User is Banned", HttpStatus.FORBIDDEN)
+    USER_BANNED(1002, "User is Banned", HttpStatus.FORBIDDEN),
+    INVALID_SESSION(1002, "Invalid session", HttpStatus.BAD_REQUEST),
     ;
 
 

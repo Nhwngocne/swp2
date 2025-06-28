@@ -60,8 +60,8 @@ public class EventService {
         return eventMapper.toEventResponse(event);
     }
 
-    public EventResponse updateEvent(int id, EventCreateRequest request) throws IOException {
-        var event = eventRepository.findById(id)
+    public EventResponse updateEvent(int eventId, EventCreateRequest request) throws IOException {
+        var event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new AppException(ErrorCode.EVENT_NOT_EXISTED));
 
         // Rest of the update logic remains the same
@@ -71,6 +71,14 @@ public class EventService {
         }
 
         eventMapper.updateEvent(event, request);
+        // Ánh xạ bloodTypeIds sang bloodTypes
+        if (request.getBloodTypeIds() != null && !request.getBloodTypeIds().isEmpty()) {
+            Set<BloodType> bloodTypes = request.getBloodTypeIds().stream()
+                    .map(id -> bloodTypeRepository.findById(id)
+                            .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND)))
+                    .collect(Collectors.toSet());
+            event.setBloodTypes(bloodTypes);
+        }
         event = eventRepository.save(event);
         return eventMapper.toEventResponse(event);
     }

@@ -21,6 +21,7 @@ import lombok.AccessLevel;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -44,12 +45,28 @@ public class BloodDonationFormService {
         Staff staff = staffRepository.findById(event.getCreatedBy().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
+        LocalTime startTime;
+        LocalTime endTime;
+
+        if ("MORNING".equalsIgnoreCase(request.getSession())) {
+            startTime = event.getDonationMorningStart();
+            endTime = event.getDonationMorningEnd();
+        } else if ("AFTERNOON".equalsIgnoreCase(request.getSession())) {
+            startTime = event.getDonationAfternoonStart();
+            endTime = event.getDonationAfternoonEnd();
+        } else {
+            throw new AppException(ErrorCode.INVALID_SESSION);
+        }
+
         BloodDonationForm form = formMapper.toForm(request);
         form.setEvent(event);
         form.setMember(member);
         form.setApprovedBy(staff);
         form.setStatus("PENDING");
         form.setCreatedAt(LocalDate.now());
+
+        form.setStartTime(startTime);
+        form.setEndTime(endTime);
 
         form = formRepository.save(form);
         return formMapper.toFormResponse(form);
@@ -60,18 +77,26 @@ public class BloodDonationFormService {
         BloodDonationForm form = formRepository.findById(request.getFormId())
                 .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
 
+        // Cập nhật các trường cơ bản từ request
         formMapper.updateForm(form, request);
 
-        if (request.getApprovedByStaffId() > 0) {
+        // Nếu có chỉ định staff duyệt
+        if (request.getApprovedByStaffId() != null && request.getApprovedByStaffId() > 0) {
             Staff staff = staffRepository.findById(request.getApprovedByStaffId())
                     .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
             form.setApprovedBy(staff);
             form.setApprovedDate(LocalDate.now());
         }
 
+        // Nếu có cập nhật trạng thái
+        if (request.getStatus() != null && !request.getStatus().isBlank()) {
+            form.setStatus(request.getStatus().toUpperCase());
+        }
+
         form = formRepository.save(form);
         return formMapper.toFormResponse(form);
     }
+
 
     // Member cập nhật lại form nếu chưa duyệt
     public BloodDonationFormResponse memberUpdateForm(int formId, int memberId, BloodDonationFormUpdateRequest request) {
@@ -85,6 +110,25 @@ public class BloodDonationFormService {
         if (!form.getStatus().equals("PENDING")) {
             throw new AppException(ErrorCode.FORM_ALREADY_APPROVED);
         }
+        Event event = form.getEvent();
+
+        // Xác định session sáng/chiều và set lại thời gian
+        LocalTime startTime;
+        LocalTime endTime;
+
+        if ("MORNING".equalsIgnoreCase(request.getSession())) {
+            startTime = event.getDonationMorningStart();
+            endTime = event.getDonationMorningEnd();
+        } else if ("AFTERNOON".equalsIgnoreCase(request.getSession())) {
+            startTime = event.getDonationAfternoonStart();
+            endTime = event.getDonationAfternoonEnd();
+        } else {
+            throw new AppException(ErrorCode.INVALID_SESSION);
+        }
+
+        // Cập nhật dữ liệu từ request (tương tự create)
+        form.setStartTime(startTime);
+        form.setEndTime(endTime);
 
         formMapper.updateForm(form, request);
         form = formRepository.save(form);

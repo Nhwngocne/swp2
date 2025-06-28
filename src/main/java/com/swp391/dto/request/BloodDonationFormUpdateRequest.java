@@ -5,6 +5,8 @@ import lombok.experimental.FieldDefaults;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +17,8 @@ public class BloodDonationFormUpdateRequest {
     @NotNull(message = "ID đơn đăng ký là bắt buộc")
     Integer formId;
 
-    String bloodType;
+    int volumeMl;
+    String session;
 
     // Câu 1
     Boolean donatedBefore;
@@ -44,8 +47,7 @@ public class BloodDonationFormUpdateRequest {
     // Câu 7 & 8
     String symptomsPast2Weeks;
     String symptomsPast1Week;
-    // Volume máu
-    int bloodVolume; // Đơn vị ml, ví dụ: 350ml, 450ml
+
 
 
     // Câu 9 - dành cho nữ
@@ -54,6 +56,6 @@ public class BloodDonationFormUpdateRequest {
     Boolean noneOfFemaleConditions;
 
     // Dành cho Staff duyệt
-    String status; // "APPROVED", "REJECTED", "PENDING"
+    String status; // "APPROVED", "REJECTED", "PENDING" "COMPLETED"
     Integer approvedByStaffId;
 }

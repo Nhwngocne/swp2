@@ -4,9 +4,7 @@ import com.swp391.dto.request.BloodDonationFormCreateRequest;
 import com.swp391.dto.request.BloodDonationFormUpdateRequest;
 import com.swp391.dto.response.BloodDonationFormResponse;
 import com.swp391.entity.BloodDonationForm;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface BloodDonationFormMapper {
@@ -29,5 +27,6 @@ public interface BloodDonationFormMapper {
     BloodDonationFormResponse toFormResponse(BloodDonationForm form);
 
     // Update entity từ update request
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateForm(@MappingTarget BloodDonationForm form, BloodDonationFormUpdateRequest request);
 }

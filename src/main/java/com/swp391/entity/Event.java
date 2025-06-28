@@ -69,19 +69,19 @@ public class Event {
     Set<Member> registeredMembers = new HashSet<>();
 
     @Column(length = 20)
-    private String session; // ALL, MORNING, AFTERNOON
+    String session; // ALL, MORNING, AFTERNOON
 
     @Column
-    private LocalTime donationMorningStart;
+    LocalTime donationMorningStart;
 
     @Column
-    private LocalTime donationMorningEnd;
+    LocalTime donationMorningEnd;
 
     @Column
-    private LocalTime donationAfternoonStart;
+    LocalTime donationAfternoonStart;
 
     @Column
-    private LocalTime donationAfternoonEnd;
+    LocalTime donationAfternoonEnd;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -90,8 +90,12 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "blood_type_id")
     )
     @JsonIgnore
-    private Set<BloodType> bloodTypes = new HashSet<>();
+    Set<BloodType> bloodTypes = new HashSet<>();
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    List<BloodDonationForm> forms;
 
     @Column
-    private Integer maxRegistrations;
+    Integer maxRegistrations;
 }
