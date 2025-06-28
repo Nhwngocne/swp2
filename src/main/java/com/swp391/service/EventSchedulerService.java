@@ -2,6 +2,7 @@ package com.swp391.service;
 
 import com.swp391.entity.BloodDonationForm;
 import com.swp391.entity.Event;
+import com.swp391.entity.Member;
 import com.swp391.entity.Staff;
 import com.swp391.repository.BloodDonationFormRepository;
 import com.swp391.repository.EventRepository;
@@ -39,7 +40,7 @@ public class EventSchedulerService {
                             "Sự kiện '%s' đã kết thúc. Vui lòng kiểm tra các đơn đăng ký để xác nhận kết quả hiến.",
                             event.getTitle()
                     );
-                    notificationService.createNotificationForStaff(staff.getId(), message);
+                    notificationService.createNotificationForStaffOnly(staff.getId(),message);
                 }
             }
         }
