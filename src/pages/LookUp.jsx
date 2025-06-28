@@ -3,8 +3,11 @@ import '../assets/css/pages/LookUp.css';
 import Form from '../components/member/Form';
 import { useNavigate } from "react-router-dom";
 
+ // Nhóm máu người nhận
 
 const LookUp = () => {
+    const [componentType, setComponentType] = useState("whole"); // Loại truyền
+const [recipientType, setRecipientType] = useState("");       // Nhóm máu người nhận
     const [bloodType, setBloodType] = useState('');
     const [result, setResult] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
@@ -96,67 +99,44 @@ const LookUp = () => {
                 </div>
 
                 <div className="blood-type-section">
-                    <div className="search-form">
-                        <select
-                            value={bloodType}
-                            onChange={(e) => setBloodType(e.target.value)}
-                            className="blood-type-select"
-                        >
-                            <option value="">-- Chọn nhóm máu --</option>
-                            <option value="O-">O-</option>
-                            <option value="O+">O+</option>
-                            <option value="A-">A-</option>
-                            <option value="A+">A+</option>
-                            <option value="B-">B-</option>
-                            <option value="B+">B+</option>
-                            <option value="AB-">AB-</option>
-                            <option value="AB+">AB+</option>
-                        </select>
-                        <button
-                            onClick={handleSearch}
-                            disabled={!bloodType}
-                            className={`search-button ${bloodType ? 'enabled' : 'disabled'}`}
-                        >
-                            Tra cứu
-                        </button>
+                   <div className="search-form">
+    <select
+        value={componentType}
+        onChange={(e) => setComponentType(e.target.value)}
+        className="blood-type-select"
+    >
+        <option value="whole">Toàn phần</option>
+        <option value="red_cells">Hồng cầu</option>
+        <option value="plasma">Huyết tương</option>
+        <option value="whole">Tiểu cầu</option>
 
-                        {isSearching && (
-                            <div className="loading-container">
-                                <div className="loading-spinner"></div>
-                                Đang tra cứu...
-                            </div>
-                        )}
+    </select>
 
-                        {!isSearching && result && (
-                            <div className="result-container">
-                                <h2 className="result-title">
-                                    Nhóm máu: <span className="blood-type-badge">{result.type}</span>
-                                </h2>
-                                <div className="result-content">
-                                    <p className="result-item">
-                                        <strong>Có thể nhận máu từ:</strong>
-                                        <span className="blood-list-badge">
-                                            {result.canReceive.join(', ')}
-                                        </span>
-                                    </p>
-                                    <p className="result-item">
-                                        <strong>Có thể truyền máu cho:</strong>
-                                        <span className="blood-list-badge">
-                                            {result.canDonate.join(', ')}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        )}
+    <select
+        value={recipientType}
+        onChange={(e) => setRecipientType(e.target.value)}
+        className="blood-type-select"
+    >
+        <option value="">-- Nhóm máu người nhận --</option>
+        <option value="O-">O-</option>
+        <option value="O+">O+</option>
+        <option value="A-">A-</option>
+        <option value="A+">A+</option>
+        <option value="B-">B-</option>
+        <option value="B+">B+</option>
+        <option value="AB-">AB-</option>
+        <option value="AB+">AB+</option>
+    </select>
 
-                        {!isSearching && result === null && bloodType.trim() !== '' && (
-                            <div className="error-container">
-                                <p className="error-message">
-                                    Không tìm thấy thông tin cho nhóm máu "<strong>{bloodType.toUpperCase().trim()}</strong>"
-                                </p>
-                            </div>
-                        )}
-                    </div>
+    <button
+        onClick={handleSearch}
+        disabled={!recipientType}
+        className={`search-button ${recipientType ? 'enabled' : 'disabled'}`}
+    >
+        Tra cứu
+    </button>
+</div>
+
                 </div>
             </div>
             <div >
