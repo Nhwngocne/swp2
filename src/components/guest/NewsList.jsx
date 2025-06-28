@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../../assets/css/components/guest/NewsList.css";
 import { useEvents } from "../../services/EventContext";
 import Pagination from "../../pages/Pagination";
-import DOMPurify from "dompurify"; // ✅ Import DOMPurify
+import DOMPurify from "dompurify";
 
 const NewsList = () => {
   const { blogs, loading, error, fetchBlogs, getBlogById, incrementBlogView } = useEvents();
@@ -33,10 +33,10 @@ const NewsList = () => {
       if (success) {
         setSelectedNews(blog);
       } else {
-        console.error("Failed to fetch blog details");
+        console.error("Không lấy được chi tiết blog");
       }
     } catch (err) {
-      console.error("Lỗi khi tăng lượt xem hoặc lấy blog", err);
+      console.error("Lỗi khi tăng view hoặc lấy blog:", err);
     }
   };
 
@@ -62,16 +62,9 @@ const NewsList = () => {
             <span>📅 {formatDate(selectedNews.publishDate)}</span>
             <span>👁️ {selectedNews.views.toLocaleString()} lượt xem</span>
           </div>
-          <img
-            src={selectedNews.image}
-            alt={selectedNews.title}
-            className="news-thumbnail"
-            onError={(e) => (e.target.src = "/assets/blog-default.jpg")}
-          />
+
           <div className="news-body">
             <p className="news-summary">{selectedNews.summary}</p>
-
-            {/* ✅ Hiển thị nội dung HTML an toàn */}
             <div
               className="news-content"
               dangerouslySetInnerHTML={{
