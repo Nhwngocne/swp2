@@ -59,6 +59,8 @@ import BloodFormList from './components/staff/FormList/BloodFormList';
 import BloodIntentList from './components/staff/FormList/BloodIntentList';
 import EmergencyList from './components/staff/FormList/EmergencyList';
 import BloodInventoryForm from './components/staff/BloodInventoryForm';
+import ResultForm from './components/staff/ResultForm';
+import BloodDonationResults from './components/staff/BloodDonationResults';
 
 // Admin Components
 import NewsManager from './components/admin/NewsManager';
@@ -131,6 +133,8 @@ const AppContent = () => {
           <Route path="/bloodIntentList" element={<ProtectedRoute requiredRole="STAFF"><BloodIntentList /></ProtectedRoute>} />
           <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
           <Route path="/bloodInventoryForm" element={<ProtectedRoute requiredRole="STAFF"><BloodInventoryForm /></ProtectedRoute>} />
+          <Route path="/resultForm" element={<ProtectedRoute requiredRole="STAFF"><ResultForm /></ProtectedRoute>} />
+          <Route path="/bloodDonationResults" element={<ProtectedRoute requiredRole="STAFF"><BloodDonationResults /></ProtectedRoute>} />
 
           {/* Admin */}
           <Route path="/manage" element={<ProtectedRoute requiredRole="ADMIN"><Manage /></ProtectedRoute>} />

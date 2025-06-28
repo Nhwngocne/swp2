@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDonation } from "../../services/DonationContext";
 import FeedbackForm from "../../pages/FeedbackForm";
 import "../../assets/css/member/DonationHistory.css";
@@ -6,6 +7,7 @@ import "../../assets/css/member/DonationHistory.css";
 const DonationHistory = () => {
   const { donationHistories, loading, error } = useDonation();
   const [selectedDonation, setSelectedDonation] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("DonationHistory useEffect chạy:", loading, error);
@@ -61,9 +63,7 @@ const DonationHistory = () => {
                   <div className="card-item flex-buttons">
                     <button
                       className="view-result-btn"
-                      onClick={() =>
-                        alert(`📄 Kết quả hiến máu\n- Mã: ${donation.id}\n- Ngày: ${donation.date}`)
-                      }
+                      onClick={() => navigate(`/donation-results/${donation.id}`)}
                     >
                       Xem kết quả
                     </button>
