@@ -9,9 +9,8 @@ import { FeedbackProvider } from './services/FeedbackContext';
 import { QnAProvider } from './services/QnAContext';
 import { EmergencyProvider } from './services/EmergencyContext';
 import { DonationProvider } from './services/DonationContext';
-import { DonorProvider } from './services/DonorContext'; // Thêm DonorProvider
-
-
+import { DonorProvider } from './services/DonorContext';
+import { NotificationProvider } from './services/NotificationsContext'; // ✅ thêm NotificationProvider
 
 // Common Components
 import Navbar from './components/common/Navbar';
@@ -34,12 +33,11 @@ import VerifyGmail from './pages/VerifyGmail';
 import LookUp from './pages/LookUp';
 import FeedbackList from './pages/FeedbackList';
 import FeedbackForm from './pages/FeedbackForm';
-import DonorSearch from './pages/DonorSearch'; // Thêm DonorSearch
+import DonorSearch from './pages/DonorSearch';
 
 // Guest Components
 import EventList from './components/guest/EventList';
 import NewsList from './components/guest/NewsList';
-import BlogList from './components/guest/BlogList';
 
 // Member Components
 import Profile from './components/member/Profile';
@@ -96,7 +94,6 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/news" element={<NewsList />} />
-          <Route path="/blog" element={<BlogList />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/search" element={<Search />} />
           <Route path="/donation-blood-form" element={<DonationBloodForm />} />
@@ -107,7 +104,7 @@ const AppContent = () => {
           <Route path="/lookUp" element={<LookUp />} />
           <Route path="/feedbacks" element={<FeedbackList />} />
           <Route path="/feedbackForm" element={<FeedbackForm />} />
-          <Route path="/donor-search" element={<DonorSearch />} /> {/* Thêm route cho DonorSearch */}
+          <Route path="/donor-search" element={<DonorSearch />} />
 
           {/* Protected */}
           <Route path="/events" element={<EventProvider><EventList /></EventProvider>} />
@@ -139,11 +136,9 @@ const AppContent = () => {
           <Route path="/admin-dashboard" element={<ProtectedRoute requiredRole="ADMIN"><AdminDaschboard /></ProtectedRoute>} />
           <Route path="/memberManagerAd" element={<ProtectedRoute requiredRole="ADMIN"><MemberManagerAd /></ProtectedRoute>} />
           <Route path="/staffmander" element={<ProtectedRoute requiredRole="ADMIN"><StaffManager /></ProtectedRoute>} />
-          
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
-          
         </Routes>
       </main>
 
@@ -153,23 +148,25 @@ const AppContent = () => {
   );
 };
 
-// Wrap toàn bộ app bằng các Provider một lần duy nhất
+// Wrap toàn bộ app bằng các Provider
 const App = () => (
-    <AuthProvider>
+  <AuthProvider>
+    <NotificationProvider>
       <EventProvider>
         <EmergencyProvider>
           <FeedbackProvider>
             <QnAProvider>
               <DonationProvider>
-                <DonorProvider> {/* Thêm DonorProvider */}
-                  <AppContent />
+                <DonorProvider>
+                  <AppContent /> {/* KHÔNG còn BrowserRouter ở đây */}
                 </DonorProvider>
               </DonationProvider>
             </QnAProvider>
           </FeedbackProvider>
         </EmergencyProvider>
       </EventProvider>
-    </AuthProvider>
+    </NotificationProvider>
+  </AuthProvider>
 );
 
 export default App;
