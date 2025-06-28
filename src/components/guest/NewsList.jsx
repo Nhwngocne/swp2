@@ -111,7 +111,7 @@ const NewsList = () => {
         )}
       </div>
 
-      <h2 className="latest-news-title">Latest news</h2>
+      <h2 className="latest-news-title">Tin tức cũ</h2>
       <div className="news-grid">
         {currentBlogs.map((item) => (
           <div

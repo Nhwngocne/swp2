@@ -40,7 +40,6 @@ import DonorSearch from './pages/DonorSearch'; // Thêm DonorSearch
 // Guest Components
 import EventList from './components/guest/EventList';
 import NewsList from './components/guest/NewsList';
-import BlogList from './components/guest/BlogList';
 
 // Member Components
 import Profile from './components/member/Profile';
@@ -100,7 +99,6 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/news" element={<NewsList />} />
-          <Route path="/blog" element={<BlogList />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/search" element={<Search />} />
           <Route path="/donation-blood-form" element={<DonationBloodForm />} />

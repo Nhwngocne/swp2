@@ -9,7 +9,8 @@ const Faq = () => {
   const { answeredQuestions, fetchAnsweredQuestions, createQuestion, loading, error } = useQnA();
   const { user, role } = useAuth();
   const [question, setQuestion] = useState('');
-  const [openQuestionId, setOpenQuestionId] = useState(null); // ID câu hỏi đang mở
+  const [openQuestionId, setOpenQuestionId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchAnsweredQuestions();
@@ -35,11 +36,25 @@ const Faq = () => {
     setOpenQuestionId((prevId) => (prevId === id ? null : id));
   };
 
+  const filteredQuestions = answeredQuestions.filter((item) =>
+    item.question.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="faq-page container">
-      <h2 className="faq-title">Câu hỏi thường gặp</h2>
+      <h2 className="faq-title">Chúng tôi có thể giúp gì cho bạn?</h2>
 
-      {/* Form gửi câu hỏi */}
+     <div className="faq-search-box">
+  <input
+    type="text"
+    placeholder="Tìm kiếm câu hỏi..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
+  <button onClick={() => setSearchTerm(searchTerm.trim())}>Tìm kiếm</button>
+</div>
+
+
       {user && role === 'MEMBER' && (
         <div className="ask-question-form">
           <h3>Gửi câu hỏi của bạn</h3>
@@ -57,45 +72,28 @@ const Faq = () => {
         </div>
       )}
 
-      {/* Hiển thị lỗi nếu có */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      {/* Danh sách câu hỏi đã trả lời */}
       {loading ? (
         <p>Đang tải...</p>
-      ) : answeredQuestions.length === 0 ? (
-        <p>Chưa có câu hỏi nào được trả lời.</p>
+      ) : filteredQuestions.length === 0 ? (
+        <p>Không tìm thấy câu hỏi nào phù hợp.</p>
       ) : (
-        answeredQuestions.map((item, index) => (
-          <div key={item.id} className="faq-item">
-            <div
-              className="faq-question"
-              onClick={() => toggleAnswer(item.id)}
-              style={{
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                padding: '10px',
-                background: '#f2f2f2',
-                borderRadius: '5px',
-                marginBottom: '5px',
-              }}
-            >
-              {index + 1}. {item.question}
-            </div>
-            {openQuestionId === item.id && (
-              <div className="faq-answer" style={{ marginLeft: '15px', marginBottom: '10px' }}>
-                {(item.answer || 'Chưa có câu trả lời')
-                  .split('\n')
-                  .map((line, i) => (
-                    <p key={i} style={{ margin: 0 }}>{line}</p>
+        <div className="faq-grid">
+          {filteredQuestions.map((item, index) => (
+            <div key={item.id} className="faq-card" onClick={() => toggleAnswer(item.id)}>
+              <h4>{index + 1}. {item.question}</h4>
+              {openQuestionId === item.id && (
+                <div className="faq-answer">
+                  {(item.answer || 'Chưa có câu trả lời').split('\n').map((line, i) => (
+                    <p key={i}>{line}</p>
                   ))}
-                <small>
-                  Được hỏi bởi: {item.member?.name || 'ẩn'} | Trả lời bởi: {item.staff?.name}
-                </small>
-              </div>
-            )}
-          </div>
-        ))
+                 
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
 
       <ToastContainer />
