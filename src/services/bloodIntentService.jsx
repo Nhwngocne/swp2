@@ -43,21 +43,28 @@ bloodIntentAPI.interceptors.response.use(
 export const bloodIntentService = {
   // MEMBER: tạo ý định
   createBloodIntent: (formData, config = {}) =>
-    bloodIntentAPI.post("/api/intents", formData, config),
+    bloodIntentAPI.post("/intents", formData, config),
 
   // STAFF: lấy toàn bộ
   getAllBloodIntents: (config = {}) =>
-    bloodIntentAPI.get("/api/intents", config),
+    bloodIntentAPI.get("/intents", config),
 
   // STAFF: lấy theo member
   getBloodIntentsByMember: (memberId, config = {}) =>
-    bloodIntentAPI.get(`/api/intents/member/${memberId}`, config),
+    bloodIntentAPI.get(`/intents/member/${memberId}`, config),
 
   // STAFF: lấy theo ID
   getBloodIntentById: (id, config = {}) =>
-    bloodIntentAPI.get(`/api/intents/${id}`, config),
+    bloodIntentAPI.get(`/intents/${id}`, config),
 
   // STAFF: xóa
   deleteBloodIntent: (id, config = {}) =>
-    bloodIntentAPI.delete(`/api/intents/${id}`, config),
+    bloodIntentAPI.delete(`/intents/${id}`, config),
+  // STAFF: cập nhật trạng thái
+  approveBloodIntentForm: (formId, config = {}) =>
+    bloodIntentAPI.post(`/intents/approve/${formId}`, {}, config),
+  // STAFF: từ chối ý định
+  rejectBloodIntentForm: (id, config = {}) =>
+  bloodIntentAPI.post(`/intents/reject/${id}`, {}, config),
+
 };

@@ -38,44 +38,52 @@ export const NotificationProvider = ({ children }) => {
   });
 
   const fetchMyNotifications = useCallback(async () => {
-    if (!isMember && !isStaff) {
-      console.log("Role không phù hợp để lấy notifications");
-      return { success: false, error: "Role không hợp lệ" };
+  if (!isMember && !isStaff) {
+    console.log("Role không phù hợp để lấy notifications");
+    return { success: false, error: "Role không hợp lệ" };
+  }
+  if (isFetchingRef.current) return { success: false, error: "Đang tải dữ liệu" };
+  isFetchingRef.current = true;
+
+  try {
+    setLoading(true);
+    const source = axios.CancelToken.source();
+    const response = await notificationService.getMyNotifications({
+      cancelToken: source.token,
+    });
+
+    let filtered = response.data.result;
+    if (isMember) {
+      filtered = filtered.filter((n) => n.title === "forMember");
+    } else if (isStaff) {
+      filtered = filtered.filter((n) => n.title === "forStaff");
     }
-    if (isFetchingRef.current) return { success: false, error: "Đang tải dữ liệu" };
-    isFetchingRef.current = true;
 
-    try {
-      setLoading(true);
-      const source = axios.CancelToken.source();
-      const response = await notificationService.getMyNotifications({
-        cancelToken: source.token,
-      });
+    const mapped = filtered.map(mapNotification);
+    const now = new Date();
+    const cleaned = mapped.filter(n => {
+      if (!n.read) return true; // chưa đọc thì giữ lại
+      const createdDate = new Date(n.createdAt);
+      const diffDays = (now - createdDate) / (1000 * 60 * 60 * 24);
+      return diffDays <= 7; // đã đọc thì phải <= 7 ngày
+    });
 
-      let filtered = response.data.result;
-      if (isMember) {
-        filtered = filtered.filter((n) => n.title === "forMember");
-      } else if (isStaff) {
-        filtered = filtered.filter((n) => n.title === "forStaff");
-      }
-
-      const mapped = filtered.map(mapNotification);
-      setNotifications(mapped);
-      setError(null);
-      return { success: true, notifications: mapped };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy lấy notifications:", error.message);
-        return { success: false, error: error.message };
-      }
-      const errorMessage = error.response?.data?.message || "Không thể tải notifications";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
-      isFetchingRef.current = false;
+    setNotifications(cleaned);
+    setError(null);
+    return { success: true, notifications: cleaned };
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      console.log("Hủy lấy notifications:", error.message);
+      return { success: false, error: error.message };
     }
-  }, [isMember, isStaff]);
+    const errorMessage = error.response?.data?.message || "Không thể tải notifications";
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+    isFetchingRef.current = false;
+  }
+}, [isMember, isStaff]);
 
   const markAllAsRead = async () => {
     try {
