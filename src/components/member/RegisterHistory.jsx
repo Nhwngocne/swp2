@@ -6,7 +6,7 @@ import Pagination from "../../pages/Pagination";
 
 const RegisterHistory = () => {
   const [currentPage, setCurrentPage] = useState(1); // ✅ Đã thêm lại
-  const itemsPerPage = 5;
+  const itemsPerPage = 5; // ✅ Số lượng mục trên mỗi trang
   const { user } = useAuth();
   const { forms, loading, error, getFormsByMember } = useEvents(); // ✅ forms được khai báo
   const totalPages = Math.ceil(forms.length / itemsPerPage); // ✅ dùng sau khi forms đã có
@@ -63,7 +63,7 @@ const RegisterHistory = () => {
             {entry.status}
           </span>
           {entry.status !== "Đã xoá" && (
-            <a className="detail-link" href={`/chi-tiet-dang-ky/${entry.id}`}>
+            <a className="detail-link" href={`/chi-tiet-dang-ky/${entry.id}`}>  // Thêm nút xem chi tiết
               <i className="fas fa-file-alt"></i> Xem chi tiết
             </a>
           )}

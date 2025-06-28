@@ -1,0 +1,145 @@
+/* Container for each donation card */
+.card-container {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-left: 6px solid #dc3545;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.card-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual items within the card */
+.card-item {
+  margin-bottom: 12px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Label styling */
+.card-label {
+  font-weight: 600;
+  margin-right: 8px;
+  color: #333;
+}
+
+/* Badge styling for status */
+.card-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.completed-badge {
+  background-color: #d1f2e6;
+  color: #137c52;
+}
+
+.pending-badge {
+  background-color: #ffe5e5;
+  color: #a11f1f;
+}
+
+/* Button container */
+.flex-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* View result button */
+.view-result-btn {
+  background-color: #e26d5c;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.view-result-btn:hover {
+  background-color: #c95545;
+  transform: translateY(-1px);
+}
+
+.view-result-btn:active {
+  transform: translateY(0);
+}
+
+/* Feedback button */
+.feedback-btn {
+  background-color: #f4f4f4;
+  color: #333333;
+  border: 1px solid #cccccc;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+
+.feedback-btn:hover {
+  background-color: #e0e0e0;
+  border-color: #bbbbbb;
+  transform: translateY(-1px);
+}
+
+.feedback-btn:active {
+  transform: translateY(0);
+}
+
+/* Feedback form styling */
+.card-item .feedback-form {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #dddddd;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .card-container {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card-item {
+    font-size: 14px;
+  }
+
+  .card-label {
+    font-size: 14px;
+  }
+
+  .card-badge {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  .view-result-btn,
+  .feedback-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .flex-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
