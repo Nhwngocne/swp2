@@ -14,8 +14,14 @@ const EventManager = () => {
     date: '',
     startTime: '',
     endTime: '',
+    session: 'ALL',
+    donationMorningStart: '',
+    donationMorningEnd: '',
+    donationAfternoonStart: '',
+    donationAfternoonEnd: '',
     location: '',
-    status: 'UPCOMING',
+    bloodTypeIds: [], // Thay đổi từ bloodTypes sang bloodTypeIds
+    maxRegistrations: 0,
   });
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
@@ -34,6 +40,24 @@ const EventManager = () => {
       setImageFile(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
+  };
+
+  // Ánh xạ tên nhóm máu sang ID (A → 2, B → 3, AB → 4, O → 5)
+  const bloodTypeMap = {
+    'A': 2,
+    'B': 3,
+    'AB': 4,
+    'O': 5,
+  };
+
+  const handleBloodTypesChange = (bloodType) => {
+    setFormData((prev) => {
+      const id = bloodTypeMap[bloodType]; // Lấy ID tương ứng
+      const newBloodTypeIds = prev.bloodTypeIds.includes(id)
+        ? prev.bloodTypeIds.filter((item) => item !== id)
+        : [...prev.bloodTypeIds, id];
+      return { ...prev, bloodTypeIds: newBloodTypeIds };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -57,6 +81,8 @@ const EventManager = () => {
       alert('Có lỗi xảy ra. Vui lòng thử lại.');
     }
   };
+  
+  
 
   const handleEdit = (event) => {
     setEditingEvent(event);
@@ -64,10 +90,19 @@ const EventManager = () => {
       title: event.title,
       description: event.description,
       date: event.date,
-      startTime: event.startTime.split(':').slice(0, 2).join(':'), // HH:mm
-      endTime: event.endTime.split(':').slice(0, 2).join(':'), // HH:mm
+      startTime: event.startTime || '',
+      endTime: event.endTime || '',
+      session: event.session || 'ALL',
+      donationMorningStart: event.donationMorningStart || '',
+      donationMorningEnd: event.donationMorningEnd || '',
+      donationAfternoonStart: event.donationAfternoonStart || '',
+      donationAfternoonEnd: event.donationAfternoonEnd || '',
       location: event.location,
-      status: event.status,
+      // Nếu event.bloodTypes là ID (số), giữ nguyên; nếu là chuỗi, ánh xạ sang ID
+      bloodTypeIds: Array.isArray(event.bloodTypes) && event.bloodTypes.every(type => typeof type === 'number')
+        ? event.bloodTypes // Giữ nguyên nếu là mảng ID
+        : event.bloodTypes.map(type => bloodTypeMap[type] || 0), // Ánh xạ từ chuỗi sang ID
+      maxRegistrations: event.maxRegistrations || 0,
     });
     setPreviewUrl(event.image || '');
     setImageFile(null);
@@ -97,8 +132,14 @@ const EventManager = () => {
       date: '',
       startTime: '',
       endTime: '',
+      session: 'ALL',
+      donationMorningStart: '',
+      donationMorningEnd: '',
+      donationAfternoonStart: '',
+      donationAfternoonEnd: '',
       location: '',
-      status: 'UPCOMING',
+      bloodTypeIds: [],
+      maxRegistrations: 0,
     });
     setImageFile(null);
     setPreviewUrl('');
@@ -126,6 +167,8 @@ const EventManager = () => {
     return <div className="error">{error}</div>;
   }
 
+  const bloodTypeOptions = ['A', 'B', 'O', 'AB'];
+
   return (
     <div className="event-manager">
       <div className="page-header">
@@ -146,72 +189,171 @@ const EventManager = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="event-form">
-              <input
-                type="text"
-                name="title"
-                placeholder="Tiêu đề"
-                value={formData.title}
-                onChange={handleInputChange}
-                required
-              />
-              <textarea
-                name="description"
-                placeholder="Mô tả"
-                value={formData.description}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="time"
-                name="startTime"
-                value={formData.startTime}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="time"
-                name="endTime"
-                value={formData.endTime}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="location"
-                placeholder="Địa điểm"
-                value={formData.location}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="file"
-                name="image"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-              {previewUrl && (
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="event-image-preview"
+              <div className="form-group">
+                <label htmlFor="title">Tiêu đề:</label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  placeholder="Tiêu đề"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
                 />
+              </div>
+              <div className="form-group">
+                <label htmlFor="description">Mô tả:</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Mô tả"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="date">Ngày:</label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="startTime">Thời gian bắt đầu:</label>
+                <input
+                  type="time"
+                  id="startTime"
+                  name="startTime"
+                  value={formData.startTime}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="endTime">Thời gian kết thúc:</label>
+                <input
+                  type="time"
+                  id="endTime"
+                  name="endTime"
+                  value={formData.endTime}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="session">Chọn phiên hiến máu:</label>
+                <select
+                  id="session"
+                  name="session"
+                  value={formData.session}
+                  onChange={handleInputChange}
+                >
+                  <option value="ALL">Cả ngày</option>
+                  <option value="MORNING">Chỉ buổi sáng</option>
+                  <option value="AFTERNOON">Chỉ buổi chiều</option>
+                </select>
+              </div>
+              {(formData.session === 'ALL' || formData.session === 'MORNING') && (
+                <div className="form-group time-pair">
+                  <label>Giờ sáng:</label>
+                  <input
+                    type="time"
+                    name="donationMorningStart"
+                    value={formData.donationMorningStart}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  →
+                  <input
+                    type="time"
+                    name="donationMorningEnd"
+                    value={formData.donationMorningEnd}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
               )}
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-              >
-                <option value="UPCOMING">Sắp diễn ra</option>
-                <option value="ONGOING">Đang diễn ra</option>
-                <option value="COMPLETED">Đã kết thúc</option>
-              </select>
+              {(formData.session === 'ALL' || formData.session === 'AFTERNOON') && (
+                <div className="form-group time-pair">
+                  <label>Giờ chiều:</label>
+                  <input
+                    type="time"
+                    name="donationAfternoonStart"
+                    value={formData.donationAfternoonStart}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  →
+                  <input
+                    type="time"
+                    name="donationAfternoonEnd"
+                    value={formData.donationAfternoonEnd}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              )}
+              <div className="form-group">
+                <label htmlFor="location">Địa điểm:</label>
+                <input
+                  type="text"
+                  id="location"
+                  name="location"
+                  placeholder="Địa điểm"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Ảnh:</label>
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                {previewUrl && (
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="event-image-preview"
+                  />
+                )}
+              </div>
+              <div className="form-group">
+                <label htmlFor="maxRegistrations">Số lượng người đăng ký cho phép:</label>
+                <input
+                  type="number"
+                  id="maxRegistrations"
+                  name="maxRegistrations"
+                  value={formData.maxRegistrations}
+                  onChange={handleInputChange}
+                  min="0"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Nhóm máu cần hiến:</label>
+                <div className="blood-types-checkboxes">
+                  {bloodTypeOptions.map((type) => (
+                    <div key={type} className="checkbox-item">
+                      <input
+                        type="checkbox"
+                        value={type}
+                        checked={formData.bloodTypeIds.includes(bloodTypeMap[type])}
+                        onChange={() => handleBloodTypesChange(type)}
+                      />
+                      <span>{type}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
               <button type="submit">
                 {editingEvent ? 'Cập nhật' : 'Tạo sự kiện'}
               </button>
@@ -239,15 +381,29 @@ const EventManager = () => {
             <div className="event-content">
               <p className="description">{event.description}</p>
               <div className="event-details">
+                <div><strong>Ngày:</strong> {event.date}</div>
+                <div><strong>Thời gian:</strong> {event.startTime} - {event.endTime}</div>
                 <div>
-                  <strong>Ngày:</strong> {event.date}
+                  <strong>Buổi:</strong> {event.session}
                 </div>
                 <div>
-                  <strong>Giờ:</strong> {event.time}
+                  <strong>Giờ hiến máu:</strong>
+                  <ul>
+                    {event.donationMorningStart && event.donationMorningEnd && (
+                      <li>
+                        Sáng: {event.donationMorningStart} → {event.donationMorningEnd}
+                      </li>
+                    )}
+                    {event.donationAfternoonStart && event.donationAfternoonEnd && (
+                      <li>
+                        Chiều: {event.donationAfternoonStart} → {event.donationAfternoonEnd}
+                      </li>
+                    )}
+                  </ul>
                 </div>
-                <div>
-                  <strong>Địa điểm:</strong> {event.location}
-                </div>
+                <div><strong>Địa điểm:</strong> {event.location}</div>
+                <div><strong>Nhóm máu:</strong> {event.bloodTypes?.join(', ') || 'Không xác định'}</div>
+                <div><strong>Số lượng người đăng ký cho phép:</strong> {event.maxRegistrations || 0}</div>
               </div>
               {event.image && (
                 <img src={event.image} alt="Event" className="event-image" />
