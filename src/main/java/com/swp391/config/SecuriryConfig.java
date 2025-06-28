@@ -38,8 +38,8 @@ public class SecuriryConfig {
             "/qna",
             "/emergencies/emergency", // Thêm endpoint
             "/emergencies/nearbyDonors",
-            "/feedbacks"
-
+            "/feedbacks",
+            "/lookup/**"
     };
     private final String[] PUBLIC_ENDPOINTS_POST = {
             "/members", "/auth/login", "/auth/introspect", "/auth/loginGoogle", "/auth/refresh", "/staffs", "/admins",

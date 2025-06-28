@@ -23,6 +23,12 @@ public class BloodType {
     @Column(length = 10)
     String name;
 
+    @Column(length = 50)
+    String antigens; // Ví dụ: "A, Rh"
+
+    @Column(length = 100)
+    String antibodies; // Ví dụ: "Anti-B"
+
     @Column(name = "can_donate_to")
     String canDonateTo;
 
@@ -62,4 +68,5 @@ public class BloodType {
     @OneToOne(mappedBy = "bloodType")
     @JsonIgnore // Không serialize
     Member member;
+
 }

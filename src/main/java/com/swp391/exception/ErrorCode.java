@@ -54,10 +54,9 @@ public enum ErrorCode {
 
     NOTIFICATION_NOT_FOUND(1002, "Notification not found", HttpStatus.NOT_FOUND),
     INVALID_SESSION(1002, "Invalid session", HttpStatus.BAD_REQUEST),
+    BLOOD_COMPONENT_NOT_FOUND(1002, "Blood component not found", HttpStatus.NOT_FOUND),
 
     ;
-
-
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;
