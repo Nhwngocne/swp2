@@ -107,7 +107,7 @@ public class NotificationController {
     }
     // MEMBER hoặc STAFF mark tất cả thông báo đã đọc
     @PutMapping("/mark-all-as-read")
-    @PreAuthorize("hasAnyRole('MEMBER', 'STAFF')")
+    @PreAuthorize("hasRole('MEMBER') or hasRole('STAFF')")
     public ApiResponse<String> markAllAsRead() {
         notificationService.markAllAsRead();
         return ApiResponse.<String>builder()

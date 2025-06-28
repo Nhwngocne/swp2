@@ -76,9 +76,12 @@ public class BloodIntentFormController {
     }
     @PostMapping("/reject/{id}")
     @PreAuthorize("hasRole('STAFF')")
-    public ApiResponse<BloodIntentFormResponse> rejectForm(@PathVariable int id) {
+    public ApiResponse<BloodIntentFormResponse> rejectForm(
+            @PathVariable int id,
+            @RequestParam("reason") String reason
+    ) {
         return ApiResponse.<BloodIntentFormResponse>builder()
-                .result(intentFormService.rejectForm(id))
+                .result(intentFormService.rejectForm(id, reason))
                 .build();
     }
 
