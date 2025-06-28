@@ -25,41 +25,7 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
       alert('Bạn cần đồng ý cam kết trước khi đăng ký.');
       return;
     }
-
-    const payload = {
-      eventId: formData.eventId,
-      memberId: formData.memberId,
-      bloodType: formData.bloodType || 'UNKNOWN',
-
-      donatedBefore: formData.donated_before === 'co',
-      currentlyIll: formData.current_illness === 'co',
-      illnessDetails: formData.illness_details || '',
-
-      hadSeriousDisease:
-        formData.past_diseases === 'co' || formData.past_diseases === 'benh_khac',
-      diseaseDetails: formData.disease_details || '',
-
-      hadMalariaOrOtherInfectious: formData.past_year?.includes('sot_ret') || false,
-      receivedBlood: formData.past_year?.includes('truyen_mau') || false,
-      gotVaccine: formData.past_year?.includes('tiem_vaccine') || false,
-      noneOfAbove12Months: formData.past_year?.includes('khong') || false,
-
-      tattooOrAcupuncture: formData.past_6months?.includes('xam_hinh') || false,
-      hadSkinIssues: formData.past_6months?.includes('noi_mun') || false,
-
-      usedAntibioticsOrAntiInflammatory:
-        formData.past_month?.includes('nhan_thuoc') || false,
-
-      symptomsPast2Weeks: formData.other_2weeks || '',
-      symptomsPast1Week: formData.other_week || '',
-
-      isMenstruating: formData.female_questions?.includes('dang_co_kinh') || false,
-      isPregnantOrRecentlyDelivered:
-        formData.female_questions?.includes('co_thai') || false,
-      noneOfFemaleConditions: formData.female_questions?.includes('khong_nu') || false,
-    };
-
-    onNext(payload);
+    onNext();
   };
 
   return (

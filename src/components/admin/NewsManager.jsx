@@ -1,286 +1,275 @@
 import React, { useState, useEffect } from "react";
 import { useEvents } from "../../services/EventContext";
+import MyCKEditor from "../../services/MyCKEditor";
+import "../../assets/css/components/admin/NewsManager.css";
+import { useNavigate } from "react-router-dom"; // Thêm đầu file
+
 
 const NewsManager = () => {
+  const navigate = useNavigate();
   const {
     blogs,
-    loading,
-    error,
     fetchBlogs,
     createBlog,
     updateBlog,
     deleteBlog,
   } = useEvents();
+
   const [showForm, setShowForm] = useState(false);
-  const [editingNews, setEditingNews] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [formError, setFormError] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     summary: "",
     content: "",
     author: "",
-    category: "general",
-    publishDate: new Date().toISOString().split("T")[0], // Mặc định ngày hiện tại
-    image: null, // Để lưu file ảnh
+    category: "Tin công nghệ",
+    publishDate: new Date().toISOString().split("T")[0],
+    image: "",
   });
-  const [formError, setFormError] = useState(null);
 
-  // Lấy danh sách blog khi component mount
   useEffect(() => {
     fetchBlogs();
-  }, [fetchBlogs]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError(null);
+    let imageUrl = formData.image;
 
-    try {
-      const blogData = {
-        title: formData.title,
-        summary: formData.summary,
-        content: formData.content,
-        author: formData.author,
-        category: formData.category,
-        publishDate: formData.publishDate,
-        image: formData.image, // Gửi file ảnh nếu có
-      };
+    if (formData.image && formData.image instanceof File) {
+      try {
+        const formImage = new FormData();
+        formImage.append("upload", formData.image);
 
-      if (editingNews) {
-        // Cập nhật blog
-        const { success, error: apiError } = await updateBlog(
-          editingNews.id,
-          blogData
-        );
-        if (!success) {
-          setFormError(apiError || "Không thể cập nhật bài viết");
-          return;
-        }
-        setEditingNews(null);
-      } else {
-        // Thêm blog mới
-        const { success, error: apiError } = await createBlog(blogData);
-        if (!success) {
-          setFormError(apiError || "Không thể tạo bài viết");
-          return;
-        }
+        const res = await fetch("http://localhost:8080/swp391/blogs/upload-image", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formImage,
+        });
+
+        const data = await res.json();
+        imageUrl = data.url;
+      } catch (error) {
+        console.error("Image upload failed:", error);
+        setFormError("Không thể upload ảnh.");
+        return;
       }
+    }
 
-      // Reset form sau khi thành công
+    const blog = {
+      ...formData,
+      image: imageUrl,
+    };
+
+    const response = editing
+      ? await updateBlog(editing.id, blog)
+      : await createBlog(blog);
+
+    if (!response.success) {
+      setFormError(response.error);
+    } else {
+      fetchBlogs();
+      setShowForm(false);
+      setEditing(null);
       setFormData({
         title: "",
         summary: "",
         content: "",
-        category: "general",
+        author: "",
+        category: "Tin công nghệ",
         publishDate: new Date().toISOString().split("T")[0],
-        image: null,
+        image: "",
       });
-      setShowForm(false);
-      fetchBlogs(); // Làm mới danh sách
-    } catch (err) {
-      setFormError(
-        err.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại."
-      );
-      console.error("Submit error:", err);
     }
   };
 
-  const handleEdit = (newsItem) => {
-    setEditingNews(newsItem);
-    setFormData({
-      title: newsItem.title,
-      summary: newsItem.summary || "",
-      content: newsItem.content,
-      category: newsItem.category,
-      publishDate:
-        newsItem.publishDate || new Date().toISOString().split("T")[0],
-      image: null, // Không tải lại ảnh cũ, người dùng phải chọn lại nếu cần
-    });
+  const handleEdit = (item) => {
+    setEditing(item);
     setShowForm(true);
+    setFormData({ ...item, image: "" });
   };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa tin tức này?")) {
-      try {
-        const { success, error: apiError } = await deleteBlog(id);
-        if (success) {
-          fetchBlogs(); // Làm mới danh sách
-        } else {
-          setFormError(apiError || "Không thể xóa bài viết");
-        }
-      } catch (err) {
-        setFormError("Đã xảy ra lỗi khi xóa. Vui lòng thử lại.");
-        console.error("Delete error:", err);
-      }
-    }
-  };
-
-  // Xóa hàm toggleStatus vì DTO không hỗ trợ trường status
-
-  if (loading) return <div>Đang tải...</div>;
-  if (error) return <div>Lỗi: {error}</div>;
 
   return (
-    <div className="news-manager">
-      <div className="header">
-        <h2>Quản lý Tin tức</h2>
-        <button onClick={() => setShowForm(true)} className="btn btn-primary">
-          Thêm tin tức mới
+    <div className="container py-4">
+      <div className="d-flex justify-content-between mb-3">
+        <h4>📋 Quản lý tin tức</h4>
+        <button className="btn btn-danger" onClick={() => setShowForm(true)}>
+          ➕ Tạo Mới
         </button>
       </div>
 
-      {formError && <div className="error-message">{formError}</div>}
+      {!showForm && (
+        <div className="table-responsive">
+          <table className="table table-hover table-bordered align-middle">
+  <thead className="table-light">
+    <tr>
+      <th>STT</th>
+      <th>Hình</th>
+      <th>Tiêu đề</th>
+      <th>Danh mục</th>
+      <th>Ngày xuất bản</th>
+      <th>Lượt xem</th>
+      <th className="text-center">Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    {blogs.map((item, index) => (
+      <tr key={item.id}>
+        <td>{index + 1}</td>
 
-      {showForm && (
-        <div className="form-overlay">
-          <div className="form-container">
-            <h3>{editingNews ? "Sửa tin tức" : "Thêm tin tức mới"}</h3>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Tiêu đề:</label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  required
-                />
-              </div>
+        <td>
+          {item.image && (
+            <img
+              src={item.image}
+              alt="thumb"
+              style={{
+                width: "60px",
+                height: "40px",
+                objectFit: "cover",
+                borderRadius: "4px",
+                border: "1px solid #ddd"
+              }}
+            />
+          )}
+        </td>
 
-              <div className="form-group">
-                <label>Tóm tắt:</label>
-                <textarea
-                  value={formData.summary}
-                  onChange={(e) =>
-                    setFormData({ ...formData, summary: e.target.value })
-                  }
-                  rows="4"
-                  required
-                />
-              </div>
+        <td>
+          <span
+            onClick={() => navigate(`/news/${item.id}`)}
+            className="text-decoration-none text-primary"
+            style={{ cursor: "pointer" }}
+          >
+            <i className="bi bi-box-arrow-up-right me-1"></i>
+            {item.title}
+          </span>
+        </td>
 
-              <div className="form-group">
-                <label>Nội dung:</label>
-                <textarea
-                  value={formData.content}
-                  onChange={(e) =>
-                    setFormData({ ...formData, content: e.target.value })
-                  }
-                  rows="10"
-                  required
-                />
-              </div>
+        <td>{item.category}</td>
 
-              <div className="form-group">
-                <label>Danh mục:</label>
-                <select
-                  value={formData.category}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value })
-                  }
-                >
-                  <option value="general">Tin tức chung</option>
-                  <option value="campaign">Chiến dịch</option>
-                  <option value="announcement">Thông báo</option>
-                  <option value="health">Sức khỏe</option>
-                </select>
-              </div>
+       <td>{new Date(item.publishDate).toLocaleDateString("vi-VN")}</td>
 
-              <div className="form-group">
-                <label>Ngày xuất bản:</label>
-                <input
-                  type="date"
-                  value={formData.publishDate}
-                  onChange={(e) =>
-                    setFormData({ ...formData, publishDate: e.target.value })
-                  }
-                  required
-                />
-              </div>
+        <td>{item.views || 0}</td>
 
-              <div className="form-group">
-                <label>Ảnh đại diện:</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    setFormData({ ...formData, image: e.target.files[0] })
-                  }
-                />
-              </div>
+        <td className="text-center">
+          <div className="btn-group" role="group">
+            <button
+              className="btn btn-sm btn-outline-primary"
+              title="Chỉnh sửa"
+              onClick={() => handleEdit(item)}
+            >
+              <i className="bi bi-pencil-square"></i>
+            </button>
 
-              <div className="form-actions">
-                <button type="submit" className="btn btn-success">
-                  {editingNews ? "Cập nhật" : "Thêm mới"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForm(false);
-                    setEditingNews(null);
-                    setFormData({
-                      title: "",
-                      summary: "",
-                      content: "",
-                      category: "general",
-                      publishDate: new Date().toISOString().split("T")[0],
-                      image: null,
-                    });
-                    setFormError(null);
-                  }}
-                  className="btn btn-secondary"
-                >
-                  Hủy
-                </button>
-              </div>
-            </form>
+            <button
+              className="btn btn-sm btn-outline-danger"
+              title="Xoá bài"
+              onClick={() => deleteBlog(item.id)}
+            >
+              <i className="bi bi-trash"></i>
+            </button>
           </div>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
         </div>
       )}
 
-      <div className="news-list">
-        <div className="news-stats">
-          <div className="stat-card">
-            <h4>Tổng tin tức</h4>
-            <span>{blogs.length}</span>
+      {showForm && (
+        <form onSubmit={handleSubmit} className="news-form">
+          <div className="form-left">
+            <div className="form-group">
+              <label>Tiêu đề tin tức *</label>
+              <input className="form-control" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
+            </div>
+            <div className="form-group">
+              <label>Mô tả ngắn</label>
+              <textarea className="form-control" rows={2} value={formData.summary} onChange={(e) => setFormData({ ...formData, summary: e.target.value })}></textarea>
+            </div>
+            <div className="form-group">
+              <label>Thông tin chi tiết</label>
+              <MyCKEditor value={formData.content} onChange={(data) => setFormData({ ...formData, content: data })} />
+            </div>
           </div>
-        </div>
+          <div className="form-right">
+            <div className="form-image-upload">
+              <label>Hình đại diện</label>
+            <input
+              className="form-control"
+              type="file"
+              accept="image/*"
+              onClick={(e) => e.stopPropagation()} // Ngăn hành vi click làm form submit
+              onChange={(e) => {
+                e.preventDefault(); // Ngăn hành vi submit mặc định
+                if (e.target.files[0]) {
+                  setFormData({ ...formData, image: e.target.files[0] });
+                }
+              }}
+            />
+            </div>
+            <div className="form-group">
+              <label>Danh mục tin tức</label>
+              <select className="form-select" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
+                <option value="Tin công nghệ">Tin công nghệ</option>
+                <option value="Tin sức khỏe">Tin sức khỏe</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Ngày xuất bản</label>
+              <input type="date" className="form-control" value={formData.publishDate} onChange={(e) => setFormData({ ...formData, publishDate: e.target.value })} />
+            </div>
+            <div className="form-group">
+              <label>Tác giả</label>
+              <input className="form-control" value={formData.author} onChange={(e) => setFormData({ ...formData, author: e.target.value })} />
+            </div>
+<div className="form-check mt-2">
+  <input className="form-check-input" type="radio" checked readOnly />
+  <label className="form-check-label">Hiển thị</label>
+</div>
 
-        <div className="news-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Tiêu đề</th>
-                <th>Danh mục</th>
-                <th>Ngày xuất bản</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              {blogs.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.title}</td>
-                  <td>{item.category}</td>
-                  <td>{item.publishDate}</td>
-                  <td>
-                    <button
-                      onClick={() => handleEdit(item)}
-                      className="btn btn-sm btn-primary"
-                    >
-                      Sửa
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="btn btn-sm btn-danger"
-                    >
-                      Xóa
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+<div className="d-flex gap-2 mt-3 align-items-center">
+  <button type="submit" className="group save-cancel-btn btn-save">
+    <div className="btn-text">Lưu</div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 
+               4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 
+               48.507 0 0 1 11.186 0Z" />
+    </svg>
+  </button>
+
+  <button
+    type="button"
+    className="group save-cancel-btn btn-cancel"
+    onClick={() => {
+      setShowForm(false);
+      setEditing(null);
+    }}
+  >
+    <div className="btn-text">Hủy</div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 
+               10 10 10-4.48 10-10S17.52 2 12 2zm4.29 
+               13.29a1 1 0 0 1-1.41 1.41L12 
+               13.41l-2.88 2.88a1 1 0 0 1-1.41-1.41L10.59 
+               12 7.71 9.12a1 1 0 1 1 1.41-1.41L12 
+               10.59l2.88-2.88a1 1 0 1 1 1.41 1.41L13.41 
+               12l2.88 2.88z" />
+    </svg>
+  </button>
+</div>
+
+
+
+
+          </div>
+        </form>
+      )}
+
+      {formError && <div className="alert alert-danger mt-3">{formError}</div>}
     </div>
   );
 };

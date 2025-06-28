@@ -1,6 +1,8 @@
 import React from 'react';
 
-export default function DonationStep1({ formData, setFormData, onNext }) {
+export default function DonationStep1({ formData, setFormData, onNext, eventData }) {
+  const { bloodTypes, session, donationMorningStart, donationMorningEnd, donationAfternoonStart, donationAfternoonEnd } = eventData;
+
   const formatDate = (dateStr) => {
     if (!dateStr) return 'Chưa chọn ngày';
     const date = new Date(dateStr);
@@ -42,20 +44,60 @@ export default function DonationStep1({ formData, setFormData, onNext }) {
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2 font-medium">Nhóm máu:</label>
+        <label className="block mb-2 font-medium">Nhóm máu cần hiến:</label>
+        <input
+          type="text"
+          value={Array.isArray(bloodTypes) && bloodTypes.length > 0 ? bloodTypes.join(', ') : 'Không xác định'}
+          disabled
+          className="w-full border px-3 py-2 rounded bg-gray-100"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block mb-2 font-medium">Thể tích máu hiến:</label>
         <div className="flex gap-4">
-          {['A', 'B', 'AB', 'O'].map((type) => (
-            <label key={type} className="flex items-center gap-2">
+          {['250', '350', '400'].map((volume) => (
+            <label key={volume} className="flex items-center gap-2">
               <input
                 type="radio"
-                name="blood_type"
-                value={type}
-                checked={formData.blood_type === type}
+                name="volumeMl"
+                value={volume}
+                checked={formData.volumeMl === volume}
                 onChange={handleChange}
               />
-              {type}
+              {volume} ml
             </label>
           ))}
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <label className="block mb-2 font-medium">Khung giờ hiến máu:</label>
+        <div className="flex gap-4">
+          {session === 'ALL' || session === 'MORNING' ? (
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="session"
+                value="MORNING"
+                checked={formData.session === 'MORNING'}
+                onChange={handleChange}
+              />
+              {donationMorningStart} - {donationMorningEnd}
+            </label>
+          ) : null}
+          {session === 'ALL' || session === 'AFTERNOON' ? ( 
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="session"
+                value="AFTERNOON"
+                checked={formData.session === 'AFTERNOON'}
+                onChange={handleChange}
+              />
+              {donationAfternoonStart} - {donationAfternoonEnd}
+            </label>
+          ) : null}
         </div>
       </div>
 

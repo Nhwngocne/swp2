@@ -16,6 +16,12 @@ export default function DonationBloodForm() {
     eventId = 0,
     donation_date = "",
     location: eventLocation = "",
+    bloodTypes = [],
+    session = "",
+    donationMorningStart = "",
+    donationMorningEnd = "",
+    donationAfternoonStart = "",
+    donationAfternoonEnd = "",
   } = location.state || {};
   console.log("State received:", location.state);
 
@@ -25,7 +31,8 @@ export default function DonationBloodForm() {
     memberId: user?.id || 0,
     donation_date: donation_date,
     location: eventLocation,
-    blood_type: "",
+    volumeMl: "", // Thay blood_type bằng volumeMl
+    session: "", // Thêm session (MORNING hoặc AFTERNOON)
     donated_before: "",
     current_illness: "",
     illness_details: "",
@@ -52,9 +59,7 @@ export default function DonationBloodForm() {
 
   useEffect(() => {
     if (!eventId) {
-      setFormError(
-        "Không tìm thấy sự kiện. Vui lòng chọn sự kiện từ danh sách."
-      );
+      setFormError("Không tìm thấy sự kiện. Vui lòng chọn sự kiện từ danh sách.");
       navigate("/events");
     }
   }, [eventId, navigate]);
@@ -69,44 +74,50 @@ export default function DonationBloodForm() {
       return;
     }
 
-    // Chuẩn bị formData an toàn
-    const safeFormData = {
-      ...formData,
-      past_year: Array.isArray(formData.past_year) ? formData.past_year : [],
-      past_6months: Array.isArray(formData.past_6months) ? formData.past_6months : [],
-      past_month: Array.isArray(formData.past_month) ? formData.past_month : [],
-      female_questions: Array.isArray(formData.female_questions) ? formData.female_questions : [],
-      blood_type: formData.blood_type || "UNKNOWN",
-      donated_before: formData.donated_before || "khong",
-      current_illness: formData.current_illness || "khong",
-      past_diseases: formData.past_diseases || "khong",
-      illness_details: formData.illness_details || "",
-      disease_details: formData.disease_details || "",
-      other_2weeks: formData.other_2weeks || "",
-      other_week: formData.other_week || "",
+    // Chuẩn bị payload khớp với BloodDonationFormCreateRequest
+    const payload = {
+      eventId: formData.eventId,
+      memberId: formData.memberId,
+      volumeMl: parseInt(formData.volumeMl),
+      session: formData.session,
+      donatedBefore: formData.donated_before === "co",
+      currentlyIll: formData.current_illness === "co",
+      illnessDetails: formData.illness_details || "",
+      hadSeriousDisease: formData.past_diseases === "co" || formData.past_diseases === "benh_khac",
+      diseaseDetails: formData.disease_details || "",
+      hadMalariaOrOtherInfectious: formData.past_year?.includes("sot_ret") || false,
+      receivedBlood: formData.past_year?.includes("truyen_mau") || false,
+      gotVaccine: formData.past_year?.includes("tiem_vaccine") || false,
+      noneOfAbove12Months: formData.past_year?.includes("khong") || false,
+      tattooOrAcupuncture: formData.past_6months?.includes("xam_hinh") || false,
+      hadSkinIssues: formData.past_6months?.includes("noi_mun") || false,
+      usedAntibioticsOrAntiInflammatory: formData.past_month?.includes("nhan_thuoc") || false,
+      symptomsPast2Weeks: formData.other_2weeks || "",
+      symptomsPast1Week: formData.other_week || "",
+      isMenstruating: formData.female_questions?.includes("dang_co_kinh") || false,
+      isPregnantOrRecentlyDelivered: formData.female_questions?.includes("co_thai") || false,
+      noneOfFemaleConditions: formData.female_questions?.includes("khong_nu") || false,
     };
 
     // Validate required fields
     if (
-      !safeFormData.eventId ||
-      !safeFormData.memberId ||
-      !safeFormData.blood_type ||
-      !safeFormData.donated_before ||
-      !safeFormData.current_illness ||
-      !safeFormData.past_diseases ||
-      !Array.isArray(safeFormData.female_questions) ||
-      !safeFormData.agreement
+      !payload.eventId ||
+      !payload.memberId ||
+      !payload.volumeMl ||
+      !payload.session ||
+      !formData.donated_before ||
+      !formData.current_illness ||
+      !formData.past_diseases ||
+      !formData.agreement
     ) {
-      setFormError(
-        "Vui lòng điền đầy đủ các trường bắt buộc và đồng ý cam kết."
-      );
+      setFormError("Vui lòng điền đầy đủ các trường bắt buộc và đồng ý cam kết.");
       return;
     }
 
-    console.log("Safe FormData trước khi gửi:", safeFormData); // Log dữ liệu an toàn
+    console.log("Payload trước khi gửi:", payload); // Debug
 
     try {
-      const result = await createBloodDonationForm(safeFormData);
+      const result = await createBloodDonationForm(payload);
       if (result.success) {
         setFormSuccess(result.message);
         setFormData({
@@ -114,7 +125,8 @@ export default function DonationBloodForm() {
           memberId: user?.id || 0,
           donation_date: "",
           location: "",
-          blood_type: "",
+          volumeMl: "",
+          session: "",
           donated_before: "",
           current_illness: "",
           illness_details: "",
@@ -169,6 +181,14 @@ export default function DonationBloodForm() {
           formData={formData}
           setFormData={setFormData}
           onNext={() => setStep(2)}
+          eventData={{
+            bloodTypes,
+            session,
+            donationMorningStart,
+            donationMorningEnd,
+            donationAfternoonStart,
+            donationAfternoonEnd,
+          }}
         />
       )}
       {step === 2 && (

@@ -44,7 +44,6 @@ import BlogList from './components/guest/BlogList';
 // Member Components
 import Profile from './components/member/Profile';
 import DonationHistory from './components/member/DonationHistory';
-import EmergencyList from './components/member/EmergencyList';
 import RegisterHistory from './components/member/RegisterHistory';
 import Certificate from './components/member/Certificate';
 import Form from './components/member/Form';
@@ -54,6 +53,12 @@ import EmergencyForm from './components/member/EmergencyForm';
 import EventManager from './components/staff/EventManager';
 import BloodInventory from './components/staff/BloodInventory';
 import MemberManager from './components/staff/MemberManager';
+import StaffDashboard from './components/staff/StaffDashboard'; 
+import CreateEventPage from './components/staff/CreateEventPage';
+import BloodFormList from './components/staff/FormList/BloodFormList';
+import BloodIntentList from './components/staff/FormList/BloodIntentList';
+import EmergencyList from './components/staff/FormList/EmergencyList';
+import BloodInventoryForm from './components/staff/BloodInventoryForm';
 
 // Admin Components
 import NewsManager from './components/admin/NewsManager';
@@ -117,9 +122,15 @@ const AppContent = () => {
           <Route path="/emergencyForm" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyForm /></ProtectedRoute>} />
 
           {/* Staff */}
-          <Route path="/manage-events" element={<ProtectedRoute requiredRole="STAFF"><EventManager /></ProtectedRoute>} />
-          <Route path="/blood-inventory" element={<ProtectedRoute requiredRole="STAFF"><BloodInventory /></ProtectedRoute>} />
+          <Route path="/eventManager" element={<ProtectedRoute requiredRole="STAFF"><EventManager /></ProtectedRoute>} />
+          <Route path="/bloodInventory" element={<ProtectedRoute requiredRole="STAFF"><BloodInventory /></ProtectedRoute>} />
           <Route path="/manage-members" element={<ProtectedRoute requiredRole="STAFF"><MemberManager /></ProtectedRoute>} />
+          <Route path="/staffDashboard" element={<ProtectedRoute requiredRole="STAFF"><StaffDashboard /></ProtectedRoute>} />
+          <Route path="/createEvent" element={<ProtectedRoute requiredRole="STAFF"><CreateEventPage /></ProtectedRoute>} />
+          <Route path="/bloodFormList" element={<ProtectedRoute requiredRole="STAFF"><BloodFormList /></ProtectedRoute>} />
+          <Route path="/bloodIntentList" element={<ProtectedRoute requiredRole="STAFF"><BloodIntentList /></ProtectedRoute>} />
+          <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
+          <Route path="/bloodInventoryForm" element={<ProtectedRoute requiredRole="STAFF"><BloodInventoryForm /></ProtectedRoute>} />
 
           {/* Admin */}
           <Route path="/manage" element={<ProtectedRoute requiredRole="ADMIN"><Manage /></ProtectedRoute>} />

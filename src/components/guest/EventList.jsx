@@ -34,6 +34,12 @@ const EventList = () => {
           eventId: event.id,
           donation_date: event.date,
           location: event.location,
+          bloodTypes: event.bloodTypes || [], // Thêm nhóm máu
+          session: event.session || "ALL", // Thêm phiên hiến máu
+          donationMorningStart: event.donationMorningStart || "", // Thêm khung giờ
+          donationMorningEnd: event.donationMorningEnd || "",
+          donationAfternoonStart: event.donationAfternoonStart || "",
+          donationAfternoonEnd: event.donationAfternoonEnd || "",
         },
       });
     } else {
@@ -42,6 +48,12 @@ const EventList = () => {
           eventId: event.id,
           donation_date: event.date,
           location: event.location,
+          bloodTypes: event.bloodTypes || [], // Thêm nhóm máu
+          session: event.session || "ALL", // Thêm phiên hiến máu
+          donationMorningStart: event.donationMorningStart || "", // Thêm khung giờ
+          donationMorningEnd: event.donationMorningEnd || "",
+          donationAfternoonStart: event.donationAfternoonStart || "",
+          donationAfternoonEnd: event.donationAfternoonEnd || "",
         },
       });
     }
