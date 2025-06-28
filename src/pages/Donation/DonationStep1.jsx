@@ -1,5 +1,6 @@
+// ✅ DonationStep1.jsx
 import React from 'react';
-
+import '../../assets/css/pages/DonationStep1.css'; // Import your CSS styles
 export default function DonationStep1({ formData, setFormData, onNext, eventData }) {
   const { bloodTypes, session, donationMorningStart, donationMorningEnd, donationAfternoonStart, donationAfternoonEnd } = eventData;
 
@@ -20,44 +21,29 @@ export default function DonationStep1({ formData, setFormData, onNext, eventData
   };
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Bước 1: Thông tin đặt hiến máu</h2>
+    <div className="step-section">
+      <h2>Bước 1: Thông tin đặt hiến máu</h2>
 
       <div className="mb-4">
-        <label className="block mb-2 font-medium">Ngày hiến máu:</label>
-        <input
-          type="text"
-          value={formatDate(formData.donation_date)}
-          disabled
-          className="w-full border px-3 py-2 rounded bg-gray-100"
-        />
+        <label>Ngày hiến máu:</label>
+        <input type="text" value={formatDate(formData.donation_date)} disabled />
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2 font-medium">Địa điểm hiến máu:</label>
-        <input
-          type="text"
-          value={formData.location || 'Chưa chọn địa điểm'}
-          disabled
-          className="w-full border px-3 py-2 rounded bg-gray-100"
-        />
+        <label>Địa điểm hiến máu:</label>
+        <input type="text" value={formData.location || 'Chưa chọn địa điểm'} disabled />
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2 font-medium">Nhóm máu cần hiến:</label>
-        <input
-          type="text"
-          value={Array.isArray(bloodTypes) && bloodTypes.length > 0 ? bloodTypes.join(', ') : 'Không xác định'}
-          disabled
-          className="w-full border px-3 py-2 rounded bg-gray-100"
-        />
+        <label>Nhóm máu cần hiến:</label>
+        <input type="text" value={Array.isArray(bloodTypes) && bloodTypes.length > 0 ? bloodTypes.join(', ') : 'Không xác định'} disabled />
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2 font-medium">Thể tích máu hiến:</label>
-        <div className="flex gap-4">
+        <label>Thể tích máu hiến:</label>
+        <div className="volume-options">
           {['250', '350', '400'].map((volume) => (
-            <label key={volume} className="flex items-center gap-2">
+            <label key={volume}>
               <input
                 type="radio"
                 name="volumeMl"
@@ -72,10 +58,10 @@ export default function DonationStep1({ formData, setFormData, onNext, eventData
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2 font-medium">Khung giờ hiến máu:</label>
-        <div className="flex gap-4">
-          {session === 'ALL' || session === 'MORNING' ? (
-            <label className="flex items-center gap-2">
+        <label>Khung giờ hiến máu:</label>
+        <div className="session-options">
+          {(session === 'ALL' || session === 'MORNING') && (
+            <label>
               <input
                 type="radio"
                 name="session"
@@ -85,9 +71,9 @@ export default function DonationStep1({ formData, setFormData, onNext, eventData
               />
               {donationMorningStart} - {donationMorningEnd}
             </label>
-          ) : null}
-          {session === 'ALL' || session === 'AFTERNOON' ? ( 
-            <label className="flex items-center gap-2">
+          )}
+          {(session === 'ALL' || session === 'AFTERNOON') && (
+            <label>
               <input
                 type="radio"
                 name="session"
@@ -97,17 +83,11 @@ export default function DonationStep1({ formData, setFormData, onNext, eventData
               />
               {donationAfternoonStart} - {donationAfternoonEnd}
             </label>
-          ) : null}
+          )}
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onNext}
-        className="bg-blue-500 text-white font-medium py-2 px-6 rounded-md hover:bg-blue-600 transition-colors"
-      >
-        Tiếp theo
-      </button>
+      <button type="button" onClick={onNext} className="next-step-btn">Tiếp theo</button>
     </div>
   );
 }
