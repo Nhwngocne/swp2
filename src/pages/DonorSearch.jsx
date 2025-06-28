@@ -10,6 +10,7 @@ import polyline from "polyline";
 import { useNavigate } from "react-router-dom";
 
 const DonorSearch = () => {
+  const [searchType, setSearchType] = useState(""); // Thêm state cho loại tìm kiếm
   const { searchNearestDonors, donors, loading, error } = useDonor();
   const { user } = useAuth();
   const [address, setAddress] = useState("");
@@ -94,6 +95,18 @@ const DonorSearch = () => {
             <option value="O-">O-</option>
           </select>
         </div>
+        <div>
+  <label>Loại tìm kiếm:</label>
+  <select
+    value={searchType}
+    onChange={(e) => setSearchType(e.target.value)}
+    required
+  >
+    <option value="">-- Chọn loại --</option>
+    <option value="donor">Người cho</option>
+    <option value="receiver">Người nhận</option>
+  </select>
+</div>
         <button type="submit" disabled={loading}>
           {loading ? "Đang tìm..." : "Tìm kiếm"}
         </button>

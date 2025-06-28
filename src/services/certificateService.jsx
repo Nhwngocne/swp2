@@ -20,7 +20,9 @@ certificateAPI.interceptors.request.use(
     const isGetCertificates =
       config.method === "get" &&
       (config.url.match(/^\/api\/certificates\/\d+$/) ||
-        config.url.match(/^\/api\/certificates\/by-donation\/\d+$/));
+        config.url.match(/^\/api\/certificates\/by-donation\/\d+$/||
+        config.url.match(/^\/lookup\/\d+\/\d+$/))
+        );
     if (token && !isGetCertificates && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
     } else if (!token && !isGetCertificates && !config.url.includes("/auth")) {
@@ -68,4 +70,8 @@ export const certificateService = {
   // Lấy chứng chỉ theo donationHistoryId
   getCertificateByDonationHistoryId: (donationHistoryId, config = {}) =>
     certificateAPI.get(`/api/certificates/by-donation/${donationHistoryId}`, config),
+
+  // Lookup tương thích máu (BloodType & BloodComponent)
+  lookupBloodCompatibility: (componentId = 0, bloodTypeId = 0, config = {}) =>
+    certificateAPI.get(`/lookup/${componentId}/${bloodTypeId}`, config),
 };

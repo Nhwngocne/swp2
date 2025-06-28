@@ -1,9 +1,14 @@
-
-
 import '../../assets/css/components/common/Footer.css';
-import logo from '../../assets/img/logo.png'; // đường dẫn logo đúng của bạn
+import logo from '../../assets/img/logo.png';
+import { useAuth } from '../../services/AuthContext';
 
 export default function Footer() {
+  const { role } = useAuth();
+
+  // Nếu là ADMIN hoặc STAFF thì không render gì hết
+  if (role === 'ADMIN' || role === 'STAFF') {
+    return null;
+  }
 
   return (
     <footer className="footer">
@@ -11,19 +16,19 @@ export default function Footer() {
         {/* Phần trên: logo + thông tin + liên kết */}
         <div className="footer-top">
           {/* Bên trái */}
-         <div className="footer-left">
-          <div className="footer-logo-info">
-            <img src={logo} alt="Logo BloodLink" className="footer-logo" />
-            <div className="contact-info">
-              <h4>Thông tin liên hệ</h4>
-              <ul>
-                <li>• 3541 Đường Fort Meade, Laurel, MD 20724</li>
-                <li>• Số điện thoại: (301) 490-5050</li>
-                <li>• Mở cửa 24/7 tất cả các ngày</li>
-              </ul>
+          <div className="footer-left">
+            <div className="footer-logo-info">
+              <img src={logo} alt="Logo BloodLink" className="footer-logo" />
+              <div className="contact-info">
+                <h4>Thông tin liên hệ</h4>
+                <ul>
+                  <li>• 3541 Đường Fort Meade, Laurel, MD 20724</li>
+                  <li>• Số điện thoại: (301) 490-5050</li>
+                  <li>• Mở cửa 24/7 tất cả các ngày</li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
 
           {/* Bên phải */}
           <div className="footer-right">
@@ -37,9 +42,6 @@ export default function Footer() {
 
         {/* Đường kẻ */}
         <hr className="footer-divider" />
-
-    
-       
       </div>
     </footer>
   );

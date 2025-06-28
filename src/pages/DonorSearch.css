@@ -1,48 +1,130 @@
+/* Tổng thể trang tìm kiếm */
 .donor-search-page {
-    padding: 20px;
-  }
-  
-  .search-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .search-form input,
-  .search-form select {
-    padding: 8px;
-    font-size: 16px;
-  }
-  
-  .search-form button {
-    padding: 8px 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .search-form button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
-  .donor-list {
-    margin-top: 20px;
-  }
-  
-  .donor-item {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-  }
-  
-  .donor-item a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .donor-item a:hover {
-    text-decoration: underline;
-  }
+  padding: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  background-color: #fefefe;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Tiêu đề */
+.donor-search-page h2 {
+  font-size: 1.75rem;
+  color: #b91c1c;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* Form tìm kiếm */
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.search-form label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.search-form input,
+.search-form select {
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  min-width: 180px;
+  background-color: white;
+}
+
+.search-form button {
+  padding: 10px 20px;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-form button:hover {
+  background-color: #2563eb;
+}
+
+.search-form button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Danh sách kết quả */
+.donor-list {
+  margin-top: 2rem;
+}
+
+.donor-list h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+/* Thông tin mỗi người */
+.donor-item {
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  background-color: #f9fafb;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.donor-item p {
+  margin: 6px 0;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.donor-item strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.donor-item button {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.donor-item button:hover {
+  background-color: #dc2626;
+}
+
+/* Nút đăng ký khẩn cấp */
+.emergency-form-link {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.emergency-form-link .btn {
+  background-color: #d32f2f;
+  color: white;
+  padding: 10px 18px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.emergency-form-link .btn:hover {
+  background-color: #b91c1c;
+}

@@ -1,0 +1,91 @@
+/* Step 2: Câu hỏi sức khỏe */
+.step-section {
+  margin-top: 1.5rem;
+}
+
+.step-section h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: #c62828;
+}
+
+.step-section p {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.step-section label {
+  font-weight: 500;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.step-section input[type="radio"],
+.step-section input[type="checkbox"] {
+  accent-color: #ec4899;
+}
+
+.step-section textarea {
+  background-color: #fff1f2;
+  border: 1px solid #fda4af;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #374151;
+  width: 100%;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.step-section textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Checkbox group spacing */
+.step-section .space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+/* Agreement checkbox */
+.step-section .agreement label {
+  align-items: flex-start;
+}
+
+/* Buttons */
+.step-section .button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.step-section .button-group button {
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+
+.step-section .button-group .btn-back {
+  background-color: #9ca3af;
+  color: white;
+}
+
+.step-section .button-group .btn-back:hover {
+  background-color: #6b7280;
+}
+
+.step-section .button-group .btn-submit {
+  background-color: #ec4899;
+  color: white;
+}
+
+.step-section .button-group .btn-submit:hover {
+  background-color: #db2777;
+}

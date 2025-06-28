@@ -137,6 +137,18 @@ export const CertificateProvider = ({ children }) => {
       setLoading(false);
     }
   };
+  const lookupBloodCompatibility = async (componentId = 0, bloodTypeId = 0) => {
+    try {
+      setLoading(true);
+      const response = await certificateService.lookupBloodCompatibility(componentId, bloodTypeId);
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error("Lỗi tra cứu tương thích máu:", error);
+      return { success: false, error: "Không thể tra cứu tương thích máu" };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Không tự động fetch tất cả vì chỉ có get by ID hoặc by donationHistoryId
 
@@ -147,6 +159,7 @@ export const CertificateProvider = ({ children }) => {
     getCertificateById,
     getCertificateByDonationHistoryId,
     uploadCertificate,
+    lookupBloodCompatibility
   };
 
   return (

@@ -157,10 +157,9 @@ export default function DonationBloodForm() {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          FORM ĐĂNG KÝ HIẾN MÁU
-        </h1>
+<div className="donation-form-container">
+          <h1 className="donation-form-title">FORM ĐĂNG KÝ HIẾN MÁU</h1>
+
         <p className="text-red-500 text-center">
           Vui lòng đăng nhập để đăng ký hiến máu.
         </p>

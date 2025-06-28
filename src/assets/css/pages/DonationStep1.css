@@ -1,0 +1,70 @@
+/* Step 1: Thông tin hiến máu */
+.step-section {
+  margin-top: 1.5rem;
+}
+
+.step-section h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: #d32f2f;
+}
+
+.step-section label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: #111827;
+}
+
+.step-section input[disabled] {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.volume-options,
+.session-options {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.volume-options label,
+.session-options label {
+  background-color: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.volume-options input[type="radio"],
+.session-options input[type="radio"] {
+  accent-color: #d32f2f;
+}
+
+.volume-options label:hover,
+.session-options label:hover {
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+}
+
+/* Nút bước tiếp */
+.next-step-btn {
+  margin-top: 2rem;
+  background-color: #d32f2f;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.next-step-btn:hover {
+  background-color: #b91c1c;
+}
