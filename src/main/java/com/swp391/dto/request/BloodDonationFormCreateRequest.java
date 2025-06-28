@@ -1,9 +1,12 @@
 package com.swp391.dto.request;
 
+import jakarta.persistence.Column;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -13,37 +16,38 @@ import jakarta.validation.constraints.NotNull;
 public class BloodDonationFormCreateRequest {
 
     @NotNull(message = "Event ID không được để trống")
-    int eventId;
+    Integer eventId;
 
     @NotNull(message = "Member ID không được để trống")
-    int memberId;
+    Integer memberId;
 
-    @NotNull(message = "Nhóm máu không được để trống")
-    String bloodType; // A, B, AB, O, UNKNOWN
+    Integer volumeMl;
+
+    String session;
 
     // Câu 1
-    boolean donatedBefore;
+    Boolean donatedBefore;
 
     // Câu 2
-    boolean currentlyIll;
+    Boolean currentlyIll;
     String illnessDetails;
 
     // Câu 3
-    boolean hadSeriousDisease;
+    Boolean hadSeriousDisease;
     String diseaseDetails;
 
     // Câu 4 (checkbox)
-    boolean hadMalariaOrOtherInfectious;
-    boolean receivedBlood;
-    boolean gotVaccine;
-    boolean noneOfAbove12Months;
+    Boolean hadMalariaOrOtherInfectious;
+    Boolean receivedBlood;
+    Boolean gotVaccine;
+    Boolean noneOfAbove12Months;
 
     // Câu 5
-    boolean tattooOrAcupuncture;
-    boolean hadSkinIssues;
+    Boolean tattooOrAcupuncture;
+    Boolean hadSkinIssues;
 
     // Câu 6
-    boolean usedAntibioticsOrAntiInflammatory;
+    Boolean usedAntibioticsOrAntiInflammatory;
 
     // Câu 7
     String symptomsPast2Weeks;
@@ -51,10 +55,8 @@ public class BloodDonationFormCreateRequest {
     // Câu 8
     String symptomsPast1Week;
 
-    // Volume máu
-    int bloodVolume; // Đơn vị ml, ví dụ: 350ml, 450ml
     // Câu 9 - nữ
-    boolean isMenstruating;
-    boolean isPregnantOrRecentlyDelivered;
-    boolean noneOfFemaleConditions;
+    Boolean isMenstruating;
+    Boolean isPregnantOrRecentlyDelivered;
+    Boolean noneOfFemaleConditions;
 }

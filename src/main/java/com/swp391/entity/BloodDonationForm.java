@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "blood_donation_forms")
@@ -20,35 +21,39 @@ public class BloodDonationForm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    String bloodType; // A, B, AB, O, UNKNOWN
+    @Column
+    LocalTime startTime;
+
+    @Column
+    LocalTime endTime;
 
     // Câu 1: Đã từng hiến máu chưa
-    boolean donatedBefore;
+    Boolean donatedBefore;
 
     // Câu 2: Có đang mắc bệnh lý
-    boolean currentlyIll;
+    Boolean currentlyIll;
 
     @Column(length = 255)
     String illnessDetails;
 
     // Câu 3: Từng mắc bệnh nguy hiểm
-    boolean hadSeriousDisease;
+    Boolean hadSeriousDisease;
 
     @Column(length = 255)
     String diseaseDetails;
 
     // Câu 4: Các hoạt động trong 12 tháng qua (checkbox)
-    boolean hadMalariaOrOtherInfectious; // Mắc sốt rét, giang mai,...
-    boolean receivedBlood;               // Truyền máu hoặc chế phẩm
-    boolean gotVaccine;                  // Tiêm vaccine
-    boolean noneOfAbove12Months;
+    Boolean hadMalariaOrOtherInfectious; // Mắc sốt rét, giang mai,...
+    Boolean receivedBlood;               // Truyền máu hoặc chế phẩm
+    Boolean gotVaccine;                  // Tiêm vaccine
+    Boolean noneOfAbove12Months;
 
     // Câu 5: Các hoạt động trong 6 tháng qua
-    boolean tattooOrAcupuncture;
-    boolean hadSkinIssues; // Nổi mụn nhọt, viêm da,...
+    Boolean tattooOrAcupuncture;
+    Boolean hadSkinIssues; // Nổi mụn nhọt, viêm da,...
 
     // Câu 6: Trong 1 tháng qua
-    boolean usedAntibioticsOrAntiInflammatory;
+    Boolean usedAntibioticsOrAntiInflammatory;
 
     // Câu 7: Trong 2 tuần qua
     @Column(length = 255)
@@ -59,11 +64,11 @@ public class BloodDonationForm {
     String symptomsPast1Week;
     // Voluome of blood donation, if applicable
     @Column(name = "volume_ml")
-    int volumeMl;
+    Integer volumeMl;
     // Câu 9: Chỉ dành cho nữ
-    boolean isMenstruating;
-    boolean isPregnantOrRecentlyDelivered;
-    boolean noneOfFemaleConditions;
+    Boolean isMenstruating;
+    Boolean isPregnantOrRecentlyDelivered;
+    Boolean noneOfFemaleConditions;
 
     // Ngày tạo form
     @JsonFormat(pattern = "yyyy-MM-dd")

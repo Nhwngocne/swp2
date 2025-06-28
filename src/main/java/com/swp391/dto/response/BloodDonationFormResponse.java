@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -15,50 +16,52 @@ public class BloodDonationFormResponse {
     int id;
 
     // Thông tin sự kiện
-    int eventId;
+    Integer eventId;
     String eventTitle;
     LocalDate eventDate;
     String eventLocation;
 
+
+
     // Thông tin người đăng ký
-    int memberId;
+    Integer memberId;
     String memberName;
     String memberEmail;
 
     // Nội dung đơn đăng ký
-    String bloodType;
+    Integer volumeMl;
+    LocalTime startTime;
+    LocalTime endTime;
+    LocalDate createdAt;
 
-    boolean donatedBefore;
-    boolean currentlyIll;
+    Boolean donatedBefore;
+    Boolean currentlyIll;
     String illnessDetails;
 
-    boolean hadSeriousDisease;
+    Boolean hadSeriousDisease;
     String diseaseDetails;
 
-    boolean hadMalariaOrOtherInfectious;
-    boolean receivedBlood;
-    boolean gotVaccine;
-    boolean noneOfAbove12Months;
+    Boolean hadMalariaOrOtherInfectious;
+    Boolean receivedBlood;
+    Boolean gotVaccine;
+    Boolean noneOfAbove12Months;
 
-    boolean tattooOrAcupuncture;
-    boolean hadSkinIssues;
+    Boolean tattooOrAcupuncture;
+    Boolean hadSkinIssues;
 
-    boolean usedAntibioticsOrAntiInflammatory;
+    Boolean usedAntibioticsOrAntiInflammatory;
 
     String symptomsPast2Weeks;
     String symptomsPast1Week;
 
-    boolean isMenstruating;
-    boolean isPregnantOrRecentlyDelivered;
-    boolean noneOfFemaleConditions;
-
-    // Volume máu
-    int bloodVolume; // Đơn vị ml, ví dụ: 350ml, 450ml
+    Boolean isMenstruating;
+    Boolean isPregnantOrRecentlyDelivered;
+    Boolean noneOfFemaleConditions;
 
     // Trạng thái phê duyệt
     String status;
     LocalDate approvedDate;
 
-    int approvedByStaffId;
+    Integer approvedByStaffId;
     String approvedByStaffName;
 }

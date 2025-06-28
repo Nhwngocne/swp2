@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -66,4 +67,35 @@ public class Event {
     )
     @JsonIgnore // Không serialize Member để tránh vòng lặp
     Set<Member> registeredMembers = new HashSet<>();
+
+    @Column(length = 20)
+    String session; // ALL, MORNING, AFTERNOON
+
+    @Column
+    LocalTime donationMorningStart;
+
+    @Column
+    LocalTime donationMorningEnd;
+
+    @Column
+    LocalTime donationAfternoonStart;
+
+    @Column
+    LocalTime donationAfternoonEnd;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "event_blood_types",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "blood_type_id")
+    )
+    @JsonIgnore
+    Set<BloodType> bloodTypes = new HashSet<>();
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    List<BloodDonationForm> forms;
+
+    @Column
+    Integer maxRegistrations;
 }

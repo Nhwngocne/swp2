@@ -51,7 +51,10 @@ public enum ErrorCode {
 
     INVALID_ADDRESS(1002, "Invalid address", HttpStatus.BAD_REQUEST),
     USER_BANNED(1002, "User is Banned", HttpStatus.FORBIDDEN),
+
     NOTIFICATION_NOT_FOUND(1002, "Notification not found", HttpStatus.NOT_FOUND)
+    INVALID_SESSION(1002, "Invalid session", HttpStatus.BAD_REQUEST),
+
     ;
 
 

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -26,4 +27,11 @@ public class EventResponse {
     private String status;
     private StaffDto staff;
     private int registeredMemberCount;
+    private String session; // Thêm session
+    private LocalTime donationMorningStart; // Thêm thời gian hiến máu
+    private LocalTime donationMorningEnd;
+    private LocalTime donationAfternoonStart;
+    private LocalTime donationAfternoonEnd;
+    private List<String> bloodTypes; // Thêm loại máu
+    private Integer maxRegistrations; // Thêm số lượng đăng ký
 }
