@@ -3,8 +3,9 @@
 import '../../assets/css/components/common/Footer.css';
 import logo from '../../assets/img/logo.png'; // đường dẫn logo đúng của bạn
 
-export default function Footer() {
 
+export default function Footer() {
+  
   return (
     <footer className="footer">
       <div className="footer-container">
