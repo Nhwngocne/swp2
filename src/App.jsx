@@ -4,13 +4,13 @@ import './App.css';
 
 // Context
 import { AuthProvider, useAuth } from './services/AuthContext';
-import { EventProvider } from './services/EventContext'; 
+import { EventProvider } from './services/EventContext';
 import { FeedbackProvider } from './services/FeedbackContext';
 import { QnAProvider } from './services/QnAContext';
 import { EmergencyProvider } from './services/EmergencyContext';
 import { DonationProvider } from './services/DonationContext';
 import { DonorProvider } from './services/DonorContext'; // Thêm DonorProvider
-import { NotificationProvider } from './services/NotificationContext';
+
 
 
 
@@ -54,14 +54,15 @@ import FormDetail from './components/member/FormDetail';
 import EventManager from './components/staff/EventManager';
 import BloodInventory from './components/staff/BloodInventory';
 import MemberManager from './components/staff/MemberManager';
-import StaffDashboard from './components/staff/StaffDashboard'; 
+import StaffDashboard from './components/staff/StaffDashboard';
 import CreateEventPage from './components/staff/CreateEventPage';
 import BloodFormList from './components/staff/FormList/BloodFormList';
 import BloodIntentList from './components/staff/FormList/BloodIntentList';
 import EmergencyList from './components/staff/FormList/EmergencyList';
 import BloodInventoryForm from './components/staff/BloodInventoryForm';
 import ResultForm from './components/staff/ResultForm';
-import BloodDonationResults from './components/staff/BloodDonationResults';
+import DonationBloodResult from './components/staff/DonationBloodResult'; // Thêm DonationBloodResult
+
 
 // Admin Components
 import NewsManager from './components/admin/NewsManager';
@@ -134,8 +135,12 @@ const AppContent = () => {
           <Route path="/bloodIntentList" element={<ProtectedRoute requiredRole="STAFF"><BloodIntentList /></ProtectedRoute>} />
           <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
           <Route path="/bloodInventoryForm" element={<ProtectedRoute requiredRole="STAFF"><BloodInventoryForm /></ProtectedRoute>} />
+          {/* Staff */}
           <Route path="/resultForm" element={<ProtectedRoute requiredRole="STAFF"><ResultForm /></ProtectedRoute>} />
-          <Route path="/bloodDonationResults" element={<ProtectedRoute requiredRole="STAFF"><BloodDonationResults /></ProtectedRoute>} />
+          <Route path="/resultForm/:id" element={<ProtectedRoute requiredRole="STAFF"><ResultForm /></ProtectedRoute>} />
+          <Route path="/donationBloodResult" element={<ProtectedRoute requiredRole="STAFF"><DonationBloodResult /></ProtectedRoute>} />
+          <Route path="/staff/formDetail/:id" element={<ProtectedRoute requiredRole="STAFF"><FormDetail /></ProtectedRoute>} />
+
 
           {/* Admin */}
           <Route path="/manage" element={<ProtectedRoute requiredRole="ADMIN"><Manage /></ProtectedRoute>} />
@@ -144,11 +149,11 @@ const AppContent = () => {
           <Route path="/admin-dashboard" element={<ProtectedRoute requiredRole="ADMIN"><AdminDaschboard /></ProtectedRoute>} />
           <Route path="/memberManagerAd" element={<ProtectedRoute requiredRole="ADMIN"><MemberManagerAd /></ProtectedRoute>} />
           <Route path="/staffmander" element={<ProtectedRoute requiredRole="ADMIN"><StaffManager /></ProtectedRoute>} />
-          
+
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
-          
+
         </Routes>
       </main>
 
@@ -160,21 +165,21 @@ const AppContent = () => {
 
 // Wrap toàn bộ app bằng các Provider một lần duy nhất
 const App = () => (
-    <AuthProvider>
-      <EventProvider>
-        <EmergencyProvider>
-          <FeedbackProvider>
-            <QnAProvider>
-              <DonationProvider>
-                <DonorProvider> {/* Thêm DonorProvider */}
-                  <AppContent />
-                </DonorProvider>
-              </DonationProvider>
-            </QnAProvider>
-          </FeedbackProvider>
-        </EmergencyProvider>
-      </EventProvider>
-    </AuthProvider>
+  <AuthProvider>
+    <EventProvider>
+      <EmergencyProvider>
+        <FeedbackProvider>
+          <QnAProvider>
+            <DonationProvider>
+              <DonorProvider> {/* Thêm DonorProvider */}
+                <AppContent />
+              </DonorProvider>
+            </DonationProvider>
+          </QnAProvider>
+        </FeedbackProvider>
+      </EmergencyProvider>
+    </EventProvider>
+  </AuthProvider>
 );
 
 export default App;

@@ -33,9 +33,8 @@ const DonationHistory = () => {
               <div className="card-item">
                 <span className="card-label">Trạng thái: </span>
                 <span
-                  className={`card-badge ${
-                    isCompleted(donation.status) ? "completed-badge" : "pending-badge"
-                  }`}
+                  className={`card-badge ${isCompleted(donation.status) ? "completed-badge" : "pending-badge"
+                    }`}
                 >
                   {donation.status || "Không xác định"}
                 </span>
@@ -63,7 +62,7 @@ const DonationHistory = () => {
                   <div className="card-item flex-buttons">
                     <button
                       className="view-result-btn"
-                      onClick={() => navigate(`/donation-results/${donation.id}`)}
+                      onClick={() => navigate(`/donationBloodResult/${donation.id}`)}
                     >
                       Xem kết quả
                     </button>

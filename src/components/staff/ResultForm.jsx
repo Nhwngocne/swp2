@@ -1,112 +1,152 @@
-import React, { useState } from 'react';
-import { donationService } from '../../services/donationService'; // Import service to handle API calls
-import { useLocation, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../services/AuthContext";
+import { donationService } from "../../services/donationService";
 
+const ResultForm = ({ form, onSuccess }) => {
+  const { user } = useAuth();
 
+  const [inputData, setInputData] = useState({
+    date: "",
+    volume: "",
+    status: "",
+    location: "",
+    testResult: "",
+    nextEligibleDate: "",
+    staffId: "",
+    bloodTypeId: "",
+  });
 
-const ResultForm = () => {
-  const [testResult, setTestResult] = useState('');
-  const [bloodType, setBloodType] = useState('');
-  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-   const { registrationId } = useParams(); // 👈 lấy ID từ URL
-  const location = useLocation(); // 👈 lấy state truyền qua
-  const memberId = location.state?.memberId || 1;
+  // Khởi tạo dữ liệu từ form khi component load hoặc form thay đổi
+  useEffect(() => {
+    if (form) {
+      setInputData({
+        date: form.eventDate ? form.eventDate.slice(0, 10) : "", // format yyyy-mm-dd
+        volume: form.volumeMl || "",
+        status: form.status || "PENDING",
+        location: form.eventLocation || "",
+        testResult: "",
+        nextEligibleDate: "",
+        staffId: user?.id || "",
+        bloodTypeId: form.bloodTypeId || "",
+      });
+    }
+  }, [form, user]);
 
-  const bloodTypeOptions = [
-    { label: 'A+', id: 1 },
-    { label: 'A-', id: 2 },
-    { label: 'B+', id: 3 },
-    { label: 'B-', id: 4 },
-    { label: 'O+', id: 5 },
-    { label: 'O-', id: 6 },
-    { label: 'AB+', id: 7 },
-    { label: 'AB-', id: 8 },
-  ];
-
-  const getBloodTypeId = (label) => {
-    const found = bloodTypeOptions.find((b) => b.label === label);
-    return found ? found.id : null;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInputData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const getResultMessage = (result) => {
-    return result === 'Đạt'
-      ? 'Chỉ số xét nghiệm bình thường'
-      : 'Chỉ số xét nghiệm không đạt yêu cầu';
-  };
-
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    const bloodTypeId = getBloodTypeId(bloodType);
-    const resultMessage = getResultMessage(testResult);
+    try {
+      const payload = {
+        ...inputData,
+        memberId: form.memberId || user?.id,
+      };
 
-    const formData = {
-      volume: 350,
-      component: 'Hồng cầu',
-      status: 'Hoàn thành',
-      location: 'Hà Nội',
-      testResult,
-      resultMessage,
-      date: new Date().toISOString().slice(0, 10),
-      nextEligibleDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
-      staffId: 1, // 👈 nếu bạn đang đăng nhập thì lấy từ localStorage
-      memberId,   // 👈 từ location.state
-      bloodTypeId,
-      registrationId: parseInt(registrationId), // 👈 liên kết đúng đơn đăng ký
-    };
+      const response = await donationService.createDonationHistory(payload);
 
-     try {
-      const response = await donationService.createDonationHistory(formData);
-      setMessage('✔️ Lưu kết quả hiến máu thành công!');
-      setTestResult('');
-      setBloodType('');
-    } catch (error) {
-      console.error('Lỗi khi lưu kết quả:', error);
-      setMessage('❌ Lưu kết quả thất bại. Vui lòng thử lại.');
+      if (response.success) {
+        alert("Tạo kết quả hiến máu thành công!");
+        onSuccess && onSuccess(response.history);
+      } else {
+        setError(response.error || "Tạo kết quả thất bại");
+      }
+    } catch (err) {
+      setError("Lỗi khi tạo kết quả");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h2>Kết quả hiến máu</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <label>Nhóm máu:</label>
-        <select value={bloodType} onChange={(e) => setBloodType(e.target.value)} required>
-          <option value="">-- Chọn nhóm máu --</option>
-          {bloodTypeOptions.map((type) => (
-            <option key={type.id} value={type.label}>{type.label}</option>
-          ))}
-        </select>
+    <form onSubmit={handleSubmit} className="result-form">
+      <h3>Gửi Kết Quả Hiến Máu</h3>
 
-        <label>Kết quả xét nghiệm:</label>
-        <select value={testResult} onChange={(e) => setTestResult(e.target.value)} required>
-          <option value="">-- Chọn kết quả --</option>
-          <option value="Đạt">Đạt</option>
-          <option value="Không đạt">Không đạt</option>
-        </select>
+      <label>
+        Ngày hiến máu:
+        <input
+          type="date"
+          name="date"
+          value={inputData.date}
+          onChange={handleChange}
+          required
+        />
+      </label>
 
-        <button type="submit">Lưu kết quả</button>
-      </form>
-      {message && <p style={{ marginTop: '15px' }}>{message}</p>}
-    </div>
+      <label>
+        Thể tích (ml):
+        <input
+          type="number"
+          name="volume"
+          value={inputData.volume}
+          onChange={handleChange}
+          min={1}
+          required
+        />
+      </label>
+
+      <label>
+        Trạng thái:
+        <select
+          name="status"
+          value={inputData.status}
+          onChange={handleChange}
+          required
+        >
+          <option value="PENDING">Chờ duyệt</option>
+          <option value="APPROVED">Đã duyệt</option>
+          <option value="REJECTED">Từ chối</option>
+        </select>
+      </label>
+
+      <label>
+        Địa điểm:
+        <input
+          type="text"
+          name="location"
+          value={inputData.location}
+          onChange={handleChange}
+          required
+        />
+      </label>
+
+      <label>
+        Kết quả xét nghiệm:
+        <input
+          type="text"
+          name="testResult"
+          value={inputData.testResult}
+          onChange={handleChange}
+          placeholder="Nhập kết quả xét nghiệm (nếu có)"
+        />
+      </label>
+
+      <label>
+        Ngày đủ điều kiện hiến tiếp:
+        <input
+          type="date"
+          name="nextEligibleDate"
+          value={inputData.nextEligibleDate}
+          onChange={handleChange}
+        />
+      </label>
+
+      <button type="submit" disabled={loading}>
+        {loading ? "Đang gửi..." : "Gửi kết quả"}
+      </button>
+
+      {error && <p className="error-message" style={{ color: "red" }}>{error}</p>}
+    </form>
   );
-};
-
-const styles = {
-  container: {
-    maxWidth: '500px',
-    margin: '30px auto',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    backgroundColor: '#f8f8f8'
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-  }
 };
 
 export default ResultForm;
