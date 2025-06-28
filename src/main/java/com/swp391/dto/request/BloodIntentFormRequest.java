@@ -15,4 +15,6 @@ public class BloodIntentFormRequest {
     String location;           // Địa điểm người đăng ký có mặt
     String description;
     String phone;
+    int quantity;;
+
 }

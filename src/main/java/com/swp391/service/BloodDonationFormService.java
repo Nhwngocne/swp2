@@ -33,6 +33,7 @@ public class BloodDonationFormService {
     EventRepository eventRepository;
     MemberRepository memberRepository;
     StaffRepository staffRepository;
+    NotificationService notificationService;
 
     // Tạo mới đơn đăng ký
     public BloodDonationFormResponse createForm(BloodDonationFormCreateRequest request) {
@@ -52,6 +53,14 @@ public class BloodDonationFormService {
         form.setCreatedAt(LocalDate.now());
 
         form = formRepository.save(form);
+
+        // 🔔 Gửi thông báo cho staff
+        notificationService.createNotificationForStaff(
+                staff.getId(),
+                "Có đơn đăng ký hiến máu mới từ thành viên: " + member.getName()
+                        + " cho sự kiện: " + event.getTitle()
+        );
+
         return formMapper.toFormResponse(form);
     }
 
@@ -67,6 +76,12 @@ public class BloodDonationFormService {
                     .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
             form.setApprovedBy(staff);
             form.setApprovedDate(LocalDate.now());
+
+            // Gửi thông báo cho Member
+            notificationService.createNotificationForMember(
+                    form.getMember().getId(),
+                    "Đơn đăng ký hiến máu #" + form.getId() + " của bạn đã được duyệt."
+            );
         }
 
         form = formRepository.save(form);

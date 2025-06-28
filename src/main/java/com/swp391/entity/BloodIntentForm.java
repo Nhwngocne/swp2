@@ -31,7 +31,8 @@ public class BloodIntentForm {
     String phone;
     @Column(length = 500)
     String description;
-
+    @Column
+    int quantity ;
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate availableFrom;
 

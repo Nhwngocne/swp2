@@ -14,7 +14,7 @@ import java.util.List;
 import static lombok.AccessLevel.PRIVATE;
 
 @RestController
-@RequestMapping("/api/intents")
+@RequestMapping("/intents")
 @RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class BloodIntentFormController {

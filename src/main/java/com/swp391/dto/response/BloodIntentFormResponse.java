@@ -16,6 +16,7 @@ public class BloodIntentFormResponse {
     String location;
     String phone;
     String description;
+    int quantity;
     LocalDate availableFrom;
     LocalDate availableTo;
     LocalDate approvedAt;

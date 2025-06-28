@@ -18,6 +18,8 @@ public class DonationHistoryResponse {
     String bloodGroup;
     Integer volume;
     String testResult;
+    String resultMessage;
+
     LocalDate nextEligibleDate;
 
     // Giấy chứng nhận (nếu có)

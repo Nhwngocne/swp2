@@ -27,6 +27,7 @@ public class BloodIntentFormService {
     BloodIntentFormRepository intentFormRepository;
     MemberRepository memberRepository;
     BloodIntentFormMapper intentFormMapper;
+    NotificationService notificationService;
 
     // Tạo mới form ý định cho/nhận máu
     public BloodIntentFormResponse create(BloodIntentFormRequest request) {
@@ -36,11 +37,21 @@ public class BloodIntentFormService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         BloodIntentForm entity = intentFormMapper.toEntity(request);
+        entity.setMember(member); // nhớ set member nếu cần
         entity.setAvailableFrom(LocalDate.now());
         entity.setAvailableTo(LocalDate.now().plusMonths(1));
         entity.setStatus("PENDING");
 
         entity = intentFormRepository.save(entity);
+
+        // Sau khi lưu thành công, tạo thông báo cho staff
+        String message = String.format(
+                "Thành viên %s vừa đăng ký %s máu.",
+                member.getName(), entity.getIntentType()
+        );
+
+        notificationService.createNotificationForStaff(1, message);
+
         return intentFormMapper.toResponse(entity);
     }
 
@@ -78,4 +89,5 @@ public class BloodIntentFormService {
 
         return intentFormMapper.toResponse(form);
     }
+
 }

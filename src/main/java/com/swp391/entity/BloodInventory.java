@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
 import java.util.List;
-
 @Entity
 @Table(name = "blood_inventory")
 @Data
@@ -22,21 +21,19 @@ public class BloodInventory {
     int id;
 
     @Column(length = 50)
-    String component;
+    String component; // plasma, RBC, platelet,...
 
-    Integer quantity;
+    Integer quantity; // số lượng đơn vị máu hiện có
 
     LocalDate lastUpdated;
 
-    @OneToMany(mappedBy = "bloodInventory")
-    @JsonIgnore // Không serialize
-    List<BloodType> bloodTypes;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blood_type_id")  // foreign key
+    BloodType bloodType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
     Staff staff;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
     Admin admin;
 }

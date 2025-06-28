@@ -17,13 +17,15 @@ public class DonationHistoryCreateRequest {
 
     Integer volume; // ml
 
-    String component; // Hồng cầu, tiểu cầu...
+    String component; // Nhom mau HR, Plasma, Huyet tuyen, Tieu cau mau, Toan bo mau,...
 
     String status; // VD: Hoàn thành, Đang chờ,...
 
     String location; // Địa điểm hiến máu
 
     String testResult; // VD: Đạt tiêu chuẩn
+
+    String resultMessage;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate date;
