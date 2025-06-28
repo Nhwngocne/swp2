@@ -64,4 +64,7 @@ public class BloodDonationFormResponse {
 
     Integer approvedByStaffId;
     String approvedByStaffName;
+
+    // history
+    DonationHistoryResponse donationHistory;
 }
