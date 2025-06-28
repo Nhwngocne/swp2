@@ -12,4 +12,5 @@ public class NotificationRequest {
     String title;
     String message;
     int memberId;
+    int staffId;
 }
