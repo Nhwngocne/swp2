@@ -50,7 +50,7 @@ public class BloodIntentFormService {
                 member.getName(), entity.getIntentType()
         );
 
-        notificationService.createNotificationForStaff(1, message);
+        notificationService.createNotificationForStaff(1, member.getId(), message);
 
         return intentFormMapper.toResponse(entity);
     }

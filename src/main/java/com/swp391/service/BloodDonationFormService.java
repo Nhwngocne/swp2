@@ -71,12 +71,14 @@ public class BloodDonationFormService {
 
         form = formRepository.save(form);
 
-        // 🔔 Gửi thông báo cho staff
+        //  Gửi thông báo cho staff
         notificationService.createNotificationForStaff(
                 staff.getId(),
+                member.getId(),
                 "Có đơn đăng ký hiến máu mới từ thành viên: " + member.getName()
                         + " cho sự kiện: " + event.getTitle()
         );
+
 
         return formMapper.toFormResponse(form);
     }

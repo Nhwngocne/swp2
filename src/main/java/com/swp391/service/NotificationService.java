@@ -74,7 +74,22 @@ public class NotificationService {
         notificationRepository.deleteById(id);
     }
     // Notification for staff
-    public void createNotificationForStaff(int staffId, String content) {
+    public void createNotificationForStaff(int staffId, int memberId, String content) {
+        Staff staff = staffRepository.findById(staffId)
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        Notification notification = Notification.builder()
+                .staff(staff)
+                .member(member) // <--- set thêm member để tránh null
+                .message(content)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        notificationRepository.save(notification);
+    }
+    public void createNotificationForStaffOnly(int staffId, String content) {
         Staff staff = staffRepository.findById(staffId)
                 .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
