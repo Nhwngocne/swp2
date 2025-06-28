@@ -28,7 +28,7 @@ public class BloodIntentFormService {
     MemberRepository memberRepository;
     BloodIntentFormMapper intentFormMapper;
     NotificationService notificationService;
-
+    BloodService bloodService;
     // Tạo mới form ý định cho/nhận máu
     public BloodIntentFormResponse create(BloodIntentFormRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -87,6 +87,70 @@ public class BloodIntentFormService {
         BloodIntentForm form = intentFormRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
 
+        return intentFormMapper.toResponse(form);
+    }
+    public BloodIntentFormResponse approveForm(int formId) {
+        BloodIntentForm form = intentFormRepository.findById(formId)
+                .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
+
+        if (!"PENDING".equalsIgnoreCase(form.getStatus())) {
+            throw new AppException(ErrorCode.FORM_ALREADY_PROCESSED);
+        }
+
+        String message;
+        if ("NHAN".equalsIgnoreCase(form.getIntentType())) {
+            String bloodType = form.getBloodType();
+            int quantityNeeded = form.getQuantity();
+
+            boolean available = bloodService.checkBloodInventory(bloodType, quantityNeeded);
+
+            if (available) {
+                form.setStatus("COMPLETED");
+                form.setApprovedAt(LocalDate.now());
+                message = String.format(
+                        "Kho máu đã sẵn sàng cho nhóm máu %s của bạn. Mời bạn đến Trung Tâm Y Tế Hiến máu vì cộng đồng để nhận.",
+                        bloodType
+                );
+            } else {
+                form.setStatus("PROCESSING");
+                message = String.format(
+                        "Đơn nhận máu nhóm %s của bạn đã được duyệt. Chúng tôi sẽ sớm tìm người hiến máu phù hợp để giúp bạn.",
+                        bloodType
+                );
+            }
+        } else if ("CHO".equalsIgnoreCase(form.getIntentType())) {
+            form.setStatus("COMPLETED");
+            form.setApprovedAt(LocalDate.now());
+            message = "Cảm ơn bạn đã đăng ký hiến máu. Trung Tâm Y Tế Hiến máu vì cộng đồng sẽ liên hệ với bạn để xác nhận lịch hẹn.";
+        } else {
+            throw new AppException(ErrorCode.INVALID_INTENT_TYPE);
+        }
+
+        // Gửi thông báo
+        notificationService.createNotificationForMember(form.getMember().getId(), message);
+
+        form = intentFormRepository.save(form);
+        return intentFormMapper.toResponse(form);
+    }
+    public BloodIntentFormResponse rejectForm(int formId) {
+        BloodIntentForm form = intentFormRepository.findById(formId)
+                .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
+
+        if (!"PENDING".equalsIgnoreCase(form.getStatus())) {
+            throw new AppException(ErrorCode.FORM_ALREADY_PROCESSED);
+        }
+
+        form.setStatus("REJECTED");
+        form.setApprovedAt(LocalDate.now());
+
+        String message = String.format(
+                "Đơn %s máu của bạn đã bị từ chối do không phù hợp. Vui lòng liên hệ Trung Tâm Y Tế Hiến máu vì cộng đồng để biết thêm chi tiết.",
+                form.getIntentType()
+        );
+
+        notificationService.createNotificationForMember(form.getMember().getId(), message);
+
+        form = intentFormRepository.save(form);
         return intentFormMapper.toResponse(form);
     }
 

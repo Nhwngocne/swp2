@@ -1,8 +1,10 @@
 package com.swp391.dto.request;
 
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -10,11 +12,16 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BloodIntentFormRequest {
-    String intentType;     // CHO hoặc NHAN
-    String bloodType;          // A, B, AB, O
-    String location;           // Địa điểm người đăng ký có mặt
+    String intentType;
+    String bloodType;
+    String location;
     String description;
     String phone;
-    int quantity;;
+    int quantity;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate availableFrom;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate availableTo;
 }
