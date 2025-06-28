@@ -1,16 +1,21 @@
 package com.swp391.service;
 
 import com.swp391.dto.request.StaffCreateRequest;
+import com.swp391.dto.response.BloodIntentFormResponse;
 import com.swp391.dto.response.StaffResponse;
 import com.swp391.entity.Admin;
+import com.swp391.entity.BloodIntentForm;
 import com.swp391.entity.Member;
 import com.swp391.entity.Staff;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
+import com.swp391.mapper.BloodIntentFormMapper;
 import com.swp391.mapper.StaffMapper;
 import com.swp391.repository.AdminRepository;
+import com.swp391.repository.BloodIntentFormRepository;
 import com.swp391.repository.MemberRepository;
 import com.swp391.repository.StaffRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,6 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -30,6 +37,8 @@ public class StaffService {
     StaffMapper staffMapper;
     PasswordEncoder passwordEncoder;
     MemberRepository memberRepository;
+    BloodIntentFormRepository intentFormRepository;
+    BloodIntentFormMapper bloodIntentFormMapper;
     // Create staff
     public StaffResponse createStaff(StaffCreateRequest request) {
         // 1. Convert request -> entity
@@ -112,6 +121,25 @@ public class StaffService {
 
         // 5. Lưu lại
         memberRepository.save(member);
+    }
+    @Transactional
+    public BloodIntentFormResponse approveForm(int formId) {
+        BloodIntentForm form = intentFormRepository.findById(formId)
+                .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
+
+        form.setStatus("ACCEPT");
+        form.setApprovedAt(LocalDate.now());
+        return bloodIntentFormMapper.toResponse(form);
+    }
+
+    @Transactional
+    public BloodIntentFormResponse rejectForm(int formId, String reason) {
+        BloodIntentForm form = intentFormRepository.findById(formId)
+                .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
+
+        form.setStatus("REJECT");
+        form.setRejectReason(reason);
+        return bloodIntentFormMapper.toResponse(form);
     }
 
 

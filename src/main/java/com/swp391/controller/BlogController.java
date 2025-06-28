@@ -28,7 +28,7 @@ public class BlogController {
     BlogService blogService;
     ImageService imageService;
 
-    // ✅ Tạo blog mới
+    //  Tạo blog mới
     @PostMapping
     public ApiResponse<BlogResponse> createBlog(@ModelAttribute @Valid BlogCreateRequest request) throws IOException {
         return ApiResponse.<BlogResponse>builder()
@@ -36,7 +36,7 @@ public class BlogController {
                 .build();
     }
 
-    // ✅ Cập nhật blog theo ID
+    //  Cập nhật blog theo ID
     @PutMapping("/{blogId}")
     public ApiResponse<BlogResponse> updateBlog(
             @PathVariable int blogId,
@@ -46,7 +46,7 @@ public class BlogController {
                 .build();
     }
 
-    // ✅ Xoá blog theo ID
+    //  Xoá blog theo ID
     @DeleteMapping("/{blogId}")
     public ApiResponse<String> deleteBlog(@PathVariable int blogId) {
         blogService.deleteBlog(blogId);
@@ -55,7 +55,7 @@ public class BlogController {
                 .build();
     }
 
-    // ✅ Lấy danh sách tất cả blog
+    //  Lấy danh sách tất cả blog
     @GetMapping
     public ApiResponse<List<BlogResponse>> getAllBlogs() {
         return ApiResponse.<List<BlogResponse>>builder()
@@ -63,7 +63,7 @@ public class BlogController {
                 .build();
     }
 
-    // ✅ Lấy chi tiết blog theo ID
+    //  Lấy chi tiết blog theo ID
     @GetMapping("/{blogId}")
     public ApiResponse<BlogResponse> getBlogById(@PathVariable int blogId) {
         return ApiResponse.<BlogResponse>builder()
@@ -71,7 +71,7 @@ public class BlogController {
                 .build();
     }
 
-    // ✅ Tăng lượt xem blog
+    //  Tăng lượt xem blog
     @PatchMapping("/{blogId}/view")
     public ApiResponse<String> incrementView(@PathVariable int blogId) {
         blogService.incrementView(blogId);
@@ -80,7 +80,7 @@ public class BlogController {
                 .build();
     }
 
-    // ✅ Upload ảnh cho blog (dùng trong trình soạn thảo như CKEditor)
+    //  Upload ảnh cho blog (dùng trong trình soạn thảo như CKEditor)
     @PostMapping("/upload-image")
     public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
         try {
