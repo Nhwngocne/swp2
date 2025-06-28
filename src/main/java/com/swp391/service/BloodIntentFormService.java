@@ -38,7 +38,7 @@ public class BloodIntentFormService {
         BloodIntentForm entity = intentFormMapper.toEntity(request);
         entity.setAvailableFrom(LocalDate.now());
         entity.setAvailableTo(LocalDate.now().plusMonths(1));
-        entity.setStatus("ACTIVE");
+        entity.setStatus("PENDING");
 
         entity = intentFormRepository.save(entity);
         return intentFormMapper.toResponse(entity);

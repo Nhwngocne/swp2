@@ -27,14 +27,24 @@ public class BloodIntentForm {
     @Column(length = 255)
     String location;
 
+    @Column
+    String phone;
+    @Column(length = 500)
+    String description;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate availableFrom;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate availableTo;
 
+    @Column
+    LocalDate approvedAt;
+
+    @Column
+    String rejectReason;
     @Column(length = 20)
-    String status; // ACTIVE, EXPIRED, CANCELED...
+    String status = "PENDING"; // ACTIVE, EXPIRED, CANCELED...
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
