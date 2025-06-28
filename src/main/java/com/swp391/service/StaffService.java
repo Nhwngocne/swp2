@@ -1,5 +1,6 @@
 package com.swp391.service;
 
+import com.swp391.dto.request.NotificationRequest;
 import com.swp391.dto.request.StaffCreateRequest;
 import com.swp391.dto.response.BloodIntentFormResponse;
 import com.swp391.dto.response.StaffResponse;
@@ -24,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -39,23 +39,22 @@ public class StaffService {
     MemberRepository memberRepository;
     BloodIntentFormRepository intentFormRepository;
     BloodIntentFormMapper bloodIntentFormMapper;
+    NotificationService notificationService;
+    BloodService bloodService;
+
+    // -------------------------------
     // Create staff
+    // -------------------------------
     public StaffResponse createStaff(StaffCreateRequest request) {
-        // 1. Convert request -> entity
         Staff staff = staffMapper.toStaff(request);
-
-        // 2. Encode password
         staff.setPassword(passwordEncoder.encode(staff.getPassword()));
-
-        // Status
         staff.setStatus("ACTIVE");
-        // 3. Tìm Admin từ adminId và set vào Staff
+
         Admin admin = adminRepository.findById(request.getAdminId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         staff.setAdmin(admin);
 
         try {
-            // 4. Lưu staff
             staff = staffRepository.save(staff);
         } catch (Exception e) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -64,7 +63,9 @@ public class StaffService {
         return staffMapper.toStaffResponse(staff);
     }
 
+    // -------------------------------
     // Update staff
+    // -------------------------------
     public StaffResponse updateStaff(int id, StaffCreateRequest request) {
         Staff staff = staffRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -72,7 +73,6 @@ public class StaffService {
         staffMapper.updateStaff(staff, request);
         staff.setPassword(passwordEncoder.encode(staff.getPassword()));
 
-        // Nếu cần cập nhật lại adminId
         Admin admin = adminRepository.findById(request.getAdminId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         staff.setAdmin(admin);
@@ -81,12 +81,16 @@ public class StaffService {
         return staffMapper.toStaffResponse(staff);
     }
 
+    // -------------------------------
     // Delete staff
+    // -------------------------------
     public void deleteStaff(int id) {
         staffRepository.deleteById(id);
     }
 
+    // -------------------------------
     // Get all staff
+    // -------------------------------
     public List<StaffResponse> getAllStaff() {
         return staffRepository.findAll()
                 .stream()
@@ -94,44 +98,78 @@ public class StaffService {
                 .toList();
     }
 
+    // -------------------------------
     // Get staff by ID
+    // -------------------------------
     public StaffResponse getStaffById(int id) {
         Staff staff = staffRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return staffMapper.toStaffResponse(staff);
     }
-    public void banMember(int memberId) {
-        // 1. Lấy email staff đang đăng nhập từ token (SecurityContext)
-        String staffName = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // 2. Kiểm tra staff tồn tại
+    // -------------------------------
+    // Ban or unban member
+    // -------------------------------
+    public void banMember(int memberId) {
+        String staffName = SecurityContextHolder.getContext().getAuthentication().getName();
         Staff staff = staffRepository.findByEmail(staffName)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        // 3. Tìm member cần ban
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        // 4. Toggle trạng thái
         if ("ACTIVE".equalsIgnoreCase(member.getStatus())) {
             member.setStatus("BANNED");
         } else {
             member.setStatus("ACTIVE");
         }
 
-        // 5. Lưu lại
         memberRepository.save(member);
     }
+
+    // -------------------------------
+    // Approve form
+    // -------------------------------
     @Transactional
     public BloodIntentFormResponse approveForm(int formId) {
         BloodIntentForm form = intentFormRepository.findById(formId)
                 .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
 
-        form.setStatus("ACCEPT");
-        form.setApprovedAt(LocalDate.now());
+        // Giả sử bạn lấy type & quantity từ form
+        String bloodType = form.getBloodType();
+        int quantityNeeded = form.getQuantity();
+
+        boolean available = bloodService.checkBloodInventory(bloodType, quantityNeeded);
+
+        if (available) {
+            // Đủ máu -> hoàn thành
+            form.setStatus("COMPLETED");
+            form.setApprovedAt(LocalDate.now());
+
+            String message = String.format(
+                    "Yêu cầu %s máu của bạn đã sẵn sàng. Hãy đến Trung Tâm Hiến Máu XYZ để nhận.",
+                    form.getIntentType()
+            );
+
+            NotificationRequest request = NotificationRequest.builder()
+                    .memberId(form.getMember().getId())
+                    .title("Thông báo nhận máu")
+                    .message(message)
+                    .build();
+            notificationService.createNotificationForMember(request.getMemberId(), message);
+
+        } else {
+            // Chỉ duyệt, chưa đủ máu
+            form.setStatus("ACCEPT");
+            form.setApprovedAt(LocalDate.now());
+        }
+
         return bloodIntentFormMapper.toResponse(form);
     }
 
+    // -------------------------------
+    // Reject form + notify member
+    // -------------------------------
     @Transactional
     public BloodIntentFormResponse rejectForm(int formId, String reason) {
         BloodIntentForm form = intentFormRepository.findById(formId)
@@ -139,8 +177,21 @@ public class StaffService {
 
         form.setStatus("REJECT");
         form.setRejectReason(reason);
+
+        String message = String.format(
+                "Yêu cầu %s máu của bạn đã bị từ chối. Lý do: %s",
+                form.getIntentType(), reason
+        );
+
+        NotificationRequest request = NotificationRequest.builder()
+                .memberId(form.getMember().getId())
+                .title("Thông báo từ hệ thống")
+                .message(message)
+                .build();
+
+        notificationService.createNotificationForMember(request.getMemberId(), message);
+
         return bloodIntentFormMapper.toResponse(form);
     }
-
 
 }

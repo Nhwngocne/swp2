@@ -40,13 +40,12 @@ public class DonationService {
     BloodTypeRepository bloodTypeRepository;
     MemberRepository memberRepository;
     StaffRepository staffRepository;
-
+    NotificationService notificationService;
     // ==== DonationHistory ====
 
     public DonationHistoryResponse createDonationHistory(DonationHistoryCreateRequest request) {
         DonationHistory donationHistory = donationMapper.toDonationHistory(request);
 
-        // Gán liên kết thủ công
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
         Staff staff = staffRepository.findById(request.getStaffId())
@@ -59,9 +58,26 @@ public class DonationService {
         donationHistory.setBloodType(bloodType);
 
         donationHistory = donationHistoryRepository.save(donationHistory);
+
+        // Sau khi lưu, gửi thông báo cho member
+        String message;
+        if ("Đạt tiêu chuẩn".equalsIgnoreCase(donationHistory.getTestResult())) {
+            message = String.format(
+                    "Chúc mừng! Kết quả xét nghiệm máu ngày %s của bạn đạt tiêu chuẩn. Vui lòng xem chi tiết trong lịch sử hiến máu.",
+                    donationHistory.getDate()
+            );
+        } else {
+            message = String.format(
+                    "Rất tiếc, kết quả xét nghiệm máu ngày %s của bạn không đạt tiêu chuẩn (%s). Vui lòng đến cơ sở y tế để kiểm tra lại.",
+                    donationHistory.getDate(),
+                    donationHistory.getTestResult()
+            );
+        }
+
+        notificationService.createNotificationForMember(member.getId(), message);
+
         return donationMapper.toDonationHistoryResponse(donationHistory);
     }
-
     public DonationHistoryResponse getDonationHistoryById(int id) {
         DonationHistory donationHistory = donationHistoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.Donation_HISTORY_NOT_EXISTED));
@@ -81,7 +97,6 @@ public class DonationService {
 
         donationMapper.updateDonationHistory(donationHistory, request);
 
-        // Cập nhật liên kết
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
         Staff staff = staffRepository.findById(request.getStaffId())
@@ -94,6 +109,23 @@ public class DonationService {
         donationHistory.setBloodType(bloodType);
 
         donationHistory = donationHistoryRepository.save(donationHistory);
+
+        String message;
+        if ("Đạt tiêu chuẩn".equalsIgnoreCase(donationHistory.getTestResult())) {
+            message = String.format(
+                    "Cập nhật: Kết quả xét nghiệm máu ngày %s của bạn đạt tiêu chuẩn.",
+                    donationHistory.getDate()
+            );
+        } else {
+            message = String.format(
+                    "Cập nhật: Kết quả xét nghiệm máu ngày %s của bạn không đạt (%s). Vui lòng kiểm tra sức khoẻ.",
+                    donationHistory.getDate(),
+                    donationHistory.getTestResult()
+            );
+        }
+
+        notificationService.createNotificationForMember(member.getId(), message);
+
         return donationMapper.toDonationHistoryResponse(donationHistory);
     }
 

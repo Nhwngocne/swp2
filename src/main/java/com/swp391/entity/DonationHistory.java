@@ -25,7 +25,7 @@ public class DonationHistory {
     Integer volume; // ml
 
     @Column(length = 50)
-    String component; // Hồng cầu, tiểu cầu...
+    String resultMessage; // "Đạt tiêu chuẩn", "Không đạt", "Đã hiến", v.v.
 
     @Column(length = 50)
     String status; // "Hoàn thành", "Đang chờ", v.v.

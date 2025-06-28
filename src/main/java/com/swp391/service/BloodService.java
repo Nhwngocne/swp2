@@ -94,4 +94,11 @@ public class BloodService {
                 .orElseThrow(() -> new AppException(ErrorCode.BLOOD_INVENTORY_NOT_EXISTED));
         return bloodMapper.toBloodInventoryResponse(inventory);
     }
+    // Check quantity in inventory
+    public boolean checkBloodInventory(String bloodType, int requiredQuantity) {
+        BloodInventory inventory = bloodInventoryRepository.findByBloodType_Name(bloodType)
+                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_INVENTORY_NOT_EXISTED));
+        return inventory.getQuantity() >= requiredQuantity;
+    }
+
 }
