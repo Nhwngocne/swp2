@@ -46,39 +46,52 @@ const BloodFormList = ({ forms, setForms }) => {
                         <td className="px-4 py-2">{form.email}</td>
                         <td className="px-4 py-2">{form.phone}</td>
                         <td className="px-4 py-2 text-red-500 font-medium">{form.bloodGroup}</td>
-                        <td className="px-4 py-2">{new Date(form.registerDate).toLocaleDateString("vi-VN")}</td>
                         <td className="px-4 py-2">
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                form.status === "Đã duyệt"
-                                    ? "bg-green-100 text-green-700"
-                                    : form.status === "Từ chối"
-                                    ? "bg-red-100 text-red-700"
-                                    : "bg-yellow-100 text-yellow-700"
-                            }`}>
-                                {form.status || "Đang chờ"}
+                            {new Date(form.registerDate).toLocaleDateString("vi-VN")}
+                        </td>
+                        <td className="px-4 py-2">
+                            <span
+                                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                    form.status === "Đã duyệt"
+                                        ? "bg-green-100 text-green-700"
+                                        : form.status === "Từ chối"
+                                        ? "bg-red-100 text-red-700"
+                                        : form.status === "Hoàn thành"
+                                        ? "bg-purple-100 text-purple-700"
+                                        : "bg-yellow-100 text-yellow-700"
+                                }`}
+                            >
+                                {form.status || "Chờ duyệt"}
                             </span>
                         </td>
                         <td className="px-4 py-2 space-x-2">
-                            {form.status === "Đã duyệt" ? (
+                            {form.status === "Hoàn thành" ? (
                                 <button
                                     onClick={() => handleViewResultForm(form.id)}
                                     className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                                 >
                                     Kết quả
                                 </button>
+                            ) : form.status === "Đã duyệt" ? (
+                                <>
+                                    <button
+                                        onClick={() => handleUpdateStatus(form.id, "Hoàn thành")}
+                                        className="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded"
+                                    >
+                                        Hoàn thành
+                                    </button>
+                                </>
                             ) : (
                                 <>
                                     <button
                                         onClick={() => handleUpdateStatus(form.id, "Đã duyệt")}
                                         className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
-                                        disabled={form.status === "Đã duyệt"}
                                     >
                                         Duyệt
                                     </button>
                                     <button
                                         onClick={() => handleUpdateStatus(form.id, "Từ chối")}
                                         className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                                        disabled={form.status === "Từ chối"}
                                     >
                                         Từ chối
                                     </button>

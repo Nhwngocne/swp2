@@ -48,6 +48,7 @@ import RegisterHistory from './components/member/RegisterHistory';
 import Certificate from './components/member/Certificate';
 import Form from './components/member/Form';
 import EmergencyForm from './components/member/EmergencyForm';
+import FormDetail from './components/member/FormDetail';
 
 // Staff Components
 import EventManager from './components/staff/EventManager';
@@ -122,6 +123,7 @@ const AppContent = () => {
           <Route path="/certificate" element={<ProtectedRoute requiredRole="MEMBER"><Certificate /></ProtectedRoute>} />
           <Route path="/form" element={<ProtectedRoute requiredRole="MEMBER"><Form /></ProtectedRoute>} />
           <Route path="/emergencyForm" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyForm /></ProtectedRoute>} />
+          <Route path="/formDetail/:id" element={<ProtectedRoute requiredRole="MEMBER"><FormDetail /></ProtectedRoute>} />
 
           {/* Staff */}
           <Route path="/eventManager" element={<ProtectedRoute requiredRole="STAFF"><EventManager /></ProtectedRoute>} />
