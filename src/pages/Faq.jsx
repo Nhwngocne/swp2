@@ -88,9 +88,7 @@ const Faq = () => {
                   {(item.answer || 'Chưa có câu trả lời').split('\n').map((line, i) => (
                     <p key={i}>{line}</p>
                   ))}
-                  <small>
-                    Được hỏi bởi: {item.member?.name || 'ẩn'} | Trả lời bởi: {item.staff?.name}
-                  </small>
+                 
                 </div>
               )}
             </div>
