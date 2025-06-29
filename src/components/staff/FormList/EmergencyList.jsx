@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useEmergency } from '../../../services/EmergencyContext';
 import { useAuth } from '../../../services/AuthContext';
 import "../../../assets/css/components/staff/EmergencyList.css";
+import { emergencyService } from '../../../services/emergencyService';
 
 const EmergencyList = () => {
   const { user } = useAuth();

@@ -4,13 +4,14 @@ import './App.css';
 
 // Context
 import { AuthProvider, useAuth } from './services/AuthContext';
-import { EventProvider } from './services/EventContext'; 
+import { EventProvider } from './services/EventContext';
 import { FeedbackProvider } from './services/FeedbackContext';
 import { QnAProvider } from './services/QnAContext';
 import { EmergencyProvider } from './services/EmergencyContext';
 import { DonationProvider } from './services/DonationContext';
 import { DonorProvider } from './services/DonorContext';
 import { NotificationProvider } from './services/NotificationsContext'; // ✅ thêm NotificationProvider
+
 
 // Common Components
 import Navbar from './components/common/Navbar';
@@ -46,17 +47,21 @@ import RegisterHistory from './components/member/RegisterHistory';
 import Certificate from './components/member/Certificate';
 import Form from './components/member/Form';
 import EmergencyForm from './components/member/EmergencyForm';
+import FormDetail from './components/member/FormDetail';
 
 // Staff Components
 import EventManager from './components/staff/EventManager';
 import BloodInventory from './components/staff/BloodInventory';
 import MemberManager from './components/staff/MemberManager';
-import StaffDashboard from './components/staff/StaffDashboard'; 
+import StaffDashboard from './components/staff/StaffDashboard';
 import CreateEventPage from './components/staff/CreateEventPage';
 import BloodFormList from './components/staff/FormList/BloodFormList';
 import BloodIntentList from './components/staff/FormList/BloodIntentList';
 import EmergencyList from './components/staff/FormList/EmergencyList';
 import BloodInventoryForm from './components/staff/BloodInventoryForm';
+import ResultForm from './components/staff/ResultForm';
+import DonationBloodResult from './components/staff/DonationBloodResult'; // Thêm DonationBloodResult
+
 
 // Admin Components
 import NewsManager from './components/admin/NewsManager';
@@ -117,6 +122,7 @@ const AppContent = () => {
           <Route path="/certificate" element={<ProtectedRoute requiredRole="MEMBER"><Certificate /></ProtectedRoute>} />
           <Route path="/form" element={<ProtectedRoute requiredRole="MEMBER"><Form /></ProtectedRoute>} />
           <Route path="/emergencyForm" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyForm /></ProtectedRoute>} />
+          <Route path="/formDetail/:id" element={<ProtectedRoute requiredRole="MEMBER"><FormDetail /></ProtectedRoute>} />
 
           {/* Staff */}
           <Route path="/eventManager" element={<ProtectedRoute requiredRole="STAFF"><EventManager /></ProtectedRoute>} />
@@ -128,6 +134,12 @@ const AppContent = () => {
           <Route path="/bloodIntentList" element={<ProtectedRoute requiredRole="STAFF"><BloodIntentList /></ProtectedRoute>} />
           <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
           <Route path="/bloodInventoryForm" element={<ProtectedRoute requiredRole="STAFF"><BloodInventoryForm /></ProtectedRoute>} />
+          {/* Staff */}
+          <Route path="/resultForm" element={<ProtectedRoute requiredRole="STAFF"><ResultForm /></ProtectedRoute>} />
+          <Route path="/resultForm/:id" element={<ProtectedRoute requiredRole="STAFF"><ResultForm /></ProtectedRoute>} />
+          <Route path="/donationBloodResult" element={<ProtectedRoute requiredRole="STAFF"><DonationBloodResult /></ProtectedRoute>} />
+          <Route path="/staff/formDetail/:id" element={<ProtectedRoute requiredRole="STAFF"><FormDetail /></ProtectedRoute>} />
+
 
           {/* Admin */}
           <Route path="/manage" element={<ProtectedRoute requiredRole="ADMIN"><Manage /></ProtectedRoute>} />
