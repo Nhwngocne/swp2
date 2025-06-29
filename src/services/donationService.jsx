@@ -71,7 +71,8 @@ export const donationService = {
     donationAPI.put(`/donations/histories/${id}`, formData, config),
   deleteDonationHistory: (id, config = {}) =>
     donationAPI.delete(`/donations/histories/${id}`, config),
-
+  getDonationHistoriesByMemberId: (memberId, config = {}) =>
+    donationAPI.get(`/donations/histories/member/${memberId}`, config),
   // ===== Donation Registration =====
   createDonationRegistration: (formData, config = {}) =>
     donationAPI.post("/donations/registrations", formData, config),

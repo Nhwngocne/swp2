@@ -507,65 +507,114 @@ export const EventProvider = ({ children }) => {
     try {
       setLoading(true);
       console.log("Đang tạo biểu mẫu hiến máu tại /swp391/forms");
-      if (!user || !user.id)
+      if (!user || !user.id) {
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-
-      // Xây dựng payload với kiểm tra null/undefined
+      }
+  
+      // Validation dữ liệu đầu vào
+      const errors = [];
+      if (!formData.eventId || isNaN(parseInt(formData.eventId))) {
+        errors.push("ID sự kiện không hợp lệ");
+      }
+      if (!formData.memberId || isNaN(parseInt(formData.memberId))) {
+        errors.push("ID thành viên không hợp lệ");
+      }
+      if (!formData.volumeMl || isNaN(parseInt(formData.volumeMl))) {
+        errors.push("Thể tích máu không hợp lệ");
+      }
+      if (!formData.session || !["MORNING", "AFTERNOON"].includes(formData.session)) {
+        errors.push("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON");
+      }
+      if (!["co", "khong"].includes(formData.donated_before)) {
+        errors.push("Thông tin từng hiến máu không hợp lệ (phải là 'co' hoặc 'khong')");
+      }
+      if (!["co", "khong"].includes(formData.current_illness)) {
+        errors.push("Thông tin bệnh lý hiện tại không hợp lệ (phải là 'co' hoặc 'khong')");
+      }
+      if (!["co", "khong", "benh_khac"].includes(formData.past_diseases)) {
+        errors.push("Thông tin bệnh nguy hiểm không hợp lệ (phải là 'co', 'khong', hoặc 'benh_khac')");
+      }
+      if (!Array.isArray(formData.past_year)) {
+        errors.push("Dữ liệu 12 tháng qua không hợp lệ (phải là mảng)");
+      }
+      if (!Array.isArray(formData.past_6months)) {
+        errors.push("Dữ liệu 6 tháng qua không hợp lệ (phải là mảng)");
+      }
+      if (!Array.isArray(formData.past_month)) {
+        errors.push("Dữ liệu 1 tháng qua không hợp lệ (phải là mảng)");
+      }
+      if (!Array.isArray(formData.female_questions)) {
+        errors.push("Dữ liệu câu hỏi nữ giới không hợp lệ (phải là mảng)");
+      }
+  
+      if (errors.length > 0) {
+        const errorMessage = `Dữ liệu không hợp lệ: ${errors.join(", ")}`;
+        console.error(errorMessage);
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+  
+      // Xây dựng payload
       const payload = {
         eventId: parseInt(formData.eventId) || 0,
-        memberId: parseInt(user.id) || 0,
-        volumeMl: formData.volumeMl ? parseInt(formData.volumeMl) : null, // Thêm volumeMl
-        session: formData.session || null, // Đảm bảo session được lấy từ formData
-        donatedBefore: formData.donated_before === "co" || false,
-        currentlyIll: formData.current_illness === "co" || false,
+        memberId: parseInt(formData.memberId) || user.id,
+        volumeMl: parseInt(formData.volumeMl) || null,
+        session: formData.session || null,
+        donatedBefore: formData.donated_before === "co",
+        currentlyIll: formData.current_illness === "co",
         illnessDetails: formData.illness_details || "",
-        hadSeriousDisease:
-          formData.past_diseases === "co" || formData.past_diseases === "benh_khac" || false,
+        hadSeriousDisease: formData.past_diseases === "co" || formData.past_diseases === "benh_khac",
         diseaseDetails: formData.disease_details || "",
-        hadMalariaOrOtherInfectious:
-          Array.isArray(formData.past_year) && formData.past_year.includes("sot_ret") || false,
-        receivedBlood:
-          Array.isArray(formData.past_year) && formData.past_year.includes("truyen_mau") || false,
-        gotVaccine:
-          Array.isArray(formData.past_year) && formData.past_year.includes("tiem_vaccine") || false,
-        noneOfAbove12Months:
-          Array.isArray(formData.past_year) && (formData.past_year.length === 0 || formData.past_year.includes("khong")) || false,
-        tattooOrAcupuncture:
-          Array.isArray(formData.past_6months) && formData.past_6months.includes("xam_hinh") || false,
-        hadSkinIssues:
-          Array.isArray(formData.past_6months) && formData.past_6months.includes("noi_mun") || false,
-        usedAntibioticsOrAntiInflammatory:
-          Array.isArray(formData.past_month) && formData.past_month.includes("nhan_thuoc") || false,
+        hadMalariaOrOtherInfectious: formData.past_year.includes("sot_ret"),
+        receivedBlood: formData.past_year.includes("truyen_mau"),
+        gotVaccine: formData.past_year.includes("tiem_vaccine"),
+        noneOfAbove12Months: formData.past_year.includes("khong") || formData.past_year.length === 0,
+        tattooOrAcupuncture: formData.past_6months.includes("xam_hinh"),
+        hadSkinIssues: formData.past_6months.includes("noi_mun"),
+        usedAntibioticsOrAntiInflammatory: formData.past_month.includes("nhan_thuoc"),
         symptomsPast2Weeks: formData.other_2weeks || "",
         symptomsPast1Week: formData.other_week || "",
-        isMenstruating:
-          Array.isArray(formData.female_questions) && formData.female_questions.includes("dang_co_kinh") || false,
-        isPregnantOrRecentlyDelivered:
-          Array.isArray(formData.female_questions) && formData.female_questions.includes("co_thai") || false,
-        noneOfFemaleConditions:
-          Array.isArray(formData.female_questions) && formData.female_questions.includes("khong_nu") || false,
+        isMenstruating: formData.female_questions.includes("dang_co_kinh"),
+        isPregnantOrRecentlyDelivered: formData.female_questions.includes("co_thai"),
+        noneOfFemaleConditions: formData.female_questions.includes("khong_nu"),
       };
-
-      // Đảm bảo các mảng không null trước khi xử lý
-      const safePastYear = Array.isArray(formData.past_year) ? formData.past_year : [];
-      const safePast6Months = Array.isArray(formData.past_6months) ? formData.past_6months : [];
-      const safePastMonth = Array.isArray(formData.past_month) ? formData.past_month : [];
-      const safeFemaleQuestions = Array.isArray(formData.female_questions) ? formData.female_questions : [];
-
-      // Cập nhật lại payload với mảng an toàn
-      payload.hadMalariaOrOtherInfectious = safePastYear.includes("sot_ret") || false;
-      payload.receivedBlood = safePastYear.includes("truyen_mau") || false;
-      payload.gotVaccine = safePastYear.includes("tiem_vaccine") || false;
-      payload.noneOfAbove12Months = safePastYear.length === 0 || safePastYear.includes("khong") || false;
-      payload.tattooOrAcupuncture = safePast6Months.includes("xam_hinh") || false;
-      payload.hadSkinIssues = safePast6Months.includes("noi_mun") || false;
-      payload.usedAntibioticsOrAntiInflammatory = safePastMonth.includes("nhan_thuoc") || false;
-      payload.isMenstruating = safeFemaleQuestions.includes("dang_co_kinh") || false;
-      payload.isPregnantOrRecentlyDelivered = safeFemaleQuestions.includes("co_thai") || false;
-      payload.noneOfFemaleConditions = safeFemaleQuestions.includes("khong_nu") || false;
-
-      console.log("Payload gửi đến API:", payload); // Log để kiểm tra
-
+  
+      // Log để debug
+      console.log("formData nhận được:", formData);
+      console.log("Payload gửi đến API:", payload);
+  
+      // Popup xác nhận trước khi gửi
+      const confirmSubmit = window.confirm(
+        `Xác nhận thông tin:\n` +
+        `Sự kiện ID: ${payload.eventId}\n` +
+        `Thành viên ID: ${payload.memberId}\n` +
+        `Thể tích máu: ${payload.volumeMl}ml\n` +
+        `Khung giờ: ${payload.session}\n` +
+        `Từng hiến máu: ${payload.donatedBefore ? "Có" : "Không"}\n` +
+        `Hiện tại mắc bệnh: ${payload.currentlyIll ? "Có" : "Không"}\n` +
+        `Chi tiết bệnh lý: ${payload.illnessDetails || "Không"}\n` +
+        `Từng mắc bệnh nguy hiểm: ${payload.hadSeriousDisease ? "Có" : "Không"}\n` +
+        `Chi tiết bệnh: ${payload.diseaseDetails || "Không"}\n` +
+        `Mắc sốt rét: ${payload.hadMalariaOrOtherInfectious ? "Có" : "Không"}\n` +
+        `Được truyền máu: ${payload.receivedBlood ? "Có" : "Không"}\n` +
+        `Tiêm vaccine: ${payload.gotVaccine ? "Có" : "Không"}\n` +
+        `Không có điều kiện 12 tháng: ${payload.noneOfAbove12Months ? "Có" : "Không"}\n` +
+        `Xăm/Châm cứu: ${payload.tattooOrAcupuncture ? "Có" : "Không"}\n` +
+        `Vấn đề da liễu: ${payload.hadSkinIssues ? "Có" : "Không"}\n` +
+        `Dùng thuốc: ${payload.usedAntibioticsOrAntiInflammatory ? "Có" : "Không"}\n` +
+        `Triệu chứng 2 tuần: ${payload.symptomsPast2Weeks || "Không"}\n` +
+        `Triệu chứng 1 tuần: ${payload.symptomsPast1Week || "Không"}\n` +
+        `Đang có kinh: ${payload.isMenstruating ? "Có" : "Không"}\n` +
+        `Mang thai/Mới sinh: ${payload.isPregnantOrRecentlyDelivered ? "Có" : "Không"}\n` +
+        `Không có điều kiện nữ giới: ${payload.noneOfFemaleConditions ? "Có" : "Không"}\n` +
+        `Bạn có chắc chắn muốn gửi?`
+      );
+  
+      if (!confirmSubmit) {
+        setLoading(false);
+        return { success: false, error: "Người dùng đã hủy gửi biểu mẫu" };
+      }
+  
       const source = axios.CancelToken.source();
       const response = await eventService.createBloodDonationForm(payload, {
         cancelToken: source.token,
