@@ -7,7 +7,7 @@ import { FaUsers, FaCalendarAlt, FaHeartbeat, FaTint } from "react-icons/fa";
 import { authService } from "../../services/authService";
 import { eventService } from "../../services/eventService";
 import { emergencyService } from "../../services/emergencyService";
-import { bloodService } from "../../services/BloodService";
+import { bloodService } from "../../services/bloodService";
 import "../../assets/css/components/admin/AdminDashboard.css";
 
 
