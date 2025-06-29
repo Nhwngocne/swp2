@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { bloodIntentService } from "../../../services/bloodIntentService.jsx";
+import "../../../assets/css/components/staff/BloodIntentList.css";
 
 const BloodIntentList = () => {
     const [intents, setIntents] = useState([]);
