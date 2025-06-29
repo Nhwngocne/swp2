@@ -132,12 +132,10 @@ const DonorSearch = () => {
         {center && <GoongMap center={center} donors={donors} selectedRoute={selectedRoute} />}
         <ToastContainer />
       </div>
-      <div className="emergency-form-link">
-        <button
-          className="btn btn-danger"
-          onClick={() => navigate("/emergencyForm")}
-        >
-          Đăng ký khẩn cấp
+
+      <div>
+        <button className="btn btn-danger" onClick={() => navigate("/form")}>
+          Đăng ký Cho/Nhận máu
         </button>
       </div>
     </>

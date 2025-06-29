@@ -130,11 +130,15 @@ const LookUp = () => {
                 )}
             </div>
 
-            <div>
-                <button className="btn btn-danger" onClick={() => navigate("/form")}>
-                    Đăng ký Cho/Nhận máu
+            <div className="emergency-form-link">
+                <button
+                    className="btn btn-danger"
+                    onClick={() => navigate("/emergencyForm")}
+                >
+                    Đăng ký khẩn cấp
                 </button>
             </div>
+            <div></div>
         </div>
     );
 };
