@@ -31,18 +31,20 @@ export const DonationProvider = ({ children }) => {
   const isFetchingRef = useRef(false);
   const [forms, setForms] = useState([]);
 
-
   // Mapping cho DonationHistoryResponse
   const mapDonationHistory = (history) => ({
     id: history.id,
-    date: history.date,
-    status: history.status || "PENDING",
+    createdDate: history.createdDate, // Khớp với DonationHistoryResponse
+    result: history.result || "Không đạt", // "Đạt" hoặc "Không đạt"
     location: history.location || "",
-    bloodGroup: history.bloodGroup || "UNKNOWN",
+    bloodType: history.bloodType || "UNKNOWN", // Khớp với String bloodType
     volume: history.volume || 0,
-    testResult: history.testResult || "",
+    memberId: history.memberId,
+    memberName: history.memberName || "Không xác định",
     nextEligibleDate: history.nextEligibleDate,
     certificateNumber: history.certificateNumber || "",
+    bloodDonationForm: history.bloodDonationForm || null,
+    bloodIntentFormResponse: history.bloodIntentFormResponse || null,
   });
 
   // Mapping cho DonationRegistrationResponse (giả định không có response cụ thể, dùng trạng thái)
@@ -71,6 +73,36 @@ export const DonationProvider = ({ children }) => {
       console.log("Đang lấy tất cả lịch sử hiến máu từ /swp391/donations/histories");
       const source = axios.CancelToken.source();
       const response = await donationService.getAllDonationHistories({
+        cancelToken: source.token,
+      });
+      console.log("API response:", response.data);
+      const mappedHistories = response.data.result.map(mapDonationHistory);
+      setDonationHistories(mappedHistories);
+      setError(null);
+      return { success: true, histories: mappedHistories };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Hủy lấy lịch sử hiến máu:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error("Lỗi lấy lịch sử hiến máu:", error.response?.status, error.message);
+      const errorMessage = error.response?.data?.message || "Không thể tải lịch sử hiến máu";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+    }
+  }, []);
+
+  const fetchDonationHistoriesByMemberId = useCallback(async (memberId) => {
+    if (isFetchingRef.current) return { success: false, error: "Đang tải dữ liệu" };
+    isFetchingRef.current = true;
+    try {
+      setLoading(true);
+      console.log(`Đang lấy lịch sử hiến máu của member ${memberId} từ /swp391/donations/histories/member/${memberId}`);
+      const source = axios.CancelToken.source();
+      const response = await donationService.getDonationHistoriesByMemberId(memberId, {
         cancelToken: source.token,
       });
       console.log("API response:", response.data);
@@ -125,16 +157,13 @@ export const DonationProvider = ({ children }) => {
       console.log("Đang tạo lịch sử hiến máu tại /swp391/donations/histories");
       if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
       const payload = {
-        date: historyData.date,
-        volume: historyData.volume,
-        component: historyData.component,
-        status: historyData.status,
+        result: historyData.result, // "Đạt" hoặc "Không đạt"
         location: historyData.location,
-        testResult: historyData.testResult,
-        nextEligibleDate: historyData.nextEligibleDate,
-        staffId: historyData.staffId,
-        memberId: user.id, // Giả định memberId từ user
+        volume: historyData.volume,
         bloodTypeId: historyData.bloodTypeId,
+        bloodDonationFormId: historyData.bloodDonationFormId,
+        memberId: user.id, // Lấy từ user
+        staffId: historyData.staffId,
       };
       const source = axios.CancelToken.source();
       const response = await donationService.createDonationHistory(payload, {
@@ -168,16 +197,13 @@ export const DonationProvider = ({ children }) => {
       setLoading(true);
       console.log(`Đang cập nhật lịch sử hiến máu ${id} tại /swp391/donations/histories/${id}`);
       const payload = {
-        date: historyData.date,
-        volume: historyData.volume,
-        component: historyData.component,
-        status: historyData.status,
+        result: historyData.result,
         location: historyData.location,
-        testResult: historyData.testResult,
-        nextEligibleDate: historyData.nextEligibleDate,
-        staffId: historyData.staffId,
-        memberId: user.id, // Giả định memberId từ user
+        volume: historyData.volume,
         bloodTypeId: historyData.bloodTypeId,
+        bloodDonationFormId: historyData.bloodDonationFormId,
+        memberId: user.id,
+        staffId: historyData.staffId,
       };
       const source = axios.CancelToken.source();
       const response = await donationService.updateDonationHistory(id, payload, {
@@ -339,19 +365,29 @@ export const DonationProvider = ({ children }) => {
   };
 
   const getFormsByMember = async (memberId) => {
-  setLoading(true);
-  try {
-    const response = await donationService.getDonationRegistrationsByMember(memberId);
-    setForms(response.data.result || []); // hoặc response.data nếu không có .result
-    setError(null);
-  } catch (err) {
-    console.error("Lỗi khi lấy danh sách đăng ký:", err);
-    setError("Không thể lấy lịch sử đăng ký.");
-  } finally {
-    setLoading(false);
-  }
-};
-
+    setLoading(true);
+    try {
+      console.log(`Đang lấy danh sách đăng ký của member ${memberId} từ /swp391/forms/member/${memberId}`);
+      const source = axios.CancelToken.source();
+      const response = await donationService.getDonationRegistrationsByMember(memberId, {
+        cancelToken: source.token,
+      });
+      console.log("API response:", response.data);
+      setForms(response.data.result || []);
+      setError(null);
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Hủy lấy danh sách đăng ký:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error("Lỗi lấy danh sách đăng ký:", error.response?.status, error.message);
+      const errorMessage = error.response?.data?.message || "Không thể tải danh sách đăng ký";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // ===== Regis Offline =====
   const fetchRegisOffline = useCallback(async () => {
@@ -650,12 +686,12 @@ export const DonationProvider = ({ children }) => {
         cancelToken: source.token,
       });
       console.log("Xóa đăng ký nhận máu thành công");
-      setRegisReceive((prev) => prev.filter((receive) => receive.id !== id));
+      setRegisReceive((prev) => prev.filter((receive) => (receive.id !== id)));
       setError(null);
       return { success: true, message: "Xóa đăng ký nhận máu thành công" };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy xóa đăng ký nhận máu:", error.message);
+        console.log("Hủy xóa đăng ký nhận máu:", error, message);
         return { success: false, error: error.message };
       }
       console.error("Lỗi xóa đăng ký nhận máu:", error.response?.status, error.message);
@@ -668,10 +704,14 @@ export const DonationProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchDonationHistories();
+    if (user && user.id) {
+      fetchDonationHistoriesByMemberId(user.id);
+    } else {
+      fetchDonationHistories();
+    }
     fetchRegisOffline();
     fetchRegisReceive();
-  }, [fetchDonationHistories, fetchRegisOffline, fetchRegisReceive]);
+  }, [fetchDonationHistories, fetchDonationHistoriesByMemberId, fetchRegisOffline, fetchRegisReceive, user]);
 
   const value = {
     donationHistories,
@@ -681,8 +721,9 @@ export const DonationProvider = ({ children }) => {
     loading,
     error,
     forms,
-  getFormsByMember,
+    getFormsByMember,
     fetchDonationHistories,
+    fetchDonationHistoriesByMemberId,
     getDonationHistoryById,
     createDonationHistory,
     updateDonationHistory,
