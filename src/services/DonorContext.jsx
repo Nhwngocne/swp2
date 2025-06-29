@@ -29,7 +29,6 @@ export const DonorProvider = ({ children }) => {
     bloodType: donor.bloodType,
     phone: donor.phone,
     distance: donor.distance,
-    routeUrl: donor.routeUrl,
   });
 
   const searchNearestDonors = useCallback(async (searchData) => {
