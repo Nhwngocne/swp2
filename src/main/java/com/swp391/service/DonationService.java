@@ -6,26 +6,17 @@ import com.swp391.dto.request.RegisReceiveRequest;
 import com.swp391.dto.response.DonationHistoryResponse;
 import com.swp391.dto.response.RegisOfflineResponse;
 import com.swp391.dto.response.RegisReceiveResponse;
-import com.swp391.entity.BloodType;
-import com.swp391.entity.DonationHistory;
-import com.swp391.entity.DonationRegistration;
-import com.swp391.entity.Member;
-import com.swp391.entity.RegisReceive;
-import com.swp391.entity.Staff;
+import com.swp391.entity.*;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.DonationMapper;
-import com.swp391.repository.BloodTypeRepository;
-import com.swp391.repository.DonationHistoryRepository;
-import com.swp391.repository.DonationRegistrationRepository;
-import com.swp391.repository.MemberRepository;
-import com.swp391.repository.RegisReceiveRepository;
-import com.swp391.repository.StaffRepository;
+import com.swp391.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -41,43 +32,52 @@ public class DonationService {
     MemberRepository memberRepository;
     StaffRepository staffRepository;
     NotificationService notificationService;
+    BloodDonationFormRepository bloodDonationFormRepository;
     // ==== DonationHistory ====
 
     public DonationHistoryResponse createDonationHistory(DonationHistoryCreateRequest request) {
         DonationHistory donationHistory = donationMapper.toDonationHistory(request);
 
+        // Set createdDate
+        donationHistory.setCreatedDate(LocalDate.now());
+        // ngày có thể hiến máu lại
+        donationHistory.setNextEligibleDate(LocalDate.now().plusMonths(3));
+        // Validate and set related entities
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
         Staff staff = staffRepository.findById(request.getStaffId())
                 .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
         BloodType bloodType = bloodTypeRepository.findById(request.getBloodTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+        BloodDonationForm form = bloodDonationFormRepository.findById(request.getBloodDonationFormId())
+                .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
 
         donationHistory.setMember(member);
         donationHistory.setStaff(staff);
         donationHistory.setBloodType(bloodType);
+        donationHistory.setBloodDonationForm(form);
 
         donationHistory = donationHistoryRepository.save(donationHistory);
 
-        // Sau khi lưu, gửi thông báo cho member
+        // Gửi thông báo cho member (giữ nguyên logic)
         String message;
-        if ("Đạt tiêu chuẩn".equalsIgnoreCase(donationHistory.getTestResult())) {
+        if ("Đạt".equalsIgnoreCase(donationHistory.getResult())) {
             message = String.format(
                     "Chúc mừng! Kết quả xét nghiệm máu ngày %s của bạn đạt tiêu chuẩn. Vui lòng xem chi tiết trong lịch sử hiến máu.",
-                    donationHistory.getDate()
+                    donationHistory.getCreatedDate()
             );
         } else {
             message = String.format(
                     "Rất tiếc, kết quả xét nghiệm máu ngày %s của bạn không đạt tiêu chuẩn (%s). Vui lòng đến cơ sở y tế để kiểm tra lại.",
-                    donationHistory.getDate(),
-                    donationHistory.getTestResult()
+                    donationHistory.getCreatedDate(),
+                    donationHistory.getResult()
             );
         }
-
         notificationService.createNotificationForMember(member.getId(), message);
 
         return donationMapper.toDonationHistoryResponse(donationHistory);
     }
+
     public DonationHistoryResponse getDonationHistoryById(int id) {
         DonationHistory donationHistory = donationHistoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.Donation_HISTORY_NOT_EXISTED));
@@ -97,33 +97,37 @@ public class DonationService {
 
         donationMapper.updateDonationHistory(donationHistory, request);
 
+        // Validate and set related entities
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
         Staff staff = staffRepository.findById(request.getStaffId())
                 .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
         BloodType bloodType = bloodTypeRepository.findById(request.getBloodTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+        BloodDonationForm form = bloodDonationFormRepository.findById(request.getBloodDonationFormId())
+                .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
 
         donationHistory.setMember(member);
         donationHistory.setStaff(staff);
         donationHistory.setBloodType(bloodType);
+        donationHistory.setBloodDonationForm(form);
 
         donationHistory = donationHistoryRepository.save(donationHistory);
 
+        // Gửi thông báo cho member (giữ nguyên logic)
         String message;
-        if ("Đạt tiêu chuẩn".equalsIgnoreCase(donationHistory.getTestResult())) {
+        if ("Đạt".equalsIgnoreCase(donationHistory.getResult())) {
             message = String.format(
                     "Cập nhật: Kết quả xét nghiệm máu ngày %s của bạn đạt tiêu chuẩn.",
-                    donationHistory.getDate()
+                    donationHistory.getCreatedDate()
             );
         } else {
             message = String.format(
                     "Cập nhật: Kết quả xét nghiệm máu ngày %s của bạn không đạt (%s). Vui lòng kiểm tra sức khoẻ.",
-                    donationHistory.getDate(),
-                    donationHistory.getTestResult()
+                    donationHistory.getCreatedDate(),
+                    donationHistory.getResult()
             );
         }
-
         notificationService.createNotificationForMember(member.getId(), message);
 
         return donationMapper.toDonationHistoryResponse(donationHistory);
@@ -134,6 +138,16 @@ public class DonationService {
             throw new AppException(ErrorCode.Donation_HISTORY_NOT_EXISTED);
         }
         donationHistoryRepository.deleteById(id);
+    }
+    public List<DonationHistoryResponse> getDonationHistoriesByMemberId(int memberId) {
+        // Validate memberId
+        if (!memberRepository.existsById(memberId)) {
+            throw new AppException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+        return donationHistoryRepository.findByMemberId(memberId)
+                .stream()
+                .map(donationMapper::toDonationHistoryResponse)
+                .toList();
     }
 
     // ==== DonationRegistration ====

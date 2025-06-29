@@ -12,29 +12,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DonationHistoryCreateRequest {
-
-//    LocalDate date;
-
+    String result; // "Đạt" hoặc "Không đạt"
+    int bloodTypeId; // ID của loại máu (liên kết với BloodType)
+    String location; // Cơ sở tiếp nhận máu
     Integer volume; // ml
-
-    String component; // Nhom mau HR, Plasma, Huyet tuyen, Tieu cau mau, Toan bo mau,...
-
-    String status; // VD: Hoàn thành, Đang chờ,...
-
-    String location; // Địa điểm hiến máu
-
-    String testResult; // VD: Đạt tiêu chuẩn
-
-    String resultMessage;
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    LocalDate date;
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    LocalDate nextEligibleDate;
-
-    // ID của các thực thể liên quan
-    int staffId;
-    int memberId;
-    int bloodTypeId;
+    int bloodDonationFormId; // ID của form hiến máu
+    int memberId; // ID của người dùng
+    int staffId; // ID của nhân viên
 }

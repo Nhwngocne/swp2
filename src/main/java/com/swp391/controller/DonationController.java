@@ -59,6 +59,12 @@ public class DonationController {
                 .result("Donation history deleted successfully.")
                 .build();
     }
+    @GetMapping("/histories/member/{memberId}")
+    public ApiResponse<List<DonationHistoryResponse>> getDonationHistoriesByMemberId(@PathVariable int memberId) {
+        return ApiResponse.<List<DonationHistoryResponse>>builder()
+                .result(donationService.getDonationHistoriesByMemberId(memberId))
+                .build();
+    }
 
     // ===== Donation Registration =====
 

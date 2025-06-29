@@ -21,11 +21,11 @@ public interface BloodDonationFormMapper {
     @Mapping(source = "member.email", target = "memberEmail")
     @Mapping(source = "approvedBy.id", target = "approvedByStaffId")
     @Mapping(source = "approvedBy.name", target = "approvedByStaffName")
-    @Mapping(source = "donationHistory", target = "donationHistory")
+    //@Mapping(source = "donationHistory", target = "donationHistory")
     BloodDonationFormResponse toFormResponse(BloodDonationForm form);
 
     // Mapping nested
-    DonationHistoryResponse toDonationHistoryResponse(DonationHistory history);
+    //DonationHistoryResponse toDonationHistoryResponse(DonationHistory history);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateForm(@MappingTarget BloodDonationForm form, BloodDonationFormUpdateRequest request);

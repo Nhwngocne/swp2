@@ -64,9 +64,9 @@ public class Member {
     @JsonIgnore // Không serialize BloodType
     BloodType bloodType;
 
-    @OneToOne
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @JsonIgnore // Không serialize DonationHistory
-    DonationHistory donationHistory;
+    List<DonationHistory> donationHistories; // Thay đổi từ OneToOne thành OneToMany
 
     @OneToMany(mappedBy = "member")
     @JsonIgnore // Không serialize

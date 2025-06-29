@@ -12,20 +12,20 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DonationHistoryResponse {
     int id;
-    LocalDate date;
-    String status;
-    String location;
-    String bloodGroup;
-    Integer volume;
-    String testResult;
-    String resultMessage;
-
+    LocalDate createdDate; // Ngày tạo lịch sử
+    String result; // "Đạt" hoặc "Không đạt"
+    String location; // Cơ sở tiếp nhận máu
+    String bloodType; // Tên loại máu (A+, B-, v.v.)
+    Integer volume; // ml
+    int memberId; // Thay thế MemberResponse bằng memberId
+    String memberName; // Thêm memberName
+    StaffResponse staff; // ID của nhân viên
     LocalDate nextEligibleDate;
 
     // Giấy chứng nhận (nếu có)
     String certificateNumber;
 
     // FORM
-    BloodDonationFormResponse bloodDonationFormResponse;
+    BloodDonationFormResponse bloodDonationForm;
     BloodIntentFormResponse bloodIntentFormResponse;
 }

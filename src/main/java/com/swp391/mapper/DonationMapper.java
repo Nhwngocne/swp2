@@ -20,19 +20,29 @@ public interface DonationMapper {
     @Mapping(target = "staff", ignore = true)           // Gán staff từ service
     @Mapping(target = "member", ignore = true)          // Gán member từ service
     @Mapping(target = "bloodType", ignore = true)       // Gán bloodType từ service
+    @Mapping(target = "bloodDonationForm", ignore = true) // Gán bloodDonationForm từ service
     @Mapping(target = "certificate", ignore = true)     // Không tạo certificate ở đây
+    @Mapping(target = "createdDate", ignore = true)     // Set trong service
     DonationHistory toDonationHistory(DonationHistoryCreateRequest donationHistory);
 
-    @Mapping(source = "bloodType.name", target = "bloodGroup")
-    @Mapping(ignore = true, target = "certificateNumber")
+    @Mapping(target = "bloodType", expression = "java(mapBloodTypeToString(entity.getBloodType()))")
+    @Mapping(target = "memberId", source = "member.id") // Map memberId từ Member
+    @Mapping(target = "memberName", source = "member.name") // Map memberName từ Member
     DonationHistoryResponse toDonationHistoryResponse(DonationHistory entity);
 
     @Mapping(target = "admin", ignore = true)
     @Mapping(target = "staff", ignore = true)
     @Mapping(target = "member", ignore = true)
     @Mapping(target = "bloodType", ignore = true)
+    @Mapping(target = "bloodDonationForm", ignore = true)
     @Mapping(target = "certificate", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
     void updateDonationHistory(@MappingTarget DonationHistory entity, DonationHistoryCreateRequest request);
+
+    default String mapBloodTypeToString(com.swp391.entity.BloodType bloodType) {
+        return bloodType != null ? bloodType.getName() : null;
+    }
+
 
     // DonationRegistration
     DonationRegistration toDonationRegistration(DonationRegistrationRequest request);

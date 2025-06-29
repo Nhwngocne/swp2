@@ -1,6 +1,7 @@
 package com.swp391.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,30 +21,23 @@ public class DonationHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    //LocalDate date; // Ngày hiến
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate createdDate; // Ngày tạo lịch sử
+
+    @Column(length = 50)
+    String result; // "Đạt" hoặc "Không đạt"
+
+    @Column(length = 255)
+    String location; // Cơ sở tiếp nhận máu
 
     Integer volume; // ml
-
-    @Column(length = 50)
-    String resultMessage; // "Đạt tiêu chuẩn", "Không đạt", "Đã hiến", v.v.
-
-    @Column(length = 50)
-    String status; // "Hoàn thành", "Đang chờ", v.v.
-
-    @Column(length = 255)
-    String location; // Địa điểm hiến (VD: Bệnh viện Chợ Rẫy)
-
-    @Column(length = 255)
-    String testResult; // Kết quả xét nghiệm ("Đạt tiêu chuẩn", "Không đạt",...)
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    LocalDate date;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate nextEligibleDate; // Ngày có thể hiến tiếp
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id")
+    @JsonIgnore
     Staff staff;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,10 +46,12 @@ public class DonationHistory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blood_type_id")
+    @JsonIgnore
     BloodType bloodType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     Member member;
 
     @OneToOne(mappedBy = "donationHistory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -65,5 +61,6 @@ public class DonationHistory {
 
     @OneToOne
     @JoinColumn(name = "blood_donation_form_id", referencedColumnName = "id")
+    @JsonIgnore
     BloodDonationForm bloodDonationForm;
 }
