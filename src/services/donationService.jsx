@@ -79,9 +79,10 @@ export const donationService = {
   updateDonationRegistration: (id, formData, config = {}) =>
     donationAPI.put(`/donations/registrations/${id}`, formData, config),
   deleteDonationRegistration: (id, config = {}) =>
-    donationAPI.delete(`/donations/registrations/${id}`, config),
+  donationAPI.delete(`/forms/${id}`, config),
   getDonationRegistrationsByMember: (memberId, config = {}) =>
     donationAPI.get(`/forms/member/${memberId}`, config),
+  
 
   // ===== Regis Offline =====
   createRegisOffline: (formData, config = {}) =>
@@ -94,6 +95,8 @@ export const donationService = {
     donationAPI.put(`/donations/offline/${id}`, formData, config),
   deleteRegisOffline: (id, config = {}) =>
     donationAPI.delete(`/donations/offline/${id}`, config),
+  getDonationRegistrationById: (id, config = {}) =>
+  donationAPI.get(`/forms/${id}`, config),
 
   // ===== Regis Receive from Registration =====
   createRegisReceiveFromRegistration: (formData, config = {}) =>

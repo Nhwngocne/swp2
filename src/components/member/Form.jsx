@@ -49,6 +49,31 @@ const Form = () => {
     <div className="blood-register-form">
       <h2>Đăng ký {formData.intentType === "CHO" ? "hiến máu" : "nhận máu"}</h2>
       <form onSubmit={handleSubmit}>
+         <div className="form-group">
+          <label>Bạn là:</label>
+          <div className="role-options">
+            <label>
+              <input
+                type="radio"
+                name="intentType"
+                value="CHO"
+                checked={formData.intentType === "CHO"}
+                onChange={handleChange}
+              />
+              Người hiến
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="intentType"
+                value="NHAN"
+                checked={formData.intentType === "NHAN"}
+                onChange={handleChange}
+              />
+              Người nhận
+            </label>
+          </div>
+        </div>
         <div className="form-group">
           <label>Ngày bắt đầu:</label>
           <input
@@ -135,31 +160,7 @@ const Form = () => {
           />
         </div>
 
-        <div className="form-group">
-          <label>Bạn là:</label>
-          <div className="role-options">
-            <label>
-              <input
-                type="radio"
-                name="intentType"
-                value="CHO"
-                checked={formData.intentType === "CHO"}
-                onChange={handleChange}
-              />
-              Người hiến
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="intentType"
-                value="NHAN"
-                checked={formData.intentType === "NHAN"}
-                onChange={handleChange}
-              />
-              Người nhận
-            </label>
-          </div>
-        </div>
+       
 
         <button type="submit" className="submit-btn">
           Gửi đăng ký

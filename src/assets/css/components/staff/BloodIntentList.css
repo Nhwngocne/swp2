@@ -1,0 +1,86 @@
+/* Table styles */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.95rem;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background-color: #f3f4f6;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #374151;
+}
+
+th, td {
+    padding: 12px 16px;
+    text-align: center;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+/* Badge styling */
+.badge-hiem {
+    background-color: #dbeafe;
+    color: #2563eb;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-nhan {
+    background-color: #fee2e2;
+    color: #dc2626;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Button styles */
+button {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Modal */
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 400px;
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Textarea */
+textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 0.95rem;
+}

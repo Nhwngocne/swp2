@@ -1,42 +1,69 @@
-// src/services/BloodService.js
 import axios from "axios";
 
-const API_BASE = "http://localhost:8080"; // hoặc cấu hình .env
+// Base URL cho API
+const REST_API_BASE_URL = "http://localhost:8080/swp391";
 
+// Tạo axios instance với cấu hình mặc định
 const bloodAPI = axios.create({
-  baseURL: `${API_BASE}/blood`,
+  baseURL: REST_API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// ===== BLOOD TYPE =====
+// Interceptor để tự động thêm token vào header
+bloodAPI.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Interceptor để xử lý response và error
+bloodAPI.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const isPublicEndpoint = error.config?.url?.includes("/feedback");
+
+    if (error.response?.status === 401 && !isPublicEndpoint) {
+      console.log("401 Unauthorized - URL:", error.config?.url, "Redirecting to /auth/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/auth/login";
+    } else if (error.response) {
+      console.log("API error:", error.config?.url, error.response.status, error.response.data);
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+// BloodService API functions
 export const bloodService = {
-  // GET: Danh sách tất cả nhóm máu
-  getAllBloodTypes: (config = {}) => bloodAPI.get("/type", config),
+  // Tạo mới một bản ghi hiến máu
+  createDonation: (donationData) => bloodAPI.post("/blood-donations", donationData),
 
-  // GET: Chi tiết nhóm máu theo ID
-  getBloodTypeById: (id, config = {}) => bloodAPI.get(`/type/${id}`, config),
+  // Lấy danh sách tất cả các lần hiến máu
+  getAllDonations: () => bloodAPI.get("/blood-donations"),
 
-  // POST: Tạo nhóm máu mới
-  createBloodType: (data, config = {}) => bloodAPI.post("/type", data, config),
+  // Lấy thông tin hiến máu theo ID
+  getDonationById: (donationId) => bloodAPI.get(`/blood-donations/${donationId}`),
 
-  // PUT: Cập nhật nhóm máu
-  updateBloodType: (id, data, config = {}) => bloodAPI.put(`/type/${id}`, data, config),
+  // Lấy danh sách hiến máu theo ID thành viên
+  getDonationsByMemberId: (memberId) => bloodAPI.get(`/blood-donations/member/${memberId}`),
 
-  // DELETE: Xoá nhóm máu
-  deleteBloodType: (id, config = {}) => bloodAPI.delete(`/type/${id}`, config),
+  // Xóa bản ghi hiến máu
+  deleteDonation: (donationId) => bloodAPI.delete(`/blood-donations/${donationId}`),
 
-  // ===== BLOOD INVENTORY =====
-  // GET: Danh sách tất cả kho máu
-  getAllBloodInventories: (config = {}) => bloodAPI.get("/inventory", config),
+  // Cập nhật bản ghi hiến máu
+  updateDonation: (donationId, donationData) => bloodAPI.put(`/blood-donations/${donationId}`, donationData),
 
-  // GET: Chi tiết kho máu theo ID
-  getBloodInventoryById: (id, config = {}) => bloodAPI.get(`/inventory/${id}`, config),
-
-  // POST: Tạo kho máu mới
-  createBloodInventory: (data, config = {}) => bloodAPI.post("/inventory", data, config),
-
-  // PUT: Cập nhật kho máu
-  updateBloodInventory: (id, data, config = {}) => bloodAPI.put(`/inventory/${id}`, data, config),
-
-  // DELETE: Xoá kho máu
-  deleteBloodInventory: (id, config = {}) => bloodAPI.delete(`/inventory/${id}`, config),
+  // Tạo giấy chứng nhận hiến máu (nếu có chức năng này)
+  generateCertificate: (donationId) => bloodAPI.get(`/blood-donations/certificate/${donationId}`, { responseType: "blob" }),
 };
+
+export default bloodService;
