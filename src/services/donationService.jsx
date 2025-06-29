@@ -79,6 +79,8 @@ export const donationService = {
     donationAPI.put(`/donations/registrations/${id}`, formData, config),
   deleteDonationRegistration: (id, config = {}) =>
     donationAPI.delete(`/donations/registrations/${id}`, config),
+  getDonationRegistrationsByMember: (memberId, config = {}) =>
+    donationAPI.get(`/forms/member/${memberId}`, config),
 
   // ===== Regis Offline =====
   createRegisOffline: (formData, config = {}) =>
@@ -101,4 +103,6 @@ export const donationService = {
     donationAPI.put(`/donations/receive/${id}`, formData, config),
   deleteRegisReceive: (id, config = {}) =>
     donationAPI.delete(`/donations/receive/${id}`, config),
+
+  getAllForms: (config = {}) => donationAPI.get("/blood-donation-forms", config),
 };

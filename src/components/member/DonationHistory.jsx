@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDonation } from "../../services/DonationContext";
 import FeedbackForm from "../../pages/FeedbackForm";
 import "../../assets/css/member/DonationHistory.css";
@@ -6,6 +7,7 @@ import "../../assets/css/member/DonationHistory.css";
 const DonationHistory = () => {
   const { donationHistories, loading, error } = useDonation();
   const [selectedDonation, setSelectedDonation] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("DonationHistory useEffect chạy:", loading, error);
@@ -31,9 +33,8 @@ const DonationHistory = () => {
               <div className="card-item">
                 <span className="card-label">Trạng thái: </span>
                 <span
-                  className={`card-badge ${
-                    isCompleted(donation.status) ? "completed-badge" : "pending-badge"
-                  }`}
+                  className={`card-badge ${isCompleted(donation.status) ? "completed-badge" : "pending-badge"
+                    }`}
                 >
                   {donation.status || "Không xác định"}
                 </span>
@@ -61,9 +62,7 @@ const DonationHistory = () => {
                   <div className="card-item flex-buttons">
                     <button
                       className="view-result-btn"
-                      onClick={() =>
-                        alert(`📄 Kết quả hiến máu\n- Mã: ${donation.id}\n- Ngày: ${donation.date}`)
-                      }
+                      onClick={() => navigate(`/donationBloodResult/${donation.id}`)}
                     >
                       Xem kết quả
                     </button>

@@ -29,6 +29,8 @@ export const DonationProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const isFetchingRef = useRef(false);
+  const [forms, setForms] = useState([]);
+
 
   // Mapping cho DonationHistoryResponse
   const mapDonationHistory = (history) => ({
@@ -335,6 +337,21 @@ export const DonationProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+  const getFormsByMember = async (memberId) => {
+  setLoading(true);
+  try {
+    const response = await donationService.getDonationRegistrationsByMember(memberId);
+    setForms(response.data.result || []); // hoặc response.data nếu không có .result
+    setError(null);
+  } catch (err) {
+    console.error("Lỗi khi lấy danh sách đăng ký:", err);
+    setError("Không thể lấy lịch sử đăng ký.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // ===== Regis Offline =====
   const fetchRegisOffline = useCallback(async () => {
@@ -663,6 +680,8 @@ export const DonationProvider = ({ children }) => {
     regisReceive,
     loading,
     error,
+    forms,
+  getFormsByMember,
     fetchDonationHistories,
     getDonationHistoryById,
     createDonationHistory,

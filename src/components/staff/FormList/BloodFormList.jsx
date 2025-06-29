@@ -1,134 +1,164 @@
-import React, { useEffect, useState } from "react";
-import { useEvents } from "../../../services/EventContext";
+import React, { useState, useEffect } from "react";
+import { donationService } from "../../../services/donationService";
+import Pagination from "../../../pages/Pagination";
+import { Link } from "react-router-dom";
 
 const BloodFormList = () => {
-  const { fetchForms, updateBloodDonationFormByStaff, loading, error } = useEvents();
   const [forms, setForms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const member = JSON.parse(localStorage.getItem("user"));
+  const memberId = member?.id;
 
   useEffect(() => {
-    const loadForms = async () => {
-      const response = await fetchForms();
-      if (response.success) {
-        setForms(response.forms);
+    if (!memberId) {
+      setError("Không tìm thấy thông tin người dùng.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchForms = async () => {
+      setLoading(true);
+      try {
+        const response = await donationService.getDonationRegistrationsByMember(memberId);
+        setForms(response.data.result || []);
+        setError(null);
+      } catch (err) {
+        console.error("Lỗi khi tải danh sách đăng ký:", err);
+        setError("Không thể tải danh sách đăng ký hiến máu.");
+      } finally {
+        setLoading(false);
       }
     };
-    loadForms();
-  }, [fetchForms]);
 
-  const handleUpdateStatus = async (formId, status) => {
+    fetchForms();
+  }, [memberId]);
+
+  const handleApprove = async (formId) => {
     try {
-      const payload = {
-        formId,
-        status,
-        approvedByStaffId: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null,
+      const token = localStorage.getItem("token");
+      const updateData = {
+        formId: formId,
+        status: 'APPROVED'
       };
-      const response = await updateBloodDonationFormByStaff(payload);
-      if (response.success) {
-        alert(`Cập nhật trạng thái thành công: ${status}`);
-        // Cập nhật danh sách forms sau khi thay đổi trạng thái
-        const updatedForms = await fetchForms();
-        if (updatedForms.success) {
-          setForms(updatedForms.forms);
-        }
-      } else {
-        alert(`Lỗi: ${response.error}`);
-      }
+      await donationService.approveOrRejectForm(updateData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setForms(forms.map(form =>
+        form.id === formId ? { ...form, status: "APPROVED" } : form
+      ));
+      alert("Duyệt đơn thành công!");
     } catch (error) {
-      alert("Lỗi khi cập nhật trạng thái: " + error.message);
+      console.error("Lỗi khi duyệt đơn:", error);
+      alert("Duyệt đơn thất bại!");
     }
   };
 
-  if (loading) {
-    return <p className="text-center text-gray-500">Đang tải...</p>;
-  }
+  const handleReject = async (formId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const updateData = {
+        formId: formId,
+        status: 'REJECTED'
+      };
+      await donationService.approveOrRejectForm(updateData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setForms(forms.map(form =>
+        form.id === formId ? { ...form, status: "REJECTED" } : form
+      ));
+      alert("Từ chối đơn thành công!");
+    } catch (error) {
+      console.error("Lỗi khi từ chối đơn:", error);
+      alert("Từ chối đơn thất bại!");
+    }
+  };
 
-  if (error) {
-    return <p className="text-center text-red-500">Lỗi: {error}</p>;
-  }
+  const handleComplete = async (formId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const updateData = {
+        formId: formId,
+        status: 'COMPLETED'
+      };
+      await donationService.approveOrRejectForm(updateData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setForms(forms.map(form =>
+        form.id === formId ? { ...form, status: "COMPLETED" } : form
+      ));
+      alert("Đơn đã được hoàn thành!");
+    } catch (error) {
+      console.error("Lỗi khi hoàn thành đơn:", error);
+      alert("Hoàn thành đơn thất bại!");
+    }
+  };
 
-  if (!forms || forms.length === 0) {
-    return <p className="text-gray-500 text-center">Chưa có đơn đăng ký nào.</p>;
-  }
+  const totalPages = Math.ceil(forms.length / itemsPerPage);
+
+  const renderCards = () => {
+    if (loading) return <div className="card">Đang tải dữ liệu...</div>;
+    if (error) return <div className="card">Lỗi: {error}</div>;
+    if (forms.length === 0) return <div className="card">Không có dữ liệu hiến máu nào.</div>;
+
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+    const paginatedForms = forms.slice(startIdx, endIdx);
+
+    return paginatedForms.map((entry) => (
+      <div key={entry.id} className="register-card">
+        <div className="card-content">
+          <h4 className="event-title">{entry.eventTitle?.trim() || "Không xác định"}</h4>
+          <p><i className="fas fa-user icon-left" /> Người đăng ký: {entry.memberName || "Không rõ"}</p>
+          <p><i className="fas fa-map-marker-alt icon-left" /> Địa điểm: {entry.eventLocation || "Không xác định"}</p>
+          <p><i className="fas fa-calendar-day icon-left" /> Ngày: {entry.eventDate || "Chưa rõ"}</p>
+          <p><i className="fas fa-info-circle icon-left" /> Trạng thái: <strong>{entry.status || "Không rõ"}</strong></p>
+        </div>
+        <div className="card-action">
+          <Link className="detail-link" to={`/staff/formDetail/${entry.id}`}>
+            <i className="fas fa-info-circle"></i> Xem chi tiết
+          </Link>
+        </div>
+
+        {/* Nút xử lý theo trạng thái */}
+        {entry.status === "PENDING" && (
+          <div className="card-buttons">
+            <button className="approve-button" onClick={() => handleApprove(entry.id)}>Duyệt</button>
+            <button className="reject-button" onClick={() => handleReject(entry.id)}>Từ chối</button>
+          </div>
+        )}
+
+        {entry.status === "APPROVED" && (
+          <div className="card-buttons">
+            <button className="complete-button" onClick={() => handleComplete(entry.id)}>Hoàn thành</button>
+          </div>
+        )}
+
+        {entry.status === "COMPLETED" && (
+          <div className="card-buttons">
+            <Link className="result-button" to={`/resultForm/${entry.id}`}>
+              kết quả
+            </Link>
+          </div>
+        )}
+      </div>
+    ));
+  };
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Quản lý đơn đăng ký hiến máu</h2>
-      <table className="min-w-full divide-y divide-gray-200 text-center">
-        <thead>
-          <tr>
-            <th className="px-4 py-2">Họ tên</th>
-            <th className="px-4 py-2">Email</th>
-            <th className="px-4 py-2">Tiêu đề sự kiện</th>
-            <th className="px-4 py-2">Địa điểm</th>
-            <th className="px-4 py-2">Ngày</th>
-            <th className="px-4 py-2">Trạng thái</th>
-            <th className="px-4 py-2">Hành động</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {forms.map((form) => (
-            <tr key={form.id}>
-              <td className="px-4 py-2">{form.memberName || "N/A"}</td>
-              <td className="px-4 py-2">{form.memberEmail || "N/A"}</td>
-              <td className="px-4 py-2">{form.eventTitle || "N/A"}</td>
-              <td className="px-4 py-2">{form.eventLocation || "N/A"}</td>
-              <td className="px-4 py-2">
-                {form.eventDate ? new Date(form.eventDate).toLocaleDateString("vi-VN") : "N/A"}
-              </td>
-              <td className="px-4 py-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    form.status === "APPROVED"
-                      ? "bg-green-100 text-green-700"
-                      : form.status === "REJECTED"
-                      ? "bg-red-100 text-red-700"
-                      : form.status === "COMPLETED"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}
-                >
-                  {form.status === "APPROVED"
-                    ? "Đã duyệt"
-                    : form.status === "REJECTED"
-                    ? "Bị từ chối"
-                    : form.status === "COMPLETED"
-                    ? "Hoàn thành"
-                    : "Đang chờ"}
-                </span>
-              </td>
-              <td className="px-4 py-2">
-                {form.status === "PENDING" && (
-                  <div className="flex justify-center gap-2">
-                    <button
-                      onClick={() => handleUpdateStatus(form.id, "APPROVED")}
-                      disabled={loading}
-                      className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={() => handleUpdateStatus(form.id, "REJECTED")}
-                      disabled={loading}
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400"
-                    >
-                      Refuse
-                    </button>
-                  </div>
-                )}
-                {form.status === "APPROVED" && (
-                  <button
-                    onClick={() => handleUpdateStatus(form.id, "COMPLETED")}
-                    disabled={loading}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
-                  >
-                    Complete
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="history-container">
+      <h2 className="history-title">DANH SÁCH TẤT CẢ ĐƠN ĐĂNG KÝ HIẾN MÁU</h2>
+      <div className="register-card-list">{renderCards()}</div>
+      {forms.length > itemsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </div>
   );
 };
