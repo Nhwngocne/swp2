@@ -132,7 +132,7 @@ public class BloodIntentFormService {
         form = intentFormRepository.save(form);
         return intentFormMapper.toResponse(form);
     }
-    public BloodIntentFormResponse rejectForm(int formId) {
+    public BloodIntentFormResponse rejectForm(int formId, String rejectReason) {
         BloodIntentForm form = intentFormRepository.findById(formId)
                 .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
 
@@ -141,14 +141,13 @@ public class BloodIntentFormService {
         }
 
         form.setStatus("REJECTED");
+        form.setRejectReason(rejectReason);
         form.setApprovedAt(LocalDate.now());
 
-        String message = String.format(
-                "Đơn %s máu của bạn đã bị từ chối do không phù hợp. Vui lòng liên hệ Trung Tâm Y Tế Hiến máu vì cộng đồng để biết thêm chi tiết.",
-                form.getIntentType()
+        notificationService.createNotificationForMember(
+                form.getMember().getId(),
+                "Đơn đăng ký của bạn đã bị từ chối. Lý do: " + rejectReason
         );
-
-        notificationService.createNotificationForMember(form.getMember().getId(), message);
 
         form = intentFormRepository.save(form);
         return intentFormMapper.toResponse(form);

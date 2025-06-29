@@ -15,8 +15,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
 
     List<Notification> findByStaffIdOrderByCreatedAtDesc(int staffId);
 
-    @Query("SELECT n FROM Notification n " +
-            "WHERE (n.member IS NOT NULL AND n.member.email = :email) " +
-            "   OR (n.staff IS NOT NULL AND n.staff.email = :email)")
-    List<Notification> findByEmail(@Param("email") String email);
+    List<Notification> findByMemberId(int memberId);
+
+    List<Notification> findByStaffId(int staffId);
 }

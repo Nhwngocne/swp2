@@ -13,6 +13,8 @@ import com.swp391.repository.NotificationRepository;
 import com.swp391.repository.StaffRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -157,8 +159,25 @@ public class NotificationService {
     }
     // Đánh dấu tất cả thông báo là đã đọc
     public void markAllAsRead() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Notification> notifications = notificationRepository.findByEmail(email);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        String role = getCurrentUserRole();
+
+        List<Notification> notifications;
+
+        if ("MEMBER".equals(role)) {
+            Member member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            notifications = notificationRepository.findByMemberId(member.getId());
+
+        } else if ("STAFF".equals(role)) {
+            Staff staff = staffRepository.findByEmail(email)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            notifications = notificationRepository.findByStaffId(staff.getId());
+
+        } else {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
 
         for (Notification notification : notifications) {
             notification.setRead(true);
@@ -166,5 +185,5 @@ public class NotificationService {
         notificationRepository.saveAll(notifications);
     }
 
+   }
 
-}
