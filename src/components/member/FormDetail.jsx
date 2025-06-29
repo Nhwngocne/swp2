@@ -16,40 +16,57 @@ const FormDetail = () => {
 
 
   useEffect(() => {
-    const fetchFormDetail = async () => {
-      if (!memberId) {
-        setError("Không tìm thấy thông tin người dùng.");
-        setLoading(false);
-        return;
-      }
+  const fetchFormDetail = async () => {
+    if (!id) {
+      setError("Không có ID đơn đăng ký.");
+      setLoading(false);
+      return;
+    }
 
-      try {
+    try {
+      let selectedForm;
+
+      if (role === "MEMBER") {
+        if (!memberId) {
+          setError("Không tìm thấy thông tin người dùng.");
+          setLoading(false);
+          return;
+        }
+
         const response = await donationService.getDonationRegistrationsByMember(memberId);
         const forms = response.data.result || [];
-        const selectedForm = forms.find((f) => f.id.toString() === id.toString());
-
-        if (selectedForm) {
-          setForm(selectedForm);
-        } else {
-          setError("Không tìm thấy đơn đăng ký tương ứng.");
-        }
-      } catch (err) {
-        console.error(err);
-        setError("Không thể tải dữ liệu chi tiết.");
-      } finally {
-        setLoading(false);
+        console.log("Forms (MEMBER):", forms);
+        selectedForm = forms.find((f) => f.id.toString() === id.toString());
+      } else if (role === "STAFF") {
+        const response = await donationService.getDonationRegistrationById(id);
+        selectedForm = response.data.result;
+        console.log("Form (STAFF):", selectedForm);
       }
-    };
 
-    fetchFormDetail();
-  }, [id, memberId]);
+      if (selectedForm) {
+        setForm(selectedForm);
+        setError("");
+      } else {
+        setError("Không tìm thấy đơn đăng ký tương ứng.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Không thể tải dữ liệu chi tiết.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchFormDetail();
+}, [id, memberId, role]);
+
 
   const handleDelete = async () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa đơn đăng ký này?")) {
       try {
         await donationService.deleteDonationRegistration(id);
         alert("Xóa thành công!");
-        navigate("/member/register-history");
+        navigate("/registerHistory");
       } catch (err) {
         console.error("Lỗi xóa:", err);
         alert("Xóa không thành công.");

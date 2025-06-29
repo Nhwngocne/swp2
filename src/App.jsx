@@ -170,7 +170,9 @@ const App = () => (
             <QnAProvider>
               <DonationProvider>
                 <DonorProvider>
-                  <AppContent /> {/* KHÔNG còn BrowserRouter ở đây */}
+                  <BrowserRouter>
+                    <AppContent />
+                  </BrowserRouter>
                 </DonorProvider>
               </DonationProvider>
             </QnAProvider>
@@ -180,5 +182,6 @@ const App = () => (
     </NotificationProvider>
   </AuthProvider>
 );
+
 
 export default App;

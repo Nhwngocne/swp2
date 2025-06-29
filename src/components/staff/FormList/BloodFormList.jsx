@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // <-- Thêm dòng này
 import { useEvents } from "../../../services/EventContext";
 
 const BloodFormList = () => {
+  const navigate = useNavigate(); // <-- Thêm dòng này
   const { fetchForms, updateBloodDonationFormByStaff, loading, error } = useEvents();
   const [forms, setForms] = useState([]);
 
@@ -25,7 +27,6 @@ const BloodFormList = () => {
       const response = await updateBloodDonationFormByStaff(payload);
       if (response.success) {
         alert(`Cập nhật trạng thái thành công: ${status}`);
-        // Cập nhật danh sách forms sau khi thay đổi trạng thái
         const updatedForms = await fetchForms();
         if (updatedForms.success) {
           setForms(updatedForms.forms);
@@ -38,17 +39,14 @@ const BloodFormList = () => {
     }
   };
 
-  if (loading) {
-    return <p className="text-center text-gray-500">Đang tải...</p>;
-  }
+  const handleViewDetail = (form) => {
+  navigate(`/staff/formDetail/${form.id}`, { state: { form } });
+};
 
-  if (error) {
-    return <p className="text-center text-red-500">Lỗi: {error}</p>;
-  }
 
-  if (!forms || forms.length === 0) {
-    return <p className="text-gray-500 text-center">Chưa có đơn đăng ký nào.</p>;
-  }
+  if (loading) return <p className="text-center text-gray-500">Đang tải...</p>;
+  if (error) return <p className="text-center text-red-500">Lỗi: {error}</p>;
+  if (!forms || forms.length === 0) return <p className="text-gray-500 text-center">Chưa có đơn đăng ký nào.</p>;
 
   return (
     <div className="container mx-auto p-4">
@@ -77,53 +75,61 @@ const BloodFormList = () => {
               </td>
               <td className="px-4 py-2">
                 <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    form.status === "APPROVED"
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${form.status === "APPROVED"
                       ? "bg-green-100 text-green-700"
                       : form.status === "REJECTED"
-                      ? "bg-red-100 text-red-700"
-                      : form.status === "COMPLETED"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}
+                        ? "bg-red-100 text-red-700"
+                        : form.status === "COMPLETED"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-yellow-100 text-yellow-700"
+                    }`}
                 >
                   {form.status === "APPROVED"
                     ? "Đã duyệt"
                     : form.status === "REJECTED"
-                    ? "Bị từ chối"
-                    : form.status === "COMPLETED"
-                    ? "Hoàn thành"
-                    : "Đang chờ"}
+                      ? "Bị từ chối"
+                      : form.status === "COMPLETED"
+                        ? "Hoàn thành"
+                        : "Đang chờ"}
                 </span>
               </td>
               <td className="px-4 py-2">
-                {form.status === "PENDING" && (
-                  <div className="flex justify-center gap-2">
+                <div className="flex justify-center gap-2 flex-wrap">
+                  {form.status === "PENDING" && (
+                    <>
+                      <button
+                        onClick={() => handleUpdateStatus(form.id, "APPROVED")}
+                        disabled={loading}
+                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleUpdateStatus(form.id, "REJECTED")}
+                        disabled={loading}
+                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400"
+                      >
+                        Refuse
+                      </button>
+                    </>
+                  )}
+                  {form.status === "APPROVED" && (
                     <button
-                      onClick={() => handleUpdateStatus(form.id, "APPROVED")}
+                      onClick={() => handleUpdateStatus(form.id, "COMPLETED")}
                       disabled={loading}
-                      className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400"
+                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
                     >
-                      Accept
+                      Complete
                     </button>
-                    <button
-                      onClick={() => handleUpdateStatus(form.id, "REJECTED")}
-                      disabled={loading}
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400"
-                    >
-                      Refuse
-                    </button>
-                  </div>
-                )}
-                {form.status === "APPROVED" && (
+                  )}
                   <button
-                    onClick={() => handleUpdateStatus(form.id, "COMPLETED")}
-                    disabled={loading}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
+                    onClick={() => handleViewDetail(form)}
+                    className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
                   >
-                    Complete
+                    Xem chi tiết
                   </button>
-                )}
+
+                </div>
               </td>
             </tr>
           ))}
