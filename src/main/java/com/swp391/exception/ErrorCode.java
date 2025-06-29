@@ -58,7 +58,7 @@ public enum ErrorCode {
     INVALID_INTENT_TYPE(1002, "Invalid intent type", HttpStatus.BAD_REQUEST),
     FORM_ALREADY_PROCESSED(1001, "Form has already been processed", HttpStatus.BAD_REQUEST),
 
-    ;
+    INVALID_SEARCH_TYPE(1002,"Invalid search type: CHO/NHAN", HttpStatus.BAD_REQUEST),;
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;

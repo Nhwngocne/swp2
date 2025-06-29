@@ -16,23 +16,19 @@ public class NearbyDonor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(length = 100, nullable = false)
-    String name;
-
-    @Column(length = 255, nullable = false)
-    String address;
-
     @Column(nullable = false)
     Double latitude;
 
     @Column(nullable = false)
     Double longitude;
 
-    @Column(length = 10)
-    String bloodType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blood_type_id", nullable = false)
+    BloodType bloodType;
 
-    @Column(length = 20)
-    String phone;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blood_intent_form_id", nullable = false)
+    BloodIntentForm bloodIntentForm;
 
     @OneToOne
     Member member;

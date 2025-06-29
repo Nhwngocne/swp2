@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DonorSearchRequest {
-    String address; // Địa chỉ của người yêu cầu
-    String bloodType; // Tùy chọn: Lọc theo nhóm máu
+    String address;
+    String bloodType;
+    String searchType; // "donor" hoặc "receiver"
 }

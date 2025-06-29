@@ -28,6 +28,7 @@ public class NearbyDonorController {
                 .result(donorService.findNearestDonors(request))
                 .build();
     }
+
     @GetMapping("/geocode")
     public ApiResponse<LatLong> getGeocode(@RequestParam String address) {
         LatLong latLong = donorService.getLatLongFromAddress(address);

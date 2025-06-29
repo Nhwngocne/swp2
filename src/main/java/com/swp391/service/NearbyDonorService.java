@@ -1,16 +1,17 @@
 package com.swp391.service;
 
-
 import com.swp391.Enum.GoongDistanceMatrixResponse;
 import com.swp391.Enum.GoongGeocodeResponse;
 import com.swp391.Enum.GoongGeocodeResult;
 import com.swp391.Enum.LatLong;
 import com.swp391.dto.request.DonorSearchRequest;
 import com.swp391.dto.response.DonorResponse;
+import com.swp391.entity.BloodType;
 import com.swp391.entity.NearbyDonor;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.NearbyDonorMapper;
+import com.swp391.repository.BloodTypeRepository;
 import com.swp391.repository.NearbyDonorRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class NearbyDonorService {
     NearbyDonorRepository donorRepository;
+    BloodTypeRepository bloodTypeRepository;
     NearbyDonorMapper donorMapper;
     RestTemplate restTemplate;
 
@@ -50,7 +53,20 @@ public class NearbyDonorService {
             throw new AppException(ErrorCode.INVALID_ADDRESS);
         }
 
-        List<NearbyDonor> donors = donorRepository.findByBloodType(request.getBloodType());
+        List<NearbyDonor> donors;
+        if ("NHAN".equalsIgnoreCase(request.getSearchType())) {
+            BloodType requestedBloodType = bloodTypeRepository.findByName(request.getBloodType())
+                    .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+            List<String> compatibleBloodTypes = Arrays.asList(requestedBloodType.getCanReceiveFrom().split(",\\s*"));
+            donors = donorRepository.findByBloodTypeNameInAndIntentType(compatibleBloodTypes, "CHO");
+        } else if ("CHO".equalsIgnoreCase(request.getSearchType())) {
+            BloodType requestedBloodType = bloodTypeRepository.findByName(request.getBloodType())
+                    .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+            List<String> compatibleBloodTypes = Arrays.asList(requestedBloodType.getCanDonateTo().split(",\\s*"));
+            donors = donorRepository.findByBloodTypeNameInAndIntentType(compatibleBloodTypes, "NHAN");
+        } else {
+            throw new AppException(ErrorCode.INVALID_SEARCH_TYPE);
+        }
 
         List<DonorResponse> donorResponses = donors.stream()
                 .map(donorMapper::toDonorResponse)
@@ -62,7 +78,7 @@ public class NearbyDonorService {
                     response.setDistance(distance);
                 })
                 .sorted(Comparator.comparing(DonorResponse::getDistance))
-                .limit(10)
+                .limit(5)
                 .collect(Collectors.toList());
 
         return donorResponses;
