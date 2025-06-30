@@ -1,70 +1,87 @@
-/* Step 1: Thông tin hiến máu */
+/* ✅ DonationStep1.css */
+
 .step-section {
-  margin-top: 1.5rem;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: "Segoe UI", sans-serif;
 }
 
 .step-section h2 {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-bottom: 1.25rem;
-  color: #d32f2f;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #b71c1c;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
-.step-section label {
-  font-weight: 500;
-  margin-bottom: 0.5rem;
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+label {
   display: block;
-  color: #111827;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
 }
 
-.step-section input[disabled] {
-  background-color: #f3f4f6;
-  color: #4b5563;
-  font-weight: 500;
-}
-
-.volume-options,
-.session-options {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+input[type="text"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  background: #f9f9f9;
+  color: #444;
+  font-size: 1rem;
 }
 
 .volume-options label,
 .session-options label {
-  background-color: #f9fafb;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
+  display: inline-block;
+  margin-right: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: 0.2s ease-in-out;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 2rem;
+  transition: background 0.3s, color 0.3s;
 }
 
 .volume-options input[type="radio"],
 .session-options input[type="radio"] {
-  accent-color: #d32f2f;
+  margin-right: 0.5rem;
 }
 
 .volume-options label:hover,
 .session-options label:hover {
-  background-color: #fef2f2;
-  border-color: #fca5a5;
+  background-color: #f0f0f0;
 }
 
-/* Nút bước tiếp */
-.next-step-btn {
-  margin-top: 2rem;
-  background-color: #d32f2f;
+.volume-options input[type="radio"]:checked + label,
+.session-options input[type="radio"]:checked + label {
+  background-color: #c62828;
   color: white;
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 8px;
-  font-weight: 500;
+  border-color: #c62828;
+}
+
+.next-step-btn {
+  background-color: #c62828;
+  color: #fff;
   border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 2rem;
+  font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  display: block;
+  margin: 0 auto;
+  transition: background-color 0.3s;
 }
 
 .next-step-btn:hover {
-  background-color: #b91c1c;
+  background-color: #b71c1c;
 }

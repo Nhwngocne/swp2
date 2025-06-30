@@ -41,45 +41,28 @@ const Faq = () => {
   );
 
   return (
-    <div className="faq-page container">
-      <h2 className="faq-title">Chúng tôi có thể giúp gì cho bạn?</h2>
+<div className="faq-page container">
+  <h2 className="faq-heading">CÂU HỎI THƯỜNG GẶP</h2>
 
-     <div className="faq-search-box">
-  <input
-    type="text"
-    placeholder="Tìm kiếm câu hỏi..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-  />
-  <button onClick={() => setSearchTerm(searchTerm.trim())}>Tìm kiếm</button>
-</div>
-
-
-      {user && role === 'MEMBER' && (
-        <div className="ask-question-form">
-          <h3>Gửi câu hỏi của bạn</h3>
-          <form onSubmit={handleSubmit}>
-            <textarea
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Nhập câu hỏi của bạn..."
-              required
-              rows="4"
-              style={{ width: '100%', marginBottom: '10px' }}
-            />
-            <button type="submit">Gửi câu hỏi</button>
-          </form>
-        </div>
-      )}
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+  <div className="faq-layout">
+    {/* Cột trái */}
+    <div className="faq-left">
+      <div className="faq-search-box">
+        <input
+          type="text"
+          placeholder="Tìm kiếm câu hỏi..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button onClick={() => setSearchTerm(searchTerm.trim())}>Tìm kiếm</button>
+      </div>
 
       {loading ? (
         <p>Đang tải...</p>
       ) : filteredQuestions.length === 0 ? (
         <p>Không tìm thấy câu hỏi nào phù hợp.</p>
       ) : (
-        <div className="faq-grid">
+        <div className="faq-list">
           {filteredQuestions.map((item, index) => (
             <div key={item.id} className="faq-card" onClick={() => toggleAnswer(item.id)}>
               <h4>{index + 1}. {item.question}</h4>
@@ -88,16 +71,35 @@ const Faq = () => {
                   {(item.answer || 'Chưa có câu trả lời').split('\n').map((line, i) => (
                     <p key={i}>{line}</p>
                   ))}
-                 
                 </div>
               )}
             </div>
           ))}
         </div>
       )}
-
-      <ToastContainer />
     </div>
+
+    {/* Cột phải */}
+    {user && role === 'MEMBER' && (
+      <div className="faq-right ask-question-form">
+        <h3>Gửi câu hỏi của bạn</h3>
+        <form onSubmit={handleSubmit}>
+          <textarea
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Nhập câu hỏi của bạn..."
+            required
+            rows="4"
+          />
+          <button type="submit">Gửi câu hỏi</button>
+        </form>
+      </div>
+    )}
+  </div>
+
+  <ToastContainer />
+</div>
+
   );
 };
 
