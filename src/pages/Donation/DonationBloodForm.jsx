@@ -31,8 +31,8 @@ export default function DonationBloodForm() {
     memberId: user?.id || 0,
     donation_date: donation_date,
     location: eventLocation,
-    volumeMl: "", // Thay blood_type bằng volumeMl
-    session: "", // Thêm session (MORNING hoặc AFTERNOON)
+    volumeMl: "",
+    session: "",
     donated_before: "",
     current_illness: "",
     illness_details: "",
@@ -74,54 +74,61 @@ export default function DonationBloodForm() {
       return;
     }
 
-    // Chuẩn bị payload khớp với BloodDonationFormCreateRequest
-    const payload = {
-      eventId: formData.eventId,
-      memberId: formData.memberId,
-      volumeMl: parseInt(formData.volumeMl),
-      session: formData.session,
-      donatedBefore: formData.donated_before === "co",
-      currentlyIll: formData.current_illness === "co",
-      illnessDetails: formData.illness_details || "",
-      hadSeriousDisease: formData.past_diseases === "co" || formData.past_diseases === "benh_khac",
-      diseaseDetails: formData.disease_details || "",
-      hadMalariaOrOtherInfectious: formData.past_year?.includes("sot_ret") || false,
-      receivedBlood: formData.past_year?.includes("truyen_mau") || false,
-      gotVaccine: formData.past_year?.includes("tiem_vaccine") || false,
-      noneOfAbove12Months: formData.past_year?.includes("khong") || false,
-      tattooOrAcupuncture: formData.past_6months?.includes("xam_hinh") || false,
-      hadSkinIssues: formData.past_6months?.includes("noi_mun") || false,
-      usedAntibioticsOrAntiInflammatory: formData.past_month?.includes("nhan_thuoc") || false,
-      symptomsPast2Weeks: formData.other_2weeks || "",
-      symptomsPast1Week: formData.other_week || "",
-      isMenstruating: formData.female_questions?.includes("dang_co_kinh") || false,
-      isPregnantOrRecentlyDelivered: formData.female_questions?.includes("co_thai") || false,
-      noneOfFemaleConditions: formData.female_questions?.includes("khong_nu") || false,
-    };
+    // Validation cơ bản
+    let errors = [];
+    if (!formData.eventId || isNaN(parseInt(formData.eventId))) {
+      errors.push("ID sự kiện");
+    }
+    if (!formData.memberId || isNaN(parseInt(formData.memberId))) {
+      errors.push("ID thành viên");
+    }
+    if (!formData.volumeMl || isNaN(parseInt(formData.volumeMl))) {
+      errors.push("Thể tích máu");
+    }
+    if (!formData.session || !["MORNING", "AFTERNOON"].includes(formData.session)) {
+      errors.push("Khung giờ hiến máu");
+    }
+    if (!["co", "khong"].includes(formData.donated_before)) {
+      errors.push("Từng hiến máu");
+    }
+    if (!["co", "khong"].includes(formData.current_illness)) {
+      errors.push("Bệnh lý hiện tại");
+    }
+    if (!["co", "khong", "benh_khac"].includes(formData.past_diseases)) {
+      errors.push("Bệnh nguy hiểm");
+    }
+    if (!Array.isArray(formData.past_year)) {
+      errors.push("Dữ liệu 12 tháng qua");
+    }
+    if (!Array.isArray(formData.past_6months)) {
+      errors.push("Dữ liệu 6 tháng qua");
+    }
+    if (!Array.isArray(formData.past_month)) {
+      errors.push("Dữ liệu 1 tháng qua");
+    }
+    if (!Array.isArray(formData.female_questions)) {
+      errors.push("Dữ liệu câu hỏi nữ giới");
+    }
+    if (!formData.agreement) {
+      errors.push("Cam kết");
+    }
 
-    // Validate required fields
-    if (
-      !payload.eventId ||
-      !payload.memberId ||
-      !payload.volumeMl ||
-      !payload.session ||
-      !formData.donated_before ||
-      !formData.current_illness ||
-      !formData.past_diseases ||
-      !formData.agreement
-    ) {
-      setFormError("Vui lòng điền đầy đủ các trường bắt buộc và đồng ý cam kết.");
+    if (errors.length > 0) {
+      const errorMessage = `Vui lòng điền đầy đủ: ${errors.join(", ")}.`;
+      setFormError(errorMessage);
+      console.error("Validation lỗi trong handleSubmitAll:", errorMessage);
       return;
     }
 
-    console.log("Payload trước khi gửi:", payload); // Debug
+    // Log formData để debug
+    console.log("formData gửi đến createBloodDonationForm:", formData);
 
     try {
-      const result = await createBloodDonationForm(payload);
+      const result = await createBloodDonationForm(formData);
       if (result.success) {
         setFormSuccess(result.message);
         setFormData({
-          eventId: eventId,
+          eventId: eventId || 0,
           memberId: user?.id || 0,
           donation_date: "",
           location: "",
@@ -157,9 +164,8 @@ export default function DonationBloodForm() {
 
   if (!isAuthenticated) {
     return (
-<div className="donation-form-container">
-          <h1 className="donation-form-title">FORM ĐĂNG KÝ HIẾN MÁU</h1>
-
+      <div className="donation-form-container">
+        <h1 className="donation-form-title">FORM ĐĂNG KÝ HIẾN MÁU</h1>
         <p className="text-red-500 text-center">
           Vui lòng đăng nhập để đăng ký hiến máu.
         </p>
