@@ -203,15 +203,7 @@ const BloodFormList = () => {
                       </button>
                     </>
                   )}
-                  {form.status === "APPROVED" && (
-                    <button
-                      onClick={() => handleUpdateStatus(form.id, "COMPLETED")}
-                      disabled={loading}
-                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
-                    >
-                      Complete
-                    </button>
-                  )}
+                  
                   <button
                     // <<<<<<< HEAD
                     onClick={() => openResultModal(form)}

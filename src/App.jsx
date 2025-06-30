@@ -59,8 +59,8 @@ import BloodFormList from './components/staff/FormList/BloodFormList';
 import BloodIntentList from './components/staff/FormList/BloodIntentList';
 import EmergencyList from './components/staff/FormList/EmergencyList';
 import BloodInventoryForm from './components/staff/BloodInventoryForm';
-import ResultForm from './components/staff/ResultForm';
-import DonationBloodResult from './components/staff/DonationBloodResult'; // Thêm DonationBloodResult
+import DonationBloodResult from './components/staff/DonationBloodResult';
+import QnA from './components/staff/QnA'; // Thêm DonationBloodResult
 
 
 // Admin Components
@@ -135,10 +135,9 @@ const AppContent = () => {
           <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
           <Route path="/bloodInventoryForm" element={<ProtectedRoute requiredRole="STAFF"><BloodInventoryForm /></ProtectedRoute>} />
           {/* Staff */}
-          <Route path="/resultForm" element={<ProtectedRoute requiredRole="STAFF"><ResultForm /></ProtectedRoute>} />
-          <Route path="/resultForm/:id" element={<ProtectedRoute requiredRole="STAFF"><ResultForm /></ProtectedRoute>} />
           <Route path="/donationBloodResult" element={<ProtectedRoute requiredRole="STAFF"><DonationBloodResult /></ProtectedRoute>} />
           <Route path="/staff/formDetail/:id" element={<ProtectedRoute requiredRole="STAFF"><FormDetail /></ProtectedRoute>} />
+          <Route path="/qna" element={<ProtectedRoute requiredRole="STAFF"><QnA /></ProtectedRoute>} />
 
 
           {/* Admin */}

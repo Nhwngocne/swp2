@@ -62,8 +62,11 @@ export const qnaService = {
     qnaAPI.post("/qna/ask", formData, config),
 
   // STAFF trả lời câu hỏi
-  answerQuestion: (formData, config = {}) =>
-    qnaAPI.post("/qna/answer", formData, config),
+
+answerQuestion: (data, config = {}) =>
+  qnaAPI.post("/qna/answer", data, config),
+
+
 
   // Tất cả user xem danh sách câu hỏi đã được trả lời
   getAllAnswered: (config = {}) =>

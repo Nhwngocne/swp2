@@ -42,6 +42,7 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
             ]
           },
           { path: "/manage-members", label: "Quản lý thành viên" },
+          { path: "/qna", label: "Hỏi đáp" },
         ];
 
       case "ADMIN":
