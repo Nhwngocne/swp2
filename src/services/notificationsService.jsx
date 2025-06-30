@@ -75,7 +75,12 @@ export const notificationService = {
   // MEMBER hoặc STAFF mark notification là đã đọc
   markAsRead: (notificationId, config = {}) =>
     notificationAPI.put(`/notifications/${notificationId}/mark-as-read`, {}, config),
-  // // MEMBER hoặc STAFF đánh dấu tất cả notifications là đã đọc
+
+  // MEMBER hoặc STAFF đánh dấu tất cả notifications là đã đọc
   markAllAsRead: (config = {}) =>
     notificationAPI.put("/notifications/mark-all-as-read", {}, config),
+
+  // 🆕 LẤY TẤT CẢ NOTIFICATIONS (ADMIN dùng)
+  getAllNotifications: (config = {}) =>
+    notificationAPI.get("/notifications", config),
 };
