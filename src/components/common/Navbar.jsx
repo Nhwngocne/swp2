@@ -199,17 +199,18 @@ const Navbar = () => {
         {role !== 'ADMIN' && role !== 'STAFF' && (
           <>
             <Link to="/" className="nav-item">Trang chủ</Link>
+            {role === 'MEMBER' && (
+          <Link to="/donationHistory" className="nav-item">
+            Lịch sử hiến máu
+          </Link>
+        )}
             <Link to="/faq" className="nav-item">Hỏi - Đáp</Link>
             <Link to="/news" className="nav-item">Tin tức</Link>
             <Link to="/lookUp" className="nav-item">Tra cứu</Link>
             <Link to="/donor-search" className="nav-item">Liên hệ</Link>
           </>
         )}
-        {role === 'MEMBER' && (
-          <Link to="/donationHistory" className="nav-item">
-            Lịch sử hiến máu
-          </Link>
-        )}
+     
       </nav>
     </header>
   );
