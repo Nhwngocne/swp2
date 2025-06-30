@@ -213,14 +213,6 @@ const BloodFormList = () => {
                     Nhập kết quả
                   </button>
                   <button
-                    // <<<<<<< HEAD
-                    onClick={() => openResultModal(form)}
-                    disabled={loading}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
-                  >
-                    Nhập kết quả
-                  </button>
-                  <button
                     onClick={() => handleViewDetail(form)}
                     className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
                   >
