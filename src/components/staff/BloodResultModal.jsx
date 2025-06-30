@@ -1,8 +1,67 @@
-// BloodResultModal.js
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDonation } from "../../services/DonationContext";
+import { useEvents } from "../../services/EventContext";
 
-const BloodResultModal = ({ isOpen, onClose, onSubmit, loading, historyData, onInputChange }) => {
-  if (!isOpen) return null;
+const BloodResultModal = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { form } = location.state || {};
+  const { createDonationHistory } = useDonation();
+  const { updateBloodDonationFormByStaff, fetchForms } = useEvents();
+  const [loading, setLoading] = useState(false);
+  const [historyData, setHistoryData] = useState({
+    result: "Đạt",
+    location: form?.eventLocation || "",
+    volume: "",
+    bloodTypeId: "",
+    bloodDonationFormId: form?.id || "",
+    staffId: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null,
+    memberId: form?.memberId || "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setHistoryData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitResult = async () => {
+    try {
+      setLoading(true);
+      if (!historyData.volume || !historyData.bloodTypeId) {
+        alert("Vui lòng nhập đầy đủ thể tích và nhóm máu!");
+        return;
+      }
+
+      const historyResponse = await createDonationHistory(historyData);
+      if (!historyResponse.success) {
+        alert(`Lỗi khi tạo lịch sử hiến máu: ${historyResponse.error}`);
+        return;
+      }
+
+      const payload = {
+        formId: form.id,
+        status: "COMPLETED",
+        approvedByStaffId: historyData.staffId,
+      };
+      const updateResponse = await updateBloodDonationFormByStaff(payload);
+      if (updateResponse.success) {
+        alert("Tạo lịch sử hiến máu và cập nhật trạng thái thành công!");
+        const updatedForms = await fetchForms();
+        navigate("/staff/forms"); // Điều hướng về trang danh sách
+      } else {
+        alert(`Lỗi khi cập nhật trạng thái: ${updateResponse.error}`);
+      }
+    } catch (error) {
+      alert("Lỗi: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    navigate("/staff/forms"); // Điều hướng về trang danh sách
+  };
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
@@ -13,7 +72,7 @@ const BloodResultModal = ({ isOpen, onClose, onSubmit, loading, historyData, onI
           <select
             name="result"
             value={historyData.result}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="Đạt">Đạt</option>
@@ -26,7 +85,7 @@ const BloodResultModal = ({ isOpen, onClose, onSubmit, loading, historyData, onI
             type="text"
             name="location"
             value={historyData.location}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             placeholder="Nhập địa điểm"
           />
@@ -37,7 +96,7 @@ const BloodResultModal = ({ isOpen, onClose, onSubmit, loading, historyData, onI
             type="number"
             name="volume"
             value={historyData.volume}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             placeholder="Nhập thể tích (ml)"
           />
@@ -47,7 +106,7 @@ const BloodResultModal = ({ isOpen, onClose, onSubmit, loading, historyData, onI
           <select
             name="bloodTypeId"
             value={historyData.bloodTypeId}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">-- Nhóm máu --</option>
@@ -63,13 +122,13 @@ const BloodResultModal = ({ isOpen, onClose, onSubmit, loading, historyData, onI
         </div>
         <div className="flex justify-end gap-2">
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
           >
             Hủy
           </button>
           <button
-            onClick={onSubmit}
+            onClick={handleSubmitResult}
             disabled={loading}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
           >
