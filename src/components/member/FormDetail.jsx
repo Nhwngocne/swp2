@@ -79,7 +79,24 @@ const FormDetail = () => {
   if (!form) return <div className="form-detail-container">Không có dữ liệu hiển thị.</div>;
 
   const formatDate = (dateStr) => {
-    return dateStr ? new Date(dateStr).toLocaleString("vi-VN") : "Không có";
+    if (!dateStr) return "Không rõ";
+    // Xử lý định dạng dd-mm-yyyy
+    if (typeof dateStr === "string" && dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
+      const [day, month, year] = dateStr.split("-");
+      const formattedDate = new Date(`${year}-${month}-${day}`);
+      return isNaN(formattedDate) ? "Không xác định" : formattedDate.toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    }
+    // Xử lý các định dạng khác (ISO hoặc null)
+    const date = new Date(dateStr);
+    return isNaN(date) ? "Không xác định" : date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 console.log("Role:", role);
 console.log("User:", user);
