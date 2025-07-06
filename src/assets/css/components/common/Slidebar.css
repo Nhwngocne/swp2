@@ -3,7 +3,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 260px;
+  width: 230px;
   height: 100vh;
   background: linear-gradient(to bottom right, #ffffff, #f1f1f1);
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -12,11 +12,7 @@
   overflow-y: auto;
   transition: transform 0.3s ease;
 }
-/* Đảm bảo phần main-content không bị đè */
-.main-content {
-  margin-left: 0px; /* đúng bằng chiều rộng sidebar */
-  transition: margin-left 0.3s ease;
-}
+
 /* Overlay (for mobile) */
 .sidebar-overlay {
   position: fixed;
@@ -116,15 +112,4 @@
   color: #c62828;
   font-weight: bold;
   font-size: 0.95rem;
-}
-
-/* === Responsive (hidden sidebar on small screens) === */
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
 }

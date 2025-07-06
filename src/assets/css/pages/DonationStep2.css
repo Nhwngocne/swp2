@@ -27,7 +27,7 @@
 
 .step-section input[type="radio"],
 .step-section input[type="checkbox"] {
-  accent-color: #ec4899;
+  accent-color: #a00d0d;
 }
 
 .step-section textarea {
@@ -82,10 +82,10 @@
 }
 
 .step-section .button-group .btn-submit {
-  background-color: #ec4899;
+  background-color: #8c1313;
   color: white;
 }
 
 .step-section .button-group .btn-submit:hover {
-  background-color: #db2777;
+  background-color: #8c1313;
 }

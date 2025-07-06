@@ -38,23 +38,38 @@
 }
 
 .hero-actions .btn {
-  padding: 12px 28px;
-  border-radius: 30px;
-  font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 30px !important;
+  font-weight: 700;
   margin-right: 16px;
+  font-size: 1.25rem;
+  border: 2.5px solid #b93a3a !important;
+  background: #fff;
+  color: #b93a3a;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 8px rgba(185,58,58,0.10);
+  display: inline-block;
+  box-sizing: border-box;
 }
 
 .hero-actions .btn.red {
   background: #b93a3a;
-  color: white;
-  text-decoration: none;
+  color: #fff;
+  border: 2.5px solid #b93a3a;
 }
 
 .hero-actions .btn.white {
-  border: 2px solid #b93a3a;
-  background: white;
+  background: #fff;
   color: #b93a3a;
-  text-decoration: none;
+  border: 2.5px solid #b93a3a;
+}
+
+.hero-actions .btn.red:hover,
+.hero-actions .btn.white:hover {
+  background: #a73737;
+  color: #fff;
+  border-color: #a73737;
 }
 
 .hero-image-group {
@@ -181,7 +196,20 @@
   font-size: 18px;
   color: white;
 }
-
+.center-title-box {
+  grid-column: 2 / 3; /* nằm giữa hàng có 3 cột */
+  grid-row: 2;        /* đảm bảo nằm ở dòng 2 */
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  text-align: center;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;   /* giúp căn giữa theo chiều dọc */
+  align-self: center; /* căn giữa theo trục dọc của grid */
+}
 /* ✅ Mỗi dòng quyền lợi */
 .benefit-content-item {
   display: flex;

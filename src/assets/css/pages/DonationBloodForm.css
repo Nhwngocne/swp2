@@ -1,125 +1,208 @@
-/* Container chính của form */
-.donation-form-container {
-  max-width: 850px;
-  margin: 2rem auto;
-  padding: 2.5rem;
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', sans-serif;
+/* Container */
+.donation-form-container,
+.max-w-4xl {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px rgba(185,58,58,0.10), 0 1.5px 8px rgba(0,0,0,0.04);
+  padding: 2.5rem 2rem;
+  margin: 32px auto;
+  max-width: 600px;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
 }
 
-/* Tiêu đề form */
+/* Tiêu đề */
 .donation-form-title {
-  font-size: 1.8rem;
-  font-weight: bold;
   text-align: center;
-  margin-bottom: 2rem;
-  color: #d32f2f;
+  color: #b71c1c;
+  font-size: 2.1rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
 }
 
-/* Thông báo lỗi hoặc thành công */
-.donation-form-message {
+/* Thông báo lỗi/thành công */
+.text-red-500 {
+  color: #e53935;
+  font-weight: 600;
+}
+.text-green-500 {
+  color: #43a047;
+  font-weight: 600;
+}
+
+/* Bước */
+.step-section {
+  background: #fff;
+  padding: 2rem 1.5rem;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 12px rgba(185,58,58,0.06);
+  margin: 0 auto;
+  max-width: 520px;
+}
+
+.step-section h2, .step-section h3 {
   text-align: center;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  font-weight: 500;
+  color: #b71c1c;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.5px;
 }
 
-.donation-form-message.error {
-  color: #dc2626;
+.mb-4 {
+  margin-bottom: 1.3rem;
 }
 
-.donation-form-message.success {
-  color: #16a34a;
-}
-
-/* Form chia bước */
-.donation-form-step {
-  margin-top: 1rem;
-}
-
-/* Label đẹp hơn */
-.donation-form-step label {
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #333;
+label {
   display: block;
+  font-weight: 600;
+  color: #b93a3a;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.2px;
 }
 
-/* Input và select */
-.donation-form-step input,
-.donation-form-step select,
-.donation-form-step textarea {
+input[type="text"], select, textarea {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 0.7rem;
+  background: #f9f9f9;
+  color: #444;
   font-size: 1rem;
-  margin-bottom: 1rem;
-  background-color: #f9fafb;
+  margin-bottom: 0.2rem;
+  transition: border 0.2s;
 }
 
-/* Checkbox / Radio nhóm */
-.checkbox-group,
-.radio-group {
+input[type="text"]:focus, select:focus, textarea:focus {
+  border: 1.5px solid #b93a3a;
+  outline: none;
+  background: #fff;
+}
+
+select {
+  cursor: pointer;
+}
+
+.volume-options, .session-options {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 1rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.checkbox-group label,
-.radio-group label {
+.volume-options label,
+.session-options label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-}
-
-/* Nút điều hướng */
-.donation-form-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2rem;
-}
-
-.donation-form-buttons button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
   font-weight: 500;
+  cursor: pointer;
+  padding: 0.45rem 1.1rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 2rem;
+  background: #fafafa;
+  margin-bottom: 0.3rem;
+  transition: background 0.2s, color 0.2s, border 0.2s;
 }
 
-.donation-form-buttons .btn-next {
-  background-color: #2563eb;
-  color: white;
+.volume-options label:hover,
+.session-options label:hover {
+  background: #ffeaea;
+  border-color: #b93a3a;
 }
 
-.donation-form-buttons .btn-next:hover {
-  background-color: #1d4ed8;
+input[type="radio"]:checked + label,
+input[type="checkbox"]:checked + label {
+  background: #b93a3a;
+  color: #fff;
+  border-color: #b93a3a;
 }
 
-.donation-form-buttons .btn-back {
-  background-color: #e5e7eb;
-  color: #111827;
+input[type="radio"], input[type="checkbox"] {
+  accent-color: #b93a3a;
+  margin-right: 0.5rem;
 }
 
-.donation-form-buttons .btn-back:hover {
-  background-color: #d1d5db;
+/* Step 2 - textarea */
+.step-section textarea {
+  background-color: #fff8f6;
+  border: 1.5px solid #fda4af;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #374151;
+  font-size: 1rem;
+  resize: vertical;
+  margin-top: 0.3rem;
 }
 
-/* Responsive cho mobile */
-@media (max-width: 640px) {
-  .donation-form-buttons {
-    flex-direction: column;
-    gap: 10px;
+.step-section textarea::placeholder {
+  color: #bdbdbd;
+}
+
+/* Checkbox group spacing */
+.step-section .space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+/* Agreement checkbox */
+.step-section .agreement label {
+  align-items: flex-start;
+  color: #b93a3a;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Buttons */
+.next-step-btn,
+.step-section .button-group button {
+  font-weight: 700;
+  padding: 12px 32px;
+  border-radius: 2rem;
+  font-size: 1.08rem;
+  cursor: pointer;
+  border: none;
+  background: #b93a3a;
+  color: #fff;
+  margin: 0 auto;
+  display: block;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(185,58,58,0.08);
+}
+
+.next-step-btn:hover,
+.step-section .button-group .btn-submit:hover {
+  background: #a73737;
+}
+
+.step-section .button-group {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 1.7rem;
+  justify-content: center;
+}
+
+.step-section .button-group .btn-back {
+  background-color: #bdbdbd;
+  color: #fff;
+  font-weight: 600;
+}
+
+.step-section .button-group .btn-back:hover {
+  background-color: #757575;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .donation-form-container,
+  .max-w-4xl,
+  .step-section {
+    padding: 1rem 0.5rem;
+    max-width: 100%;
   }
-
-  .donation-form-buttons button {
-    width: 100%;
+  .step-section h2, .step-section h3 {
+    font-size: 1.1rem;
+  }
+  .next-step-btn,
+  .step-section .button-group button {
+    padding: 10px 16px;
+    font-size: 1rem;
   }
 }

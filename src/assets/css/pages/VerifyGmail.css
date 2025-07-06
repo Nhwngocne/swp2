@@ -78,3 +78,29 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+.resend-otp-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  background: #fff;
+  color: #74221D;
+  border: 2px solid #74221D;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.resend-otp-btn:hover:not(:disabled) {
+  background: #fbeee7;
+  color: #5c1a17;
+  border-color: #5c1a17;
+  transform: scale(1.03);
+}
+
+.resend-otp-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

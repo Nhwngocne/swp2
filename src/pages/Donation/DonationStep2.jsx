@@ -294,7 +294,7 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
       {/* Buttons */}
       <div className="button-group">
         <button type="button" onClick={onBack} className="btn-back">Quay lại</button>
-        <button type="button" onClick={handleSubmit} className="btn-submit">Tiếp theo</button>
+        <button type="button" onClick={handleSubmit} className="btn-submit">Đăng kí</button>
       </div>
     </div>
   );
