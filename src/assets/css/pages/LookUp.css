@@ -1,3 +1,5 @@
+/* ...existing code... */
+
 .lookup-container {
   min-height: 100vh;
   background: linear-gradient(to bottom right, #fef2f2, #ffffff, #eef2ff);
@@ -21,6 +23,7 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px auto;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
 .heart-icon {
@@ -44,42 +47,42 @@
   margin: 0 auto;
 }
 
-
 .search-form {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: 24px; /* thêm khoảng cách dưới */
+  margin-bottom: 24px;
 }
-s
+
 .search-form label {
   flex: 1 1 200px;
   display: flex;
   flex-direction: column;
   font-size: 0.9rem;
   color: #374151;
-}
-
-.search-form label {
-  font-size: 0.9rem;
-  color: #374151;
-  display: flex;
-  flex-direction: column;
   gap: 4px;
 }
 
 .search-form select {
   border: none;
-  box-shadow: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  background-color: transparent;
+  background-color: #fff;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: box-shadow 0.2s;
 }
+
+.search-form select:focus {
+  outline: none;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
 .search-button {
-  grid-column: 1 / -1;
   margin-top: 12px;
-  padding: 12px;
+  padding: 12px 24px;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
@@ -87,6 +90,7 @@ s
   background: #e5e7eb;
   color: #9ca3af;
   cursor: not-allowed;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .search-button.enabled {
@@ -97,15 +101,14 @@ s
 
 .search-button.enabled:hover {
   transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
 }
-
 
 .results-card {
   background: transparent;
   padding: 24px 0;
   border-radius: 0;
   box-shadow: none;
-  
 }
 
 .results-header {
@@ -114,6 +117,7 @@ s
   margin-bottom: 16px;
   text-align: center;
   color: #1f2937;
+  text-transform: uppercase;
 }
 
 .results-content {
@@ -129,6 +133,7 @@ s
   font-size: 1.125rem;
   color: #1e40af;
   margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .no-data {
@@ -137,34 +142,8 @@ s
 }
 
 .cta-section {
-  margin-top: 40px;
-  text-align: center;
-}
-
-.cta-button {
-  background: linear-gradient(to right, #ef4444, #ec4899);
-  color: white;
-  font-weight: 600;
-  padding: 12px 32px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.cta-button:hover {
-  background: linear-gradient(to right, #dc2626, #d946ef);
-  transform: scale(1.05);
-}
-
-@media (max-width: 768px) {
-  .search-form {
-    grid-template-columns: 1fr;
-  }
-}
-.cta-section {
-  text-align: center;
   margin-top: 64px;
+  text-align: center;
   margin-bottom: 64px;
 }
 
@@ -176,6 +155,11 @@ s
   border-radius: 24px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   max-width: 640px;
+  transition: transform 0.3s;
+}
+
+.cta-card:hover {
+  transform: translateY(-5px);
 }
 
 .cta-icon-container {
@@ -218,6 +202,7 @@ s
   background: #f3f4f6;
   transform: scale(1.05);
 }
+
 .compatibility-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -229,6 +214,12 @@ s
   padding: 20px;
   border-radius: 16px;
   background: #f0f9ff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.compatibility-box:hover {
+  transform: translateY(-5px);
 }
 
 .compatibility-box.donate {
@@ -254,6 +245,11 @@ s
   border-radius: 12px;
   margin-bottom: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.blood-card:hover {
+  transform: translateY(-2px);
 }
 
 .blood-type {
@@ -276,5 +272,131 @@ s
 @media (max-width: 768px) {
   .compatibility-grid {
     grid-template-columns: 1fr;
+  }
+  .search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-form label {
+    flex: 1 1 100%;
+  }
+}
+
+/* ...existing code... */
+
+.compatibility-diagram-vertical {
+  margin-top: 40px;
+  position: relative;
+  width: 800px;
+  height: 500px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f3f4f6 0%, #ffffff 100%);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: visible;
+  padding: 30px;
+  border: 1px solid #e5e7eb;
+}
+
+.center-circle {
+  width: 140px;
+  height: 140px;
+  background: linear-gradient(135deg, #f87171 0%, #fb923c 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 2.2rem;
+  box-shadow: 0 6px 24px rgba(248, 113, 113, 0.2);
+  border: 5px solid #fff;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.center-circle:hover {
+  transform: scale(1.05);
+}
+
+.circle {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.15);
+  border: 3px solid #fff;
+  transition: transform 0.3s ease;
+}
+
+.circle:hover {
+  transform: scale(1.15);
+  box-shadow: 0 8px 24px rgba(96, 165, 250, 0.25);
+}
+
+.mindmap-circle {
+  position: absolute;
+}
+
+.circle-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 240px;
+  background: #ffffff;
+  color: #374151;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  padding: 16px 20px;
+  z-index: 10;
+  font-size: 1rem;
+  text-align: left;
+  pointer-events: none;
+  white-space: normal;
+  border: 1px solid #e5e7eb;
+}
+
+.mindmap-circle:hover .circle-tooltip {
+  display: block;
+}
+
+.circle-tooltip .note {
+  font-style: italic;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .compatibility-diagram-vertical {
+    width: 320px;
+    height: 600px;
+    padding: 15px;
+  }
+  .center-circle {
+    width: 100px;
+    height: 100px;
+    font-size: 1.5rem;
+    left: 110px;
+    top: 250px;
+  }
+  .circle {
+    width: 50px;
+    height: 50px;
+    font-size: 1rem;
+  }
+  .mindmap-circle.left {
+    left: 30px;
+  }
+  .mindmap-circle.right {
+    left: 240px;
   }
 }

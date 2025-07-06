@@ -11,6 +11,7 @@ const Faq = () => {
   const [question, setQuestion] = useState('');
   const [openQuestionId, setOpenQuestionId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+const [showChatbox, setShowChatbox] = useState(false);
 
   useEffect(() => {
     fetchAnsweredQuestions();
@@ -80,21 +81,38 @@ const Faq = () => {
     </div>
 
     {/* Cột phải */}
-    {user && role === 'MEMBER' && (
-      <div className="faq-right ask-question-form">
-        <h3>Gửi câu hỏi của bạn</h3>
-        <form onSubmit={handleSubmit}>
-          <textarea
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Nhập câu hỏi của bạn..."
-            required
-            rows="4"
-          />
-          <button type="submit">Gửi câu hỏi</button>
-        </form>
+   <div className="faq-chatbox-toggle">
+  <button
+    className="faq-chatbox-btn"
+    onClick={() => setShowChatbox(true)}
+    title="Đặt câu hỏi"
+  >
+    <span role="img" aria-label="question">❓</span>
+  </button>
+</div>
+
+{showChatbox && user && role === 'MEMBER' && (
+  <div className="faq-chatbox-popup">
+    <div className="faq-chatbox-header">
+      <span>Đặt câu hỏi</span>
+      <button className="faq-chatbox-close" onClick={() => setShowChatbox(false)}>×</button>
+    </div>
+    <form onSubmit={handleSubmit} className="chatbox-form">
+      <div className="chatbox-input-row">
+        <textarea
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Nhập câu hỏi của bạn..."
+          required
+          rows="2"
+        />
+        <button type="submit" className="chatbox-send-btn">
+          <span role="img" aria-label="send">📤</span>
+        </button>
       </div>
-    )}
+    </form>
+  </div>
+)}
   </div>
 
   <ToastContainer />

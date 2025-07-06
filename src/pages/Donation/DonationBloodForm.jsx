@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../services/AuthContext";
 import { useEvents } from "../../services/EventContext";
+import { useBlood } from "../../services/BloodContext";
 import DonationStep1 from "./DonationStep1";
 import DonationStep2 from "./DonationStep2";
 import "../../assets/css/pages/DonationBloodForm.css";
@@ -9,6 +10,7 @@ import "../../assets/css/pages/DonationBloodForm.css";
 export default function DonationBloodForm() {
   const { user, isAuthenticated } = useAuth();
   const { createBloodDonationForm } = useEvents();
+  const { bloodTypes } = useBlood();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -16,7 +18,7 @@ export default function DonationBloodForm() {
     eventId = 0,
     donation_date = "",
     location: eventLocation = "",
-    bloodTypes = [],
+    bloodTypes: eventBloodTypes = [],
     session = "",
     donationMorningStart = "",
     donationMorningEnd = "",
@@ -25,12 +27,21 @@ export default function DonationBloodForm() {
   } = location.state || {};
   console.log("State received:", location.state);
 
+  const bloodTypeMap = {
+    A: 2,
+    B: 3,
+    AB: 4,
+    O: 5,
+    "Không biết": 0, // Thêm tùy chọn "Không biết"
+  };
+
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     eventId: eventId,
     memberId: user?.id || 0,
     donation_date: donation_date,
     location: eventLocation,
+    bloodTypeId: "", // Khởi tạo rỗng
     volumeMl: "",
     session: "",
     donated_before: "",
@@ -82,6 +93,9 @@ export default function DonationBloodForm() {
     if (!formData.memberId || isNaN(parseInt(formData.memberId))) {
       errors.push("ID thành viên");
     }
+    if (!formData.bloodTypeId && formData.bloodTypeId !== "0") {
+      errors.push("Nhóm máu của bạn"); // Cho phép bloodTypeId là "0" (Không biết)
+    }
     if (!formData.volumeMl || isNaN(parseInt(formData.volumeMl))) {
       errors.push("Thể tích máu");
     }
@@ -124,7 +138,10 @@ export default function DonationBloodForm() {
     console.log("formData gửi đến createBloodDonationForm:", formData);
 
     try {
-      const result = await createBloodDonationForm(formData);
+      const result = await createBloodDonationForm({
+        ...formData,
+        bloodTypeId: formData.bloodTypeId === "0" ? 0 : parseInt(formData.bloodTypeId), // Xử lý "Không biết"
+      });
       if (result.success) {
         setFormSuccess(result.message);
         setFormData({
@@ -132,6 +149,7 @@ export default function DonationBloodForm() {
           memberId: user?.id || 0,
           donation_date: "",
           location: "",
+          bloodTypeId: "",
           volumeMl: "",
           session: "",
           donated_before: "",
@@ -187,13 +205,15 @@ export default function DonationBloodForm() {
           setFormData={setFormData}
           onNext={() => setStep(2)}
           eventData={{
-            bloodTypes,
+            bloodTypes: eventBloodTypes,
             session,
             donationMorningStart,
             donationMorningEnd,
             donationAfternoonStart,
             donationAfternoonEnd,
           }}
+          bloodTypes={bloodTypes}
+          bloodTypeMap={bloodTypeMap}
         />
       )}
       {step === 2 && (

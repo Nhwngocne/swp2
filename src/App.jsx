@@ -11,7 +11,7 @@ import { EmergencyProvider } from './services/EmergencyContext';
 import { DonationProvider } from './services/DonationContext';
 import { DonorProvider } from './services/DonorContext';
 import { NotificationProvider } from './services/NotificationsContext'; // ✅ thêm NotificationProvider
-
+import { BloodProvider } from './services/BloodContext';
 
 // Common Components
 import Navbar from './components/common/Navbar';
@@ -61,6 +61,7 @@ import EmergencyList from './components/staff/FormList/EmergencyList';
 import BloodInventoryForm from './components/staff/BloodInventoryForm';
 import DonationBloodResult from './components/staff/DonationBloodResult';
 import QnA from './components/staff/QnA'; // Thêm DonationBloodResult
+import BloodResultModal from './components/staff/BloodResultModal';
 
 
 // Admin Components
@@ -134,11 +135,10 @@ const AppContent = () => {
           <Route path="/bloodIntentList" element={<ProtectedRoute requiredRole="STAFF"><BloodIntentList /></ProtectedRoute>} />
           <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
           <Route path="/bloodInventoryForm" element={<ProtectedRoute requiredRole="STAFF"><BloodInventoryForm /></ProtectedRoute>} />
-          {/* Staff */}
           <Route path="/donationBloodResult" element={<ProtectedRoute requiredRole="STAFF"><DonationBloodResult /></ProtectedRoute>} />
           <Route path="/staff/formDetail/:id" element={<ProtectedRoute requiredRole="STAFF"><FormDetail /></ProtectedRoute>} />
           <Route path="/qna" element={<ProtectedRoute requiredRole="STAFF"><QnA /></ProtectedRoute>} />
-
+          <Route path="/staff/formResult/:formId" element={<ProtectedRoute requiredRole="STAFF"><BloodResultModal /></ProtectedRoute>} />
 
           {/* Admin */}
           <Route path="/manage" element={<ProtectedRoute requiredRole="ADMIN"><Manage /></ProtectedRoute>} />
@@ -169,9 +169,11 @@ const App = () => (
             <QnAProvider>
               <DonationProvider>
                 <DonorProvider>
+                  <BloodProvider>
                   <BrowserRouter>
                     <AppContent />
                   </BrowserRouter>
+                  </BloodProvider>
                 </DonorProvider>
               </DonationProvider>
             </QnAProvider>

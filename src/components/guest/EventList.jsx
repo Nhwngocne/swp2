@@ -2,17 +2,25 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "../../services/EventContext";
 import { useAuth } from "../../services/AuthContext";
+import DatePicker from "react-datepicker"; // Thêm import
+import "react-datepicker/dist/react-datepicker.css"; // CSS cho DatePicker
 import "../../assets/css/components/guest/EventList.css";
 
 const EventList = () => {
   const { user } = useAuth();
   const { events, loading, error } = useEvents();
   const [filter, setFilter] = useState("all");
+  const [startDate, setStartDate] = useState(null); // Từ ngày
+  const [endDate, setEndDate] = useState(null);   // Đến ngày
   const navigate = useNavigate();
 
+  // Lọc sự kiện
   const filteredEvents = events.filter((event) => {
-    if (filter === "all") return true;
-    return event.status === filter;
+    if (filter !== "all" && event.status !== filter) return false;
+
+    const eventDate = new Date(event.date);
+    const isInRange = (!startDate || eventDate >= startDate) && (!endDate || eventDate <= endDate);
+    return isInRange;
   });
 
   const formatDate = (dateStr) => {
@@ -45,14 +53,53 @@ const EventList = () => {
     }
   };
 
+  const isRegisterable = (eventDateStr) => {
+    const today = new Date();
+    const eventDate = new Date(eventDateStr);
+    const registerDeadline = new Date(eventDate);
+    registerDeadline.setDate(registerDeadline.getDate() - 7);
+    return today >= registerDeadline;
+  };
+
+  const handleSearch = () => {
+    // Logic tìm kiếm đã được xử lý trong filteredEvents
+    // Không cần thêm hành động khác vì state đã tự động cập nhật
+  };
+
   if (loading) return <div style={{ textAlign: "center", padding: 20 }}>Đang tải...</div>;
   if (error) return <div style={{ textAlign: "center", padding: 20, color: "red" }}>Lỗi: {error}</div>;
 
   return (
     <div className="event-container">
-        <h1>Sự kiện hiến máu</h1>
-        <p>Tham gia các sự kiện hiến máu để góp phần cứu giúp những người cần máu</p>
-      
+      <h1>Sự kiện hiến máu</h1>
+      <p>Tham gia các sự kiện hiến máu để góp phần cứu giúp những người cần máu</p>
+
+      {/* Thanh tìm kiếm theo khoảng ngày */}
+      <div className="date-search" style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
+        <label>Bạn cần đặt lịch vào thời gian nào?</label>
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => setStartDate(date)}
+          selectsStart
+          startDate={startDate}
+          endDate={endDate}
+          placeholderText="Từ ngày"
+          dateFormat="dd/MM/yyyy"
+          className="date-picker"
+        />
+        <span>-</span>
+        <DatePicker
+          selected={endDate}
+          onChange={(date) => setEndDate(date)}
+          selectsEnd
+          startDate={startDate}
+          endDate={endDate}
+          placeholderText="Đến ngày"
+          dateFormat="dd/MM/yyyy"
+          className="date-picker"
+        />
+      </div>
+
       {filteredEvents.map((event) => (
         <div className="event-horizontal-card" key={event.id}>
           {/* LEFT: Image */}
@@ -75,13 +122,18 @@ const EventList = () => {
           {/* RIGHT: Action */}
           <div className="event-horizontal-action">
             <p className="event-register-count">
-              👥 {event.registered || 0}/{event.capacity || 150} Người
+              👥 {event.registeredMemberCount || 0}/{event.maxRegistrations || 150} Người
             </p>
             <button
               className="event-horizontal-btn"
+              disabled={!isRegisterable(event.date)}
               onClick={() => handleRegisterClick(event)}
+              style={{
+                backgroundColor: isRegisterable(event.date) ? "#dc3545" : "#ccc",
+                cursor: isRegisterable(event.date) ? "pointer" : "not-allowed",
+              }}
             >
-              Đặt lịch
+              {isRegisterable(event.date) ? "Đặt lịch đăng ký" : "Chưa đến lúc đặt lịch"}
             </button>
           </div>
         </div>

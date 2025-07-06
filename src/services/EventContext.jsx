@@ -24,10 +24,18 @@ export const EventProvider = ({ children }) => {
   const { user } = useAuth();
   const [events, setEvents] = useState([]);
   const [blogs, setBlogs] = useState([]);
-  const [forms, setForms] = useState([]); // Thêm state cho forms
+  const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const isFetchingRef = useRef(false);
+
+  const bloodTypeMap = {
+    A: 2,
+    B: 3,
+    AB: 4,
+    O: 5,
+    "Không biết": 0,
+  };
 
   const getEventStatus = (eventDate, apiStatus) => {
     if (
@@ -54,13 +62,13 @@ export const EventProvider = ({ children }) => {
       time: `${event.startTime} - ${event.endTime}`,
       location: event.location,
       description: event.description,
-      session: event.session || "ALL", // Thêm session
-      donationMorningStart: event.donationMorningStart || "", // Thêm thời gian hiến máu buổi sáng
+      session: event.session || "ALL",
+      donationMorningStart: event.donationMorningStart || "",
       donationMorningEnd: event.donationMorningEnd || "",
-      donationAfternoonStart: event.donationAfternoonStart || "", // Thêm thời gian hiến máu buổi chiều
+      donationAfternoonStart: event.donationAfternoonStart || "",
       donationAfternoonEnd: event.donationAfternoonEnd || "",
       bloodTypes: Array.isArray(event.bloodTypes) ? event.bloodTypes : [],
-      maxRegistrations: event.maxRegistrations || 0, // Thêm số lượng đăng ký
+      maxRegistrations: event.maxRegistrations || 0,
       registeredMemberCount: event.registeredMemberCount || 0,
       image: event.imageUrl || event.images?.[0]?.url || "/assets/event-default.jpg",
       status: getEventStatus(event.date, event.status),
@@ -91,7 +99,8 @@ export const EventProvider = ({ children }) => {
     memberId: form.memberId,
     memberName: form.memberName,
     memberEmail: form.memberEmail,
-    bloodType: form.bloodType,
+    bloodTypeId: form.bloodTypeId,
+    bloodType: form.bloodTypeId === 0 ? "Không biết" : form.bloodType?.name || "",
     donatedBefore: form.donatedBefore,
     currentlyIll: form.currentlyIll,
     illnessDetails: form.illnessDetails,
@@ -292,56 +301,51 @@ export const EventProvider = ({ children }) => {
     }
   };
 
-  const getFormsByMember = useCallback(
-    async (memberId) => {
-      if (isFetchingRef.current) {
-        console.log("Bỏ qua gọi API vì đang tải, memberId:", memberId);
-        return { success: false, error: "Đang tải dữ liệu" };
-      }
-      isFetchingRef.current = true;
-      try {
-        setLoading(true);
-        console.log(
-          `Đang lấy biểu mẫu của thành viên ${memberId} từ /swp391/forms/member/${memberId}`
-        );
-        const source = axios.CancelToken.source();
-        const response = await eventService.getBloodDonationFormsByMember(
-          memberId,
-          {
-            cancelToken: source.token,
-          }
-        );
-        console.log("API response:", response.data);
-        const mappedForms = response.data.result.map(mapForm);
-        
-        setForms((prevForms) => {
-          const isDifferent = JSON.stringify(prevForms) !== JSON.stringify(mappedForms);
-          console.log("setForms gọi, dữ liệu mới khác cũ:", isDifferent);
-          if (isDifferent) {
-            return mappedForms;
-          }
-          return prevForms;
-        });
-        
-        setError(null);
-        return { success: true, forms: mappedForms };
-      } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log("Hủy lấy biểu mẫu:", error.message);
-          return { success: false, error: error.message };
+  const getFormsByMember = useCallback(async (memberId) => {
+    if (isFetchingRef.current) {
+      console.log("Bỏ qua gọi API vì đang tải, memberId:", memberId);
+      return { success: false, error: "Đang tải dữ liệu" };
+    }
+    isFetchingRef.current = true;
+    try {
+      setLoading(true);
+      console.log(
+        `Đang lấy biểu mẫu của thành viên ${memberId} từ /swp391/forms/member/${memberId}`
+      );
+      const source = axios.CancelToken.source();
+      const response = await eventService.getBloodDonationFormsByMember(
+        memberId,
+        {
+          cancelToken: source.token,
         }
-        console.error("Lỗi lấy biểu mẫu:", error.response?.status, error.message);
-        const errorMessage =
-          error.response?.data?.message || "Không thể tải biểu mẫu";
-        setError(errorMessage);
-        return { success: false, error: errorMessage };
-      } finally {
-        setLoading(false);
-        isFetchingRef.current = false;
+      );
+      console.log("API response:", response.data);
+      const mappedForms = response.data.result.map(mapForm);
+      setForms((prevForms) => {
+        const isDifferent = JSON.stringify(prevForms) !== JSON.stringify(mappedForms);
+        console.log("setForms gọi, dữ liệu mới khác cũ:", isDifferent);
+        if (isDifferent) {
+          return mappedForms;
+        }
+        return prevForms;
+      });
+      setError(null);
+      return { success: true, forms: mappedForms };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Hủy lấy biểu mẫu:", error.message);
+        return { success: false, error: error.message };
       }
-    },
-    [mapForm]
-  );
+      console.error("Lỗi lấy biểu mẫu:", error.response?.status, error.message);
+      const errorMessage =
+        error.response?.data?.message || "Không thể tải biểu mẫu";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+    }
+  }, []);
 
   const getFormByMemberAndId = async (formId, memberId) => {
     try {
@@ -422,15 +426,15 @@ export const EventProvider = ({ children }) => {
       formData.append("endTime", eventData.endTime);
       formData.append("location", eventData.location);
       formData.append("description", eventData.description);
-      formData.append("session", eventData.session); // Thêm session
-      formData.append("donationMorningStart", eventData.donationMorningStart || ""); // Thêm thời gian hiến máu
+      formData.append("session", eventData.session);
+      formData.append("donationMorningStart", eventData.donationMorningStart || "");
       formData.append("donationMorningEnd", eventData.donationMorningEnd || "");
       formData.append("donationAfternoonStart", eventData.donationAfternoonStart || "");
       formData.append("donationAfternoonEnd", eventData.donationAfternoonEnd || "");
-      (eventData.bloodTypeIds || []).forEach(id => {
+      (eventData.bloodTypeIds || []).forEach((id) => {
         formData.append("bloodTypeIds", id);
       });
-      formData.append("maxRegistrations", eventData.maxRegistrations || 0); // Thêm số lượng đăng ký
+      formData.append("maxRegistrations", eventData.maxRegistrations || 0);
       formData.append("staffId", user.id);
       if (eventData.image) {
         formData.append("image", eventData.image);
@@ -500,8 +504,8 @@ export const EventProvider = ({ children }) => {
       setLoading(false);
     }
   };
-  const incrementBlogView = (blogId) =>
-  eventService.incrementBlogView(blogId);
+
+  const incrementBlogView = (blogId) => eventService.incrementBlogView(blogId);
 
   const createBloodDonationForm = async (formData) => {
     try {
@@ -510,14 +514,18 @@ export const EventProvider = ({ children }) => {
       if (!user || !user.id) {
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
       }
-  
+
       // Validation dữ liệu đầu vào
       const errors = [];
+      const validBloodTypeIds = Object.values(bloodTypeMap); // [2, 3, 4, 5, 0]
       if (!formData.eventId || isNaN(parseInt(formData.eventId))) {
         errors.push("ID sự kiện không hợp lệ");
       }
       if (!formData.memberId || isNaN(parseInt(formData.memberId))) {
         errors.push("ID thành viên không hợp lệ");
+      }
+      if (!validBloodTypeIds.includes(parseInt(formData.bloodTypeId))) {
+        errors.push("ID nhóm máu không hợp lệ");
       }
       if (!formData.volumeMl || isNaN(parseInt(formData.volumeMl))) {
         errors.push("Thể tích máu không hợp lệ");
@@ -546,18 +554,19 @@ export const EventProvider = ({ children }) => {
       if (!Array.isArray(formData.female_questions)) {
         errors.push("Dữ liệu câu hỏi nữ giới không hợp lệ (phải là mảng)");
       }
-  
+
       if (errors.length > 0) {
         const errorMessage = `Dữ liệu không hợp lệ: ${errors.join(", ")}`;
         console.error(errorMessage);
         setError(errorMessage);
         return { success: false, error: errorMessage };
       }
-  
+
       // Xây dựng payload
       const payload = {
         eventId: parseInt(formData.eventId) || 0,
         memberId: parseInt(formData.memberId) || user.id,
+        bloodTypeId: formData.bloodTypeId === "0" ? 0 : parseInt(formData.bloodTypeId),
         volumeMl: parseInt(formData.volumeMl) || null,
         session: formData.session || null,
         donatedBefore: formData.donated_before === "co",
@@ -578,16 +587,21 @@ export const EventProvider = ({ children }) => {
         isPregnantOrRecentlyDelivered: formData.female_questions.includes("co_thai"),
         noneOfFemaleConditions: formData.female_questions.includes("khong_nu"),
       };
-  
+
       // Log để debug
       console.log("formData nhận được:", formData);
       console.log("Payload gửi đến API:", payload);
-  
+
       // Popup xác nhận trước khi gửi
       const confirmSubmit = window.confirm(
         `Xác nhận thông tin:\n` +
         `Sự kiện ID: ${payload.eventId}\n` +
         `Thành viên ID: ${payload.memberId}\n` +
+        `Nhóm máu: ${
+          Object.keys(bloodTypeMap).find(
+            (key) => bloodTypeMap[key] === parseInt(payload.bloodTypeId)
+          ) || "Không xác định"
+        }\n` +
         `Thể tích máu: ${payload.volumeMl}ml\n` +
         `Khung giờ: ${payload.session}\n` +
         `Từng hiến máu: ${payload.donatedBefore ? "Có" : "Không"}\n` +
@@ -609,12 +623,12 @@ export const EventProvider = ({ children }) => {
         `Không có điều kiện nữ giới: ${payload.noneOfFemaleConditions ? "Có" : "Không"}\n` +
         `Bạn có chắc chắn muốn gửi?`
       );
-  
+
       if (!confirmSubmit) {
         setLoading(false);
         return { success: false, error: "Người dùng đã hủy gửi biểu mẫu" };
       }
-  
+
       const source = axios.CancelToken.source();
       const response = await eventService.createBloodDonationForm(payload, {
         cancelToken: source.token,
@@ -656,33 +670,15 @@ export const EventProvider = ({ children }) => {
       formData.append("endTime", eventData.endTime);
       formData.append("location", eventData.location);
       formData.append("description", eventData.description);
-      formData.append("session", eventData.session); // Thêm session
-      formData.append("donationMorningStart", eventData.donationMorningStart || ""); // Thêm thời gian hiến máu
+      formData.append("session", eventData.session);
+      formData.append("donationMorningStart", eventData.donationMorningStart || "");
       formData.append("donationMorningEnd", eventData.donationMorningEnd || "");
       formData.append("donationAfternoonStart", eventData.donationAfternoonStart || "");
       formData.append("donationAfternoonEnd", eventData.donationAfternoonEnd || "");
-      const updateEvent = async (eventId, eventData) => {
-    try {
-      setLoading(true);
-      console.log(`Đang cập nhật sự kiện ${eventId} tại /swp391/events/${eventId}`);
-      if (!user || !user.id)
-        throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-      const formData = new FormData();
-      formData.append("title", eventData.title);
-      formData.append("date", eventData.date);
-      formData.append("startTime", eventData.startTime);
-      formData.append("endTime", eventData.endTime);
-      formData.append("location", eventData.location);
-      formData.append("description", eventData.description);
-      formData.append("session", eventData.session); // Thêm session
-      formData.append("donationMorningStart", eventData.donationMorningStart || ""); // Thêm thời gian hiến máu
-      formData.append("donationMorningEnd", eventData.donationMorningEnd || "");
-      formData.append("donationAfternoonStart", eventData.donationAfternoonStart || "");
-      formData.append("donationAfternoonEnd", eventData.donationAfternoonEnd || "");
-      (eventData.bloodTypeIds || []).forEach(id => {
+      (eventData.bloodTypeIds || []).forEach((id) => {
         formData.append("bloodTypeIds", id);
       });
-      formData.append("maxRegistrations", eventData.maxRegistrations || 0); // Thêm số lượng đăng ký
+      formData.append("maxRegistrations", eventData.maxRegistrations || 0);
       formData.append("staffId", user.id);
       if (eventData.image) {
         formData.append("image", eventData.image);
@@ -712,40 +708,7 @@ export const EventProvider = ({ children }) => {
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
-      setLoading(false);  
-    }
-  };
-      formData.append("maxRegistrations", eventData.maxRegistrations || 0); // Thêm số lượng đăng ký
-      formData.append("staffId", user.id);
-      if (eventData.image) {
-        formData.append("image", eventData.image);
-      }
-      const source = axios.CancelToken.source();
-      const response = await eventService.updateEvent(eventId, formData, {
-        cancelToken: source.token,
-      });
-      console.log("API response:", response.data);
-      const updatedEvent = mapEvent(response.data.result);
-      setEvents((prev) =>
-        prev.map((event) => (event.id === eventId ? updatedEvent : event))
-      );
-      setError(null);
-      return {
-        success: true,
-        message: "Cập nhật sự kiện thành công",
-        event: updatedEvent,
-      };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy cập nhật sự kiện:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("Lỗi cập nhật sự kiện:", error.response?.status, error.message);
-      const errorMessage = error.response?.data?.message || "Cập nhật sự kiện thất bại";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);  
+      setLoading(false);
     }
   };
 
@@ -785,13 +748,8 @@ export const EventProvider = ({ children }) => {
         console.log("Hủy cập nhật blog:", error.message);
         return { success: false, error: error.message };
       }
-      console.error(
-        "Lỗi cập nhật blog:",
-        error.response?.status,
-        error.message
-      );
-      const errorMessage =
-        error.response?.data?.message || "Cập nhật blog thất bại";
+      console.error("Lỗi cập nhật blog:", error.response?.status, error.message);
+      const errorMessage = error.response?.data?.message || "Cập nhật blog thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -802,17 +760,16 @@ export const EventProvider = ({ children }) => {
   const updateBloodDonationFormByStaff = async (formData) => {
     try {
       setLoading(true);
-      console.log(
-        "Đang cập nhật biểu mẫu hiến máu bởi staff tại /swp391/forms/approve"
-      );
+      console.log("Đang cập nhật biểu mẫu hiến máu bởi staff tại /swp391/forms/approve");
       if (!user || !user.id)
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-  
-      // Xây dựng payload dựa trên BloodDonationFormUpdateRequest
+
+      // Xây dựng payload
       const payload = {
-        formId: parseInt(formData.formId) || 0, // Bắt buộc theo DTO
+        formId: parseInt(formData.formId) || 0,
+        bloodTypeId: formData.bloodTypeId === "0" ? 0 : (formData.bloodTypeId ? parseInt(formData.bloodTypeId) : null),
         volumeMl: formData.volumeMl ? parseInt(formData.volumeMl) : null,
-        session: formData.session || null, // Chấp nhận null nếu không thay đổi
+        session: formData.session || null,
         donatedBefore: formData.donated_before === "co" || false,
         currentlyIll: formData.current_illness === "co" || false,
         illnessDetails: formData.illness_details || "",
@@ -830,27 +787,32 @@ export const EventProvider = ({ children }) => {
         isMenstruating: Array.isArray(formData.female_questions) && formData.female_questions.includes("dang_co_kinh") || false,
         isPregnantOrRecentlyDelivered: Array.isArray(formData.female_questions) && formData.female_questions.includes("co_thai") || false,
         noneOfFemaleConditions: Array.isArray(formData.female_questions) && formData.female_questions.includes("khong_nu") || false,
-        status: formData.status || null, // "APPROVED", "REJECTED", "PENDING", "COMPLETED" hoặc null
+        status: formData.status || null,
         approvedByStaffId: formData.approvedByStaffId ? parseInt(formData.approvedByStaffId) : null,
       };
-  
+
       // Kiểm tra formId hợp lệ
       if (!payload.formId) {
         throw new Error("ID biểu mẫu là bắt buộc.");
       }
-  
+
       // Validate session nếu được cung cấp
       if (payload.session && !["MORNING", "AFTERNOON"].includes(payload.session)) {
         throw new Error("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON.");
       }
-  
+
       // Validate status nếu được cung cấp
       if (payload.status && !["APPROVED", "REJECTED", "PENDING", "COMPLETED"].includes(payload.status)) {
         throw new Error("Trạng thái phải là APPROVED, REJECTED, PENDING, hoặc COMPLETED.");
       }
-  
+
+      // Validate bloodTypeId nếu được cung cấp
+      if (payload.bloodTypeId !== null && !validBloodTypeIds.includes(parseInt(payload.bloodTypeId))) {
+        throw new Error("ID nhóm máu không hợp lệ.");
+      }
+
       console.log("Payload gửi đến API:", payload);
-  
+
       const source = axios.CancelToken.source();
       const response = await eventService.updateBloodDonationFormByStaff(
         payload,
@@ -872,11 +834,7 @@ export const EventProvider = ({ children }) => {
         console.log("Hủy cập nhật biểu mẫu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error(
-        "Lỗi cập nhật biểu mẫu:",
-        error.response?.status,
-        error.message
-      );
+      console.error("Lỗi cập nhật biểu mẫu:", error.response?.status, error.message);
       const errorMessage =
         error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
       setError(errorMessage);
@@ -894,12 +852,13 @@ export const EventProvider = ({ children }) => {
       );
       if (!user || !user.id)
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-  
-      // Xây dựng payload dựa trên BloodDonationFormUpdateRequest
+
+      // Xây dựng payload
       const payload = {
-        formId: parseInt(formId) || 0, // Bắt buộc theo DTO
+        formId: parseInt(formId) || 0,
+        bloodTypeId: formData.bloodTypeId === "0" ? 0 : (formData.bloodTypeId ? parseInt(formData.bloodTypeId) : null),
         volumeMl: formData.volumeMl ? parseInt(formData.volumeMl) : null,
-        session: formData.session || null, // Chấp nhận null nếu không thay đổi
+        session: formData.session || null,
         donatedBefore: formData.donated_before === "co" || false,
         currentlyIll: formData.current_illness === "co" || false,
         illnessDetails: formData.illness_details || "",
@@ -918,19 +877,24 @@ export const EventProvider = ({ children }) => {
         isPregnantOrRecentlyDelivered: Array.isArray(formData.female_questions) && formData.female_questions.includes("co_thai") || false,
         noneOfFemaleConditions: Array.isArray(formData.female_questions) && formData.female_questions.includes("khong_nu") || false,
       };
-  
+
       // Kiểm tra formId hợp lệ
       if (!payload.formId) {
         throw new Error("ID biểu mẫu là bắt buộc.");
       }
-  
+
       // Validate session nếu được cung cấp
       if (payload.session && !["MORNING", "AFTERNOON"].includes(payload.session)) {
         throw new Error("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON.");
       }
-  
+
+      // Validate bloodTypeId nếu được cung cấp
+      if (payload.bloodTypeId !== null && !validBloodTypeIds.includes(parseInt(payload.bloodTypeId))) {
+        throw new Error("ID nhóm máu không hợp lệ.");
+      }
+
       console.log("Payload gửi đến API:", payload);
-  
+
       const source = axios.CancelToken.source();
       const response = await eventService.updateBloodDonationFormByMember(
         formId,
@@ -954,11 +918,7 @@ export const EventProvider = ({ children }) => {
         console.log("Hủy cập nhật biểu mẫu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error(
-        "Lỗi cập nhật biểu mẫu:",
-        error.response?.status,
-        error.message
-      );
+      console.error("Lỗi cập nhật biểu mẫu:", error.response?.status, error.message);
       const errorMessage =
         error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
       setError(errorMessage);
