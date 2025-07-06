@@ -21,6 +21,56 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
       alert('Bạn cần đồng ý cam kết trước khi đăng ký.');
       return;
     }
+    // Danh sách điều kiện loại trừ
+    const reasons = [];
+  
+    if (formData.past_diseases === 'co') {
+      reasons.push('Bạn từng mắc các bệnh nguy hiểm như HIV, viêm gan B/C, v.v.');
+    }
+  
+    if (formData.past_year?.includes('truyen_mau')) {
+      reasons.push('Bạn đã được truyền máu trong 12 tháng qua.');
+    }
+  
+    if (formData.past_6months?.includes('ma_tuy')) {
+      reasons.push('Bạn có sử dụng ma túy trong 6 tháng qua.');
+    }
+  
+    if (formData.past_6months?.includes('qhtd_nguy_co')) {
+      reasons.push('Bạn có quan hệ tình dục với người có nguy cơ cao.');
+    }
+  
+    if (formData.past_6months?.includes('qhtd_dong_gioi')) {
+      reasons.push('Bạn có quan hệ đồng giới trong 6 tháng qua.');
+    }
+  
+    if (formData.past_6months?.includes('song_chung_virusB')) {
+      reasons.push('Bạn sống chung với người nhiễm virus viêm gan B.');
+    }
+  
+    if (formData.past_month?.includes('vung_dich')) {
+      reasons.push('Bạn từng đi vào vùng dịch bệnh trong 1 tháng qua.');
+    }
+  
+    if (formData.past_2weeks?.includes('cum_cam_lanh')) {
+      reasons.push('Bạn đang bị cảm, cúm, sốt, đau họng trong 2 tuần qua.');
+    }
+  
+    if (formData.past_week?.includes('thuoc_khang_sinh')) {
+      reasons.push('Bạn đang sử dụng thuốc kháng sinh/kháng viêm.');
+    }
+  
+    if (formData.female_questions?.includes('co_thai')) {
+      reasons.push('Bạn đang mang thai hoặc nuôi con dưới 12 tháng.');
+    }
+  
+    if (reasons.length > 0) {
+      alert(
+        'Bạn hiện không đủ điều kiện hiến máu vì lý do sau:\n\n' +
+        reasons.map((r, i) => `${i + 1}. ${r}`).join('\n')
+      );
+      return;
+    }
     onNext();
   };
 
@@ -64,8 +114,8 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
 
       {/* 3 */}
       <div className="mb-4">
-        <p>. Trước đây, anh/chị có từng mắc một trong các bệnh: viêm gan siêu vi B, C, 
-          HIV, vảy nến, phì đại tiền liệt tuyến, sốc phản vệ, tai biến mạch máu não, 
+        <p>3. Trước đây, anh/chị có từng mắc một trong các bệnh: viêm gan siêu vi B, C,
+          HIV, vảy nến, phì đại tiền liệt tuyến, sốc phản vệ, tai biến mạch máu não,
           nhồi máu cơ tim, lupus ban đỏ, động kinh, ung thư, hen, được cấy ghép mô tạng?</p>
         <label>
           <input type="radio" name="past_diseases" value="co"
@@ -94,7 +144,7 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
         <label><input type="checkbox" name="past_year" value="sot_ret"
           checked={formData.past_year?.includes('sot_ret')}
           onChange={handleInputChange} /> Khỏi bệnh sau khi mắc một trong các bệnh: sốt rét,
-           giang mai, lao, viêm não-màng não, uốn ván, phẫu thuật ngoại khoa?</label>
+          giang mai, lao, viêm não-màng não, uốn ván, phẫu thuật ngoại khoa?</label>
         <label><input type="checkbox" name="past_year" value="truyen_mau"
           checked={formData.past_year?.includes('truyen_mau')}
           onChange={handleInputChange} /> Được truyền máu hoặc chế phẩm máu</label>
@@ -145,72 +195,72 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
       </div>
 
       {/* 6 */}
-        <div className="mb-4">
-          <p>6. Trong 1 tháng qua, anh/chị có dùng thuốc kháng sinh?</p>
-          <label>
-            <input type="checkbox" name="past_month" value="viem_duong_tiet_niu"
-              checked={formData.past_month?.includes('viem_duong_tiet_niu')}
-              onChange={handleInputChange} />
-            Khỏi bệnh sau khi mắc bệnh viêm đường tiết niệu, viêm da nhiễm trùng, viêm phế quản, viêm phổi, sởi, ho gà, quai bị, sốt xuất huyết, kiết lỵ, tả, Rubella?
-          </label>
-          <label>
-            <input type="checkbox" name="past_month" value="vung_dich"
-              checked={formData.past_month?.includes('vung_dich')}
-              onChange={handleInputChange} />
-            Đi vào vùng có dịch bệnh lưu hành (sốt rét, sốt xuất huyết, Zika,…)?
-          </label>
-          <label>
-            <input type="checkbox" name="past_month" value="khong"
-              checked={formData.past_month?.includes('khong')}
-              onChange={handleInputChange} />
-            Không
-          </label>
-        </div>
+      <div className="mb-4">
+        <p>6. Trong 1 tháng qua, anh/chị có dùng thuốc kháng sinh?</p>
+        <label>
+          <input type="checkbox" name="past_month" value="viem_duong_tiet_niu"
+            checked={formData.past_month?.includes('viem_duong_tiet_niu')}
+            onChange={handleInputChange} />
+          Khỏi bệnh sau khi mắc bệnh viêm đường tiết niệu, viêm da nhiễm trùng, viêm phế quản, viêm phổi, sởi, ho gà, quai bị, sốt xuất huyết, kiết lỵ, tả, Rubella?
+        </label>
+        <label>
+          <input type="checkbox" name="past_month" value="vung_dich"
+            checked={formData.past_month?.includes('vung_dich')}
+            onChange={handleInputChange} />
+          Đi vào vùng có dịch bệnh lưu hành (sốt rét, sốt xuất huyết, Zika,…)?
+        </label>
+        <label>
+          <input type="checkbox" name="past_month" value="khong"
+            checked={formData.past_month?.includes('khong')}
+            onChange={handleInputChange} />
+          Không
+        </label>
+      </div>
 
       {/* 7 */}
-    {/* 7 */}
-<div className="mb-4">
-  <p>7. Trong 2 tuần qua, anh/chị có:</p>
-  <label>
-    <input type="checkbox" name="past_2weeks" value="cum_cam_lanh"
-      checked={formData.past_2weeks?.includes('cum_cam_lanh')}
-      onChange={handleInputChange} />
-    Bị cúm, cảm lạnh, ho, nhức đầu, sốt, đau họng?
-  </label>
-  <label>
-    <input type="checkbox" name="past_2weeks" value="khong"
-      checked={formData.past_2weeks?.includes('khong')}
-      onChange={handleInputChange} />
-    Không
-  </label>
-  <textarea name="other_2weeks"
-    value={formData.other_2weeks || ''}
-    onChange={handleInputChange}
-    placeholder="khác (Ghi rõ nếu có triệu chứng)" />
-</div>
+      {/* 7 */}
+      <div className="mb-4">
+        <p>7. Trong 2 tuần qua, anh/chị có:</p>
+        <label>
+          <input type="checkbox" name="past_2weeks" value="cum_cam_lanh"
+            checked={formData.past_2weeks?.includes('cum_cam_lanh')}
+            onChange={handleInputChange} />
+          Bị cúm, cảm lạnh, ho, nhức đầu, sốt, đau họng?
+        </label>
+        <label>
+          <input type="checkbox" name="past_2weeks" value="khong"
+            checked={formData.past_2weeks?.includes('khong')}
+            onChange={handleInputChange} />
+          Không
+        </label>
+        <textarea name="other_2weeks"
+          value={formData.other_2weeks || ''}
+          onChange={handleInputChange}
+          placeholder="khác (Ghi rõ nếu có triệu chứng)" />
+      </div>
 
 
       {/* 8 */}
-     {/* 8 */}
-<div className="mb-4">
-  <p>8. Trong 1 tuần qua, anh/chị có:</p>
-  <label>
-    <input type="checkbox" name="past_week" value="thuoc_khang_sinh"
-      checked={formData.past_week?.includes('thuoc_khang_sinh')}
-      onChange={handleInputChange} />
-    Dùng thuốc kháng sinh, kháng viêm, Aspirin, Corticoid?
-  </label>
-  <label>
-    <input type="checkbox" name="past_week" value="khong"
-      checked={formData.past_week?.includes('khong')}
-      onChange={handleInputChange} />
-    Không
-  </label>
-  <textarea name="other_week"
-    value={formData.other_week || ''}
-    onChange={handleInputChange}
-    placeholder="khác (Ghi rõ nếu có triệu chứng)" />
-</div>
+      {/* 8 */}
+      <div className="mb-4">
+        <p>8. Trong 1 tuần qua, anh/chị có:</p>
+        <label>
+          <input type="checkbox" name="past_week" value="thuoc_khang_sinh"
+            checked={formData.past_week?.includes('thuoc_khang_sinh')}
+            onChange={handleInputChange} />
+          Dùng thuốc kháng sinh, kháng viêm, Aspirin, Corticoid?
+        </label>
+        <label>
+          <input type="checkbox" name="past_week" value="khong"
+            checked={formData.past_week?.includes('khong')}
+            onChange={handleInputChange} />
+          Không
+        </label>
+        <textarea name="other_week"
+          value={formData.other_week || ''}
+          onChange={handleInputChange}
+          placeholder="khác (Ghi rõ nếu có triệu chứng)" />
+      </div>
 
 
       {/* 9 */}
@@ -219,12 +269,12 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
         <label><input type="checkbox" name="female_questions" value="dang_co_kinh"
           checked={formData.female_questions?.includes('dang_co_kinh')}
           onChange={handleInputChange} /> Đang có kinh nguyệt</label>
-       <label>
-  <input type="checkbox" name="female_questions" value="co_thai"
-    checked={formData.female_questions?.includes('co_thai')}
-    onChange={handleInputChange} />
-  Đang mang thai hoặc nuôi con &lt;12 tháng
-</label>
+        <label>
+          <input type="checkbox" name="female_questions" value="co_thai"
+            checked={formData.female_questions?.includes('co_thai')}
+            onChange={handleInputChange} />
+          Đang mang thai hoặc nuôi con &lt;12 tháng
+        </label>
 
         <label><input type="checkbox" name="female_questions" value="khong"
           checked={formData.female_questions?.includes('khong')}

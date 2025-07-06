@@ -11,7 +11,7 @@ import { EmergencyProvider } from './services/EmergencyContext';
 import { DonationProvider } from './services/DonationContext';
 import { DonorProvider } from './services/DonorContext';
 import { NotificationProvider } from './services/NotificationsContext'; // ✅ thêm NotificationProvider
-
+import { BloodProvider } from './services/BloodContext';
 
 // Common Components
 import Navbar from './components/common/Navbar';
@@ -169,9 +169,11 @@ const App = () => (
             <QnAProvider>
               <DonationProvider>
                 <DonorProvider>
+                  <BloodProvider>
                   <BrowserRouter>
                     <AppContent />
                   </BrowserRouter>
+                  </BloodProvider>
                 </DonorProvider>
               </DonationProvider>
             </QnAProvider>

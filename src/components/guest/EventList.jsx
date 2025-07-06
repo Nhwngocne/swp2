@@ -44,14 +44,25 @@ const EventList = () => {
       navigate("/donation-blood-form", { state });
     }
   };
+  const isRegisterable = (eventDateStr) => {
+    const today = new Date();
+    const eventDate = new Date(eventDateStr);
+
+    // Ngày bắt đầu được phép đăng ký = eventDate - 7 ngày
+    const registerDeadline = new Date(eventDate);
+    registerDeadline.setDate(registerDeadline.getDate() - 7);
+
+    return today >= registerDeadline;
+  };
+  
 
   if (loading) return <div style={{ textAlign: "center", padding: 20 }}>Đang tải...</div>;
   if (error) return <div style={{ textAlign: "center", padding: 20, color: "red" }}>Lỗi: {error}</div>;
 
   return (
     <div className="event-container">
-        <h1>Sự kiện hiến máu</h1>
-        <p>Tham gia các sự kiện hiến máu để góp phần cứu giúp những người cần máu</p>
+      <h1>Sự kiện hiến máu</h1>
+      <p>Tham gia các sự kiện hiến máu để góp phần cứu giúp những người cần máu</p>
       
       {filteredEvents.map((event) => (
         <div className="event-horizontal-card" key={event.id}>
@@ -75,13 +86,18 @@ const EventList = () => {
           {/* RIGHT: Action */}
           <div className="event-horizontal-action">
             <p className="event-register-count">
-              👥 {event.registered || 0}/{event.capacity || 150} Người
+              👥 {event.registeredMemberCount || 0}/{event.maxRegistrations || 150} Người
             </p>
             <button
               className="event-horizontal-btn"
+              disabled={!isRegisterable(event.date)}
               onClick={() => handleRegisterClick(event)}
+              style={{
+                backgroundColor: isRegisterable(event.date) ? "#dc3545" : "#ccc",
+                cursor: isRegisterable(event.date) ? "pointer" : "not-allowed"
+              }}
             >
-              Đặt lịch
+              {isRegisterable(event.date) ? "Đặt lịch đăng ký" : "Chưa đến lúc đặt lịch"}
             </button>
           </div>
         </div>
