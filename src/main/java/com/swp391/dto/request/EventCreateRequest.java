@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -14,7 +15,7 @@ import java.util.List;
 public class EventCreateRequest {
     String title;
     String description;
-    String date; // yyyy-MM-dd
+    LocalDate date; // yyyy-MM-dd
     String startTime; // HH:mm AM/PM
     String endTime;   // HH:mm AM/PM
     String location;

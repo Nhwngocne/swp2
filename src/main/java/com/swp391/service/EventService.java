@@ -7,6 +7,7 @@ import com.swp391.entity.Event;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.EventMapper;
+import com.swp391.repository.BloodDonationFormRepository;
 import com.swp391.repository.BloodTypeRepository;
 import com.swp391.repository.EventRepository;
 import com.swp391.repository.StaffRepository;
@@ -19,7 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-    import java.io.IOException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,7 @@ public class EventService {
     ImageService imageService;
     StaffRepository staffRepository;
     BloodTypeRepository bloodTypeRepository;
+    BloodDonationFormRepository formRepository;
 
     @PreAuthorize("hasRole('STAFF')")
     public EventResponse createEvent(EventCreateRequest request) throws IOException {
@@ -82,6 +84,7 @@ public class EventService {
         event = eventRepository.save(event);
         return eventMapper.toEventResponse(event);
     }
+
     public void deleteEvent(int id) {
         eventRepository.deleteById(id);
     }
@@ -92,20 +95,28 @@ public class EventService {
                 .peek(event -> {
                     LocalDate currentDate = LocalDate.now();
                     if (event.getDate().isBefore(currentDate)) {
-                        event.setStatus("COMPLETED"); // Hoặc lưu lại nếu cần
-                        eventRepository.save(event); // Lưu thay đổi (tùy chọn)
-                    } else if (event.getDate().isEqual(currentDate)) {
-                        // Logic cho ONGOING (có thể dựa trên startTime/endTime)
+                        event.setStatus("COMPLETED");
+                        eventRepository.save(event);
                     }
                 })
-                .map(eventMapper::toEventResponse)
-                .filter(response -> !response.getStatus().equals("COMPLETED")) // Không hiển thị sự kiện đã hoàn thành
+                .map(event -> {
+                    EventResponse response = eventMapper.toEventResponse(event);
+                    int approvedCount = formRepository.countByEventIdAndStatus(event.getId(), "APPROVED");
+                    response.setRegisteredMemberCount(approvedCount); // 👈 Gán giá trị
+                    return response;
+                })
+                .filter(response -> !"COMPLETED".equals(response.getStatus()))
                 .toList();
     }
+
 
     public EventResponse getEventById(int id) {
         var event = eventRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EVENT_NOT_EXISTED));
-        return eventMapper.toEventResponse(event);
+        var response = eventMapper.toEventResponse(event);
+        int count = formRepository.countByEventIdAndStatus(event.getId(), "APPROVED");
+        response.setRegisteredMemberCount(count);
+        return response;
     }
+
 }

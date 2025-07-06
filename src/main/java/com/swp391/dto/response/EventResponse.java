@@ -1,5 +1,6 @@
 package com.swp391.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.swp391.Enum.EventStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ import java.util.List;
 public class EventResponse {
     private int id;
     private String title;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;

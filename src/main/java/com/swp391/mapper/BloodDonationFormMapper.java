@@ -7,9 +7,11 @@ import com.swp391.dto.response.DonationHistoryResponse;
 import com.swp391.entity.BloodDonationForm;
 import com.swp391.entity.DonationHistory;
 import org.mapstruct.*;
+
 @Mapper(componentModel = "spring")
 public interface BloodDonationFormMapper {
 
+    @Mapping(target = "bloodType", ignore = true)
     BloodDonationForm toForm(BloodDonationFormCreateRequest request);
 
     @Mapping(source = "event.id", target = "eventId")
@@ -21,12 +23,14 @@ public interface BloodDonationFormMapper {
     @Mapping(source = "member.email", target = "memberEmail")
     @Mapping(source = "approvedBy.id", target = "approvedByStaffId")
     @Mapping(source = "approvedBy.name", target = "approvedByStaffName")
-    //@Mapping(source = "donationHistory", target = "donationHistory")
+    @Mapping(target = "bloodTypeId", expression = "java(form.getBloodType() != null ? form.getBloodType().getId() : 0)")
+    @Mapping(target = "bloodTypeName", expression = "java(form.getBloodType() != null ? form.getBloodType().getName() : \"Không biết\")")
     BloodDonationFormResponse toFormResponse(BloodDonationForm form);
 
     // Mapping nested
-    //DonationHistoryResponse toDonationHistoryResponse(DonationHistory history);
+    // DonationHistoryResponse toDonationHistoryResponse(DonationHistory history);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "bloodType", ignore = true)
     void updateForm(@MappingTarget BloodDonationForm form, BloodDonationFormUpdateRequest request);
 }

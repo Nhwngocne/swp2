@@ -27,6 +27,8 @@ public class BloodDonationFormResponse {
     Integer memberId;
     String memberName;
     String memberEmail;
+    Integer bloodTypeId; // Thêm trường này
+    String bloodTypeName; // Thêm trường này để trả về tên nhóm máu
 
     // Nội dung đơn đăng ký
     Integer volumeMl;

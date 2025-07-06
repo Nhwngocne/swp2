@@ -25,6 +25,8 @@ public class BloodDonationFormCreateRequest {
 
     String session;
 
+    Integer bloodTypeId;
+
     // Câu 1
     Boolean donatedBefore;
 

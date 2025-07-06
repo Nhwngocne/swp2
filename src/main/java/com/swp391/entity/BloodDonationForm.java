@@ -26,6 +26,10 @@ public class BloodDonationForm {
 
     @Column
     LocalTime endTime;
+    // Thêm quan hệ với BloodType
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blood_type_id")
+    BloodType bloodType;
 
     // Câu 1: Đã từng hiến máu chưa
     Boolean donatedBefore;

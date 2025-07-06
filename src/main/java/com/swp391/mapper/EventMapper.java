@@ -22,7 +22,6 @@ public interface EventMapper {
 
     @Mapping(target = "status", constant = "UPCOMING")
     @Mapping(source = "staffId", target = "createdBy.id")
-    @Mapping(source = "date", target = "date", qualifiedByName = "stringToLocalDate")
     @Mapping(source = "startTime", target = "startTime", qualifiedByName = "stringToLocalTime")
     @Mapping(source = "endTime", target = "endTime", qualifiedByName = "stringToLocalTime")
     @Mapping(source = "donationMorningStart", target = "donationMorningStart", qualifiedByName = "stringToLocalTime")
@@ -42,7 +41,6 @@ public interface EventMapper {
     @Mapping(target = "images", ignore = true)
     @Mapping(target = "registeredMembers", ignore = true)
     @Mapping(target = "bloodTypes", ignore = true)
-    @Mapping(source = "date", target = "date", qualifiedByName = "stringToLocalDate")
     @Mapping(source = "startTime", target = "startTime", qualifiedByName = "stringToLocalTime")
     @Mapping(source = "endTime", target = "endTime", qualifiedByName = "stringToLocalTime")
     @Mapping(source = "donationMorningStart", target = "donationMorningStart", qualifiedByName = "stringToLocalTime")
@@ -51,20 +49,17 @@ public interface EventMapper {
     @Mapping(source = "donationAfternoonEnd", target = "donationAfternoonEnd", qualifiedByName = "stringToLocalTime")
     void updateEvent(@MappingTarget Event entity, EventCreateRequest request);
 
-    @Named("stringToLocalDate")
-    default LocalDate stringToLocalDate(String date) {
-        return date != null ? LocalDate.parse(date) : null;
-    }
-
     @Named("stringToLocalTime")
     default LocalTime stringToLocalTime(String time) {
-        if (time == null) return null;
+        if (time == null || time.trim().isEmpty()) return null;
+
         try {
             return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
         } catch (Exception e) {
             return LocalTime.parse(time, DateTimeFormatter.ofPattern("hh:mm a"));
         }
     }
+
 
     @Named("mapRegisteredMembersSize")
     default Integer mapRegisteredMembersSize(java.util.Collection<?> registeredMembers) {

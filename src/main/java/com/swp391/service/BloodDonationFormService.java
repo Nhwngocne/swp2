@@ -1,20 +1,13 @@
 package com.swp391.service;
 
-
 import com.swp391.dto.request.BloodDonationFormCreateRequest;
 import com.swp391.dto.request.BloodDonationFormUpdateRequest;
 import com.swp391.dto.response.BloodDonationFormResponse;
-import com.swp391.entity.BloodDonationForm;
-import com.swp391.entity.Event;
-import com.swp391.entity.Member;
-import com.swp391.entity.Staff;
+import com.swp391.entity.*;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.BloodDonationFormMapper;
-import com.swp391.repository.BloodDonationFormRepository;
-import com.swp391.repository.EventRepository;
-import com.swp391.repository.MemberRepository;
-import com.swp391.repository.StaffRepository;
+import com.swp391.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -35,6 +28,7 @@ public class BloodDonationFormService {
     MemberRepository memberRepository;
     StaffRepository staffRepository;
     NotificationService notificationService;
+    BloodTypeRepository bloodTypeRepository;
 
     // Tạo mới đơn đăng ký
     public BloodDonationFormResponse createForm(BloodDonationFormCreateRequest request) {
@@ -45,6 +39,13 @@ public class BloodDonationFormService {
                 .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
         Staff staff = staffRepository.findById(event.getCreatedBy().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+
+        // Validate and fetch BloodType if bloodTypeId is not 0
+        BloodType bloodType = null;
+        if (request.getBloodTypeId() != null && request.getBloodTypeId() != 0) {
+            bloodType = bloodTypeRepository.findById(request.getBloodTypeId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+        }
 
         LocalTime startTime;
         LocalTime endTime;
@@ -63,6 +64,7 @@ public class BloodDonationFormService {
         form.setEvent(event);
         form.setMember(member);
         form.setApprovedBy(staff);
+        form.setBloodType(bloodType); // Set BloodType (null if bloodTypeId is 0)
         form.setStatus("PENDING");
         form.setCreatedAt(LocalDate.now());
 
@@ -71,14 +73,13 @@ public class BloodDonationFormService {
 
         form = formRepository.save(form);
 
-        //  Gửi thông báo cho staff
+        // Gửi thông báo cho staff
         notificationService.createNotificationForStaff(
                 staff.getId(),
                 member.getId(),
                 "Có đơn đăng ký hiến máu mới từ thành viên: " + member.getName()
                         + " cho sự kiện: " + event.getTitle()
         );
-
 
         return formMapper.toFormResponse(form);
     }
@@ -114,7 +115,6 @@ public class BloodDonationFormService {
         return formMapper.toFormResponse(form);
     }
 
-
     // Member cập nhật lại form nếu chưa duyệt
     public BloodDonationFormResponse memberUpdateForm(int formId, int memberId, BloodDonationFormUpdateRequest request) {
         BloodDonationForm form = formRepository.findById(formId)
@@ -143,7 +143,18 @@ public class BloodDonationFormService {
             throw new AppException(ErrorCode.INVALID_SESSION);
         }
 
-        // Cập nhật dữ liệu từ request (tương tự create)
+        // Update BloodType if provided
+        if (request.getBloodTypeId() != null) {
+            if (request.getBloodTypeId() == 0) {
+                form.setBloodType(null); // Set bloodType to null for "Không biết"
+            } else {
+                BloodType bloodType = bloodTypeRepository.findById(request.getBloodTypeId())
+                        .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+                form.setBloodType(bloodType);
+            }
+        }
+
+        // Cập nhật dữ liệu từ request
         form.setStartTime(startTime);
         form.setEndTime(endTime);
 
