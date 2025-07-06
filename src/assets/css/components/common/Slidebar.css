@@ -14,7 +14,7 @@
 }
 /* Đảm bảo phần main-content không bị đè */
 .main-content {
-  margin-left: 23px; /* đúng bằng chiều rộng sidebar */
+  margin-left: 0px; /* đúng bằng chiều rộng sidebar */
   transition: margin-left 0.3s ease;
 }
 /* Overlay (for mobile) */
