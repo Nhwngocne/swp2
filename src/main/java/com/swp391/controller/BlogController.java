@@ -23,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/blogs")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class BlogController {
+public class    BlogController {
 
     BlogService blogService;
     ImageService imageService;
