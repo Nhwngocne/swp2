@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class AdminService {
     PasswordEncoder passwordEncoder;
     StaffRepository staffRepository;
     MemberRepository memberRepository;
+    NotificationService notificationService;
     // Create admin
     public AdminResponse createAdmin(AdminCreateRequest request) {
         Admin admin = adminMapper.toAdmin(request);
@@ -112,6 +114,26 @@ public class AdminService {
         }
 
         memberRepository.save(member);
+    }
+
+    // Send notification for all
+    @PreAuthorize("hasRole('ADMIN')")
+    public void sendNotificationToAll(String title, String content) {
+        // Lấy danh sách tất cả staff
+        List<Staff> staffs = staffRepository.findAll();
+        for (Staff staff : staffs) {
+            // Gửi thông báo cho từng staff
+            String message = String.format("Admin đã gửi thông báo hệ thống: %s", content);
+            notificationService.createNotificationForStaffOnly2(staff.getId(),title ,message);
+        }
+
+        // Lấy danh sách tất cả member
+        List<Member> members = memberRepository.findAll();
+        for (Member member : members) {
+            // Gửi thông báo cho từng member
+            String message = String.format("Admin đã gửi thông báo hệ thống: %s", content);
+            notificationService.createNotificationForMember2(member.getId(),title, message);
+        }
     }
 
 

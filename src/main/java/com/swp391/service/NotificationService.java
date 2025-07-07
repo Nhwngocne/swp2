@@ -11,6 +11,7 @@ import com.swp391.mapper.NotificationMapper;
 import com.swp391.repository.MemberRepository;
 import com.swp391.repository.NotificationRepository;
 import com.swp391.repository.StaffRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.Authentication;
@@ -19,7 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -41,6 +45,20 @@ public class NotificationService {
         Notification notification = Notification.builder()
                 .member(member)
                 .title("forMember")
+                .message(content)
+                .createdAt(LocalDateTime.now())
+                .read(false)
+                .build();
+
+        notificationRepository.save(notification);
+    }
+    public void createNotificationForMember2(int memberId,String title ,String content) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        Notification notification = Notification.builder()
+                .member(member)
+                .title(title)
                 .message(content)
                 .createdAt(LocalDateTime.now())
                 .read(false)
@@ -125,6 +143,19 @@ public class NotificationService {
 
         notificationRepository.save(notification);
     }
+    public void createNotificationForStaffOnly2(int staffId,String title ,String content) {
+        Staff staff = staffRepository.findById(staffId)
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+
+        Notification notification = Notification.builder()
+                .staff(staff)
+                .message(content)
+                .title(title)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        notificationRepository.save(notification);
+    }
     public String getCurrentUserRole() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getAuthorities().stream()
@@ -185,5 +216,38 @@ public class NotificationService {
         notificationRepository.saveAll(notifications);
     }
 
-   }
+    // Lấy tất cả thông báo của admin gửi
+    public List<NotificationResponse> getAllSystemNotifications() {
+        List<String> systemTitles = List.of("Thông tin", "Thành công", "Cảnh báo", "Lỗi");
+
+        // Group by (title + message), chỉ lấy notification mới nhất (createdAt lớn nhất)
+        Map<String, Notification> grouped = notificationRepository.findAll()
+                .stream()
+                .filter(n -> systemTitles.contains(n.getTitle()))
+                .collect(Collectors.toMap(
+                        n -> n.getTitle() + "|" + n.getMessage(), // key: title + message
+                        n -> n,                                   // value
+                        (existing, replacement) ->
+                                existing.getCreatedAt().isAfter(replacement.getCreatedAt())
+                                        ? existing : replacement
+                ));
+
+        // Convert to List sorted by createdAt DESC
+        return grouped.values()
+                .stream()
+                .sorted(Comparator.comparing(Notification::getCreatedAt).reversed())
+                .map(notificationMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional
+    public void deleteByTitleAndMessage(String title, String message) {
+        notificationRepository.deleteByTitleAndMessage(title, message);
+    }
+
+
+
+
+}
+
 

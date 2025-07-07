@@ -1,8 +1,10 @@
 package com.swp391.controller;
 
 import com.swp391.dto.request.NotificationRequest;
+import com.swp391.dto.request.NotificationShortRequest;
 import com.swp391.dto.response.ApiResponse;
 import com.swp391.dto.response.NotificationResponse;
+import com.swp391.service.AdminService;
 import com.swp391.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,7 +20,7 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class NotificationController {
-
+    AdminService adminService;
     NotificationService notificationService;
 
     // STAFF tạo thông báo cho member
@@ -31,20 +33,21 @@ public class NotificationController {
                 .build();
     }
 
-    // MEMBER hoặc STAFF xem thông báo của chính mình (lọc theo title)
     @GetMapping("/my")
     @PreAuthorize("hasAnyRole('MEMBER', 'STAFF')")
     public ApiResponse<List<NotificationResponse>> getMyNotifications() {
         List<NotificationResponse> notifications = notificationService.getMyNotifications();
         String role = notificationService.getCurrentUserRole();
 
+        List<String> systemTitles = List.of("Thông tin", "Thành công", "Cảnh báo", "Lỗi");
+
         if ("MEMBER".equals(role)) {
             notifications = notifications.stream()
-                    .filter(n -> "forMember".equals(n.getTitle()))
+                    .filter(n -> "forMember".equals(n.getTitle()) || systemTitles.contains(n.getTitle()))
                     .toList();
         } else if ("STAFF".equals(role)) {
             notifications = notifications.stream()
-                    .filter(n -> "forStaff".equals(n.getTitle()))
+                    .filter(n -> "forStaff".equals(n.getTitle()) || systemTitles.contains(n.getTitle()))
                     .toList();
         }
 
@@ -115,4 +118,39 @@ public class NotificationController {
                 .message("Cập nhật trạng thái tất cả thông báo thành công.")
                 .build();
     }
+
+    // Admin gửi thông báo cho tất cả member
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/all_member")
+    public ApiResponse<String> sendNotificationToStaffAndMember(
+            @RequestBody NotificationRequest request)
+    {
+        adminService.sendNotificationToAll(request.getTitle(), request.getMessage());
+        return ApiResponse.<String>builder()
+                .result("Notification has been sent to staff and member.")
+                .build();
+    }
+    // All notifications for all users
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<List<NotificationResponse>> getAllNotifications() {
+        List<NotificationResponse> notifications = notificationService.getAllSystemNotifications();
+        return ApiResponse.<List<NotificationResponse>>builder()
+                .result(notifications)
+                .message("Lấy tất cả thông báo thành công.")
+                .build();
+    }
+    // Delete notification by ID
+    @DeleteMapping("/delete/group")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<String> deleteNotificationGroup(
+            @RequestParam String title,
+            @RequestParam String message) {
+        notificationService.deleteByTitleAndMessage(title, message);
+        return ApiResponse.<String>builder()
+                .result("Notification group deleted successfully.")
+                .message("Đã xóa tất cả thông báo theo title & message.")
+                .build();
+    }
+
 }
