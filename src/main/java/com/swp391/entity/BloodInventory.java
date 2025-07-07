@@ -34,6 +34,6 @@ public class BloodInventory {
     @ManyToOne(fetch = FetchType.LAZY)
     Staff staff;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     Admin admin;
 }
