@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useEvents } from '../../services/EventContext';
-import { useAuth } from '../../services/AuthContext';
+import { useAuth } from "../../services/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import '../../assets/css/components/staff/EventManager.css';
 
@@ -18,14 +18,24 @@ const EventManager = () => {
   }, [isStaff, isAdmin]);
 
   const handleEdit = (event) => {
-    // Chuyển sang trang chỉnh sửa sự kiện nếu bạn có route này
+    if (event.status === 'ONGOING') {
+      alert('Không thể chỉnh sửa sự kiện đang diễn ra.');
+      return;
+    }
     navigate(`/staff/events/edit/${event.id}`);
   };
 
-  const handleDelete = async (eventId) => {
+
+
+  const handleDelete = async (event) => {
+    if (event.status === 'ONGOING') {
+      alert('Không thể xóa sự kiện đang diễn ra.');
+      return;
+    }
+
     if (window.confirm('Bạn có chắc chắn muốn xóa sự kiện này?')) {
       try {
-        const result = await deleteEvent(eventId);
+        const result = await deleteEvent(event.id);
         if (result.success) {
           alert(result.message);
         } else {
@@ -37,6 +47,7 @@ const EventManager = () => {
       }
     }
   };
+
 
   if (!(isStaff || isAdmin)) {
     return <div>Bạn không có quyền truy cập trang này.</div>;
@@ -98,10 +109,22 @@ const EventManager = () => {
             </div>
 
             <div className="event-actions">
-              <button onClick={() => handleEdit(event)}>Chỉnh sửa</button>
-              <button onClick={() => handleDelete(event.id)} className="delete-btn">
+              <button
+                onClick={() => handleEdit(event)}
+                disabled={event.status === 'ONGOING'}
+                title={event.status === 'ONGOING' ? 'Không thể chỉnh sửa sự kiện đang diễn ra' : ''}
+              >
+                Chỉnh sửa
+              </button>
+              <button
+                onClick={() => handleDelete(event)}
+                disabled={event.status === 'ONGOING'}
+                className="delete-btn"
+                title={event.status === 'ONGOING' ? 'Không thể xóa sự kiện đang diễn ra' : ''}
+              >
                 Xóa
               </button>
+
             </div>
           </div>
         ))}

@@ -51,7 +51,7 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
           { path: "/manage-news", label: "Quản lý tin tức" },
           { path: "/manage-notifications", label: "Quản lý thông báo" },
           { path: "/memberManagerAd", label: "Quản lý thành viên" },
-          { path: "/staffmander", label: "Quản lý nhân viên" },
+          { path: "/staff-manager", label: "Quản lý nhân viên" },
         ];
 
       default:

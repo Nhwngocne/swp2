@@ -130,7 +130,7 @@ const FormDetail = () => {
           </section>
         </div>
       </div>
-      {role === "MEMBER" && form.status !== "APPROVED" && (
+      {role === "MEMBER" && (
         <button className="delete-button" onClick={handleDelete}>Xóa đơn đăng ký</button>
       )}
       {role === "MEMBER" && (

@@ -59,13 +59,14 @@ import BloodFormList from './components/staff/FormList/BloodFormList';
 import BloodIntentList from './components/staff/FormList/BloodIntentList';
 import EmergencyList from './components/staff/FormList/EmergencyList';
 import BloodInventoryForm from './components/staff/BloodInventoryForm';
-import DonationBloodResult from './components/staff/DonationBloodResult';
+import DonationBloodResult from './components/staff/DonationBloodResult'
 import QnA from './components/staff/QnA'; // Thêm DonationBloodResult
+import EditEvent from './components/staff/EditEvent';
 
 
 // Admin Components
 import NewsManager from './components/admin/NewsManager';
-import AdminDaschboard from './components/admin/AdminDashboard';
+import AdminDashboard from './components/staff/StaffDashboard';
 import NotificationManager from './components/admin/NotificationManager';
 import MemberManagerAd from './components/admin/MemberManagerAd';
 import StaffManager from './components/admin/StaffManager';
@@ -134,19 +135,22 @@ const AppContent = () => {
           <Route path="/bloodIntentList" element={<ProtectedRoute requiredRole="STAFF"><BloodIntentList /></ProtectedRoute>} />
           <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
           <Route path="/bloodInventoryForm" element={<ProtectedRoute requiredRole="STAFF"><BloodInventoryForm /></ProtectedRoute>} />
-          {/* Staff */}
-          <Route path="/donationBloodResult" element={<ProtectedRoute requiredRole="STAFF"><DonationBloodResult /></ProtectedRoute>} />
           <Route path="/staff/formDetail/:id" element={<ProtectedRoute requiredRole="STAFF"><FormDetail /></ProtectedRoute>} />
           <Route path="/qna" element={<ProtectedRoute requiredRole="STAFF"><QnA /></ProtectedRoute>} />
+          <Route path="/staff/events/edit/:id" element={<ProtectedRoute requiredRole="STAFF"><EditEvent /></ProtectedRoute>} />
+          <Route path="/donation-result/:id" element={<ProtectedRoute><DonationBloodResult /></ProtectedRoute>}/>
+
+
 
 
           {/* Admin */}
           <Route path="/manage" element={<ProtectedRoute requiredRole="ADMIN"><Manage /></ProtectedRoute>} />
           <Route path="/manage-news" element={<ProtectedRoute requiredRole="ADMIN"><NewsManager /></ProtectedRoute>} />
           <Route path="/manage-notifications" element={<ProtectedRoute requiredRole="ADMIN"><NotificationManager /></ProtectedRoute>} />
-          <Route path="/admin-dashboard" element={<ProtectedRoute requiredRole="ADMIN"><AdminDaschboard /></ProtectedRoute>} />
+          <Route path='/admin-dashboard' element={<ProtectedRoute requiredRole="ADMIN"><MemberManagerAd /></ProtectedRoute>} />
           <Route path="/memberManagerAd" element={<ProtectedRoute requiredRole="ADMIN"><MemberManagerAd /></ProtectedRoute>} />
-          <Route path="/staffmander" element={<ProtectedRoute requiredRole="ADMIN"><StaffManager /></ProtectedRoute>} />
+          <Route path="/staff-manager" element={<ProtectedRoute requiredRole="ADMIN"><StaffManager /></ProtectedRoute>} />
+
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -313,7 +313,7 @@ export const EventProvider = ({ children }) => {
         );
         console.log("API response:", response.data);
         const mappedForms = response.data.result.map(mapForm);
-        
+
         setForms((prevForms) => {
           const isDifferent = JSON.stringify(prevForms) !== JSON.stringify(mappedForms);
           console.log("setForms gọi, dữ liệu mới khác cũ:", isDifferent);
@@ -322,7 +322,7 @@ export const EventProvider = ({ children }) => {
           }
           return prevForms;
         });
-        
+
         setError(null);
         return { success: true, forms: mappedForms };
       } catch (error) {
@@ -501,7 +501,7 @@ export const EventProvider = ({ children }) => {
     }
   };
   const incrementBlogView = (blogId) =>
-  eventService.incrementBlogView(blogId);
+    eventService.incrementBlogView(blogId);
 
   const createBloodDonationForm = async (formData) => {
     try {
@@ -510,7 +510,7 @@ export const EventProvider = ({ children }) => {
       if (!user || !user.id) {
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
       }
-  
+
       // Validation dữ liệu đầu vào
       const errors = [];
       if (!formData.eventId || isNaN(parseInt(formData.eventId))) {
@@ -546,14 +546,14 @@ export const EventProvider = ({ children }) => {
       if (!Array.isArray(formData.female_questions)) {
         errors.push("Dữ liệu câu hỏi nữ giới không hợp lệ (phải là mảng)");
       }
-  
+
       if (errors.length > 0) {
         const errorMessage = `Dữ liệu không hợp lệ: ${errors.join(", ")}`;
         console.error(errorMessage);
         setError(errorMessage);
         return { success: false, error: errorMessage };
       }
-  
+
       // Xây dựng payload
       const payload = {
         eventId: parseInt(formData.eventId) || 0,
@@ -578,11 +578,11 @@ export const EventProvider = ({ children }) => {
         isPregnantOrRecentlyDelivered: formData.female_questions.includes("co_thai"),
         noneOfFemaleConditions: formData.female_questions.includes("khong_nu"),
       };
-  
+
       // Log để debug
       console.log("formData nhận được:", formData);
       console.log("Payload gửi đến API:", payload);
-  
+
       // Popup xác nhận trước khi gửi
       const confirmSubmit = window.confirm(
         `Xác nhận thông tin:\n` +
@@ -609,12 +609,12 @@ export const EventProvider = ({ children }) => {
         `Không có điều kiện nữ giới: ${payload.noneOfFemaleConditions ? "Có" : "Không"}\n` +
         `Bạn có chắc chắn muốn gửi?`
       );
-  
+
       if (!confirmSubmit) {
         setLoading(false);
         return { success: false, error: "Người dùng đã hủy gửi biểu mẫu" };
       }
-  
+
       const source = axios.CancelToken.source();
       const response = await eventService.createBloodDonationForm(payload, {
         cancelToken: source.token,
@@ -644,110 +644,88 @@ export const EventProvider = ({ children }) => {
   };
 
   const updateEvent = async (eventId, eventData) => {
-    try {
-      setLoading(true);
-      console.log(`Đang cập nhật sự kiện ${eventId} tại /swp391/events/${eventId}`);
-      if (!user || !user.id)
-        throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-      const formData = new FormData();
-      formData.append("title", eventData.title);
-      formData.append("date", eventData.date);
-      formData.append("startTime", eventData.startTime);
-      formData.append("endTime", eventData.endTime);
-      formData.append("location", eventData.location);
-      formData.append("description", eventData.description);
-      formData.append("session", eventData.session); // Thêm session
-      formData.append("donationMorningStart", eventData.donationMorningStart || ""); // Thêm thời gian hiến máu
-      formData.append("donationMorningEnd", eventData.donationMorningEnd || "");
-      formData.append("donationAfternoonStart", eventData.donationAfternoonStart || "");
-      formData.append("donationAfternoonEnd", eventData.donationAfternoonEnd || "");
-      const updateEvent = async (eventId, eventData) => {
-    try {
-      setLoading(true);
-      console.log(`Đang cập nhật sự kiện ${eventId} tại /swp391/events/${eventId}`);
-      if (!user || !user.id)
-        throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-      const formData = new FormData();
-      formData.append("title", eventData.title);
-      formData.append("date", eventData.date);
-      formData.append("startTime", eventData.startTime);
-      formData.append("endTime", eventData.endTime);
-      formData.append("location", eventData.location);
-      formData.append("description", eventData.description);
-      formData.append("session", eventData.session); // Thêm session
-      formData.append("donationMorningStart", eventData.donationMorningStart || ""); // Thêm thời gian hiến máu
-      formData.append("donationMorningEnd", eventData.donationMorningEnd || "");
-      formData.append("donationAfternoonStart", eventData.donationAfternoonStart || "");
-      formData.append("donationAfternoonEnd", eventData.donationAfternoonEnd || "");
-      (eventData.bloodTypeIds || []).forEach(id => {
-        formData.append("bloodTypeIds", id);
-      });
-      formData.append("maxRegistrations", eventData.maxRegistrations || 0); // Thêm số lượng đăng ký
-      formData.append("staffId", user.id);
-      if (eventData.image) {
-        formData.append("image", eventData.image);
-      }
-      const source = axios.CancelToken.source();
-      const response = await eventService.updateEvent(eventId, formData, {
-        cancelToken: source.token,
-      });
-      console.log("API response:", response.data);
-      const updatedEvent = mapEvent(response.data.result);
-      setEvents((prev) =>
-        prev.map((event) => (event.id === eventId ? updatedEvent : event))
-      );
-      setError(null);
-      return {
-        success: true,
-        message: "Cập nhật sự kiện thành công",
-        event: updatedEvent,
-      };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy cập nhật sự kiện:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("Lỗi cập nhật sự kiện:", error.response?.status, error.message);
-      const errorMessage = error.response?.data?.message || "Cập nhật sự kiện thất bại";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);  
+  try {
+    setLoading(true);
+
+    if (!user || !user.id) {
+      throw new Error("Người dùng chưa xác thực hoặc không có ID.");
     }
-  };
-      formData.append("maxRegistrations", eventData.maxRegistrations || 0); // Thêm số lượng đăng ký
-      formData.append("staffId", user.id);
-      if (eventData.image) {
-        formData.append("image", eventData.image);
-      }
-      const source = axios.CancelToken.source();
-      const response = await eventService.updateEvent(eventId, formData, {
-        cancelToken: source.token,
-      });
-      console.log("API response:", response.data);
-      const updatedEvent = mapEvent(response.data.result);
-      setEvents((prev) =>
-        prev.map((event) => (event.id === eventId ? updatedEvent : event))
-      );
-      setError(null);
-      return {
-        success: true,
-        message: "Cập nhật sự kiện thành công",
-        event: updatedEvent,
-      };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy cập nhật sự kiện:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("Lỗi cập nhật sự kiện:", error.response?.status, error.message);
-      const errorMessage = error.response?.data?.message || "Cập nhật sự kiện thất bại";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);  
+
+    const formData = new FormData();
+    const {
+      title,
+      date,
+      startTime,
+      endTime,
+      location,
+      description,
+      session,
+      donationMorningStart,
+      donationMorningEnd,
+      donationAfternoonStart,
+      donationAfternoonEnd,
+      bloodTypeIds,
+      maxRegistrations,
+      image,
+    } = eventData;
+
+    formData.append("title", title);
+    formData.append("date", date);
+    formData.append("startTime", startTime);
+    formData.append("endTime", endTime);
+    formData.append("location", location);
+    formData.append("description", description);
+    formData.append("session", session || "");
+    formData.append("donationMorningStart", donationMorningStart || "");
+    formData.append("donationMorningEnd", donationMorningEnd || "");
+    formData.append("donationAfternoonStart", donationAfternoonStart || "");
+    formData.append("donationAfternoonEnd", donationAfternoonEnd || "");
+
+    (bloodTypeIds || []).forEach((id) => {
+      formData.append("bloodTypeIds", id);
+    });
+
+    formData.append("maxRegistrations", maxRegistrations || 0);
+    formData.append("staffId", user.id);
+
+    if (image instanceof File) {
+      formData.append("image", image);
     }
-  };
+
+    const response = await eventService.updateEvent(eventId, formData, {
+      cancelToken: source.token,
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+        // ❌ KHÔNG cần Content-Type
+      },
+    });
+
+    const updatedEvent = mapEvent(response.data.result);
+    setEvents((prev) =>
+      prev.map((event) => (event.id === eventId ? updatedEvent : event))
+    );
+    setError(null);
+
+    return {
+      success: true,
+      message: "Cập nhật sự kiện thành công",
+      event: updatedEvent,
+    };
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      console.log("Hủy cập nhật sự kiện:", error.message);
+      return { success: false, error: error.message };
+    }
+
+    const errorMessage = error.response?.data?.message || "Cập nhật sự kiện thất bại";
+    console.error("Lỗi cập nhật sự kiện:", error.response?.status, error.message);
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const updateBlog = async (blogId, blogData) => {
     try {
@@ -807,7 +785,7 @@ export const EventProvider = ({ children }) => {
       );
       if (!user || !user.id)
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-  
+
       // Xây dựng payload dựa trên BloodDonationFormUpdateRequest
       const payload = {
         formId: parseInt(formData.formId) || 0, // Bắt buộc theo DTO
@@ -833,24 +811,24 @@ export const EventProvider = ({ children }) => {
         status: formData.status || null, // "APPROVED", "REJECTED", "PENDING", "COMPLETED" hoặc null
         approvedByStaffId: formData.approvedByStaffId ? parseInt(formData.approvedByStaffId) : null,
       };
-  
+
       // Kiểm tra formId hợp lệ
       if (!payload.formId) {
         throw new Error("ID biểu mẫu là bắt buộc.");
       }
-  
+
       // Validate session nếu được cung cấp
       if (payload.session && !["MORNING", "AFTERNOON"].includes(payload.session)) {
         throw new Error("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON.");
       }
-  
+
       // Validate status nếu được cung cấp
       if (payload.status && !["APPROVED", "REJECTED", "PENDING", "COMPLETED"].includes(payload.status)) {
         throw new Error("Trạng thái phải là APPROVED, REJECTED, PENDING, hoặc COMPLETED.");
       }
-  
+
       console.log("Payload gửi đến API:", payload);
-  
+
       const source = axios.CancelToken.source();
       const response = await eventService.updateBloodDonationFormByStaff(
         payload,
@@ -894,7 +872,7 @@ export const EventProvider = ({ children }) => {
       );
       if (!user || !user.id)
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-  
+
       // Xây dựng payload dựa trên BloodDonationFormUpdateRequest
       const payload = {
         formId: parseInt(formId) || 0, // Bắt buộc theo DTO
@@ -918,19 +896,19 @@ export const EventProvider = ({ children }) => {
         isPregnantOrRecentlyDelivered: Array.isArray(formData.female_questions) && formData.female_questions.includes("co_thai") || false,
         noneOfFemaleConditions: Array.isArray(formData.female_questions) && formData.female_questions.includes("khong_nu") || false,
       };
-  
+
       // Kiểm tra formId hợp lệ
       if (!payload.formId) {
         throw new Error("ID biểu mẫu là bắt buộc.");
       }
-  
+
       // Validate session nếu được cung cấp
       if (payload.session && !["MORNING", "AFTERNOON"].includes(payload.session)) {
         throw new Error("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON.");
       }
-  
+
       console.log("Payload gửi đến API:", payload);
-  
+
       const source = axios.CancelToken.source();
       const response = await eventService.updateBloodDonationFormByMember(
         formId,

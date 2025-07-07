@@ -66,7 +66,8 @@ export const donationService = {
   getDonationHistoryById: (id, config = {}) =>
     donationAPI.get(`/donations/histories/${id}`, config),
   getAllDonationHistories: (config = {}) =>
-    donationAPI.get("/donations/histories", config),
+  donationAPI.get("/donations/histories", config),
+
   updateDonationHistory: (id, formData, config = {}) =>
     donationAPI.put(`/donations/histories/${id}`, formData, config),
   deleteDonationHistory: (id, config = {}) =>
