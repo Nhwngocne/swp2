@@ -27,11 +27,11 @@ public class Notification {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt;
-    @Column(name ="is_read")
+    @Column(name = "is_read")
     boolean read; // false = chưa đọc, true = đã đọc
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = true)
     Member member;
 
     @ManyToOne
