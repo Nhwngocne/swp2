@@ -2,6 +2,7 @@ package com.swp391.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -16,7 +17,9 @@ public class EventCreateRequest {
     String title;
     String description;
     LocalDate date; // yyyy-MM-dd
+    @DateTimeFormat(pattern = "HH:mm")
     String startTime; // HH:mm AM/PM
+    @DateTimeFormat(pattern = "HH:mm")
     String endTime;   // HH:mm AM/PM
     String location;
     MultipartFile image;
