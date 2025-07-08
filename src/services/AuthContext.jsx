@@ -95,6 +95,9 @@ export const AuthProvider = ({ children }) => {
     const response = await authService.login(email, password);
     const { data } = response;
 
+    // ✅ Log toàn bộ dữ liệu trả về để kiểm tra
+    console.log("Login API response:", data);
+
     if (data.code !== 1000) {
       let errorMessage = data.message || "Đăng nhập thất bại";
 
@@ -107,22 +110,39 @@ export const AuthProvider = ({ children }) => {
       return { success: false, error: errorMessage, code: data.code };
     }
 
-    localStorage.setItem("token", data.result.token);
-    localStorage.setItem("user", JSON.stringify(data.result.user));
-    localStorage.setItem("role", data.result.role);
-    setUser(data.result.user);
-    setRole(data.result.role);
+    // ✅ Kiểm tra token có tồn tại không
+    const token = data.result?.token;
+    const user = data.result?.user;
+    const role = data.result?.role;
+
+    if (!token || !user || !role) {
+      console.error("Thiếu dữ liệu trong phản hồi đăng nhập.");
+      return { success: false, error: "Dữ liệu đăng nhập không hợp lệ từ máy chủ" };
+    }
+
+    // ✅ Lưu vào Local Storage
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("role", role);
+
+    // ✅ Log kiểm tra sau khi lưu
+    console.log("Token đã lưu vào localStorage:", localStorage.getItem("token"));
+    console.log("User đã lưu vào localStorage:", localStorage.getItem("user"));
+    console.log("Role đã lưu vào localStorage:", localStorage.getItem("role"));
+
+    setUser(user);
+    setRole(role);
 
     return { success: true };
   } catch (error) {
     console.error("Login error:", error);
+
     let errorMessage =
       error.response?.data?.message ||
       error.response?.data?.error ||
       error.message ||
       "Đăng nhập thất bại";
 
-    // ✅ Dịch lỗi sang tiếng Việt
     if (errorMessage.includes("User does not exist")) {
       errorMessage = "Tài khoản không tồn tại";
     } else if (errorMessage.includes("Invalid credentials")) {
@@ -140,6 +160,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }
 };
+
 
   // Đăng ký
   const register = async (userData) => {

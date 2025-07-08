@@ -2,6 +2,8 @@ import axios from "axios";
 
 const REST_API_BASE_URL = "http://localhost:8080/swp391";
 
+
+
 const eventAPI = axios.create({
   baseURL: REST_API_BASE_URL,
   // headers: {
@@ -67,8 +69,15 @@ export const eventService = {
   getEvents: (config = {}) => eventAPI.get("/events", config),
 
   // Lấy sự kiện theo ID
-  getEventById: (eventId, config = {}) =>
-    eventAPI.get(`/events/${eventId}`, config),
+  getEventById: (eventId) => {
+  const token = localStorage.getItem("token");
+  return eventAPI.get(`/events/${eventId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }})},
+  
+
+
 
   // Tạo sự kiện
   createEvent: (formData, config = {}) =>

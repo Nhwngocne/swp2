@@ -103,80 +103,69 @@ console.log("User:", user);
   return (
     
     <div className="form-detail-container">
-<h2>Chi Tiết Đơn Đăng Ký Hiến Máu</h2>
-
-<div className="form-detail-grid">
-  {/* Cột trái */}
-  <div className="form-col">
-    <section className="detail-section">
-      <h3>📅 Thông tin sự kiện</h3>
-      <p><strong>Tên sự kiện:</strong> {form.eventTitle}</p>
-      <p><strong>Địa điểm:</strong> {form.eventLocation}</p>
-      <p><strong>Ngày tổ chức:</strong> {form.eventDate}</p>
-    </section>
-
-    <section className="detail-section">
-      <h3>👤 Thông tin người đăng ký</h3>
-      <p><strong>Họ tên:</strong> {form.memberName}</p>
-      <p><strong>Email:</strong> {form.memberEmail}</p>
-      <p><strong>Thể tích đăng ký:</strong> {form.volumeMl} ml</p>
-      <p><strong>Nhóm máu của bạn:</strong> {form.bloodTypeName}</p>
-      <p><strong>Ngày đăng ký:</strong> {formatDate(form.createdAt)}</p>
-    </section>
-  </div>
-
-  {/* Cột phải */}
-  <div className="form-col">
-    <section className="detail-section highlight-status">
-      <h3>📋 Phê duyệt</h3>
-      <p><strong>Trạng thái:</strong> {form.status}</p>
-      <p><strong>Ngày phê duyệt:</strong> {formatDate(form.approvedDate)}</p>
-      <p><strong>Người phê duyệt:</strong> {form.approvedByStaffName || "Chưa có"}</p>
-    </section>
-
-    <section className="detail-section">
-      <h3>📝 Tình trạng sức khoẻ</h3>
-      <p><strong>Đã từng hiến máu:</strong> {form.donatedBefore ? "Có" : "Không"}</p>
-      <p><strong>Đang mắc bệnh:</strong> {form.currentlyIll ? `Có (${form.illnessDetails})` : "Không"}</p>
-      <p><strong>Từng mắc bệnh nặng:</strong> {form.hadSeriousDisease ? `Có (${form.diseaseDetails})` : "Không"}</p>
-      <p><strong>Từng mắc sốt rét/bệnh truyền nhiễm:</strong> {form.hadMalariaOrOtherInfectious ? "Có" : "Không"}</p>
-      <p><strong>Đã từng nhận máu:</strong> {form.receivedBlood ? "Có" : "Không"}</p>
-      <p><strong>Đã tiêm vaccine:</strong> {form.gotVaccine ? "Có" : "Không"}</p>
-      <p><strong>Không thuộc các điều kiện trên trong 12 tháng:</strong> {form.noneOfAbove12Months ? "Đúng" : "Không"}</p>
-      <p><strong>Có xăm hình/châm cứu:</strong> {form.tattooOrAcupuncture ? "Có" : "Không"}</p>
-      <p><strong>Có vấn đề da liễu:</strong> {form.hadSkinIssues ? "Có" : "Không"}</p>
-      <p><strong>Đang dùng kháng sinh/kháng viêm:</strong> {form.usedAntibioticsOrAntiInflammatory ? "Có" : "Không"}</p>
-      <p><strong>Triệu chứng trong 2 tuần qua:</strong> {form.symptomsPast2Weeks || "Không có"}</p>
-      <p><strong>Triệu chứng trong 1 tuần qua:</strong> {form.symptomsPast1Week || "Không có"}</p>
-    </section>
-
-    <section className="detail-section">
-      <h3>💁‍♀️ Điều kiện dành cho nữ</h3>
-      <p><strong>Đang có kinh nguyệt:</strong> {form.isMenstruating ? "Có" : "Không"}</p>
-      <p><strong>Đang mang thai hoặc mới sinh:</strong> {form.isPregnantOrRecentlyDelivered ? "Có" : "Không"}</p>
-      <p><strong>Không thuộc các điều kiện trên:</strong> {form.noneOfFemaleConditions ? "Đúng" : "Không"}</p>
-    </section>
-  </div>
-</div>
-
-{/* Nút điều hướng */}
-{role === "MEMBER" && form.status !== "APPROVED" && (
-  <button className="delete-button" onClick={handleDelete}>Xóa đơn đăng ký</button>
-)}
-
-{role === "MEMBER" && (
-  <button className="back-button" onClick={() => navigate("/registerHistory")}>
-    Quay lại lịch sử đăng ký
-  </button>
-)}
-
-{role === "STAFF" && (
-  <button className="back-button" onClick={() => navigate("/bloodFormList")}>
-    Quay lại danh sách đơn
-  </button>
-)}
-
-
+      <h2>Chi Tiết Đơn Đăng Ký Hiến Máu</h2>
+      <div className="form-detail-grid">
+        <div className="form-col">
+          <section className="detail-section">
+            <h3><FaCalendar /> Thông tin sự kiện</h3>
+            <p><strong>Tên sự kiện:</strong> {form.eventTitle}</p>
+            <p><strong>Địa điểm:</strong> {form.eventLocation}</p>
+            <p><strong>Ngày tổ chức:</strong> {form.eventDate}</p>
+          </section>
+          <section className="detail-section">
+            <h3><FaUser /> Thông tin người đăng ký</h3>
+            <p><strong>Họ tên:</strong> {form.memberName}</p>
+            <p><strong>Email:</strong> {form.memberEmail}</p>
+            <p><strong>Thể tích đăng ký:</strong> {form.volumeMl} ml</p>
+            <p><strong>Ngày đăng ký:</strong> {formatDate(form.createdAt)}</p>
+          </section>
+        </div>
+        <div className="form-col">
+          <section className="detail-section highlight-status">
+            <p>
+              <strong>Trạng thái:</strong> {form.status}
+              <span className={`status-badge status-${form.status.toLowerCase()}`}>
+                {form.status}
+              </span>
+            </p>
+            
+          </section>
+          <section className="detail-section">
+            <h3><FaHeartbeat /> Tình trạng sức khoẻ</h3>
+            <p><strong>1.Đã từng hiến máu:</strong> {form.donatedBefore ? "Có" : "Không"}</p>
+            <p><strong>Đang mắc bệnh:</strong> {form.currentlyIll ? `Có (${form.illnessDetails})` : "Không"}</p>
+            <p><strong>Từng mắc bệnh nặng:</strong> {form.hadSeriousDisease ? `Có (${form.diseaseDetails})` : "Không"}</p>
+            <p><strong>Từng mắc sốt rét/bệnh truyền nhiễm:</strong> {form.hadMalariaOrOtherInfectious ? "Có" : "Không"}</p>
+            <p><strong>Đã từng nhận máu:</strong> {form.receivedBlood ? "Có" : "Không"}</p>
+            <p><strong>Đã tiêm vaccine:</strong> {form.gotVaccine ? "Có" : "Không"}</p>
+            <p><strong>Không thuộc các điều kiện trên trong 12 tháng:</strong> {form.noneOfAbove12Months ? "Đúng" : "Không"}</p>
+            <p><strong>Có xăm hình/châm cứu:</strong> {form.tattooOrAcupuncture ? "Có" : "Không"}</p>
+            <p><strong>Có vấn đề da liễu:</strong> {form.hadSkinIssues ? "Có" : "Không"}</p>
+            <p><strong>Đang dùng kháng sinh/kháng viêm:</strong> {form.usedAntibioticsOrAntiInflammatory ? "Có" : "Không"}</p>
+            <p><strong>Triệu chứng trong 2 tuần qua:</strong> {form.symptomsPast2Weeks || "Không có"}</p>
+            <p><strong>Triệu chứng trong 1 tuần qua:</strong> {form.symptomsPast1Week || "Không có"}</p>
+          </section>
+          <section className="detail-section">
+            <h3><FaHeartbeat /> Điều kiện dành cho nữ</h3>
+            <p><strong>Đang có kinh nguyệt:</strong> {form.isMenstruating ? "Có" : "Không"}</p>
+            <p><strong>Đang mang thai hoặc mới sinh:</strong> {form.isPregnantOrRecentlyDelivered ? "Có" : "Không"}</p>
+            <p><strong>Không thuộc các điều kiện trên:</strong> {form.noneOfFemaleConditions ? "Đúng" : "Không"}</p>
+          </section>
+        </div>
+      </div>
+      {role === "MEMBER" && form.status !== "APPROVED" && (
+        <button className="delete-button" onClick={handleDelete}>Xóa đơn đăng ký</button>
+      )}
+      {role === "MEMBER" && (
+        <button className="back-button" onClick={() => navigate("/registerHistory")}>
+          Quay lại lịch sử đăng ký
+        </button>
+      )}
+      {role === "STAFF" && (
+        <button className="back-button" onClick={() => navigate("/bloodFormList")}>
+          Quay lại danh sách đơn
+        </button>
+      )}
     </div>
   );
 };
