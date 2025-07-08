@@ -27,6 +27,7 @@ public interface BloodMapper {
     // BLOOD INVENTORY
     BloodInventory toBloodInventory(BloodInventoryCreateRequest request);
 
+    @Mapping(source = "bloodType.id", target = "bloodTypeId")
     BloodInventoryResponse toBloodInventoryResponse(BloodInventory entity);
 
     void updateBloodInventory(@MappingTarget BloodInventory entity, BloodInventoryUpdateRequest request);
