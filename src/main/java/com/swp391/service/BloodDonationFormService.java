@@ -37,10 +37,10 @@ public class BloodDonationFormService {
 
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
+
         Staff staff = staffRepository.findById(event.getCreatedBy().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
-        // Validate and fetch BloodType if bloodTypeId is not 0
         BloodType bloodType = null;
         if (request.getBloodTypeId() != null && request.getBloodTypeId() != 0) {
             bloodType = bloodTypeRepository.findById(request.getBloodTypeId())
@@ -64,14 +64,17 @@ public class BloodDonationFormService {
         form.setEvent(event);
         form.setMember(member);
         form.setApprovedBy(staff);
-        form.setBloodType(bloodType); // Set BloodType (null if bloodTypeId is 0)
-        form.setStatus("PENDING");
+        form.setBloodType(bloodType);
+        form.setStatus("APPROVED"); // Mặc định là đã duyệt
         form.setCreatedAt(LocalDate.now());
-
         form.setStartTime(startTime);
         form.setEndTime(endTime);
 
         form = formRepository.save(form);
+
+        //  Thêm member vào danh sách registeredMembers để tự insert vào event_registrations
+        event.getRegisteredMembers().add(member);
+        eventRepository.save(event);
 
         // Gửi thông báo cho staff
         notificationService.createNotificationForStaff(
@@ -80,10 +83,15 @@ public class BloodDonationFormService {
                 "Có đơn đăng ký hiến máu mới từ thành viên: " + member.getName()
                         + " cho sự kiện: " + event.getTitle()
         );
-
+        //  Gửi thông báo cho chính member
+        notificationService.createNotificationForMember(
+                member.getId(),
+                "Chúc mừng! Bạn đã đăng ký thành công sự kiện: '"
+                        + event.getTitle()
+                        + "' diễn ra vào ngày " + event.getDate() + ". Hẹn gặp lại!"
+        );
         return formMapper.toFormResponse(form);
     }
-
     // Cập nhật đơn đăng ký (dành cho staff duyệt đơn)
     public BloodDonationFormResponse updateForm(BloodDonationFormUpdateRequest request) {
         BloodDonationForm form = formRepository.findById(request.getFormId())
