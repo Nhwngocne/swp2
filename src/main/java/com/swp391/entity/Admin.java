@@ -82,8 +82,7 @@ public class Admin {
     @JsonIgnore // Không ser
     private List<Blog> blogs;
 
-
-    @OneToOne(mappedBy = "admin")
-    @JsonIgnore // Không serialize
-    BloodInventory bloodInventory;
+    @OneToMany(mappedBy = "admin", fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<BloodInventory> bloodInventories;
 }

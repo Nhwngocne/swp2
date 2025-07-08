@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -95,10 +96,26 @@ public class BloodService {
         return bloodMapper.toBloodInventoryResponse(inventory);
     }
     // Check quantity in inventory
-    public boolean checkBloodInventory(String bloodType, int requiredQuantity) {
-        BloodInventory inventory = bloodInventoryRepository.findByBloodType_Name(bloodType)
-                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_INVENTORY_NOT_EXISTED));
-        return inventory.getQuantity() >= requiredQuantity;
+    public boolean checkBloodInventoryFlexible(String recipientBloodType, int requiredQuantity) {
+        // Lấy nhóm máu recipient
+        BloodType recipient = bloodTypeRepository.findByName(recipientBloodType)
+                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+
+        // Parse can_receive_from thành List<String>
+        List<String> compatibleDonors = Arrays.stream(recipient.getCanReceiveFrom().split(","))
+                .map(String::trim)
+                .toList();
+
+        // Tính tổng quantity của tất cả bloodType có thể truyền (bỏ qua component)
+        int totalAvailable = bloodInventoryRepository
+                .findByBloodType_NameIn(compatibleDonors)
+                .stream()
+                .mapToInt(BloodInventory::getQuantity)
+                .sum();
+
+        return totalAvailable >= requiredQuantity;
     }
+
+
 
 }

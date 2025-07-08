@@ -4,13 +4,11 @@ import com.swp391.dto.request.EventCreateRequest;
 import com.swp391.dto.response.EventResponse;
 import com.swp391.entity.BloodType;
 import com.swp391.entity.Event;
+import com.swp391.entity.Member;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.EventMapper;
-import com.swp391.repository.BloodDonationFormRepository;
-import com.swp391.repository.BloodTypeRepository;
-import com.swp391.repository.EventRepository;
-import com.swp391.repository.StaffRepository;
+import com.swp391.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -36,6 +34,8 @@ public class EventService {
     StaffRepository staffRepository;
     BloodTypeRepository bloodTypeRepository;
     BloodDonationFormRepository formRepository;
+    NotificationService notificationService;
+    MemberRepository   memberRepository;
 
     @PreAuthorize("hasRole('STAFF')")
     public EventResponse createEvent(EventCreateRequest request) throws IOException {
@@ -86,7 +86,23 @@ public class EventService {
     }
 
     public void deleteEvent(int id) {
-        eventRepository.deleteById(id);
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        // Lấy tất cả members đã đăng ký
+        Set<Member> members = event.getRegisteredMembers();
+
+        // Gửi thông báo cho từng member
+        for (Member member : members) {
+            String message = String.format(
+                    "Sự kiện '%s' mà bạn đã đăng ký đã bị hủy. Vui lòng xem và đăng ký các sự kiện khác.",
+                    event.getTitle()
+            );
+            notificationService.createNotificationForMember(member.getId(), message);
+        }
+
+        // Sau đó mới xóa
+        eventRepository.delete(event);
     }
 
     public List<EventResponse> getAllEvents() {
@@ -117,6 +133,19 @@ public class EventService {
         int count = formRepository.countByEventIdAndStatus(event.getId(), "APPROVED");
         response.setRegisteredMemberCount(count);
         return response;
+    }
+
+    public void registerMemberToEvent(int memberId, int eventId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new AppException(ErrorCode.EVENT_NOT_EXISTED));
+
+        // Tránh duplicate
+        if (!event.getRegisteredMembers().contains(member)) {
+            event.getRegisteredMembers().add(member);
+            eventRepository.save(event);
+        }
     }
 
 }

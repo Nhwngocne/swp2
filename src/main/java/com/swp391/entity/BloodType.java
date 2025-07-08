@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import java.util.List;
 
 @Entity
@@ -37,36 +35,35 @@ public class BloodType {
 
     @Column(name = "description", columnDefinition = "TEXT")
     String description;
+
+    // Các quan hệ OneToMany khác
     @OneToMany(mappedBy = "bloodType")
-    @JsonIgnore // Không serialize
+    @JsonIgnore
     List<EmergencyRequest> emergencyRequests;
 
     @OneToMany(mappedBy = "bloodType")
-    @JsonIgnore // Không serialize
+    @JsonIgnore
     List<DonationRegistration> donationRegistrations;
 
     @OneToMany(mappedBy = "bloodType")
-    @JsonIgnore // Không serialize
+    @JsonIgnore
     List<RegisReceive> regisReceives;
 
     @OneToMany(mappedBy = "bloodType")
-    @JsonIgnore // Không serialize
+    @JsonIgnore
     List<DonationHistory> donationHistories;
 
+    // Admin / Staff chỉ là người tạo nhóm máu, không bắt buộc
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference // Không serialize
-    BloodInventory bloodInventory;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore // Không serialize
+    @JsonIgnore
     Admin admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore // Không serialize
+    @JsonIgnore
     Staff staff;
 
+    // Nếu bạn thực sự cần, Member có thể có nhóm máu
     @OneToOne(mappedBy = "bloodType")
-    @JsonIgnore // Không serialize
+    @JsonIgnore
     Member member;
-
 }

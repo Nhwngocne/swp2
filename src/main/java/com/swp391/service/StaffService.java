@@ -139,7 +139,7 @@ public class StaffService {
         String bloodType = form.getBloodType();
         int quantityNeeded = form.getQuantity();
 
-        boolean available = bloodService.checkBloodInventory(bloodType, quantityNeeded);
+        boolean available = bloodService.checkBloodInventoryFlexible(bloodType, quantityNeeded);
 
         if (available) {
             // Đủ máu -> hoàn thành

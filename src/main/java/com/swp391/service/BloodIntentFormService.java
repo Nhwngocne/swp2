@@ -98,11 +98,12 @@ public class BloodIntentFormService {
         }
 
         String message;
+
         if ("NHAN".equalsIgnoreCase(form.getIntentType())) {
             String bloodType = form.getBloodType();
             int quantityNeeded = form.getQuantity();
 
-            boolean available = bloodService.checkBloodInventory(bloodType, quantityNeeded);
+            boolean available = bloodService.checkBloodInventoryFlexible(bloodType, quantityNeeded);
 
             if (available) {
                 form.setStatus("COMPLETED");
@@ -132,6 +133,7 @@ public class BloodIntentFormService {
         form = intentFormRepository.save(form);
         return intentFormMapper.toResponse(form);
     }
+
     public BloodIntentFormResponse rejectForm(int formId, String rejectReason) {
         BloodIntentForm form = intentFormRepository.findById(formId)
                 .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
