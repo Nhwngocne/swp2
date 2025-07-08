@@ -4,6 +4,7 @@ import com.swp391.dto.request.EventCreateRequest;
 import com.swp391.dto.response.EventResponse;
 import com.swp391.entity.BloodType;
 import com.swp391.entity.Event;
+import com.swp391.entity.Member;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.EventMapper;
@@ -36,6 +37,7 @@ public class EventService {
     StaffRepository staffRepository;
     BloodTypeRepository bloodTypeRepository;
     BloodDonationFormRepository formRepository;
+    NotificationService notificationService;
 
     @PreAuthorize("hasRole('STAFF')")
     public EventResponse createEvent(EventCreateRequest request) throws IOException {
@@ -86,7 +88,23 @@ public class EventService {
     }
 
     public void deleteEvent(int id) {
-        eventRepository.deleteById(id);
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        // Lấy tất cả members đã đăng ký
+        Set<Member> members = event.getRegisteredMembers();
+
+        // Gửi thông báo cho từng member
+        for (Member member : members) {
+            String message = String.format(
+                    "Sự kiện '%s' mà bạn đã đăng ký đã bị hủy. Vui lòng xem và đăng ký các sự kiện khác.",
+                    event.getTitle()
+            );
+            notificationService.createNotificationForMember(member.getId(), message);
+        }
+
+        // Sau đó mới xóa
+        eventRepository.delete(event);
     }
 
     public List<EventResponse> getAllEvents() {
