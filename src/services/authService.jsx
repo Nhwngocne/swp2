@@ -35,26 +35,31 @@ authAPI.interceptors.response.use(
       error.config?.url?.includes("/auth/register") ||
       error.config?.url?.includes("/auth/loginGoogle") ||
       error.config?.url?.includes("/reset-password") ||
-
       error.config?.url?.includes("/register/send-otp") ||
       error.config?.url?.includes("/register/verify-otp") ||
-
       error.config?.url?.includes("/feedback");
 
-
     if (error.response?.status === 401 && !isAuthFreeEndpoint) {
-      console.log("401 Unauthorized - URL:", error.config?.url, "Redirecting to /auth/login"); // Debug
+      console.log(
+        "401 Unauthorized - URL:",
+        error.config?.url,
+        "Redirecting to /auth/login"
+      ); // Debug
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/auth/login";
     } else if (error.response) {
-      console.log("API error:", error.config?.url, error.response.status, error.response.data); // Debug
+      console.log(
+        "API error:",
+        error.config?.url,
+        error.response.status,
+        error.response.data
+      ); // Debug
     }
 
     return Promise.reject(error);
   }
 );
-
 
 // Auth API functions
 export const authService = {
@@ -88,12 +93,10 @@ export const authService = {
     authAPI.post(`/forgotPassword/verifyOtp/${otp}/${email}`),
 
   // Verify email(forget password)
-  verifyEmail: (email) =>
-    authAPI.post(`/forgotPassword/verifyMail/${email}`),
+  verifyEmail: (email) => authAPI.post(`/forgotPassword/verifyMail/${email}`),
 
   //Verify email(register)
-  sendOtp: (email) =>
-    authAPI.post("/register/send-otp", { email }),
+  sendOtp: (email) => authAPI.post("/register/send-otp", { email }),
 
   // verify otp(register)
   verifyOtpRegis: (otp, email) =>
@@ -120,13 +123,14 @@ export const authService = {
   // Lấy tất cả thành viên
   getAllUsers: () => authAPI.get("/members"),
 
-   // STAFF ======================================================
+  // STAFF ======================================================
 
   // Tạo tài khoản nhân viên mới
   createStaff: (staffData) => authAPI.post("/staffs", staffData),
 
   // Cập nhật thông tin của một nhân viên
-  updateStaff: (staffId, staffData) => authAPI.put(`/staffs/${staffId}`, staffData),
+  updateStaff: (staffId, staffData) =>
+    authAPI.put(`/staffs/${staffId}`, staffData),
 
   // Xóa tài khoản nhân viên
   deleteStaff: (staffId) => authAPI.delete(`/staffs/${staffId}`),
@@ -140,14 +144,14 @@ export const authService = {
   // Khóa / mở khóa tài khoản nhân viên
   banStaff: (memberId) => authAPI.patch(`/staffs/status/${memberId}`),
 
-
   // ADMIN ======================================================
 
   // Tạo tài khoản quản trị viên mới
   createAdmin: (adminData) => authAPI.post("/admins", adminData),
 
   // Cập nhật thông tin của một quản trị viên
-  updateAdmin: (adminId, adminData) => authAPI.put(`/admins/${adminId}`, adminData),
+  updateAdmin: (adminId, adminData) =>
+    authAPI.put(`/admins/${adminId}`, adminData),
 
   // Xóa tài khoản quản trị viên
   deleteAdmin: (adminId) => authAPI.delete(`/admins/${adminId}`),
@@ -163,7 +167,16 @@ export const authService = {
 
   // Khóa / mở khóa tài khoản thành viên từ phía admin
   banAdminMember: (memberId) => authAPI.patch(`/admins/member/${memberId}`),
-
+  // Send notification
+  sendNotificationToAll: (title, message) =>
+    authAPI.post("/notifications/all_member", { title, message }),
+  // All notifications
+  getAllNotifications: () => authAPI.get("/notifications/all"),
+  // Delete notification
+ deleteNotificationGroup: (title, message) =>
+  authAPI.delete(`/notifications/delete/group`, {
+    params: { title, message },
+  }),
 };
 
 export default authService;

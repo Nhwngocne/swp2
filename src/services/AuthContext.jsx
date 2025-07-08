@@ -521,6 +521,46 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Send notification to all users
+  const sendNotificationToAll = async (title, message) => {
+    try {
+      const response = await authService.sendNotificationToAll(title, message);
+      return { success: true, message: "Thông báo đã được gửi đến tất cả người dùng" };
+    } catch (error) {
+      console.error("Send notification error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Gửi thông báo thất bại";
+      return { success: false, error: errorMessage };
+    }
+  }
+  // Lấy tất cả thông báo
+  const getAllNotifications = async () => {
+    try {
+      const response = await authService.getAllNotifications();
+      return { success: true, notifications: response.data.result };
+    } catch (error) {
+      console.error("Get all notifications error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Không lấy được danh sách thông báo";
+      return { success: false, error: errorMessage };
+    }
+  }
+  // Xóa thông báo
+  const deleteNotification = async (title, message) => {
+  try {
+    console.log("Gửi request xóa notification với:", { title, message });
+    await authService.deleteNotificationGroup(title, message);
+    return { success: true, message: "Thông báo đã được xóa" };
+  } catch (error) {
+    console.error("Delete notification error:", error);
+    const errorMessage =
+      error.response?.data?.message || error.message || "Xóa thông báo thất bại";
+    return { success: false, error: errorMessage };
+  }
+};
+
+
+
   const value = {
     user,
     role,
@@ -552,6 +592,9 @@ export const AuthProvider = ({ children }) => {
     getAdminById,
     banAdminStaff,
     banAdminMember,
+    sendNotificationToAll,
+    getAllNotifications,
+    deleteNotification,
     isAuthenticated: !!user,
     isAdmin: role === "ADMIN",
     isStaff: role === "STAFF",
