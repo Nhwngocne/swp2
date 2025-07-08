@@ -17,7 +17,7 @@ public class EventCreateRequest {
     String description;
     LocalDate date; // yyyy-MM-dd
     String startTime; // HH:mm AM/PM
-    String endTime;   // HH:mm AM/PM
+        String endTime;   // HH:mm AM/PM
     String location;
     MultipartFile image;
 
