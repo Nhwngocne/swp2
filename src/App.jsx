@@ -55,6 +55,7 @@ import BloodInventory from './components/staff/BloodInventory';
 import MemberManager from './components/staff/MemberManager';
 import StaffDashboard from './components/staff/StaffDashboard';
 import CreateEventPage from './components/staff/CreateEventPage';
+import EditEvent from './components/staff/EditEvent';
 import BloodFormList from './components/staff/FormList/BloodFormList';
 import BloodIntentList from './components/staff/FormList/BloodIntentList';
 import EmergencyList from './components/staff/FormList/EmergencyList';
@@ -130,6 +131,7 @@ const AppContent = () => {
           <Route path="/manage-members" element={<ProtectedRoute requiredRole="STAFF"><MemberManager /></ProtectedRoute>} />
           <Route path="/staffDashboard" element={<ProtectedRoute requiredRole="STAFF"><StaffDashboard /></ProtectedRoute>} />
           <Route path="/createEvent" element={<ProtectedRoute requiredRole="STAFF"><CreateEventPage /></ProtectedRoute>} />
+          <Route path="/staff/events/edit/:id" element={<ProtectedRoute requiredRole="STAFF"><EditEvent /></ProtectedRoute>} />
           <Route path="/bloodFormList" element={<ProtectedRoute requiredRole="STAFF"><BloodFormList /></ProtectedRoute>} />
           <Route path="/bloodIntentList" element={<ProtectedRoute requiredRole="STAFF"><BloodIntentList /></ProtectedRoute>} />
           <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
@@ -144,7 +146,7 @@ const AppContent = () => {
           <Route path="/manage" element={<ProtectedRoute requiredRole="ADMIN"><Manage /></ProtectedRoute>} />
           <Route path="/manage-news" element={<ProtectedRoute requiredRole="ADMIN"><NewsManager /></ProtectedRoute>} />
           <Route path="/manage-notifications" element={<ProtectedRoute requiredRole="ADMIN"><NotificationManager /></ProtectedRoute>} />
-          <Route path='/admin-dashboard' element={<ProtectedRoute requiredRole="ADMIN"><MemberManagerAd /></ProtectedRoute>} />
+          <Route path='/admin-dashboard' element={<ProtectedRoute requiredRole="ADMIN"><AdminDashboard /></ProtectedRoute>} />
           <Route path="/memberManagerAd" element={<ProtectedRoute requiredRole="ADMIN"><MemberManagerAd /></ProtectedRoute>} />
           <Route path="/staff-manager" element={<ProtectedRoute requiredRole="ADMIN"><StaffManager /></ProtectedRoute>} />
 
