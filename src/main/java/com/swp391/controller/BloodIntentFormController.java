@@ -84,6 +84,12 @@ public class BloodIntentFormController {
                 .result(intentFormService.rejectForm(id, reason))
                 .build();
     }
-
+    // Get All Forms by Status
+    @GetMapping("/alls")
+    public ApiResponse<List<BloodIntentFormResponse>> getAllForms() {
+        return ApiResponse.<List<BloodIntentFormResponse>>builder()
+                .result(intentFormService.getAllForms())
+                .build();
+    }
 
 }

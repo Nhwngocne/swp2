@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -153,6 +154,13 @@ public class BloodIntentFormService {
 
         form = intentFormRepository.save(form);
         return intentFormMapper.toResponse(form);
+    }
+    //  get all forms that are pending or processing
+    public List<BloodIntentFormResponse> getAllForms() {
+        return intentFormRepository.findAll()
+                .stream()
+                .map(intentFormMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
 }
