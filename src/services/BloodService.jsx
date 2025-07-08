@@ -44,26 +44,22 @@ bloodAPI.interceptors.response.use(
 
 // BloodService API functions
 export const bloodService = {
-  // Tạo mới một bản ghi hiến máu
+  // CRUD Blood Donation
   createDonation: (donationData) => bloodAPI.post("/blood-donations", donationData),
-
-  // Lấy danh sách tất cả các lần hiến máu
   getAllDonations: () => bloodAPI.get("/blood-donations"),
-
-  // Lấy thông tin hiến máu theo ID
   getDonationById: (donationId) => bloodAPI.get(`/blood-donations/${donationId}`),
-
-  // Lấy danh sách hiến máu theo ID thành viên
   getDonationsByMemberId: (memberId) => bloodAPI.get(`/blood-donations/member/${memberId}`),
-
-  // Xóa bản ghi hiến máu
   deleteDonation: (donationId) => bloodAPI.delete(`/blood-donations/${donationId}`),
-
-  // Cập nhật bản ghi hiến máu
   updateDonation: (donationId, donationData) => bloodAPI.put(`/blood-donations/${donationId}`, donationData),
+  generateCertificate: (donationId) =>
+    bloodAPI.get(`/blood-donations/certificate/${donationId}`, { responseType: "blob" }),
 
-  // Tạo giấy chứng nhận hiến máu (nếu có chức năng này)
-  generateCertificate: (donationId) => bloodAPI.get(`/blood-donations/certificate/${donationId}`, { responseType: "blob" }),
+  // CRUD Blood Intent Forms
+  getAllBloodIntentForms: () => bloodAPI.get("/intents/alls"),
+
+  // CRUD Blood Inventories
+  getAllBloodInventories: () => bloodAPI.get("/blood/inventory"),
+
 };
 
 export default bloodService;
