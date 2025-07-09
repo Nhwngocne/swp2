@@ -23,7 +23,7 @@ import {
 import { authService } from "../../services/authService";
 import { eventService } from "../../services/eventService";
 import { emergencyService } from "../../services/emergencyService";
-import { bloodService } from "../../services/bloodService";
+import { bloodService } from "../../services/BloodService";
 import "../../assets/css/components/admin/AdminDashboard.css";
 
 export default function AdminDashboard() {

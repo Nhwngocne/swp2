@@ -1,65 +1,103 @@
 import axios from "axios";
 
-// Base URL cho API
 const REST_API_BASE_URL = "http://localhost:8080/swp391";
 
-// Tạo axios instance với cấu hình mặc định
 const bloodAPI = axios.create({
   baseURL: REST_API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  timeout: 30000,
 });
 
-// Interceptor để tự động thêm token vào header
 bloodAPI.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    if (token) {
+    console.log(
+      "bloodService request:",
+      config.url,
+      "Token:",
+      token || "No token"
+    );
+    // Chỉ bỏ qua token cho GET /blood/type hoặc GET /blood/inventory
+    const isGetBlood =
+      config.method === "get" &&
+      (config.url === "/blood/type" ||
+        // config.url === "/blood/inventory" ||
+        config.url.match(/^\/blood\/type\/\d+$/) ||
+        config.url.match(/^\/blood\/inventory\/\d+$/));
+    if (token && !isGetBlood && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else if (!token && !isGetBlood && !config.url.includes("/auth")) {
+      console.warn("No token found for request:", config.url);
     }
     return config;
   },
-  (error) => Promise.reject(error)
-);
-
-// Interceptor để xử lý response và error
-bloodAPI.interceptors.response.use(
-  (response) => response,
   (error) => {
-    const isPublicEndpoint = error.config?.url?.includes("/feedback");
-
-    if (error.response?.status === 401 && !isPublicEndpoint) {
-      console.log("401 Unauthorized - URL:", error.config?.url, "Redirecting to /auth/login");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.location.href = "/auth/login";
-    } else if (error.response) {
-      console.log("API error:", error.config?.url, error.response.status, error.response.data);
-    }
-
+    console.error("bloodService request error:", error);
     return Promise.reject(error);
   }
 );
 
-// BloodService API functions
+bloodAPI.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("bloodService error:", {
+      status: error.response?.status,
+      message: error.message,
+      url: error.config?.url,
+    });
+    if (
+      error.response?.status === 401 &&
+      window.location.pathname !== "/login"
+    ) {
+      console.log("401 detected, clearing auth data");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const bloodService = {
-  // CRUD Blood Donation
-  createDonation: (donationData) => bloodAPI.post("/blood-donations", donationData),
-  getAllDonations: () => bloodAPI.get("/blood-donations"),
-  getDonationById: (donationId) => bloodAPI.get(`/blood-donations/${donationId}`),
-  getDonationsByMemberId: (memberId) => bloodAPI.get(`/blood-donations/member/${memberId}`),
-  deleteDonation: (donationId) => bloodAPI.delete(`/blood-donations/${donationId}`),
-  updateDonation: (donationId, donationData) => bloodAPI.put(`/blood-donations/${donationId}`, donationData),
-  generateCertificate: (donationId) =>
-    bloodAPI.get(`/blood-donations/certificate/${donationId}`, { responseType: "blob" }),
+  // ==== BLOOD TYPE ====
+  // Tạo loại máu
+  createBloodType: (formData, config = {}) =>
+    bloodAPI.post("/blood/type", formData, config),
 
-  // CRUD Blood Intent Forms
-  getAllBloodIntentForms: () => bloodAPI.get("/intents/alls"),
+  // Cập nhật loại máu
+  updateBloodType: (typeId, formData, config = {}) =>
+    bloodAPI.put(`/blood/type/${typeId}`, formData, config),
 
-  // CRUD Blood Inventories
-  getAllBloodInventories: () => bloodAPI.get("/blood/inventory"),
+  // Xóa loại máu
+  deleteBloodType: (typeId, config = {}) =>
+    bloodAPI.delete(`/blood/type/${typeId}`, config),
 
+  // Lấy tất cả loại máu
+  getAllBloodTypes: (config = {}) => bloodAPI.get("/blood/type", config),
+
+  // Lấy loại máu theo ID
+  getBloodTypeById: (typeId, config = {}) =>
+    bloodAPI.get(`/blood/type/${typeId}`, config),
+
+  // ==== BLOOD INVENTORY ====
+  // Tạo kho máu
+  createBloodInventory: (formData, config = {}) =>
+    bloodAPI.post("/blood/inventory", formData, config),
+
+  // Cập nhật kho máu
+  updateBloodInventory: (inventoryId, formData, config = {}) =>
+    bloodAPI.put(`/blood/inventory/${inventoryId}`, formData, config),
+
+  // Xóa kho máu
+  deleteBloodInventory: (inventoryId, config = {}) =>
+    bloodAPI.delete(`/blood/inventory/${inventoryId}`, config),
+
+  // Lấy tất cả kho máu
+  getAllBloodInventories: (config = {}) => bloodAPI.get("/blood/inventory", config),
+
+  // Lấy kho máu theo ID
+  getBloodInventoryById: (inventoryId, config = {}) =>
+    bloodAPI.get(`/blood/inventory/${inventoryId}`, config),
+
+  getAllBloodIntentForms: () => bloodIntentAPI.get("/intents/alls"),
 };
-
-export default bloodService;
