@@ -1,5 +1,6 @@
 package com.swp391.dto.response;
 
+import com.swp391.entity.BloodType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,7 +16,7 @@ public class BloodInventoryResponse {
     String component;
     Integer quantity;
     LocalDate lastUpdated;
-
+    Integer bloodTypeId;
     // Optional - chỉ nếu muốn hiển thị tên người phụ trách
     String staffName;
     String adminName;

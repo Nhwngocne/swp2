@@ -40,7 +40,6 @@ public interface EventMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "images", ignore = true)
     @Mapping(target = "registeredMembers", ignore = true)
-    @Mapping(target = "bloodTypes", ignore = true)
     @Mapping(source = "startTime", target = "startTime", qualifiedByName = "stringToLocalTime")
     @Mapping(source = "endTime", target = "endTime", qualifiedByName = "stringToLocalTime")
     @Mapping(source = "donationMorningStart", target = "donationMorningStart", qualifiedByName = "stringToLocalTime")

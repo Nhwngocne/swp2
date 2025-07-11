@@ -20,7 +20,6 @@ public interface BloodMapper {
 
     @Mapping(source = "admin.name", target = "adminName")
     @Mapping(source = "staff.name", target = "staffName")
-    @Mapping(source = "bloodInventory.component", target = "bloodInventoryComponent")
     BloodTypeResponse toBloodTypeResponse(BloodType entity);
 
     void updateBloodType(@MappingTarget BloodType entity, BloodTypeUpdateRequest request);
@@ -28,6 +27,7 @@ public interface BloodMapper {
     // BLOOD INVENTORY
     BloodInventory toBloodInventory(BloodInventoryCreateRequest request);
 
+    @Mapping(source = "bloodType.id", target = "bloodTypeId")
     BloodInventoryResponse toBloodInventoryResponse(BloodInventory entity);
 
     void updateBloodInventory(@MappingTarget BloodInventory entity, BloodInventoryUpdateRequest request);

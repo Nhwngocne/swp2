@@ -1,9 +1,12 @@
 package com.swp391.controller;
 
 import com.swp391.dto.request.AdminCreateRequest;
+import com.swp391.dto.request.NotificationRequest;
+import com.swp391.dto.request.NotificationShortRequest;
 import com.swp391.dto.response.AdminResponse;
 import com.swp391.dto.response.ApiResponse;
 import com.swp391.service.AdminService;
+import com.swp391.service.NotificationService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +21,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminController {
     AdminService adminService;
-
+    NotificationService notificationService;
     // Create admin
     @PostMapping
     public ApiResponse<AdminResponse> createAdmin(@RequestBody @Valid AdminCreateRequest request) {
@@ -75,5 +78,7 @@ public class AdminController {
                 .result("Status has been changed by staff.")
                 .build();
     }
+
+
 
 }
