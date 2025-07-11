@@ -1,0 +1,141 @@
+.qna-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.qna-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.qna-empty {
+  text-align: center;
+  color: #4a5568;
+  font-size: 1.1rem;
+  padding: 20px;
+}
+
+.qna-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.qna-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.qna-item:hover {
+  transform: translateY(-2px);
+}
+
+.qna-username,
+.qna-question {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  color: #2d3748;
+}
+
+.qna-username strong,
+.qna-question strong {
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.qna-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 0.95rem;
+  margin-top: 10px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.qna-textarea:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+}
+
+.qna-button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.qna-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.qna-button--answer {
+  background: #38a169;
+  color: #fff;
+}
+
+.qna-button--answer:hover {
+  background: #2f855a;
+}
+
+.qna-button--submit {
+  background: #3182ce;
+  color: #fff;
+}
+
+.qna-button--submit:hover {
+  background: #2b6cb0;
+}
+
+.qna-button--cancel {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.qna-button--cancel:hover {
+  background: #cbd5e0;
+}
+
+.loading {
+  text-align: center;
+  color: #4a5568;
+  font-size: 1.1rem;
+  padding: 20px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .qna-container {
+    padding: 15px;
+  }
+
+  .qna-title {
+    font-size: 1.5rem;
+  }
+
+  .qna-item {
+    padding: 12px;
+  }
+
+  .qna-button {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
