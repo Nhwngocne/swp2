@@ -21,7 +21,7 @@ export const useBlood = () => {
 };
 
 export const BloodProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [bloodTypes, setBloodTypes] = useState([]);
   const [bloodInventories, setBloodInventories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -378,9 +378,11 @@ export const BloodProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchBloodTypes();
-    fetchBloodInventories();
-  }, [fetchBloodTypes, fetchBloodInventories]);
+    if (!authLoading && user) {
+      fetchBloodTypes();
+      fetchBloodInventories();
+    }
+  }, [authLoading, user, fetchBloodTypes, fetchBloodInventories]);
 
   const value = {
     bloodTypes,
