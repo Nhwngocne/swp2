@@ -66,7 +66,7 @@ import QnA from './components/staff/QnA'; // Thêm DonationBloodResult
 
 // Admin Components
 import NewsManager from './components/admin/NewsManager';
-import AdminDashboard from './components/staff/StaffDashboard';
+import AdminDashboard from './components/admin/AdminDashboard';
 import NotificationManager from './components/admin/NotificationManager';
 import MemberManagerAd from './components/admin/MemberManagerAd';
 import StaffManager from './components/admin/StaffManager';

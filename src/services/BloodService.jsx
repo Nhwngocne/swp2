@@ -93,11 +93,14 @@ export const bloodService = {
     bloodAPI.delete(`/blood/inventory/${inventoryId}`, config),
 
   // Lấy tất cả kho máu
-  getAllBloodInventories: (config = {}) => bloodAPI.get("/blood/inventory", config),
+  // CRUD Blood Intent Forms
+  getAllBloodIntentForms: () => bloodAPI.get("/intents/alls"),
 
-  // Lấy kho máu theo ID
-  getBloodInventoryById: (inventoryId, config = {}) =>
-    bloodAPI.get(`/blood/inventory/${inventoryId}`, config),
+  // CRUD Blood Inventories
+  getAllBloodInventories: () => bloodAPI.get("/blood/inventory"),
 
-  getAllBloodIntentForms: () => bloodIntentAPI.get("/intents/alls"),
+  // Update BLood Inventory
+  updateBloodInventory: (inventoryId, formData) =>
+    bloodAPI.put(`/blood/inventory/${inventoryId}`, formData),
+
 };
