@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
@@ -20,5 +21,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
     List<Notification> findByStaffId(int staffId);
 
     void deleteByTitleAndMessage(String title, String message);
+
+    Optional<Notification> findTopByTitleAndMessageContainingOrderByCreatedAtDesc(String title, String messagePart);
+
 
 }

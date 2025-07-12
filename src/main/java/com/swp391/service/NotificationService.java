@@ -218,7 +218,7 @@ public class NotificationService {
 
     // Lấy tất cả thông báo của admin gửi
     public List<NotificationResponse> getAllSystemNotifications() {
-        List<String> systemTitles = List.of("Thông tin", "Thành công", "Cảnh báo", "Lỗi");
+        List<String> systemTitles = List.of("Thông tin", "Thành công", "Cảnh báo", "Lỗi","Cảnh báo kho máu thấp");
 
         // Group by (title + message), chỉ lấy notification mới nhất (createdAt lớn nhất)
         Map<String, Notification> grouped = notificationRepository.findAll()
@@ -245,9 +245,21 @@ public class NotificationService {
         notificationRepository.deleteByTitleAndMessage(title, message);
     }
 
+    public void createNotificationForAllStaff(String title, String message) {
+        List<Staff> allStaff = staffRepository.findAll();
+        List<Notification> notifications = allStaff.stream()
+                .map(staff -> Notification.builder()
+                        .staff(staff)
+                        .title(title)
+                        .message(message)
+                        .createdAt(LocalDateTime.now())
+                        .read(false)
+                        .build())
+                .collect(Collectors.toList());
 
+        notificationRepository.saveAll(notifications);
 
-
+    }
 }
 
 
