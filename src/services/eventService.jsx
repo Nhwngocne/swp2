@@ -69,12 +69,9 @@ export const eventService = {
   getEvents: (config = {}) => eventAPI.get("/events", config),
 
   // Lấy sự kiện theo ID
-  getEventById: (eventId) => {
-  const token = localStorage.getItem("token");
-  return eventAPI.get(`/events/${eventId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    }})},
+ getEventById: (eventId, config = {}) =>
+  eventAPI.get(`/events/${eventId}`, config),
+
   
 
 
@@ -123,9 +120,11 @@ export const eventService = {
   getBloodDonationFormByMemberAndId: (formId, memberId, config = {}) =>
     eventAPI.get(`/forms/${formId}/member/${memberId}`, config),
 
-  // Lấy tất cả biểu mẫu của một sự kiện
-  getBloodDonationFormsByEvent: (eventId, config = {}) =>
-    eventAPI.get(`/forms/event/${eventId}`, config),
+// Lấy tất cả biểu mẫu của một sự kiện
+getBloodDonationFormsByEvent: (eventId, config = {}) =>
+  eventAPI.get(`/forms/event/${eventId}`, config),
+
+
 
   // BLOG=======================================================================
   // Lấy tất cả blog

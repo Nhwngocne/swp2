@@ -39,6 +39,7 @@ import DonorSearch from './pages/DonorSearch';
 // Guest Components
 import EventList from './components/guest/EventList';
 import NewsList from './components/guest/NewsList';
+import MemberList from './components/guest/MemberList';
 
 // Member Components
 import Profile from './components/member/Profile';
@@ -99,7 +100,7 @@ const AppContent = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/news" element={<NewsList />} />
+          <Route path="/members" element={<MemberList />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/search" element={<Search />} />
           <Route path="/donation-blood-form" element={<DonationBloodForm />} />
@@ -114,6 +115,11 @@ const AppContent = () => {
 
           {/* Protected */}
           <Route path="/events" element={<EventProvider><EventList /></EventProvider>} />
+          <Route path="/events/:id/members" element={<MemberList />} />
+
+
+
+          
 
           {/* Member */}
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />
@@ -124,6 +130,7 @@ const AppContent = () => {
           <Route path="/form" element={<ProtectedRoute requiredRole="MEMBER"><Form /></ProtectedRoute>} />
           <Route path="/emergencyForm" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyForm /></ProtectedRoute>} />
           <Route path="/formDetail/:id" element={<ProtectedRoute requiredRole="MEMBER"><FormDetail /></ProtectedRoute>} />
+
 
           {/* Staff */}
           <Route path="/eventManager" element={<ProtectedRoute requiredRole="STAFF"><EventManager /></ProtectedRoute>} />

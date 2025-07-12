@@ -3,6 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { donationService } from "../../services/donationService";
 import { useAuth } from "../../services/AuthContext";
 import "../../assets/css/member/FormDetail.css";
+import { FaCalendar, FaUser, FaHeartbeat } from 'react-icons/fa';
+
+
+
+
 const FormDetail = () => {
   const { id } = useParams(); // ID của form từ URL
   const navigate = useNavigate();

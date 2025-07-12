@@ -135,6 +135,12 @@ const EventList = () => {
             >
               {isRegisterable(event.date) ? "Đặt lịch đăng ký" : "Chưa đến lúc đặt lịch"}
             </button>
+            <button
+              className="event-horizontal-btn detail-btn"
+              onClick={() => navigate(`/events/${event.id}/members`)}
+            >
+              Chi tiết
+            </button>
           </div>
         </div>
       ))}
