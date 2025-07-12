@@ -1,75 +1,106 @@
-import React from 'react';
+import React, { useState } from 'react'; // Thêm useState
 import '../../assets/css/pages/DonationStep2.css';
 
 export default function DonationStep2({ formData, setFormData, onBack, onNext }) {
+  const [errors, setErrors] = useState({});
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === 'checkbox') {
       const prev = formData[name] || [];
-      if (checked) {
-        setFormData({ ...formData, [name]: [...prev, value] });
+      let updatedValues;
+      if (value === 'khong' && checked) {
+        // Nếu tích "Không", chỉ giữ "khong" và bỏ các lựa chọn khác
+        updatedValues = ['khong'];
+      } else if (value === 'khong' && !checked) {
+        // Nếu bỏ tích "Không", xóa "khong" khỏi danh sách
+        updatedValues = prev.filter((v) => v !== 'khong');
+      } else if (checked) {
+        // Nếu tích một lựa chọn khác, thêm nó vào và bỏ "khong"
+        updatedValues = [...prev.filter((v) => v !== 'khong'), value];
       } else {
-        setFormData({ ...formData, [name]: prev.filter(v => v !== value) });
+        // Nếu bỏ tích một lựa chọn khác, xóa nó
+        updatedValues = prev.filter((v) => v !== value);
       }
+      setFormData({ ...formData, [name]: updatedValues });
+      setErrors((prev) => ({ ...prev, [name]: '' })); // Xóa lỗi khi thay đổi
     } else {
       setFormData({ ...formData, [name]: value });
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
-
-  const handleSubmit = () => {
-    if (!formData.agreement) {
-      alert('Bạn cần đồng ý cam kết trước khi đăng ký.');
-      return;
+  const validateForm = () => {
+    const newErrors = [];
+    if (!['co', 'khong'].includes(formData.donated_before)) {
+      newErrors.push('Câu 1: Vui lòng chọn Có hoặc Không.');
     }
-    // Danh sách điều kiện loại trừ
+    if (!['co', 'khong'].includes(formData.past_diseases)) {
+      newErrors.push('Câu 2: Vui lòng chọn Có hoặc Không.');
+    }
+    if (!Array.isArray(formData.past_year) || formData.past_year.length === 0) {
+      newErrors.push('Câu 3: Vui lòng chọn ít nhất một lựa chọn.');
+    }
+    if (!Array.isArray(formData.past_6months) || formData.past_6months.length === 0) {
+      newErrors.push('Câu 4: Vui lòng chọn ít nhất một lựa chọn.');
+    }
+    if (!Array.isArray(formData.past_month) || formData.past_month.length === 0) {
+      newErrors.push('Câu 5: Vui lòng chọn ít nhất một lựa chọn.');
+    }
+    if (!Array.isArray(formData.past_2weeks) || formData.past_2weeks.length === 0) {
+      newErrors.push('Câu 6: Vui lòng chọn ít nhất một lựa chọn.');
+    }
+    if (!Array.isArray(formData.past_week) || formData.past_week.length === 0) {
+      newErrors.push('Câu 7: Vui lòng chọn ít nhất một lựa chọn.');
+    }
+    if (!Array.isArray(formData.female_questions) || formData.female_questions.length === 0) {
+      newErrors.push('Câu 8: Vui lòng chọn ít nhất một lựa chọn.');
+    }
+    if (!formData.agreement) {
+      newErrors.push('Vui lòng đồng ý cam kết.');
+    }
+    // Kiểm tra điều kiện loại trừ
     const reasons = [];
-  
     if (formData.past_diseases === 'co') {
       reasons.push('Bạn từng mắc các bệnh nguy hiểm như HIV, viêm gan B/C, v.v.');
     }
-  
     if (formData.past_year?.includes('truyen_mau')) {
       reasons.push('Bạn đã được truyền máu trong 12 tháng qua.');
     }
-  
     if (formData.past_6months?.includes('ma_tuy')) {
       reasons.push('Bạn có sử dụng ma túy trong 6 tháng qua.');
     }
-  
     if (formData.past_6months?.includes('qhtd_nguy_co')) {
       reasons.push('Bạn có quan hệ tình dục với người có nguy cơ cao.');
     }
-  
     if (formData.past_6months?.includes('qhtd_dong_gioi')) {
       reasons.push('Bạn có quan hệ đồng giới trong 6 tháng qua.');
     }
-  
     if (formData.past_6months?.includes('song_chung_virusB')) {
       reasons.push('Bạn sống chung với người nhiễm virus viêm gan B.');
     }
-  
     if (formData.past_month?.includes('vung_dich')) {
       reasons.push('Bạn từng đi vào vùng dịch bệnh trong 1 tháng qua.');
     }
-  
     if (formData.past_2weeks?.includes('cum_cam_lanh')) {
       reasons.push('Bạn đang bị cảm, cúm, sốt, đau họng trong 2 tuần qua.');
     }
-  
     if (formData.past_week?.includes('thuoc_khang_sinh')) {
       reasons.push('Bạn đang sử dụng thuốc kháng sinh/kháng viêm.');
     }
-  
     if (formData.female_questions?.includes('co_thai')) {
       reasons.push('Bạn đang mang thai hoặc nuôi con dưới 12 tháng.');
     }
-  
     if (reasons.length > 0) {
-      alert(
-        'Bạn hiện không đủ điều kiện hiến máu vì lý do sau:\n\n' +
-        reasons.map((r, i) => `${i + 1}. ${r}`).join('\n')
-      );
-      return;
+      newErrors.push('Bạn không đủ điều kiện hiến máu vì:\n' + reasons.map((r, i) => `${i + 1}. ${r}`).join('\n'));
+    }
+    return newErrors;
+  };
+
+  const handleSubmit = () => {
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors.reduce((obj, err, index) => ({ ...obj, [`error${index}`]: err }), {})); // Lưu lỗi vào state
+      alert(validationErrors.join('\n')); // Hiển thị tất cả lỗi qua alert
+      return; // Chặn gọi onNext
     }
     onNext();
   };
@@ -92,29 +123,9 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
             onChange={handleInputChange} /> Không
         </label>
       </div>
-
       {/* 2 */}
       <div className="mb-4">
-        <p>2. Hiện tại, anh/chị có mắc bệnh lý nào không?</p>
-        <label>
-          <input type="radio" name="current_illness" value="co"
-            checked={formData.current_illness === 'co'}
-            onChange={handleInputChange} /> Có
-        </label>
-        <label>
-          <input type="radio" name="current_illness" value="khong"
-            checked={formData.current_illness === 'khong'}
-            onChange={handleInputChange} /> Không
-        </label>
-        <textarea name="illness_details"
-          value={formData.illness_details || ''}
-          onChange={handleInputChange}
-          placeholder="Nếu có, ghi rõ" />
-      </div>
-
-      {/* 3 */}
-      <div className="mb-4">
-        <p>3. Trước đây, anh/chị có từng mắc một trong các bệnh: viêm gan siêu vi B, C,
+        <p>2. Trước đây, anh/chị có từng mắc một trong các bệnh: viêm gan siêu vi B, C,
           HIV, vảy nến, phì đại tiền liệt tuyến, sốc phản vệ, tai biến mạch máu não,
           nhồi máu cơ tim, lupus ban đỏ, động kinh, ung thư, hen, được cấy ghép mô tạng?</p>
         <label>
@@ -127,20 +138,11 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
             checked={formData.past_diseases === 'khong'}
             onChange={handleInputChange} /> Không
         </label>
-        <label>
-          <input type="radio" name="past_diseases" value="benh_khac"
-            checked={formData.past_diseases === 'benh_khac'}
-            onChange={handleInputChange} /> Bệnh khác
-        </label>
-        <textarea name="disease_details"
-          value={formData.disease_details || ''}
-          onChange={handleInputChange}
-          placeholder="Ghi rõ bệnh nếu chọn trên" />
       </div>
 
-      {/* 4 */}
+      {/* 3 */}
       <div className="mb-4">
-        <p>4. Trong 12 tháng qua, anh/chị có:</p>
+        <p>3. Trong 12 tháng qua, anh/chị có:</p>
         <label><input type="checkbox" name="past_year" value="sot_ret"
           checked={formData.past_year?.includes('sot_ret')}
           onChange={handleInputChange} /> Khỏi bệnh sau khi mắc một trong các bệnh: sốt rét,
@@ -156,9 +158,9 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
           onChange={handleInputChange} /> Không</label>
       </div>
 
-      {/* 5 */}
+      {/* 4 */}
       <div className="mb-4">
-        <p>5. Trong 6 tháng qua, anh/chị có:</p>
+        <p>4. Trong 6 tháng qua, anh/chị có:</p>
         <label><input type="checkbox" name="past_6months" value="thuong_han"
           checked={formData.past_6months?.includes('thuong_han')}
           onChange={handleInputChange} /> Khỏi bệnh sau các bệnh: thương hàn, nhiễm trùng máu, v.v.</label>
@@ -194,9 +196,9 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
           onChange={handleInputChange} /> Không</label>
       </div>
 
-      {/* 6 */}
+      {/* 5 */}
       <div className="mb-4">
-        <p>6. Trong 1 tháng qua, anh/chị có dùng thuốc kháng sinh?</p>
+        <p>5. Trong 1 tháng qua, anh/chị có dùng thuốc kháng sinh?</p>
         <label>
           <input type="checkbox" name="past_month" value="viem_duong_tiet_niu"
             checked={formData.past_month?.includes('viem_duong_tiet_niu')}
@@ -217,10 +219,10 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
         </label>
       </div>
 
-      {/* 7 */}
-      {/* 7 */}
+      {/* 6 */}
+      {/* 6 */}
       <div className="mb-4">
-        <p>7. Trong 2 tuần qua, anh/chị có:</p>
+        <p>6. Trong 2 tuần qua, anh/chị có:</p>
         <label>
           <input type="checkbox" name="past_2weeks" value="cum_cam_lanh"
             checked={formData.past_2weeks?.includes('cum_cam_lanh')}
@@ -233,17 +235,13 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
             onChange={handleInputChange} />
           Không
         </label>
-        <textarea name="other_2weeks"
-          value={formData.other_2weeks || ''}
-          onChange={handleInputChange}
-          placeholder="khác (Ghi rõ nếu có triệu chứng)" />
       </div>
 
 
-      {/* 8 */}
-      {/* 8 */}
+      {/* 7 */}
+      {/* 7 */}
       <div className="mb-4">
-        <p>8. Trong 1 tuần qua, anh/chị có:</p>
+        <p>7. Trong 1 tuần qua, anh/chị có:</p>
         <label>
           <input type="checkbox" name="past_week" value="thuoc_khang_sinh"
             checked={formData.past_week?.includes('thuoc_khang_sinh')}
@@ -256,16 +254,12 @@ export default function DonationStep2({ formData, setFormData, onBack, onNext })
             onChange={handleInputChange} />
           Không
         </label>
-        <textarea name="other_week"
-          value={formData.other_week || ''}
-          onChange={handleInputChange}
-          placeholder="khác (Ghi rõ nếu có triệu chứng)" />
       </div>
 
 
-      {/* 9 */}
+      {/* 8 */}
       <div className="mb-4">
-        <p>9. Câu hỏi dành cho phụ nữ:</p>
+        <p>8. Câu hỏi dành cho phụ nữ:</p>
         <label><input type="checkbox" name="female_questions" value="dang_co_kinh"
           checked={formData.female_questions?.includes('dang_co_kinh')}
           onChange={handleInputChange} /> Đang có kinh nguyệt</label>

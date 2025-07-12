@@ -4,9 +4,6 @@ import { useEvents } from "../../services/EventContext";
 import { AuthContext } from "../../services/AuthContext";
 import "../../assets/css/components/staff/EventManager.css";
 
-const bloodTypeOptions = ["A", "B", "AB", "O"];
-const bloodTypeMap = { A: 2, B: 3, AB: 4, O: 5 };
-
 const CreateEventPage = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
@@ -25,7 +22,6 @@ const CreateEventPage = () => {
     donationAfternoonStart: "12:00",
     donationAfternoonEnd: "18:00",
     maxRegistrations: "",
-    bloodTypeIds: [],
     image: null,
   });
 
@@ -105,16 +101,6 @@ const CreateEventPage = () => {
       }
 
       return newData;
-    });
-  };
-
-  const handleCheckboxChange = (blood) => {
-    const id = bloodTypeMap[blood];
-    setFormData((prev) => {
-      const updated = prev.bloodTypeIds.includes(id)
-        ? prev.bloodTypeIds.filter((b) => b !== id)
-        : [...prev.bloodTypeIds, id];
-      return { ...prev, bloodTypeIds: updated };
     });
   };
 
@@ -327,18 +313,6 @@ const CreateEventPage = () => {
         <div className="form-group">
           <label>Số lượng đăng ký tối đa:</label>
           <input type="number" name="maxRegistrations" value={formData.maxRegistrations} onChange={handleChange} required />
-        </div>
-
-        <div className="form-group">
-          <label>Nhóm máu phù hợp:</label>
-          <div className="checkbox-group">
-            {bloodTypeOptions.map((type) => (
-              <label key={type}>
-                <input type="checkbox" checked={formData.bloodTypeIds.includes(bloodTypeMap[type])} onChange={() => handleCheckboxChange(type)} />
-                {type}
-              </label>
-            ))}
-          </div>
         </div>
 
         <div className="form-group">

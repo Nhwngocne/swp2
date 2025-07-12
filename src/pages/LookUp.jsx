@@ -248,10 +248,10 @@ const LookUp = () => {
           </div>
           <h3 className="cta-title">Sẵn sàng giúp đỡ?</h3>
           <p className="cta-description">
-            Đăng ký để trở thành người hiến máu hoặc tìm người hiến máu phù hợp
+            Đăng ký để trở thành người sẵn sàng hiến máu khẩn cấp 
           </p>
-          <button className="cta-button" onClick={() => navigate("/form")}>
-            Đăng ký Cho/Nhận máu
+          <button className="cta-button" onClick={() => navigate("/emergencyForm")}>
+            Đăng ký yêu cầu khẩn cấp
           </button>
         </div>
       </div>

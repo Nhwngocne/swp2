@@ -18,7 +18,6 @@ export default function DonationBloodForm() {
     eventId = 0,
     donation_date = "",
     location: eventLocation = "",
-    bloodTypes: eventBloodTypes = [],
     session = "",
     donationMorningStart = "",
     donationMorningEnd = "",
@@ -94,7 +93,7 @@ export default function DonationBloodForm() {
       errors.push("ID thành viên");
     }
     if (!formData.bloodTypeId && formData.bloodTypeId !== "0") {
-      errors.push("Nhóm máu của bạn"); // Cho phép bloodTypeId là "0" (Không biết)
+      errors.push("Nhóm máu của bạn");
     }
     if (!formData.volumeMl || isNaN(parseInt(formData.volumeMl))) {
       errors.push("Thể tích máu");
@@ -105,10 +104,7 @@ export default function DonationBloodForm() {
     if (!["co", "khong"].includes(formData.donated_before)) {
       errors.push("Từng hiến máu");
     }
-    if (!["co", "khong"].includes(formData.current_illness)) {
-      errors.push("Bệnh lý hiện tại");
-    }
-    if (!["co", "khong", "benh_khac"].includes(formData.past_diseases)) {
+    if (!["co", "khong"].includes(formData.past_diseases)) {
       errors.push("Bệnh nguy hiểm");
     }
     if (!Array.isArray(formData.past_year)) {
@@ -119,6 +115,12 @@ export default function DonationBloodForm() {
     }
     if (!Array.isArray(formData.past_month)) {
       errors.push("Dữ liệu 1 tháng qua");
+    }
+    if (!Array.isArray(formData.past_2weeks)) {
+      errors.push("Dữ liệu 2 tuần qua");
+    }
+    if (!Array.isArray(formData.past_week)) {
+      errors.push("Dữ liệu 1 tuần qua");
     }
     if (!Array.isArray(formData.female_questions)) {
       errors.push("Dữ liệu câu hỏi nữ giới");
@@ -205,7 +207,6 @@ export default function DonationBloodForm() {
           setFormData={setFormData}
           onNext={() => setStep(2)}
           eventData={{
-            bloodTypes: eventBloodTypes,
             session,
             donationMorningStart,
             donationMorningEnd,

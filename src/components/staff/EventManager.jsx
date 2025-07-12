@@ -61,8 +61,6 @@ const EventManager = () => {
     return <div className="error">{error}</div>;
   }
 
-  const bloodTypeOptions = ['A', 'B', 'O', 'AB'];
-
   return (
     <div className="event-manager">
       <div className="page-header">
@@ -99,7 +97,6 @@ const EventManager = () => {
                 {(event.session === 'ALL' || event.session === 'AFTERNOON') && (
                   <div><strong>Giờ chiều:</strong> {event.donationAfternoonStart} - {event.donationAfternoonEnd}</div>
                 )}
-                <div><strong>Nhóm máu cần:</strong> {event.bloodTypes.join(', ') || 'Không xác định'}</div>
                 <div><strong>Số lượng đăng ký:</strong> {event.registeredMemberCount} / {event.maxRegistrations}</div>
                 <div><strong>Người tạo:</strong> {event.createdBy}</div>
               </div>
