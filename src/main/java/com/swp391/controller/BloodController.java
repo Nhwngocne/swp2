@@ -8,6 +8,7 @@ import com.swp391.dto.response.ApiResponse;
 import com.swp391.dto.response.BloodInventoryResponse;
 import com.swp391.dto.response.BloodTypeResponse;
 import com.swp391.service.BloodService;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,15 @@ public class BloodController {
 
     BloodService bloodService;
 
+    // ==== INIT ====
+    @PostConstruct
+    public void initCheckLowBloodInventory() {
+        System.out.println("🚀 Hệ thống khởi động -> Kiểm tra kho máu ban đầu...");
+        bloodService.checkAndNotifyLowBlood();
+    }
+
     // ==== BLOOD TYPE ====
 
-    // Create
     @PostMapping("/type")
     public ApiResponse<BloodTypeResponse> createBloodType(@RequestBody @Valid BloodTypeCreateRequest request) {
         return ApiResponse.<BloodTypeResponse>builder()
@@ -34,7 +41,6 @@ public class BloodController {
                 .build();
     }
 
-    // Update
     @PutMapping("/type/{typeId}")
     public ApiResponse<BloodTypeResponse> updateBloodType(
             @PathVariable int typeId,
@@ -44,7 +50,6 @@ public class BloodController {
                 .build();
     }
 
-    // Delete
     @DeleteMapping("/type/{typeId}")
     public ApiResponse<String> deleteBloodType(@PathVariable int typeId) {
         bloodService.deleteBloodType(typeId);
@@ -53,7 +58,6 @@ public class BloodController {
                 .build();
     }
 
-    // Get all
     @GetMapping("/type")
     public ApiResponse<List<BloodTypeResponse>> getAllBloodTypes() {
         return ApiResponse.<List<BloodTypeResponse>>builder()
@@ -61,7 +65,6 @@ public class BloodController {
                 .build();
     }
 
-    // Get by ID
     @GetMapping("/type/{typeId}")
     public ApiResponse<BloodTypeResponse> getBloodTypeById(@PathVariable int typeId) {
         return ApiResponse.<BloodTypeResponse>builder()
@@ -71,7 +74,6 @@ public class BloodController {
 
     // ==== BLOOD INVENTORY ====
 
-    // Create
     @PostMapping("/inventory")
     public ApiResponse<BloodInventoryResponse> createBloodInventory(
             @RequestBody @Valid BloodInventoryCreateRequest request) {
@@ -80,7 +82,6 @@ public class BloodController {
                 .build();
     }
 
-    // Update
     @PutMapping("/inventory/{inventoryId}")
     public ApiResponse<BloodInventoryResponse> updateBloodInventory(
             @PathVariable int inventoryId,
@@ -90,7 +91,6 @@ public class BloodController {
                 .build();
     }
 
-    // Delete
     @DeleteMapping("/inventory/{inventoryId}")
     public ApiResponse<String> deleteBloodInventory(@PathVariable int inventoryId) {
         bloodService.deleteBloodInventory(inventoryId);
@@ -99,7 +99,6 @@ public class BloodController {
                 .build();
     }
 
-    // Get all
     @GetMapping("/inventory")
     public ApiResponse<List<BloodInventoryResponse>> getAllBloodInventories() {
         return ApiResponse.<List<BloodInventoryResponse>>builder()
@@ -107,11 +106,20 @@ public class BloodController {
                 .build();
     }
 
-    // Get by ID
     @GetMapping("/inventory/{inventoryId}")
     public ApiResponse<BloodInventoryResponse> getBloodInventoryById(@PathVariable int inventoryId) {
         return ApiResponse.<BloodInventoryResponse>builder()
                 .result(bloodService.getBloodInventoryById(inventoryId))
+                .build();
+    }
+
+    // ==== CHECK LOW BLOOD ====
+
+    @PostMapping("/inventory/check-low")
+    public ApiResponse<String> checkLowBloodInventory() {
+        bloodService.checkAndNotifyLowBlood();
+        return ApiResponse.<String>builder()
+                .result("Đã kiểm tra kho máu và gửi thông báo cho staff nếu cần.")
                 .build();
     }
 }

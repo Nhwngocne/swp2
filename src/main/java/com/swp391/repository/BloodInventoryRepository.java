@@ -14,8 +14,7 @@ public interface BloodInventoryRepository extends JpaRepository<BloodInventory, 
     Optional<BloodInventory> findByBloodType_Name(String name);
     List<BloodInventory> findByBloodType_NameIn(List<String> bloodTypes);
 
-    @Query("SELECT b FROM BloodInventory b WHERE b.bloodType.name IN :bloodTypes")
-    List<BloodInventory> findInventories(@Param("bloodTypes") List<String> bloodTypes);
-
+    @Query("SELECT bi.bloodType.id, SUM(bi.quantity) FROM BloodInventory bi GROUP BY bi.bloodType.id")
+    List<Object[]> getTotalQuantityPerBloodType();
 }
 

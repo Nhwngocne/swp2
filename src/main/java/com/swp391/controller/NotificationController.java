@@ -47,7 +47,10 @@ public class NotificationController {
                     .toList();
         } else if ("STAFF".equals(role)) {
             notifications = notifications.stream()
-                    .filter(n -> "forStaff".equals(n.getTitle()) || systemTitles.contains(n.getTitle()))
+                    .filter(n ->
+                            "forStaff".equals(n.getTitle()) ||
+                                    "Cảnh báo kho máu thấp".equals(n.getTitle()) ||
+                                    systemTitles.contains(n.getTitle()))
                     .toList();
         }
 
@@ -56,6 +59,7 @@ public class NotificationController {
                 .message("Lấy danh sách thông báo thành công.")
                 .build();
     }
+
 
     // STAFF xem thông báo của 1 member cụ thể
     @GetMapping("/member/{memberId}")
