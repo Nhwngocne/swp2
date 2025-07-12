@@ -8,16 +8,19 @@ import com.swp391.dto.response.BloodInventoryResponse;
 import com.swp391.dto.response.BloodTypeResponse;
 import com.swp391.entity.BloodInventory;
 import com.swp391.entity.BloodType;
+import com.swp391.entity.Notification;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.BloodMapper;
 import com.swp391.repository.BloodInventoryRepository;
 import com.swp391.repository.BloodTypeRepository;
+import com.swp391.repository.NotificationRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,7 +32,8 @@ public class BloodService {
     BloodTypeRepository bloodTypeRepository;
     BloodInventoryRepository bloodInventoryRepository;
     BloodMapper bloodMapper;
-
+    NotificationService notificationService;
+    NotificationRepository notificationRepository;
     // ===== BLOOD TYPE =====
     // Create
     public BloodTypeResponse createBloodType(BloodTypeCreateRequest request) {
@@ -116,6 +120,53 @@ public class BloodService {
         return totalAvailable >= requiredQuantity;
     }
 
+    public void checkAndNotifyLowBlood() {
+        List<Object[]> result = bloodInventoryRepository.getTotalQuantityPerBloodType();
 
+        for (Object[] row : result) {
+            Integer bloodTypeId = (Integer) row[0];
+            Long totalQuantity = (Long) row[1];
 
+            if (totalQuantity < 5) {
+                // Lấy thông báo gần nhất theo nhóm máu này
+                Notification lastNotification = notificationRepository
+                        .findTopByTitleAndMessageContainingOrderByCreatedAtDesc(
+                                "Cảnh báo kho máu thấp", getBloodTypeName(bloodTypeId)
+                        )
+                        .orElse(null);
+
+                boolean shouldNotify = true;
+                if (lastNotification != null) {
+                    LocalDateTime lastTime = lastNotification.getCreatedAt();
+                    LocalDateTime now = LocalDateTime.now();
+                    if (lastTime.plusDays(3).isAfter(now)) {
+                        // Nếu chưa quá 3 ngày
+                        shouldNotify = false;
+                    }
+                }
+
+                if (shouldNotify) {
+                    String message = "Kho máu nhóm " + getBloodTypeName(bloodTypeId)
+                            + " chỉ còn " + totalQuantity + " đơn vị. Vui lòng bổ sung gấp!";
+                    notificationService.createNotificationForAllStaff(
+                            "Cảnh báo kho máu thấp", message
+                    );
+                }
+            }
+        }
+    }
+
+    private String getBloodTypeName(Integer bloodTypeId) {
+        switch (bloodTypeId) {
+            case 6: return "O-";
+            case 7: return "O+";
+            case 8: return "A-";
+            case 9: return "A+";
+            case 10: return "B-";
+            case 11: return "B+";
+            case 12: return "AB-";
+            case 13: return "AB+";
+            default: return "Type-" + bloodTypeId;
+        }
+    }
 }
