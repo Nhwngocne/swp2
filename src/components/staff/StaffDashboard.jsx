@@ -4,8 +4,6 @@ import {
   Area,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
   Cell,
   CartesianGrid,
   XAxis,
@@ -42,7 +40,6 @@ export default function AdminDashboard() {
   const [totalRequestForms, setTotalRequestForms] = useState(0);
   const [totalDonateForms, setTotalDonateForms] = useState(0);
 
-  const [bloodInventoryData, setBloodInventoryData] = useState([]);
   const [pieData, setPieData] = useState([]);
 
   useEffect(() => {
@@ -84,7 +81,7 @@ export default function AdminDashboard() {
       ? intents.filter((i) => isInTimeRange(i.createdAt, filterType, selectedDate))
       : intents;
 
-    // Đối với kho máu tính "đến thời điểm đó"
+    // Kho máu tính đến thời điểm đó
     const filteredInventories = inventories[0]?.lastUpdated
       ? inventories.filter((inv) => isInTimeRangeUpTo(inv.lastUpdated, filterType, selectedDate))
       : inventories;
@@ -98,15 +95,7 @@ export default function AdminDashboard() {
     setTotalRequestForms(requestFormsCount);
     setTotalDonateForms(donateFormsCount);
 
-    // Bar chart
-    const componentMap = filteredInventories.reduce((acc, curr) => {
-      acc[curr.component] = (acc[curr.component] || 0) + (curr.quantity || 0);
-      return acc;
-    }, {});
-    const groupedData = Object.entries(componentMap).map(([type, units]) => ({ type, units }));
-    setBloodInventoryData(groupedData);
-
-    // Pie chart
+    // Tính dữ liệu nhóm máu
     const bloodTypeMap = {
       6: "O-", 7: "O+", 8: "A-", 9: "A+",
       10: "B-", 11: "B+", 12: "AB-", 13: "AB+"
@@ -137,9 +126,9 @@ export default function AdminDashboard() {
 
       <div className="filter-bar">
         <label>Lọc theo:</label>
-        <select value={filterType} onChange={(e) => { 
+        <select value={filterType} onChange={(e) => {
           setFilterType(e.target.value);
-          setSelectedDate(""); 
+          setSelectedDate("");
         }}>
           <option value="day">Ngày cụ thể</option>
           <option value="month">Tháng cụ thể</option>
@@ -193,42 +182,19 @@ export default function AdminDashboard() {
 
       <div className="dashboard-charts">
         <div className="chart-card">
-          <h2>Kho máu theo loại nhóm</h2>
+          <h2>Kho máu theo nhóm máu</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={bloodInventoryData}>
+            <BarChart data={pieData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="type" />
+              <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="units" radius={[10, 10, 0, 0]}>
-                {bloodInventoryData.map((entry, index) => (
+              <Bar dataKey="value" radius={[10, 10, 0, 0]}>
+                {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
                 ))}
               </Bar>
             </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="chart-card">
-          <h2>Tỷ lệ nhóm máu</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-                label
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
           </ResponsiveContainer>
         </div>
       </div>

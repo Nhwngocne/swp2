@@ -4,8 +4,6 @@ import {
   Area,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
   Cell,
   CartesianGrid,
   XAxis,
@@ -51,7 +49,6 @@ export default function AdminDashboard() {
   const [totalBlogs, setTotalBlogs] = useState(0);
 
   const [bloodInventoryData, setBloodInventoryData] = useState([]);
-  const [pieData, setPieData] = useState([]);
 
   const { getAllNotifications } = useAuth();
 
@@ -117,13 +114,6 @@ export default function AdminDashboard() {
     setTotalRequestForms(requestFormsCount);
     setTotalDonateForms(donateFormsCount);
 
-    const componentMap = filteredInventories.reduce((acc, curr) => {
-      acc[curr.component] = (acc[curr.component] || 0) + (curr.quantity || 0);
-      return acc;
-    }, {});
-    const groupedData = Object.entries(componentMap).map(([type, units]) => ({ type, units }));
-    setBloodInventoryData(groupedData);
-
     const bloodTypeMap = {
       6: "O-", 7: "O+", 8: "A-", 9: "A+",
       10: "B-", 11: "B+", 12: "AB-", 13: "AB+"
@@ -134,7 +124,7 @@ export default function AdminDashboard() {
       return acc;
     }, {});
     const bloodTypeData = Object.entries(typeMap).map(([name, value]) => ({ name, value }));
-    setPieData(bloodTypeData);
+    setBloodInventoryData(bloodTypeData);
 
   }, [members, forms, emergencies, intents, inventories, blogs, filterType, selectedDate]);
 
@@ -209,34 +199,19 @@ export default function AdminDashboard() {
 
       <div className="dashboard-charts">
         <div className="chart-card">
-          <h2>Kho máu theo loại nhóm</h2>
+          <h2>Tỷ lệ tồn kho nhóm máu</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={bloodInventoryData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="type" />
+              <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="units" radius={[10, 10, 0, 0]}>
+              <Bar dataKey="value" radius={[10, 10, 0, 0]}>
                 {bloodInventoryData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
                 ))}
               </Bar>
             </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="chart-card">
-          <h2>Tỷ lệ nhóm máu</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={100}
-                fill="#8884d8" dataKey="value" label>
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
           </ResponsiveContainer>
         </div>
       </div>
@@ -266,12 +241,12 @@ function isInTimeRangeUpTo(dateStr, type, selectedDate) {
   }
   if (type === "month") {
     const [selYear, selMonth] = selectedDate.split("-").map(Number);
-    const selDate = new Date(selYear, selMonth, 0); // ngày cuối tháng
+    const selDate = new Date(selYear, selMonth, 0);
     return dataDate <= selDate;
   }
   if (type === "year") {
     const selYear = parseInt(selectedDate);
-    const selDate = new Date(selYear, 11, 31); // cuối năm
+    const selDate = new Date(selYear, 11, 31);
     return dataDate <= selDate;
   }
   return true;
