@@ -30,34 +30,22 @@ public class BloodDonationFormCreateRequest {
     // Câu 1
     Boolean donatedBefore;
 
-    // Câu 2
-    Boolean currentlyIll;
-    String illnessDetails;
-
-    // Câu 3
     Boolean hadSeriousDisease;
-    String diseaseDetails;
 
-    // Câu 4 (checkbox)
     Boolean hadMalariaOrOtherInfectious;
     Boolean receivedBlood;
     Boolean gotVaccine;
     Boolean noneOfAbove12Months;
 
-    // Câu 5
     Boolean tattooOrAcupuncture;
     Boolean hadSkinIssues;
 
-    // Câu 6
     Boolean usedAntibioticsOrAntiInflammatory;
 
-    // Câu 7
-    String symptomsPast2Weeks;
+    Boolean symptomsPast2Weeks; // Chuyển thành Boolean để phù hợp với checkbox
 
-    // Câu 8
-    String symptomsPast1Week;
+    Boolean symptomsPast1Week;  // Chuyển thành Boolean để phù hợp với checkbox
 
-    // Câu 9 - nữ
     Boolean isMenstruating;
     Boolean isPregnantOrRecentlyDelivered;
     Boolean noneOfFemaleConditions;

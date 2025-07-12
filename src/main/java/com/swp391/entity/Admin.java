@@ -11,7 +11,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "admin")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

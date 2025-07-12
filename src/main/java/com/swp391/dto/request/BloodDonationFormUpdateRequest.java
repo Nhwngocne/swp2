@@ -23,13 +23,8 @@ public class BloodDonationFormUpdateRequest {
     // Câu 1
     Boolean donatedBefore;
 
-    // Câu 2
-    Boolean currentlyIll;
-    String illnessDetails;
-
     // Câu 3
     Boolean hadSeriousDisease;
-    String diseaseDetails;
 
     // Câu 4
     Boolean hadMalariaOrOtherInfectious;
@@ -45,8 +40,8 @@ public class BloodDonationFormUpdateRequest {
     Boolean usedAntibioticsOrAntiInflammatory;
 
     // Câu 7 & 8
-    String symptomsPast2Weeks;
-    String symptomsPast1Week;
+    Boolean symptomsPast2Weeks;
+    Boolean symptomsPast1Week;
 
 
 

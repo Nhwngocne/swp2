@@ -28,12 +28,10 @@ public interface EventMapper {
     @Mapping(source = "donationMorningEnd", target = "donationMorningEnd", qualifiedByName = "stringToLocalTime")
     @Mapping(source = "donationAfternoonStart", target = "donationAfternoonStart", qualifiedByName = "stringToLocalTime")
     @Mapping(source = "donationAfternoonEnd", target = "donationAfternoonEnd", qualifiedByName = "stringToLocalTime")
-    @Mapping(target = "bloodTypes", ignore = true)
     Event toEvent(EventCreateRequest request);
 
     @Mapping(source = "createdBy", target = "staff")
     @Mapping(target = "registeredMemberCount", source = "registeredMembers", qualifiedByName = "mapRegisteredMembersSize")
-    @Mapping(source = "bloodTypes", target = "bloodTypes", qualifiedByName = "mapBloodTypesToNames")
     EventResponse toEventResponse(Event event);
 
     @Mapping(target = "id", ignore = true)
@@ -63,13 +61,5 @@ public interface EventMapper {
     @Named("mapRegisteredMembersSize")
     default Integer mapRegisteredMembersSize(java.util.Collection<?> registeredMembers) {
         return registeredMembers != null ? registeredMembers.size() : 0;
-    }
-
-    @Named("mapBloodTypesToNames")
-    default List<String> mapBloodTypesToNames(Set<BloodType> bloodTypes) {
-        if (bloodTypes == null) return new ArrayList<>();
-        return bloodTypes.stream()
-                .map(BloodType::getName)
-                .collect(Collectors.toList());
     }
 }

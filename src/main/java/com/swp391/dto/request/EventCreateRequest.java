@@ -31,7 +31,6 @@ public class EventCreateRequest {
     String donationAfternoonStart;
     String donationAfternoonEnd;
 
-    List<Integer> bloodTypeIds;
     Integer maxRegistrations;
 
     int staffId;

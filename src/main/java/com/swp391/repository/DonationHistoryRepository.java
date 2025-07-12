@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface DonationHistoryRepository extends JpaRepository<DonationHistory,Integer> {
     List<DonationHistory> findByMemberId(int memberId);
+    List<DonationHistory> findByMemberIdAndResult(int memberId, String result);
 }
