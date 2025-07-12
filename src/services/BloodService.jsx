@@ -84,9 +84,9 @@ export const bloodService = {
   createBloodInventory: (formData, config = {}) =>
     bloodAPI.post("/blood/inventory", formData, config),
 
-  // Cập nhật kho máu
-  updateBloodInventory: (inventoryId, formData, config = {}) =>
-    bloodAPI.put(`/blood/inventory/${inventoryId}`, formData, config),
+  // // Cập nhật kho máu
+  // updateBloodInventory: (inventoryId, formData, config = {}) =>
+  //   bloodAPI.put(`/blood/inventory/${inventoryId}`, formData, config),
 
   // Xóa kho máu
   deleteBloodInventory: (inventoryId, config = {}) =>
