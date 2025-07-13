@@ -155,7 +155,7 @@ console.log("User:", user);
           </section>
         </div>
       </div>
-      {role === "MEMBER" && form.status !== "APPROVED" && (
+      {role === "MEMBER" && form.status == "APPROVED" && (
         <button className="delete-button" onClick={handleDelete}>Xóa đơn đăng ký</button>
       )}
       {role === "MEMBER" && (
