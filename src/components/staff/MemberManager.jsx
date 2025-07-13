@@ -1,13 +1,13 @@
+// MemberManager.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../services/AuthContext";
-
+import "../../assets/css/components/staff/userManager.css"; // ✅ thêm CSS nếu cần
 const MemberManager = () => {
   const { getAllUsers, getMemberById, banStaff } = useAuth();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMember, setSelectedMember] = useState(null);
 
-  // Lấy danh sách người dùng từ API
   const fetchMembers = async () => {
     try {
       setLoading(true);
@@ -20,39 +20,32 @@ const MemberManager = () => {
             status: member.status || "ACTIVE",
           }));
           setMembers(mappedMembers);
-          console.log("Members data:", mappedMembers); // Debug
         } else {
-          console.error("Dữ liệu không đúng định dạng mảng:", result);
           setMembers([]);
         }
       } else {
-        console.error("Lỗi khi lấy danh sách người dùng:", response.error);
         setMembers([]);
       }
     } catch (error) {
-      console.error("Lỗi khi lấy danh sách người dùng:", error);
       setMembers([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Lấy thông tin chi tiết của thành viên theo ID
   const fetchMemberDetails = async (memberId) => {
     try {
-      const response = await getMemberById(memberId); // Sử dụng getMemberById từ useAuth
+      const response = await getMemberById(memberId);
       if (response.success) {
         setSelectedMember({ ...response.member, status: response.member.status || "ACTIVE" });
       } else {
         alert(response.error);
       }
     } catch (error) {
-      console.error("Lỗi khi lấy thông tin chi tiết:", error);
       alert("Không thể lấy thông tin chi tiết");
     }
   };
 
-  // Ban/Unban thành viên
   const handleToggleBan = async (memberId, currentStatus) => {
     try {
       const newStatus = currentStatus === "ACTIVE" ? "BANNED" : "ACTIVE";
@@ -68,7 +61,6 @@ const MemberManager = () => {
         alert(response.error);
       }
     } catch (error) {
-      console.error("Lỗi khi thay đổi trạng thái:", error);
       alert("Thay đổi trạng thái thất bại");
     }
   };
@@ -78,91 +70,106 @@ const MemberManager = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Quản lý thành viên (Staff)</h2>
+    <div className="member-manager-container">
+      <h2>Quản lý nhân viên</h2>
       {loading ? (
         <p>Đang tải danh sách...</p>
       ) : (
         <>
-          <table border="1" cellPadding="10" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
+          <table className="member-table">
             <thead>
               <tr>
-                <th>STT</th>
-                <th>Họ tên</th>
-                <th>Email</th>
-                <th>Trạng thái</th>
-                <th>Xem thông tin chi tiết</th>
-                <th>Hành động</th>
+                <th>HỌ TÊN</th>
+                <th>EMAIL</th>
+                <th>TRẠNG THÁI</th>
+                <th>XEM THÔNG TIN CHI TIẾT</th>
+                <th>HÀNH ĐỘNG</th>
               </tr>
             </thead>
             <tbody>
-              {members.map((member, index) => (
+              {members.map((member) => (
                 <tr key={member.id}>
-                  <td>{index + 1}</td>
                   <td>{member.name || "Không xác định"}</td>
                   <td>{member.email || "Không có email"}</td>
-                  <td style={{ color: member.status === "BANNED" ? "red" : "green", fontWeight: "bold" }}>
+                  <td className={member.status === "BANNED" ? "status-banned" : "status-active"}>
                     {member.status === "ACTIVE" ? "Hoạt động" : member.status === "BANNED" ? "Đã ban" : "Không xác định"}
                   </td>
                   <td>
-                    <button
-                      onClick={() => fetchMemberDetails(member.id)}
-                      style={{ cursor: "pointer" }}
-                    >
+                    <span className="view-link" onClick={() => fetchMemberDetails(member.id)}>
                       Xem chi tiết
-                    </button>
+                    </span>
                   </td>
                   <td>
-                    <button
-                      onClick={() => handleToggleBan(member.id, member.status || "ACTIVE")}
-                      style={{ backgroundColor: member.status === "ACTIVE" ? "#ff4444" : "#44ff44", color: "white" }}
-                    >
-                      {member.status === "ACTIVE" ? "Cấm" : "Gỡ cấm"}
-                    </button>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={member.status === "ACTIVE"}
+                        onChange={() => handleToggleBan(member.id, member.status || "ACTIVE")}
+                      />
+                      <div className="slider"></div>
+                      <div className="slider-card">
+                        <div className="slider-card-face slider-card-front"></div>
+                        <div className="slider-card-face slider-card-back"></div>
+                      </div>
+                    </label>
                   </td>
                 </tr>
               ))}
               {members.length === 0 && (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    Không có dữ liệu
-                  </td>
+                  <td colSpan="5">Không có dữ liệu</td>
                 </tr>
               )}
             </tbody>
           </table>
 
-          {/* Modal hoặc popup hiển thị thông tin chi tiết */}
           {selectedMember && (
-            <div
-              style={{
-                position: "fixed",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                backgroundColor: "white",
-                padding: "20px",
-                border: "1px solid #ccc",
-                boxShadow: "0 0 10px rgba(0,0,0,0.5)",
-                zIndex: 1000,
-              }}
-            >
-              <h3>Thông tin chi tiết thành viên ID: {selectedMember.id}</h3>
-              <p><strong>Họ tên:</strong> {selectedMember.name || "Không xác định"}</p>
-              <p><strong>Email:</strong> {selectedMember.email || "Không có email"}</p>
-              <p><strong>Số CCCD:</strong> {selectedMember.numberCccd || "Không có"}</p>
-              <p><strong>Ngày sinh:</strong> {selectedMember.dob || "Không có"}</p>
-              <p><strong>Giới tính:</strong> {selectedMember.gender || "Không có"}</p>
-              <p><strong>Địa chỉ liên hệ:</strong> {selectedMember.address || "Không có"}</p>
-              <p><strong>Số điện thoại:</strong> {selectedMember.phone || "Không có"}</p>
-              <p><strong>Nghề nghiệp:</strong> {selectedMember.job || "Không có"}</p>
-              <p><strong>Trạng thái:</strong> {selectedMember.status === "ACTIVE" ? "Hoạt động" : selectedMember.status === "BANNED" ? "Đã ban" : "Không xác định"}</p>
-              <button
-                onClick={() => setSelectedMember(null)}
-                style={{ marginTop: "10px", backgroundColor: "#ff4444", color: "white" }}
-              >
-                Đóng
-              </button>
+            <div className="modal">
+              <div className="modal-content">
+                <span className="close-icon" onClick={() => setSelectedMember(null)}>×</span>
+                <h3>Thông tin chi tiết thành viên</h3>
+                <div className="detail-row">
+                  <label>Họ tên</label>
+                  <div className="detail-value">{selectedMember.name || "Không có"}</div>
+                </div>
+                <div className="detail-row">
+                  <label>Email</label>
+                  <div className="detail-value">{selectedMember.email || "Không có"}</div>
+                </div>
+                <div className="detail-row">
+                  <label>Số CCCD</label>
+                  <div className="detail-value">{selectedMember.numberCccd || "Không có"}</div>
+                </div>
+                <div className="detail-row">
+                  <label>Ngày sinh</label>
+                  <div className="detail-value">{selectedMember.dob || "Không có"}</div>
+                </div>
+                <div className="detail-row">
+                  <label>Giới tính</label>
+                  <div className="detail-value">{selectedMember.gender || "Không có"}</div>
+                </div>
+                <div className="detail-row">
+                  <label>Địa chỉ liên hệ</label>
+                  <div className="detail-value">{selectedMember.address || "Không có"}</div>
+                </div>
+                <div className="detail-row">
+                  <label>Số điện thoại</label>
+                  <div className="detail-value">{selectedMember.phone || "Không có"}</div>
+                </div>
+                <div className="detail-row">
+                  <label>Nghề nghiệp</label>
+                  <div className="detail-value">{selectedMember.job || "Không có"}</div>
+                </div>
+                <div className="detail-row">
+                  <label>Trạng thái</label>
+                  <div className="detail-value">{selectedMember.status === "ACTIVE" ? "Hoạt động" : selectedMember.status === "BANNED" ? "Đã ban" : "Không xác định"}</div>
+                </div>
+                <div className="modal-actions">
+                  <button className="close-btn" onClick={() => setSelectedMember(null)}>
+                    Đóng
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </>
