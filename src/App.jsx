@@ -100,6 +100,7 @@ const AppContent = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/news" element={<NewsList />} />
           <Route path="/members" element={<MemberList />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/search" element={<Search />} />
@@ -116,7 +117,6 @@ const AppContent = () => {
           {/* Protected */}
           <Route path="/events" element={<EventProvider><EventList /></EventProvider>} />
           <Route path="/events/:id/members" element={<MemberList />} />
-
 
 
           

@@ -136,7 +136,7 @@ const NewsManager = () => {
                     </span>
                   </td>
                   <td>{item.category}</td>
-                  <td>{new Date(item.publishDate).toLocaleDateString("vi-VN")}</td>
+                  <td>{item.publishDate}</td>
                   <td>{item.views || 0}</td>
                   <td className="text-center">
                     <div className="btn-group" role="group">
@@ -207,10 +207,6 @@ const NewsManager = () => {
             <div className="form-group">
               <label>Tác giả</label>
               <input className="form-control" value={formData.author} onChange={(e) => setFormData({ ...formData, author: e.target.value })} />
-            </div>
-            <div className="form-check mt-2">
-              <input className="form-check-input" type="radio" checked readOnly />
-              <label className="form-check-label">Hiển thị</label>
             </div>
             <div className="button-group mt-3">
               <button type="submit" className="save-cancel-btn btn-save">
