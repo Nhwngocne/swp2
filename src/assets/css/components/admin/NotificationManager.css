@@ -1,0 +1,316 @@
+
+/* Tiêu đề */
+.notification-manager h2 {
+  text-align: center;
+  color: #1d4ed8; /* blue-700 */
+  font-size: 1.875rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+.notification-list-wrapper,
+.notification-list-container {
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+/* Form */
+.notification-manager form textarea,
+.notification-manager form select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: #f9fafb;
+  transition: border 0.2s ease;
+}
+
+.notification-manager form textarea:focus,
+.notification-manager form select:focus {
+  border-color: #3b82f6;
+  background: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.notification-manager form button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #2563eb; /* blue-600 */
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.5rem;
+  margin-top: 0.75rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.notification-manager form button:hover {
+  background: #1e40af; /* blue-800 */
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  border-left: 8px solid;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: 0.2s ease;
+}
+
+.notification-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.notification-content {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.notification-content .icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.notification-content .title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.notification-content .message {
+  margin: 0;
+}
+
+.notification-content .date {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+.delete-btn {
+  font-size: 1.25rem;
+  color: #dc2626; /* red-600 */
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+  color: #b91c1c; /* red-700 */
+  transform: scale(1.1);
+}
+
+/* Màu loại thông báo */
+.border-blue-500 {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+  color: #1e3a8a;
+}
+
+.border-green-500 {
+  border-color: #10b981;
+  background-color: #ecfdf5;
+  color: #065f46;
+}
+
+.border-yellow-500 {
+  border-color: #facc15;
+  background-color: #fefce8;
+  color: #78350f;
+}
+
+.border-red-500 {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+  color: #7f1d1d;
+}
+
+/* Toast */
+.local-notifications {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 9999;
+}
+
+.local-notification {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  max-width: 300px;
+  animation: slideIn 0.4s ease-out;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .notification-manager {
+    padding: 1.5rem;
+  }
+
+  .notification-item {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .delete-btn {
+    align-self: flex-end;
+  }
+}
+.notification-manager {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.notification-grid {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* FORM */
+.notification-form-section {
+  flex: 1;
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.notification-form textarea,
+.notification-form select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.notification-form textarea:focus,
+.notification-form select:focus {
+  border-color: #2563eb;
+  outline: none;
+  background: white;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background: #1e3a8a;
+}
+
+/* DANH SÁCH THÔNG BÁO */
+.notification-list-section {
+  flex: 2;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-left: 8px solid;
+  border-radius: 0.5rem;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.notification-content {
+  display: flex;
+  gap: 1rem;
+}
+
+.notification-content .icon {
+  font-size: 1.5rem;
+}
+
+.title {
+  font-weight: 600;
+}
+
+.date {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.delete-btn {
+  font-size: 1.2rem;
+  color: #dc2626;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: #b91c1c;
+}
+
+/* TOAST */
+.local-notifications {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.local-notification {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .notification-grid {
+    flex-direction: column;
+  }
+}

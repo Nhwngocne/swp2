@@ -164,11 +164,7 @@ const StaffManager = () => {
                   <label>Trạng thái</label>
                   <div className="detail-value">{selectedStaff.status === "ACTIVE" ? "Hoạt động" : selectedStaff.status === "BANNED" ? "Đã ban" : "Không xác định"}</div>
                 </div>
-                <div className="modal-actions">
-                  <button className="close-btn" onClick={() => setSelectedStaff(null)}>
-                    Đóng
-                  </button>
-                </div>
+               
               </div>
             </div>
           )}

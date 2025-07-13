@@ -165,11 +165,7 @@ const MemberManager = () => {
                   <label>Trạng thái</label>
                   <div className="detail-value">{selectedMember.status === "ACTIVE" ? "Hoạt động" : selectedMember.status === "BANNED" ? "Đã ban" : "Không xác định"}</div>
                 </div>
-                <div className="modal-actions">
-                  <button className="close-btn" onClick={() => setSelectedMember(null)}>
-                    Đóng
-                  </button>
-                </div>
+              
               </div>
             </div>
           )}
