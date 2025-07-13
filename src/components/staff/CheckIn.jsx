@@ -24,7 +24,7 @@ const CheckIn = () => {
     height: "",
     bloodPressure: "",
     note: "",
-    status: "APPROVED", // Hoặc "REJECTED" tùy theo logic của bạn
+    status: "CHECKIN", // Hoặc "REJECTED" tùy theo logic của bạn
     approvedByStaffId: null,
   });
 
@@ -162,7 +162,7 @@ const CheckIn = () => {
         <div>
           <label className="block text-sm font-medium">Trạng thái</label>
           <select name="status" value={formData.status} onChange={handleChange} className="border rounded px-3 py-2 w-full">
-            <option value="APPROVED">Chấp nhận</option>
+            <option value="CHECKIN">Chấp nhận</option>
             <option value="REJECTED">Từ chối</option>
           </select>
         </div>
