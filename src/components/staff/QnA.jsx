@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { qnaService } from "../../services/qnaService";
-
+ import "../../assets/css/components/staff/QnA.css"; // ✅ thêm CSS nếu cần
 const QnA = () => {
   const [questions, setQuestions] = useState([]);
   const [selectedId, setSelectedId] = useState(null);

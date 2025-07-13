@@ -45,10 +45,14 @@ export const NotificationProvider = ({ children }) => {
       );
     }
     if (isStaff) {
-      return notifications.filter(
-        (n) => n.title === "forStaff" || systemTitles.includes(n.title)
-      );
-    }
+  return notifications.filter(
+    (n) =>
+      n.title === "forStaff" ||
+      n.title === "Cảnh báo kho máu thấp" ||
+      systemTitles.includes(n.title)
+  );
+}
+
     return [];
   };
 

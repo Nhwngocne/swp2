@@ -3,101 +3,148 @@ import { useAuth } from "../../services/AuthContext";
 import { bloodService } from "../../services/BloodService";
 import "../../assets/css/components/staff/BloodInventoryForm.css";
 
-const BloodInventoryForm = () => {
+const BloodInventoryForm = ({ bloodInventories = [], onSuccess }) => {
   const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
-    component: "",
-    quantity: "",
-    lastUpdated: "",
+    bloodType: "",
+    addQuantity: "",
   });
+
+  // Map nhóm máu sang bloodTypeId (chuẩn)
+  const bloodMap = {
+    "O-": 6, "O+": 7, "A-": 8, "A+": 9,
+    "B-": 10, "B+": 11, "AB-": 12, "AB+": 13
+  };
+
+  const bloodTypes = Object.keys(bloodMap);
+
+  const getCurrentQuantity = () => {
+    if (!formData.bloodType) return 0;
+    const bloodTypeId = bloodMap[formData.bloodType];
+
+    // ✅ Tìm inventory đúng bloodTypeId
+    const inventory = bloodInventories.find(inv => 
+      Number(inv.bloodTypeId) === Number(bloodTypeId)
+    );
+
+    console.log(`===> Inventory cho ${formData.bloodType}:`, inventory);
+    return inventory ? inventory.quantity : 0;
+  };
+
+  const handleToggleForm = () => {
+    setShowForm(prev => !prev);
+    if (!showForm) {
+      setFormData({
+        bloodType: "",
+        addQuantity: ""
+      });
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleAddQuantity = async () => {
+    if (!formData.bloodType || !formData.addQuantity) {
+      alert("Vui lòng chọn nhóm máu và nhập số lượng.");
+      return;
+    }
 
-    if (!formData.component || !formData.quantity || !formData.lastUpdated) {
-      alert("Vui lòng điền đủ thông tin bắt buộc.");
+    const addNum = parseInt(formData.addQuantity, 10);
+    if (isNaN(addNum) || addNum <= 0) {
+      alert("Số lượng phải là số lớn hơn 0.");
+      return;
+    }
+
+    const bloodTypeId = bloodMap[formData.bloodType];
+    const inventory = bloodInventories.find(inv =>
+      Number(inv.bloodTypeId) === Number(bloodTypeId)
+    );
+
+    if (!inventory) {
+      alert(`Không tìm thấy kho máu cho nhóm máu ${formData.bloodType}`);
       return;
     }
 
     try {
       const payload = {
-        component: formData.component,
-        quantity: parseInt(formData.quantity, 10),
-        lastUpdated: formData.lastUpdated,
-        staffId: user?.id || null,    // hoặc nếu bạn muốn staffId cũng từ user
+        component: inventory.component,
+        quantity: inventory.quantity + addNum,
+        lastUpdated: new Date().toISOString().split('T')[0],
+        staffId: user?.id || null,
       };
 
-      console.log("Payload gửi đi:", payload);
+      console.log("🚀 Payload gửi lên server:", payload);
 
-      await bloodService.createBloodInventory(payload);
+      await bloodService.updateBloodInventory(inventory.id, payload);
 
-      alert("Thêm kho máu thành công!");
-      setFormData({
-        component: "",
-        quantity: "",
-        lastUpdated: "",
-      });
+      alert(`Đã thêm ${addNum} đơn vị máu cho nhóm ${formData.bloodType}`);
+      onSuccess && onSuccess();
       setShowForm(false);
     } catch (err) {
-      console.error("Lỗi khi thêm kho máu:", err);
-      alert("Thêm kho máu thất bại!");
+      console.error("❌ Lỗi khi cập nhật kho máu:", err);
+      alert("Cập nhật kho máu thất bại!");
     }
   };
 
   return (
     <div className="blood-inventory-container">
-      <button
-        className="toggle-button"
-        onClick={() => setShowForm((prev) => !prev)}
-      >
-        {showForm ? "Đóng form" : "Mở form thêm kho máu"}
+      <button className="toggle-button" onClick={handleToggleForm}>
+        {showForm ? "Đóng form" : "Thêm Đơn Vị Máu"}
       </button>
 
       {showForm && (
-        <form className="blood-form" onSubmit={handleSubmit}>
-          <h2>Thêm Kho Máu</h2>
+        <div className="blood-form">
+          <h2>Thêm Đơn Vị Máu</h2>
           <div className="blood-form-group">
-            <label>Thành phần máu</label>
-            <input
-              name="component"
-              value={formData.component}
+            <label>Nhóm máu</label>
+            <select
+              name="bloodType"
+              value={formData.bloodType}
               onChange={handleChange}
               required
-            />
+            >
+              <option value="">-- Chọn nhóm máu --</option>
+              {bloodTypes.map((type, idx) => (
+                <option key={idx} value={type}>{type}</option>
+              ))}
+            </select>
           </div>
-          <div className="blood-form-group">
-            <label>Số lượng</label>
-            <input
-              type="number"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="blood-form-group">
-            <label>Ngày cập nhật</label>
-            <input
-              type="date"
-              name="lastUpdated"
-              value={formData.lastUpdated}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          {/* Ẩn trường staffId, adminId vì đã tự lấy từ user */}
-          <button type="submit" className="submit-button">Lưu</button>
-        </form>
+
+          {formData.bloodType && (
+            <>
+              <div className="blood-form-group">
+                <label>Số lượng hiện tại:</label>
+                <span style={{ fontWeight: 'bold' }}>{getCurrentQuantity()}</span>
+              </div>
+              <div className="blood-form-group">
+                <label>Thêm số lượng:</label>
+                <input
+                  type="number"
+                  name="addQuantity"
+                  value={formData.addQuantity}
+                  onChange={handleChange}
+                  placeholder="Nhập số lượng muốn thêm"
+                  min="1"
+                />
+              </div>
+              <button
+                type="button"
+                className="submit-button"
+                onClick={handleAddQuantity}
+              >
+                Thêm
+              </button>
+            </>
+          )}
+        </div>
       )}
     </div>
   );
