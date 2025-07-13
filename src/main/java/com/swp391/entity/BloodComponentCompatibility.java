@@ -5,7 +5,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "blood_component_compatibility")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BloodComponentCompatibility {

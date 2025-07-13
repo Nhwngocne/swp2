@@ -10,7 +10,8 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "blood_donation_forms")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -34,17 +35,10 @@ public class BloodDonationForm {
     // Câu 1: Đã từng hiến máu chưa
     Boolean donatedBefore;
 
-    // Câu 2: Có đang mắc bệnh lý
-    Boolean currentlyIll;
-
-    @Column(length = 255)
-    String illnessDetails;
 
     // Câu 3: Từng mắc bệnh nguy hiểm
     Boolean hadSeriousDisease;
 
-    @Column(length = 255)
-    String diseaseDetails;
 
     // Câu 4: Các hoạt động trong 12 tháng qua (checkbox)
     Boolean hadMalariaOrOtherInfectious; // Mắc sốt rét, giang mai,...
@@ -60,12 +54,10 @@ public class BloodDonationForm {
     Boolean usedAntibioticsOrAntiInflammatory;
 
     // Câu 7: Trong 2 tuần qua
-    @Column(length = 255)
-    String symptomsPast2Weeks;
+    Boolean symptomsPast2Weeks;
 
     // Câu 8: Trong 1 tuần qua
-    @Column(length = 255)
-    String symptomsPast1Week;
+    Boolean symptomsPast1Week;
     // Voluome of blood donation, if applicable
     @Column(name = "volume_ml")
     Integer volumeMl;
@@ -73,6 +65,19 @@ public class BloodDonationForm {
     Boolean isMenstruating;
     Boolean isPregnantOrRecentlyDelivered;
     Boolean noneOfFemaleConditions;
+
+    // Các trường mới cho check-in
+    @Column(nullable = true)
+    Double weight; // Cân nặng (kg)
+
+    @Column(nullable = true)
+    Double height; // Chiều cao (cm)
+
+    @Column(nullable = true)
+    String bloodPressure; // Huyết áp (e.g., "120/80")
+
+    @Column(nullable = true)
+    String note; // Ghi chú của staff
 
     // Ngày tạo form
     @JsonFormat(pattern = "yyyy-MM-dd")

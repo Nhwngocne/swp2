@@ -10,7 +10,8 @@ import java.time.LocalDate;
 import java.util.List;
 @Entity
 @Table(name = "blood_inventory")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

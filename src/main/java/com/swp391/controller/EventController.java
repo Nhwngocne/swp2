@@ -4,6 +4,7 @@ import com.swp391.dto.request.EventCreateRequest;
 import com.swp391.dto.response.ApiResponse;
 import com.swp391.dto.response.EventResponse;
 import com.swp391.service.EventService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +47,9 @@ public class EventController {
     }
 
     @GetMapping
-    public ApiResponse<List<EventResponse>> getAllEvents() {
+    public ApiResponse<List<EventResponse>> getAllEvents(HttpServletRequest request) {
         return ApiResponse.<List<EventResponse>>builder()
-                .result(eventService.getAllEvents())
+                .result(eventService.getAllEvents(request))
                 .build();
     }
 

@@ -9,7 +9,8 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "emergency_requests")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

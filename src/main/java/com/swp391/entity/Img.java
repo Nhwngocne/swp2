@@ -7,7 +7,8 @@ import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "images")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

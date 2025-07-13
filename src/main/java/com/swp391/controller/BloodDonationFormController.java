@@ -1,5 +1,6 @@
 package com.swp391.controller;
 
+import com.swp391.dto.request.BloodDonationFormCheckInRequest;
 import com.swp391.dto.request.BloodDonationFormCreateRequest;
 
 import com.swp391.dto.request.BloodDonationFormUpdateRequest;
@@ -31,12 +32,12 @@ public class BloodDonationFormController {
                 .build();
     }
 
-    // Staff update (duyệt đơn, cập nhật tình trạng)
-    @PutMapping("/approve")
-    public ApiResponse<BloodDonationFormResponse> updateFormByStaff(
-            @RequestBody @Valid BloodDonationFormUpdateRequest request) {
+    // Staff check-in tại điểm hiến máu
+    @PutMapping("/checkin")
+    public ApiResponse<BloodDonationFormResponse> checkInForm(
+            @RequestBody @Valid BloodDonationFormCheckInRequest request) {
         return ApiResponse.<BloodDonationFormResponse>builder()
-                .result(formService.updateForm(request))
+                .result(formService.checkInForm(request))
                 .build();
     }
 
