@@ -111,7 +111,7 @@ public class EventService {
             memberId = null;
         }
 
-        final Integer finalMemberId = memberId; // ✅ để dùng trong lambda
+        final Integer finalMemberId = memberId;
 
         // B2: Cập nhật các sự kiện quá hạn
         LocalDate currentDate = LocalDate.now();
@@ -130,15 +130,18 @@ public class EventService {
                 .map(event -> {
                     EventResponse response = eventMapper.toEventResponse(event);
 
+                    // Số người đã được duyệt
                     int approvedCount = formRepository.countByEventIdAndStatus(event.getId(), "APPROVED");
                     response.setRegisteredMemberCount(approvedCount);
 
                     boolean isRegistered = false;
                     boolean canDonate = true;
+
                     if (finalMemberId != null) {
-                        isRegistered = event.getRegisteredMembers().stream()
-                                .anyMatch(member -> member.getId() == finalMemberId);
-                        // Tìm các lần hiến máu "Đạt"
+                        // ✅ Dùng repository để kiểm tra chính xác trong DB
+                        isRegistered = formRepository.existsByEventIdAndMemberId(event.getId(), finalMemberId);
+
+                        // Kiểm tra lịch sử hiến máu để xác định có thể hiến hay không
                         List<DonationHistory> historyList = donationHistoryRepository
                                 .findByMemberIdAndResult(finalMemberId, "Đạt");
 
@@ -149,13 +152,13 @@ public class EventService {
                                     .max(LocalDate::compareTo)
                                     .orElse(LocalDate.MIN);
 
-                            // Nếu sự kiện trước thời gian hiến lại thì không cho đăng ký
                             if (event.getDate().isBefore(latestEligibleDate)) {
                                 canDonate = false;
                             }
                         }
                     }
-                    response.setRegistered(isRegistered); // ✅ đã map đúng
+
+                    response.setRegistered(isRegistered);
                     response.setCanDonate(canDonate);
 
                     return response;
