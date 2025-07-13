@@ -106,35 +106,7 @@ public class BloodDonationFormService {
         // Cập nhật các trường cơ bản từ request
         formMapper.updateFormFromCheckIn(form, request);
 
-        // Cập nhật BloodType nếu được cung cấp
-        if (request.getBloodTypeId() != null) {
-            if (request.getBloodTypeId() == 0) {
-                form.setBloodType(null); // Set bloodType to null for "Không biết"
-            } else {
-                BloodType bloodType = bloodTypeRepository.findById(request.getBloodTypeId())
-                        .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
-                form.setBloodType(bloodType);
-            }
-        }
 
-        // Cập nhật thời gian nếu có thay đổi session
-        if (request.getSession() != null && !request.getSession().isBlank()) {
-            Event event = form.getEvent();
-            LocalTime startTime;
-            LocalTime endTime;
-
-            if ("MORNING".equalsIgnoreCase(request.getSession())) {
-                startTime = event.getDonationMorningStart();
-                endTime = event.getDonationMorningEnd();
-            } else if ("AFTERNOON".equalsIgnoreCase(request.getSession())) {
-                startTime = event.getDonationAfternoonStart();
-                endTime = event.getDonationAfternoonEnd();
-            } else {
-                throw new AppException(ErrorCode.INVALID_SESSION);
-            }
-            form.setStartTime(startTime);
-            form.setEndTime(endTime);
-        }
 
         // Cập nhật thông tin staff và ngày duyệt
         Staff staff = staffRepository.findById(request.getApprovedByStaffId())

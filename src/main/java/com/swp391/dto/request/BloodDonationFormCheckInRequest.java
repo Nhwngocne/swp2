@@ -15,9 +15,6 @@ public class BloodDonationFormCheckInRequest {
     @NotNull(message = "ID đơn đăng ký là bắt buộc")
     Integer formId;
 
-    Integer volumeMl;
-    String session;
-    Integer bloodTypeId;
 
     // Câu 1
     Boolean donatedBefore;
