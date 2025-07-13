@@ -1,17 +1,14 @@
 package com.swp391.mapper;
 
-import com.swp391.dto.request.DonationHistoryCreateRequest;
-import com.swp391.dto.request.DonationRegistrationRequest;
-import com.swp391.dto.request.RegisReceiveRequest;
+import com.swp391.dto.request.*;
 import com.swp391.dto.response.DonationHistoryResponse;
 import com.swp391.dto.response.RegisOfflineResponse;
 import com.swp391.dto.response.RegisReceiveResponse;
 import com.swp391.entity.DonationHistory;
 import com.swp391.entity.DonationRegistration;
+import com.swp391.entity.RegisOffline;
 import com.swp391.entity.RegisReceive;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface DonationMapper {
@@ -50,13 +47,19 @@ public interface DonationMapper {
     void updateDonationRegistration(@MappingTarget DonationRegistration entity, DonationRegistrationRequest request);
 
     // RegisOffline
-    @Mapping(target = "bloodType", ignore = true)
-    RegisReceive toRegisReceive(RegisReceiveRequest request);
+    @Mapping(target = "staff", ignore = true)
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDate.now())")
+    @Mapping(target = "status", constant = "PENDING")
+    RegisOffline toRegisOffline(RegisOfflineRequest request);
 
-    RegisOfflineResponse toRegisOfflineResponse(RegisReceive entity);
+    @Mapping(source = "staff.id", target = "staffId")
+    @Mapping(source = "staff.name", target = "staffName")
+    RegisOfflineResponse toRegisOfflineResponse(RegisOffline entity);
 
-    @Mapping(target = "bloodType", ignore = true)
-    void updateRegisReceive(@MappingTarget RegisReceive entity, RegisReceiveRequest request);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "staff", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    void updateRegisOffline(@MappingTarget RegisOffline entity, RegisOfflineUpdateRequest request);
 
     // RegisReceive (from DonationRegistration)
     @Mapping(target = "bloodType", ignore = true)

@@ -59,7 +59,8 @@ public enum ErrorCode {
     FORM_ALREADY_PROCESSED(1001, "Form has already been processed", HttpStatus.BAD_REQUEST),
     FORM_NOT_APPROVED(1001, "Form not approved", HttpStatus.BAD_REQUEST),
 
-    INVALID_SEARCH_TYPE(1002,"Invalid search type: CHO/NHAN", HttpStatus.BAD_REQUEST),;
+    INVALID_SEARCH_TYPE(1002,"Invalid search type: CHO/NHAN", HttpStatus.BAD_REQUEST),
+    DONATION_REGISTRATION_OFFLINE_NOT_EXISTED(1002,  "Donation registration offline does not exist", HttpStatus.NOT_FOUND ),;
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;

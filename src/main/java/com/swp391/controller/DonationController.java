@@ -1,8 +1,6 @@
 package com.swp391.controller;
 
-import com.swp391.dto.request.DonationHistoryCreateRequest;
-import com.swp391.dto.request.DonationRegistrationRequest;
-import com.swp391.dto.request.RegisReceiveRequest;
+import com.swp391.dto.request.*;
 import com.swp391.dto.response.*;
 import com.swp391.service.DonationService;
 import jakarta.validation.Valid;
@@ -96,9 +94,17 @@ public class DonationController {
     // ===== Regis Offline =====
 
     @PostMapping("/offline")
-    public ApiResponse<RegisOfflineResponse> createRegisOffline(@RequestBody @Valid RegisReceiveRequest request) {
+    public ApiResponse<RegisOfflineResponse> createRegisOffline(@RequestBody @Valid RegisOfflineRequest request) {
         return ApiResponse.<RegisOfflineResponse>builder()
                 .result(donationService.createRegisOffline(request))
+                .build();
+    }
+
+    @PutMapping("/offline/{id}")
+    public ApiResponse<RegisOfflineResponse> updateRegisOffline(@PathVariable int id,
+                                                                @RequestBody @Valid RegisOfflineUpdateRequest request) {
+        return ApiResponse.<RegisOfflineResponse>builder()
+                .result(donationService.updateRegisOffline(id, request))
                 .build();
     }
 
@@ -116,19 +122,11 @@ public class DonationController {
                 .build();
     }
 
-    @PutMapping("/offline/{id}")
-    public ApiResponse<RegisOfflineResponse> updateRegisOffline(@PathVariable int id,
-                                                                @RequestBody @Valid RegisReceiveRequest request) {
-        return ApiResponse.<RegisOfflineResponse>builder()
-                .result(donationService.updateRegisOffline(id, request))
-                .build();
-    }
-
     @DeleteMapping("/offline/{id}")
     public ApiResponse<String> deleteRegisOffline(@PathVariable int id) {
         donationService.deleteRegisOffline(id);
         return ApiResponse.<String>builder()
-                .result("Offline registration deleted successfully.")
+                .result("Đơn đăng ký offline đã được xóa thành công.")
                 .build();
     }
 

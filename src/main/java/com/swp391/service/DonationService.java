@@ -1,8 +1,6 @@
 package com.swp391.service;
 
-import com.swp391.dto.request.DonationHistoryCreateRequest;
-import com.swp391.dto.request.DonationRegistrationRequest;
-import com.swp391.dto.request.RegisReceiveRequest;
+import com.swp391.dto.request.*;
 import com.swp391.dto.response.DonationHistoryResponse;
 import com.swp391.dto.response.RegisOfflineResponse;
 import com.swp391.dto.response.RegisReceiveResponse;
@@ -33,6 +31,7 @@ public class DonationService {
     StaffRepository staffRepository;
     NotificationService notificationService;
     BloodDonationFormRepository bloodDonationFormRepository;
+    RegisOfflineRepository  regisOfflineRepository;
     // ==== DonationHistory ====
 
     public DonationHistoryResponse createDonationHistory(DonationHistoryCreateRequest request) {
@@ -173,43 +172,58 @@ public class DonationService {
 
     // ==== RegisOffline ====
 
-    public RegisOfflineResponse createRegisOffline(RegisReceiveRequest request) {
-        BloodType bloodType = bloodTypeRepository.findByName(request.getBloodType())
-                .orElseThrow(() -> new AppException(ErrorCode.Donation_REGISTRATION_OFFLINE_NOT_EXISTED));
+    public RegisOfflineResponse createRegisOffline(RegisOfflineRequest request) {
+        // Validate staff
+        Staff staff = staffRepository.findById(request.getStaffId())
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
-        RegisReceive receive = donationMapper.toRegisReceive(request);
-        receive.setBloodType(bloodType);
-        receive = regisReceiveRepository.save(receive);
+        RegisOffline regisOffline = donationMapper.toRegisOffline(request);
+        regisOffline.setStaff(staff);
+        regisOffline.setCreatedAt(LocalDate.now());
+        regisOffline.setStatus("APPROVED"); // Mặc định trạng thái là PENDING khi tạo
 
-        return donationMapper.toRegisOfflineResponse(receive);
+        regisOffline = regisOfflineRepository.save(regisOffline);
+        return donationMapper.toRegisOfflineResponse(regisOffline);
+    }
+
+    public RegisOfflineResponse updateRegisOffline(int id, RegisOfflineUpdateRequest request) {
+        RegisOffline regisOffline = regisOfflineRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.DONATION_REGISTRATION_OFFLINE_NOT_EXISTED));
+
+        // Validate staff
+        Staff staff = staffRepository.findById(request.getStaffId())
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+
+        // Cập nhật thông tin từ request
+        donationMapper.updateRegisOffline(regisOffline, request);
+        regisOffline.setStaff(staff);
+        regisOffline.setBloodType(request.getBloodType());
+        regisOffline.setVolumeMl(request.getVolumeMl());
+        regisOffline.setResult(request.getResult());
+        regisOffline.setStatus(request.getStatus().toUpperCase());
+
+        regisOffline = regisOfflineRepository.save(regisOffline);
+        return donationMapper.toRegisOfflineResponse(regisOffline);
     }
 
     public RegisOfflineResponse getRegisOfflineById(int id) {
-        RegisReceive receive = regisReceiveRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.Donation_REGISTRATION_OFFLINE_NOT_EXISTED));
-        return donationMapper.toRegisOfflineResponse(receive);
+        RegisOffline regisOffline = regisOfflineRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.DONATION_REGISTRATION_OFFLINE_NOT_EXISTED));
+        return donationMapper.toRegisOfflineResponse(regisOffline);
     }
 
     public List<RegisOfflineResponse> getAllRegisOffline() {
-        return regisReceiveRepository.findAll()
+        return regisOfflineRepository.findAll()
                 .stream()
                 .map(donationMapper::toRegisOfflineResponse)
                 .toList();
     }
 
-    public RegisOfflineResponse updateRegisOffline(int id, RegisReceiveRequest request) {
-        RegisReceive receive = regisReceiveRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.Donation_REGISTRATION_OFFLINE_NOT_EXISTED));
-        donationMapper.updateRegisReceive(receive, request);
-        receive = regisReceiveRepository.save(receive);
-        return donationMapper.toRegisOfflineResponse(receive);
-    }
-
     public void deleteRegisOffline(int id) {
-        if (!regisReceiveRepository.existsById(id)) {
-            throw new AppException(ErrorCode.Donation_REGISTRATION_OFFLINE_NOT_EXISTED);
+        if (!regisOfflineRepository.existsById(id)) {
+            throw new AppException(ErrorCode.DONATION_REGISTRATION_OFFLINE_NOT_EXISTED);
         }
-        regisReceiveRepository.deleteById(id);
+        regisOfflineRepository.deleteById(id);
     }
 
     // ==== RegisReceive from DonationRegistration ====
