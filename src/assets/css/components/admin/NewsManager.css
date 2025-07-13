@@ -1,4 +1,31 @@
+/* NewsManager.css */
 /* FORM CHI TIẾT BÀI VIẾT */
+.news-container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  align-self: center;
+  margin-bottom: 10px;
+}
+
+.create-btn {
+  align-self: flex-end;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .news-form {
   display: flex;
   gap: 24px;
@@ -66,7 +93,7 @@
 
 /* Nút hành động (✏️, ❌) */
 .btn-group .btn,
-.table .btn {
+.news-table .btn {
   min-width: 36px;
   height: 36px;
   padding: 6px;
@@ -78,29 +105,39 @@
   color: #ffffff;
   border: none;
 }
-.table .btn:hover {
+.news-table .btn:hover {
   background-color: #030101;
 }
 
 /* Bảng bài viết */
-.table {
+.news-table {
   border: 1px solid #ccc;
 }
-.table th, .table td {
+.news-table th, .news-table td {
   vertical-align: middle;
   font-size: 14px;
   text-align: center;
   border: 1px solid #ddd;
   padding: 10px;
 }
-.table thead th {
+.news-table thead th {
   background-color: #a30000;
   font-weight: 600;
 }
-.table img {
+.news-table img {
   width: 50px;
   height: auto;
   border-radius: 4px;
+}
+
+.news-link {
+  text-decoration: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.news-link:hover {
+  text-decoration: underline;
 }
 
 /* Nút Lưu / Hủy đẹp */
@@ -134,11 +171,11 @@
   transition: transform 0.3s ease;
 }
 
-.group:hover svg {
+.save-cancel-btn:hover svg {
   transform: scale(6) translate(-12px, -8px);
 }
 
-.group:hover .btn-text {
+.save-cancel-btn:hover .btn-text {
   transform: translateX(12px);
 }
 
