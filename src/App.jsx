@@ -63,6 +63,7 @@ import EmergencyList from './components/staff/FormList/EmergencyList';
 import BloodInventoryForm from './components/staff/BloodInventoryForm';
 import DonationBloodResult from './components/staff/DonationBloodResult'
 import QnA from './components/staff/QnA'; // Thêm DonationBloodResult
+import CheckIn from './components/staff/CheckIn';
 
 
 // Admin Components
@@ -148,6 +149,7 @@ const AppContent = () => {
           <Route path="/donationBloodResult" element={<ProtectedRoute requiredRole="STAFF"><DonationBloodResult /></ProtectedRoute>} />
           <Route path="/staff/formDetail/:id" element={<ProtectedRoute requiredRole="STAFF"><FormDetail /></ProtectedRoute>} />
           <Route path="/qna" element={<ProtectedRoute requiredRole="STAFF"><QnA /></ProtectedRoute>} />
+          <Route path="/staff/checkin/:id" element={<CheckIn />} />
 
 
           {/* Admin */}

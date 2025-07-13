@@ -103,6 +103,9 @@ const BloodFormList = () => {
       memberId: "",
     });
   };
+  const handleCheckIn = (formId) => {
+    navigate(`/staff/checkin/${formId}`);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -231,10 +234,21 @@ const BloodFormList = () => {
                   )}
 
                   <button
-                    // <<<<<<< HEAD
-                    onClick={() => openResultModal(form)}
+                    onClick={() => handleCheckIn(form.id)}
                     disabled={loading}
                     className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
+                  >
+                    Check-in
+                  </button>
+
+                  <button
+                    onClick={() => openResultModal(form)}
+                    disabled={loading || form.status === "REJECTED"}
+                    className={`px-3 py-1 rounded text-white 
+    ${form.status === "REJECTED" || loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600"}
+  `}
                   >
                     Nhập kết quả
                   </button>
