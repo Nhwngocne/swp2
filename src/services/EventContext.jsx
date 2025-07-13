@@ -769,9 +769,7 @@ export const EventProvider = ({ children }) => {
 
       const payload = {
         formId: parseInt(formData.formId) || 0,
-        bloodTypeId: formData.bloodTypeId === "0" ? 0 : (formData.bloodTypeId ? parseInt(formData.bloodTypeId) : null),
-        volumeMl: formData.volumeMl ? parseInt(formData.volumeMl) : null,
-        session: formData.session || null,
+        
         donatedBefore: formData.donated_before === "co" || false,
         hadSeriousDisease: formData.past_diseases === "co" || false,
         hadMalariaOrOtherInfectious: Array.isArray(formData.past_year) && formData.past_year.includes("sot_ret") || false,
@@ -796,14 +794,6 @@ export const EventProvider = ({ children }) => {
 
       if (!payload.formId) {
         throw new Error("ID biểu mẫu là bắt buộc.");
-      }
-
-      if (payload.session && !["MORNING", "AFTERNOON"].includes(payload.session)) {
-        throw new Error("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON.");
-      }
-
-      if (payload.status && !["COMPLETED", "REJECTED"].includes(payload.status)) {
-        throw new Error("Trạng thái phải là COMPLETED hoặc REJECTED.");
       }
 
       if (!payload.approvedByStaffId) {

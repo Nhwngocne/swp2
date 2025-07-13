@@ -21,49 +21,49 @@ const FormDetail = () => {
 
 
   useEffect(() => {
-  const fetchFormDetail = async () => {
-    if (!id) {
-      setError("Không có ID đơn đăng ký.");
-      setLoading(false);
-      return;
-    }
+    const fetchFormDetail = async () => {
+      if (!id) {
+        setError("Không có ID đơn đăng ký.");
+        setLoading(false);
+        return;
+      }
 
-    try {
-      let selectedForm;
+      try {
+        let selectedForm;
 
-      if (role === "MEMBER") {
-        if (!memberId) {
-          setError("Không tìm thấy thông tin người dùng.");
-          setLoading(false);
-          return;
+        if (role === "MEMBER") {
+          if (!memberId) {
+            setError("Không tìm thấy thông tin người dùng.");
+            setLoading(false);
+            return;
+          }
+
+          const response = await donationService.getDonationRegistrationsByMember(memberId);
+          const forms = response.data.result || [];
+          console.log("Forms (MEMBER):", forms);
+          selectedForm = forms.find((f) => f.id.toString() === id.toString());
+        } else if (role === "STAFF") {
+          const response = await donationService.getDonationRegistrationById(id);
+          selectedForm = response.data.result;
+          console.log("Form (STAFF):", selectedForm);
         }
 
-        const response = await donationService.getDonationRegistrationsByMember(memberId);
-        const forms = response.data.result || [];
-        console.log("Forms (MEMBER):", forms);
-        selectedForm = forms.find((f) => f.id.toString() === id.toString());
-      } else if (role === "STAFF") {
-        const response = await donationService.getDonationRegistrationById(id);
-        selectedForm = response.data.result;
-        console.log("Form (STAFF):", selectedForm);
+        if (selectedForm) {
+          setForm(selectedForm);
+          setError("");
+        } else {
+          setError("Không tìm thấy đơn đăng ký tương ứng.");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Không thể tải dữ liệu chi tiết.");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      if (selectedForm) {
-        setForm(selectedForm);
-        setError("");
-      } else {
-        setError("Không tìm thấy đơn đăng ký tương ứng.");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Không thể tải dữ liệu chi tiết.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchFormDetail();
-}, [id, memberId, role]);
+    fetchFormDetail();
+  }, [id, memberId, role]);
 
 
   const handleDelete = async () => {
@@ -103,10 +103,10 @@ const FormDetail = () => {
       year: "numeric",
     });
   };
-console.log("Role:", role);
-console.log("User:", user);
+  console.log("Role:", role);
+  console.log("User:", user);
   return (
-    
+
     <div className="form-detail-container">
       <h2>Chi Tiết Đơn Đăng Ký Hiến Máu</h2>
       <div className="form-detail-grid">
@@ -134,7 +134,7 @@ console.log("User:", user);
                 {form.status}
               </span>
             </p>
-            
+
           </section>
           <section className="detail-section">
             <h3><FaHeartbeat /> Tình trạng sức khoẻ</h3>
@@ -157,6 +157,21 @@ console.log("User:", user);
             <p><strong>Đang mang thai hoặc mới sinh:</strong> {form.isPregnantOrRecentlyDelivered ? "Có" : "Không"}</p>
             <p><strong>Không thuộc các điều kiện trên:</strong> {form.noneOfFemaleConditions ? "Đúng" : "Không"}</p>
           </section>
+<section className="detail-section">
+          <p><strong>Ghi chú của nhân viên:</strong> {form.note || "Không có"}</p>
+          </section>
+          {role === "STAFF" && (
+          <section className="detail-section">
+            <h3><FaHeartbeat /> Thông tin kiểm tra khi check-in</h3>
+            <p><strong>Thời gian bắt đầu:</strong> {form.startTime}</p>
+            <p><strong>Thời gian kết thúc:</strong> {form.endTime}</p>
+            <p><strong>Cân nặng:</strong> {form.weight ? `${form.weight} kg` : "Không rõ"}</p>
+            <p><strong>Chiều cao:</strong> {form.height ? `${form.height} cm` : "Không rõ"}</p>
+            <p><strong>Huyết áp:</strong> {form.bloodPressure || "Không rõ"}</p>
+            
+            <p><strong>Ngày duyệt:</strong> {formatDate(form.approvedDate)}</p>
+          </section>
+          )}
         </div>
       </div>
       {role === "MEMBER" && form.status == "APPROVED" && (
@@ -168,8 +183,8 @@ console.log("User:", user);
         </button>
       )}
       {role === "STAFF" && (
-        <button className="back-button" onClick={() => navigate("/bloodFormList")}>
-          Quay lại danh sách đơn
+        <button className="back-button" onClick={() => navigate("/events")}>
+          Quay lại
         </button>
       )}
     </div>
