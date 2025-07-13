@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css"; // CSS cho DatePicker
 import "../../assets/css/components/guest/EventList.css";
 
 const EventList = () => {
-  const { user } = useAuth();
+  const { user,role } = useAuth();
   const { events, loading, error } = useEvents();
   const [filter, setFilter] = useState("all");
   const [startDate, setStartDate] = useState(null); // Từ ngày
@@ -124,6 +124,7 @@ const EventList = () => {
             <p className="event-register-count">
               👥 {event.registeredMemberCount || 0}/{event.maxRegistrations || 150} Người
             </p>
+            {role === "MEMBER" && (
             <button
               className="event-horizontal-btn"
               disabled={!isRegisterable(event.date)}
@@ -135,12 +136,15 @@ const EventList = () => {
             >
               {isRegisterable(event.date) ? "Đặt lịch đăng ký" : "Chưa đến lúc đặt lịch"}
             </button>
+            )}
+            {role === "STAFF" && (
             <button
               className="event-horizontal-btn detail-btn"
               onClick={() => navigate(`/bloodFormList/${event.id}`)}
             >
               Chi tiết
             </button>
+            )}
 
           </div>
         </div>

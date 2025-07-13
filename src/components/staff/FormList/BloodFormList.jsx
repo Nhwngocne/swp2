@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom"; // <-- Thêm dòng này
 import { useEvents } from "../../../services/EventContext";
 import { useDonation } from "../../../services/DonationContext";
 import { useParams } from "react-router-dom";
-import { eventService } from "../../../services/eventService"; // chỉnh lại đường dẫn nếu cần
+import dayjs from "dayjs";
+import { eventService } from "../../../services/eventService";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat); // chỉnh lại đường dẫn nếu cần
 
 
 const BloodFormList = () => {
@@ -25,50 +28,52 @@ const BloodFormList = () => {
     memberId: "",
   });
 
-    useEffect(() => {
-  const fetchForms = async () => {
-    try {
-      const response = await eventService.getBloodDonationFormsByEvent(eventId);
-
-      // Kiểm tra nếu có trường "result" là mảng
-      if (response.data && Array.isArray(response.data.result)) {
-        setForms(response.data.result);
-      } else {
-        console.warn("Dữ liệu không đúng định dạng:", response.data);
-        setForms([]); // fallback để không lỗi .map
-      }
-    } catch (error) {
-      console.error("Lỗi khi lấy danh sách đơn:", error);
-      setForms([]);
-    }
-  };
-
-  fetchForms();
-}, [eventId]);
-
-
-
-    const handleUpdateStatus = async (formId, status) => {
+  useEffect(() => {
+    const fetchForms = async () => {
       try {
-        const payload = {
-          formId,
-          status,
-          approvedByStaffId: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null,
-        };
-        const response = await updateBloodDonationFormByStaff(payload);
-        if (response.success) {
-          alert(`Cập nhật trạng thái thành công: ${status}`);
-          const updatedForms = await fetchForms();
-          if (updatedForms.success) {
-            setForms(updatedForms.forms);
-          }
+        const response = await eventService.getBloodDonationFormsByEvent(eventId);
+
+        // Kiểm tra nếu có trường "result" là mảng
+        if (response.data && Array.isArray(response.data.result)) {
+          setForms(response.data.result);
+          console.log("Dữ liệu đơn:", response.data.result);
+
         } else {
-          alert(`Lỗi: ${response.error}`);
+          console.warn("Dữ liệu không đúng định dạng:", response.data);
+          setForms([]); // fallback để không lỗi .map
         }
       } catch (error) {
-        alert("Lỗi khi cập nhật trạng thái: " + error.message);
+        console.error("Lỗi khi lấy danh sách đơn:", error);
+        setForms([]);
       }
     };
+
+    fetchForms();
+  }, [eventId]);
+
+
+
+  const handleUpdateStatus = async (formId, status) => {
+    try {
+      const payload = {
+        formId,
+        status,
+        approvedByStaffId: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null,
+      };
+      const response = await updateBloodDonationFormByStaff(payload);
+      if (response.success) {
+        alert(`Cập nhật trạng thái thành công: ${status}`);
+        const updatedForms = await fetchForms();
+        if (updatedForms.success) {
+          setForms(updatedForms.forms);
+        }
+      } else {
+        alert(`Lỗi: ${response.error}`);
+      }
+    } catch (error) {
+      alert("Lỗi khi cập nhật trạng thái: " + error.message);
+    }
+  };
 
   // <<<<<<< HEAD
   const openResultModal = (form) => {
@@ -152,10 +157,10 @@ const BloodFormList = () => {
   // >>>>>>> dabc5e927256250315640f2ba6f1226be5667656
 
 
-    if (loading) return <p className="text-center text-gray-500">Đang tải...</p>;
-    if (error) return <p className="text-center text-red-500">Lỗi: {error}</p>;
-    if (!forms || forms.length === 0) return <p className="text-gray-500 text-center">Chưa có đơn đăng ký nào.</p>;
-    
+  if (loading) return <p className="text-center text-gray-500">Đang tải...</p>;
+  if (error) return <p className="text-center text-red-500">Lỗi: {error}</p>;
+  if (!forms || forms.length === 0) return <p className="text-gray-500 text-center">Chưa có đơn đăng ký nào.</p>;
+
 
   return (
     <div className="container mx-auto p-4">
@@ -180,7 +185,9 @@ const BloodFormList = () => {
               <td className="px-4 py-2">{form.eventTitle || "N/A"}</td>
               <td className="px-4 py-2">{form.eventLocation || "N/A"}</td>
               <td className="px-4 py-2">
-                {form.eventDate ? new Date(form.eventDate).toLocaleDateString("vi-VN") : "N/A"}
+                {dayjs(form.eventDate, "DD-MM-YYYY").isValid()
+                  ? dayjs(form.eventDate, "DD-MM-YYYY").format("DD/MM/YYYY")
+                  : "Invalid Date"}
               </td>
               <td className="px-4 py-2">
                 <span
@@ -222,7 +229,7 @@ const BloodFormList = () => {
                       </button>
                     </>
                   )}
-                  
+
                   <button
                     // <<<<<<< HEAD
                     onClick={() => openResultModal(form)}
