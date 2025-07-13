@@ -214,24 +214,7 @@ const BloodFormList = () => {
               </td>
               <td className="px-4 py-2">
                 <div className="flex justify-center gap-2 flex-wrap">
-                  {form.status === "PENDING" && (
-                    <>
-                      <button
-                        onClick={() => handleUpdateStatus(form.id, "APPROVED")}
-                        disabled={loading}
-                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400"
-                      >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() => handleUpdateStatus(form.id, "REJECTED")}
-                        disabled={loading}
-                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400"
-                      >
-                        Refuse
-                      </button>
-                    </>
-                  )}
+                 
 
                   <button
                     onClick={() => handleCheckIn(form.id)}
