@@ -137,10 +137,11 @@ const EventList = () => {
             </button>
             <button
               className="event-horizontal-btn detail-btn"
-              onClick={() => navigate(`/events/${event.id}/members`)}
+              onClick={() => navigate(`/bloodFormList/${event.id}`)}
             >
               Chi tiết
             </button>
+
           </div>
         </div>
       ))}

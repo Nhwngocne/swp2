@@ -2,12 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // <-- Thêm dòng này
 import { useEvents } from "../../../services/EventContext";
 import { useDonation } from "../../../services/DonationContext";
+import { useParams } from "react-router-dom";
+import { eventService } from "../../../services/eventService"; // chỉnh lại đường dẫn nếu cần
+
 
 const BloodFormList = () => {
+  const { eventId } = useParams();
   const navigate = useNavigate(); // <-- Thêm dòng này
   const { fetchForms, updateBloodDonationFormByStaff, loading, error } = useEvents();
   const { createDonationHistory } = useDonation();
   const [forms, setForms] = useState([]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedForm, setSelectedForm] = useState(null);
   const [historyData, setHistoryData] = useState({
@@ -21,14 +26,27 @@ const BloodFormList = () => {
   });
 
     useEffect(() => {
-      const loadForms = async () => {
-        const response = await fetchForms();
-        if (response.success) {
-          setForms(response.forms);
-        }
-      };
-      loadForms();
-    }, [fetchForms]);
+  const fetchForms = async () => {
+    try {
+      const response = await eventService.getBloodDonationFormsByEvent(eventId);
+
+      // Kiểm tra nếu có trường "result" là mảng
+      if (response.data && Array.isArray(response.data.result)) {
+        setForms(response.data.result);
+      } else {
+        console.warn("Dữ liệu không đúng định dạng:", response.data);
+        setForms([]); // fallback để không lỗi .map
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách đơn:", error);
+      setForms([]);
+    }
+  };
+
+  fetchForms();
+}, [eventId]);
+
+
 
     const handleUpdateStatus = async (formId, status) => {
       try {
@@ -137,6 +155,7 @@ const BloodFormList = () => {
     if (loading) return <p className="text-center text-gray-500">Đang tải...</p>;
     if (error) return <p className="text-center text-red-500">Lỗi: {error}</p>;
     if (!forms || forms.length === 0) return <p className="text-gray-500 text-center">Chưa có đơn đăng ký nào.</p>;
+    
 
   return (
     <div className="container mx-auto p-4">
@@ -154,7 +173,7 @@ const BloodFormList = () => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
-          {forms.map((form) => (
+          {Array.isArray(forms) && forms.map(form => (
             <tr key={form.id}>
               <td className="px-4 py-2">{form.memberName || "N/A"}</td>
               <td className="px-4 py-2">{form.memberEmail || "N/A"}</td>

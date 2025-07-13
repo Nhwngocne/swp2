@@ -139,7 +139,8 @@ const AppContent = () => {
           <Route path="/staffDashboard" element={<ProtectedRoute requiredRole="STAFF"><StaffDashboard /></ProtectedRoute>} />
           <Route path="/createEvent" element={<ProtectedRoute requiredRole="STAFF"><CreateEventPage /></ProtectedRoute>} />
           <Route path="/staff/events/edit/:id" element={<ProtectedRoute requiredRole="STAFF"><EditEvent /></ProtectedRoute>} />
-          <Route path="/bloodFormList" element={<ProtectedRoute requiredRole="STAFF"><BloodFormList /></ProtectedRoute>} />
+          <Route path="/bloodFormList/:eventId" element={<ProtectedRoute requiredRole="STAFF"><BloodFormList /></ProtectedRoute>} />
+
           <Route path="/bloodIntentList" element={<ProtectedRoute requiredRole="STAFF"><BloodIntentList /></ProtectedRoute>} />
           <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
           <Route path="/bloodInventoryForm" element={<ProtectedRoute requiredRole="STAFF"><BloodInventoryForm /></ProtectedRoute>} />
