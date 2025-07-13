@@ -92,7 +92,7 @@ export const eventService = {
 
   // Cập nhật biểu mẫu hiến máu (dành cho staff)
   updateBloodDonationFormByStaff: (formData, config = {}) =>
-    eventAPI.put("/forms/approve", formData, config),
+    eventAPI.put("/forms/checkin", formData, config),
 
   // Cập nhật biểu mẫu hiến máu (dành cho member)
   updateBloodDonationFormByMember: (formId, memberId, formData, config = {}) =>

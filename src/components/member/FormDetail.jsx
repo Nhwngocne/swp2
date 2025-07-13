@@ -118,6 +118,7 @@ console.log("User:", user);
             <p><strong>Họ tên:</strong> {form.memberName}</p>
             <p><strong>Email:</strong> {form.memberEmail}</p>
             <p><strong>Thể tích đăng ký:</strong> {form.volumeMl} ml</p>
+            <p><strong>Nhóm máu của bạn:</strong> {form.bloodTypeName} </p>
             <p><strong>Ngày đăng ký:</strong> {formatDate(form.createdAt)}</p>
           </section>
         </div>

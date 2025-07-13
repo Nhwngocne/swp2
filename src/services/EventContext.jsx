@@ -75,8 +75,8 @@ export const EventProvider = ({ children }) => {
       image: event.imageUrl || event.images?.[0]?.url || "/assets/event-default.jpg",
       status: getEventStatus(event.date, event.status),
       createdBy: event.staff?.name || "Không xác định",
-      registered: event.registered || false, 
-      canDonate: event.canDonate || false, 
+      registered: event.registered || false,
+      canDonate: event.canDonate || false,
     };
   };
 
@@ -104,7 +104,10 @@ export const EventProvider = ({ children }) => {
     memberName: form.memberName,
     memberEmail: form.memberEmail,
     bloodTypeId: form.bloodTypeId,
-    bloodType: form.bloodTypeId === 0 ? "Không biết" : form.bloodType?.name || "",
+    bloodType: form.bloodTypeId === 0 ? "Không biết" : form.bloodTypeName || "",
+    volumeMl: form.volumeMl,
+    startTime: form.startTime || "",
+    endTime: form.endTime || "",
     donatedBefore: form.donatedBefore,
     hadSeriousDisease: form.hadSeriousDisease,
     hadMalariaOrOtherInfectious: form.hadMalariaOrOtherInfectious,
@@ -114,9 +117,15 @@ export const EventProvider = ({ children }) => {
     tattooOrAcupuncture: form.tattooOrAcupuncture,
     hadSkinIssues: form.hadSkinIssues,
     usedAntibioticsOrAntiInflammatory: form.usedAntibioticsOrAntiInflammatory,
+    symptomsPast2Weeks: form.symptomsPast2Weeks || false,
+    symptomsPast1Week: form.symptomsPast1Week || false,
     isMenstruating: form.isMenstruating,
     isPregnantOrRecentlyDelivered: form.isPregnantOrRecentlyDelivered,
     noneOfFemaleConditions: form.noneOfFemaleConditions,
+    weight: form.weight || null,
+    height: form.height || null,
+    bloodPressure: form.bloodPressure || null,
+    note: form.note || null,
     status: form.status,
     approvedDate: form.approvedDate,
     approvedByStaffId: form.approvedByStaffId,
@@ -754,11 +763,10 @@ export const EventProvider = ({ children }) => {
   const updateBloodDonationFormByStaff = async (formData) => {
     try {
       setLoading(true);
-      console.log("Đang cập nhật biểu mẫu hiến máu bởi staff tại /swp391/forms/approve");
+      console.log("Đang cập nhật biểu mẫu hiến máu bởi staff tại /swp391/forms/checkin");
       if (!user || !user.id)
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
 
-      // Xây dựng payload dựa trên BloodDonationFormUpdateRequest
       const payload = {
         formId: parseInt(formData.formId) || 0,
         bloodTypeId: formData.bloodTypeId === "0" ? 0 : (formData.bloodTypeId ? parseInt(formData.bloodTypeId) : null),
@@ -773,26 +781,33 @@ export const EventProvider = ({ children }) => {
         tattooOrAcupuncture: Array.isArray(formData.past_6months) && formData.past_6months.includes("xam_xo") || false,
         hadSkinIssues: Array.isArray(formData.past_6months) && formData.past_6months.includes("noi_hach") || false,
         usedAntibioticsOrAntiInflammatory: Array.isArray(formData.past_week) && formData.past_week.includes("thuoc_khang_sinh") || false,
+        symptomsPast2Weeks: Array.isArray(formData.past_week) && formData.past_week.includes("trieu_chung_2_tuan") || false,
+        symptomsPast1Week: Array.isArray(formData.past_week) && formData.past_week.includes("trieu_chung_1_tuan") || false,
         isMenstruating: Array.isArray(formData.female_questions) && formData.female_questions.includes("dang_co_kinh") || false,
         isPregnantOrRecentlyDelivered: Array.isArray(formData.female_questions) && formData.female_questions.includes("co_thai") || false,
         noneOfFemaleConditions: Array.isArray(formData.female_questions) && formData.female_questions.includes("khong") || false,
+        weight: formData.weight ? parseFloat(formData.weight) : null,
+        height: formData.height ? parseFloat(formData.height) : null,
+        bloodPressure: formData.bloodPressure || null,
+        note: formData.note || null,
         status: formData.status || null,
-        approvedByStaffId: formData.approvedByStaffId ? parseInt(formData.approvedByStaffId) : null,
+        approvedByStaffId: parseInt(formData.approvedByStaffId) || user.id,
       };
 
-      // Kiểm tra formId hợp lệ
       if (!payload.formId) {
         throw new Error("ID biểu mẫu là bắt buộc.");
       }
 
-      // Validate session nếu được cung cấp
       if (payload.session && !["MORNING", "AFTERNOON"].includes(payload.session)) {
         throw new Error("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON.");
       }
 
-      // Validate status nếu được cung cấp
-      if (payload.status && !["APPROVED", "REJECTED", "PENDING", "COMPLETED"].includes(payload.status)) {
-        throw new Error("Trạng thái phải là APPROVED, REJECTED, PENDING, hoặc COMPLETED.");
+      if (payload.status && !["COMPLETED", "REJECTED"].includes(payload.status)) {
+        throw new Error("Trạng thái phải là COMPLETED hoặc REJECTED.");
+      }
+
+      if (!payload.approvedByStaffId) {
+        throw new Error("ID nhân viên duyệt là bắt buộc.");
       }
 
       console.log("Payload gửi đến API:", payload);
@@ -819,8 +834,10 @@ export const EventProvider = ({ children }) => {
         return { success: false, error: error.message };
       }
       console.error("Lỗi cập nhật biểu mẫu:", error.response?.status, error.message);
-      const errorMessage =
-        error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
+      let errorMessage = error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
+      if (error.response?.data?.errorCode === "INVALID_EVENT_TIME") {
+        errorMessage = "Sự kiện chưa được cấu hình thời gian hợp lệ.";
+      }
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -837,7 +854,6 @@ export const EventProvider = ({ children }) => {
       if (!user || !user.id)
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
 
-      // Xây dựng payload dựa trên BloodDonationFormUpdateRequest
       const payload = {
         formId: parseInt(formId) || 0,
         bloodTypeId: formData.bloodTypeId === "0" ? 0 : (formData.bloodTypeId ? parseInt(formData.bloodTypeId) : null),
@@ -852,17 +868,17 @@ export const EventProvider = ({ children }) => {
         tattooOrAcupuncture: Array.isArray(formData.past_6months) && formData.past_6months.includes("xam_xo") || false,
         hadSkinIssues: Array.isArray(formData.past_6months) && formData.past_6months.includes("noi_hach") || false,
         usedAntibioticsOrAntiInflammatory: Array.isArray(formData.past_week) && formData.past_week.includes("thuoc_khang_sinh") || false,
+        symptomsPast2Weeks: Array.isArray(formData.past_week) && formData.past_week.includes("trieu_chung_2_tuan") || false,
+        symptomsPast1Week: Array.isArray(formData.past_week) && formData.past_week.includes("trieu_chung_1_tuan") || false,
         isMenstruating: Array.isArray(formData.female_questions) && formData.female_questions.includes("dang_co_kinh") || false,
         isPregnantOrRecentlyDelivered: Array.isArray(formData.female_questions) && formData.female_questions.includes("co_thai") || false,
         noneOfFemaleConditions: Array.isArray(formData.female_questions) && formData.female_questions.includes("khong") || false,
       };
 
-      // Kiểm tra formId hợp lệ
       if (!payload.formId) {
         throw new Error("ID biểu mẫu là bắt buộc.");
       }
 
-      // Validate session nếu được cung cấp
       if (payload.session && !["MORNING", "AFTERNOON"].includes(payload.session)) {
         throw new Error("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON.");
       }
@@ -893,15 +909,16 @@ export const EventProvider = ({ children }) => {
         return { success: false, error: error.message };
       }
       console.error("Lỗi cập nhật biểu mẫu:", error.response?.status, error.message);
-      const errorMessage =
-        error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
+      let errorMessage = error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
+      if (error.response?.data?.errorCode === "INVALID_EVENT_TIME") {
+        errorMessage = "Sự kiện chưa được cấu hình thời gian hợp lệ.";
+      }
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
   };
-
   const deleteEvent = async (eventId) => {
     try {
       setLoading(true);
