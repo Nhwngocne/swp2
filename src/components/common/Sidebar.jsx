@@ -36,7 +36,7 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
           {
             label: "Quản lý đơn đăng ký",
             children: [
-              { path: "/bloodFormList", label: " Danh Sách Hiến Máu" },
+              { path: "/events", label: " Danh Sách Hiến Máu" },
               { path: "/bloodIntentList", label: "Danh Sách Hiến/Nhận Máu" },
               { path: "/emergencyList", label: "Danh Sách Cấp Cứu" }
             ]

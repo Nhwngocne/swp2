@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css"; // CSS cho DatePicker
 import "../../assets/css/components/guest/EventList.css";
 
 const EventList = () => {
-  const { user } = useAuth();
+  const { user,role } = useAuth();
   const { events, loading, error } = useEvents();
   const [filter, setFilter] = useState("all");
   const [startDate, setStartDate] = useState(null); // Từ ngày
@@ -38,6 +38,7 @@ const EventList = () => {
       eventId: event.id,
       donation_date: event.date,
       location: event.location,
+      bloodTypes: event.bloodTypes || [],
       session: event.session || "ALL",
       donationMorningStart: event.donationMorningStart || "",
       donationMorningEnd: event.donationMorningEnd || "",
@@ -99,80 +100,55 @@ const EventList = () => {
         />
       </div>
 
-      {filteredEvents.map((event) => {
-        console.log("🔍 Render Event:", {
-          id: event.id,
-          title: event.title,
-          registered: event.registered,
-          date: event.date,
-        });
-
-        return (
-          <div className="event-horizontal-card" key={event.id}>
-            {/* LEFT: Image */}
-            <div className="event-horizontal-image">
-              <img
-                src={event.image || "/default-logo.png"}
-                alt="event"
-                className="event-logo"
-              />
-            </div>
-
-            {/* MIDDLE: Content */}
-            <div className="event-horizontal-content">
-              <h3 className="event-title-link">{event.title}</h3>
-              <p><strong>Địa chỉ:</strong> {event.location}</p>
-              <p><strong>Thời gian hoạt động:</strong> {formatDate(event.date)} - Từ {event.time}</p>
-              <p><strong>Thời gian hiến máu:</strong> {event.sessionTime || "07:00 - 11:00"}</p>
-            </div>
-
-            {/* RIGHT: Action */}
-            <div className="event-horizontal-action">
-              <p className="event-register-count">
-                👥 {event.registeredMemberCount || 0}/{event.maxRegistrations || 150} Người
-              </p>
-              {event.registered ? (
-                <button
-                  className="event-horizontal-btn"
-                  disabled
-                  style={{
-                    backgroundColor: "#28a745",
-                    color: "white",
-                    cursor: "not-allowed",
-                  }}
-                >
-                  Đã đăng ký
-                </button>
-              ) : !event.canDonate ? (
-                <button
-                  className="event-horizontal-btn"
-                  disabled
-                  style={{
-                    backgroundColor: "#6c757d", // màu xám
-                    color: "white",
-                    cursor: "not-allowed",
-                  }}
-                >
-                  Chưa đến thời gian hiến lại
-                </button>
-              ) : (
-                <button
-                  className="event-horizontal-btn"
-                  disabled={!isRegisterable(event.date)}
-                  onClick={() => handleRegisterClick(event)}
-                  style={{
-                    backgroundColor: isRegisterable(event.date) ? "#dc3545" : "#ccc",
-                    cursor: isRegisterable(event.date) ? "pointer" : "not-allowed",
-                  }}
-                >
-                  {isRegisterable(event.date) ? "Đặt lịch đăng ký" : "Chưa đến lúc đặt lịch"}
-                </button>
-              )}
-            </div>
+      {filteredEvents.map((event) => (
+        <div className="event-horizontal-card" key={event.id}>
+          {/* LEFT: Image */}
+          <div className="event-horizontal-image">
+            <img
+              src={event.image || "/default-logo.png"}
+              alt="event"
+              className="event-logo"
+            />
           </div>
-        );
-      })}
 
+          {/* MIDDLE: Content */}
+          <div className="event-horizontal-content">
+            <h3 className="event-title-link">{event.title}</h3>
+            <p><strong>Địa chỉ:</strong> {event.location}</p>
+            <p><strong>Thời gian hoạt động:</strong> {formatDate(event.date)} - Từ {event.time}</p>
+            <p><strong>Thời gian hiến máu:</strong> {event.sessionTime || "07:00 - 11:00"}</p>
+          </div>
+
+          {/* RIGHT: Action */}
+          <div className="event-horizontal-action">
+            <p className="event-register-count">
+              👥 {event.registeredMemberCount || 0}/{event.maxRegistrations || 150} Người
+            </p>
+            {role === "MEMBER" && (
+            <button
+              className="event-horizontal-btn"
+              disabled={!isRegisterable(event.date)}
+              onClick={() => handleRegisterClick(event)}
+              style={{
+                backgroundColor: isRegisterable(event.date) ? "#dc3545" : "#ccc",
+                cursor: isRegisterable(event.date) ? "pointer" : "not-allowed",
+              }}
+            >
+              {isRegisterable(event.date) ? "Đặt lịch đăng ký" : "Chưa đến lúc đặt lịch"}
+            </button>
+            )}
+            {role === "STAFF" && (
+            <button
+              className="event-horizontal-btn detail-btn"
+              onClick={() => navigate(`/bloodFormList/${event.id}`)}
+            >
+              Chi tiết
+            </button>
+            )}
+
+          </div>
+        </div>
+      ))}
 
       {filteredEvents.length === 0 && (
         <div className="no-event-box">
