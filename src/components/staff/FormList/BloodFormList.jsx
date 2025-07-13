@@ -81,7 +81,7 @@ const BloodFormList = () => {
     setHistoryData({
       result: "Đạt",
       location: form.eventLocation || "",
-      volume: form.volumeMl||"",
+      volume: "",
       bloodTypeId: "",
       bloodDonationFormId: form.id,
       staffId: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null,
