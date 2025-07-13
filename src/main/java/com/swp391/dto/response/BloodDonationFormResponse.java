@@ -37,11 +37,8 @@ public class BloodDonationFormResponse {
     LocalDate createdAt;
 
     Boolean donatedBefore;
-    Boolean currentlyIll;
-    String illnessDetails;
 
     Boolean hadSeriousDisease;
-    String diseaseDetails;
 
     Boolean hadMalariaOrOtherInfectious;
     Boolean receivedBlood;
@@ -53,8 +50,8 @@ public class BloodDonationFormResponse {
 
     Boolean usedAntibioticsOrAntiInflammatory;
 
-    String symptomsPast2Weeks;
-    String symptomsPast1Week;
+    Boolean symptomsPast2Weeks;
+    Boolean symptomsPast1Week;
 
     Boolean isMenstruating;
     Boolean isPregnantOrRecentlyDelivered;
@@ -66,6 +63,12 @@ public class BloodDonationFormResponse {
 
     Integer approvedByStaffId;
     String approvedByStaffName;
+
+    // Thông tin check-in
+    Double weight;
+    Double height;
+    String bloodPressure;
+    String note;
 
     // history
     //DonationHistoryResponse donationHistory;

@@ -8,7 +8,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "regis_receive")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

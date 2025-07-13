@@ -2,10 +2,7 @@ package com.swp391.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.swp391.Enum.EventStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 import java.time.LocalDate;
@@ -34,6 +31,7 @@ public class EventResponse {
     private LocalTime donationMorningEnd;
     private LocalTime donationAfternoonStart;
     private LocalTime donationAfternoonEnd;
-    private List<String> bloodTypes; // Thêm loại máu
     private Integer maxRegistrations; // Thêm số lượng đăng ký
+    private boolean isRegistered;
+    private boolean isCanDonate;
 }

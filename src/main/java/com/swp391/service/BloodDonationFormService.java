@@ -1,5 +1,6 @@
 package com.swp391.service;
 
+import com.swp391.dto.request.BloodDonationFormCheckInRequest;
 import com.swp391.dto.request.BloodDonationFormCreateRequest;
 import com.swp391.dto.request.BloodDonationFormUpdateRequest;
 import com.swp391.dto.response.BloodDonationFormResponse;
@@ -92,34 +93,69 @@ public class BloodDonationFormService {
         );
         return formMapper.toFormResponse(form);
     }
-    // Cập nhật đơn đăng ký (dành cho staff duyệt đơn)
-    public BloodDonationFormResponse updateForm(BloodDonationFormUpdateRequest request) {
+    // Staff check-in và cập nhật thông tin tại điểm hiến máu
+    public BloodDonationFormResponse checkInForm(BloodDonationFormCheckInRequest request) {
         BloodDonationForm form = formRepository.findById(request.getFormId())
                 .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
 
-        // Cập nhật các trường cơ bản từ request
-        formMapper.updateForm(form, request);
-
-        // Nếu có chỉ định staff duyệt
-        if (request.getApprovedByStaffId() != null && request.getApprovedByStaffId() > 0) {
-            Staff staff = staffRepository.findById(request.getApprovedByStaffId())
-                    .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
-            form.setApprovedBy(staff);
-            form.setApprovedDate(LocalDate.now());
-
-            // Gửi thông báo cho Member
-            notificationService.createNotificationForMember(
-                    form.getMember().getId(),
-                    "Đơn đăng ký hiến máu #" + form.getId() + " của bạn đã được duyệt."
-            );
+        // Kiểm tra trạng thái form
+        if (!form.getStatus().equals("APPROVED")) {
+            throw new AppException(ErrorCode.FORM_NOT_APPROVED);
         }
 
-        // Nếu có cập nhật trạng thái
+        // Cập nhật các trường cơ bản từ request
+        formMapper.updateFormFromCheckIn(form, request);
+
+        // Cập nhật BloodType nếu được cung cấp
+        if (request.getBloodTypeId() != null) {
+            if (request.getBloodTypeId() == 0) {
+                form.setBloodType(null); // Set bloodType to null for "Không biết"
+            } else {
+                BloodType bloodType = bloodTypeRepository.findById(request.getBloodTypeId())
+                        .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+                form.setBloodType(bloodType);
+            }
+        }
+
+        // Cập nhật thời gian nếu có thay đổi session
+        if (request.getSession() != null && !request.getSession().isBlank()) {
+            Event event = form.getEvent();
+            LocalTime startTime;
+            LocalTime endTime;
+
+            if ("MORNING".equalsIgnoreCase(request.getSession())) {
+                startTime = event.getDonationMorningStart();
+                endTime = event.getDonationMorningEnd();
+            } else if ("AFTERNOON".equalsIgnoreCase(request.getSession())) {
+                startTime = event.getDonationAfternoonStart();
+                endTime = event.getDonationAfternoonEnd();
+            } else {
+                throw new AppException(ErrorCode.INVALID_SESSION);
+            }
+            form.setStartTime(startTime);
+            form.setEndTime(endTime);
+        }
+
+        // Cập nhật thông tin staff và ngày duyệt
+        Staff staff = staffRepository.findById(request.getApprovedByStaffId())
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+        form.setApprovedBy(staff);
+        form.setApprovedDate(LocalDate.now());
+
+        // Cập nhật trạng thái
         if (request.getStatus() != null && !request.getStatus().isBlank()) {
-            form.setStatus(request.getStatus().toUpperCase());
+            String status = request.getStatus().toUpperCase();
+            form.setStatus(status);
         }
 
         form = formRepository.save(form);
+
+        // Gửi thông báo cho member
+        notificationService.createNotificationForMember(
+                form.getMember().getId(),
+                "Đơn đăng ký hiến máu #" + form.getId() + " của bạn đã được cập nhật trạng thái: " + form.getStatus()
+        );
+
         return formMapper.toFormResponse(form);
     }
 
@@ -132,8 +168,8 @@ public class BloodDonationFormService {
             throw new AppException(ErrorCode.UNAUTHORIZED);
         }
 
-        if (!form.getStatus().equals("PENDING")) {
-            throw new AppException(ErrorCode.FORM_ALREADY_APPROVED);
+        if (!form.getStatus().equals("APPROVED")) {
+            throw new AppException(ErrorCode.FORM_NOT_APPROVED);
         }
         Event event = form.getEvent();
 

@@ -15,7 +15,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "events")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -82,15 +83,6 @@ public class Event {
 
     @Column
     LocalTime donationAfternoonEnd;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "event_blood_types",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "blood_type_id")
-    )
-    @JsonIgnore
-    Set<BloodType> bloodTypes = new HashSet<>();
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

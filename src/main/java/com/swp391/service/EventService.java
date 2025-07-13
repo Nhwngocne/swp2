@@ -1,14 +1,17 @@
 package com.swp391.service;
 
 import com.swp391.dto.request.EventCreateRequest;
+import com.swp391.dto.response.AuthenticationResponse;
 import com.swp391.dto.response.EventResponse;
 import com.swp391.entity.BloodType;
+import com.swp391.entity.DonationHistory;
 import com.swp391.entity.Event;
 import com.swp391.entity.Member;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.EventMapper;
 import com.swp391.repository.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,10 +36,11 @@ public class EventService {
     EventMapper eventMapper;
     ImageService imageService;
     StaffRepository staffRepository;
-    BloodTypeRepository bloodTypeRepository;
     BloodDonationFormRepository formRepository;
     NotificationService notificationService;
     MemberRepository   memberRepository;
+    AuthenticationService authenticationService;
+    DonationHistoryRepository donationHistoryRepository;
 
     @PreAuthorize("hasRole('STAFF')")
     public EventResponse createEvent(EventCreateRequest request) throws IOException {
@@ -47,14 +52,6 @@ public class EventService {
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             String imageUrl = imageService.uploadImage(request.getImage());
             event.setImageUrl(imageUrl);
-        }
-        // Ánh xạ bloodTypeIds sang bloodTypes
-        if (request.getBloodTypeIds() != null && !request.getBloodTypeIds().isEmpty()) {
-            Set<BloodType> bloodTypes = request.getBloodTypeIds().stream()
-                    .map(id -> bloodTypeRepository.findById(id)
-                            .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND)))
-                    .collect(Collectors.toSet());
-            event.setBloodTypes(bloodTypes);
         }
         // Tự động set status là UPCOMING khi tạo
         event.setStatus("UPCOMING");
@@ -73,14 +70,6 @@ public class EventService {
         }
 
         eventMapper.updateEvent(event, request);
-        // Ánh xạ bloodTypeIds sang bloodTypes
-        if (request.getBloodTypeIds() != null && !request.getBloodTypeIds().isEmpty()) {
-            Set<BloodType> bloodTypes = request.getBloodTypeIds().stream()
-                    .map(id -> bloodTypeRepository.findById(id)
-                            .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND)))
-                    .collect(Collectors.toSet());
-            event.setBloodTypes(bloodTypes);
-        }
         event = eventRepository.save(event);
         return eventMapper.toEventResponse(event);
     }
@@ -105,23 +94,75 @@ public class EventService {
         eventRepository.delete(event);
     }
 
-    public List<EventResponse> getAllEvents() {
-        return eventRepository.findAll()
-                .stream()
-                .peek(event -> {
-                    LocalDate currentDate = LocalDate.now();
-                    if (event.getDate().isBefore(currentDate)) {
-                        event.setStatus("COMPLETED");
-                        eventRepository.save(event);
-                    }
-                })
+    public List<EventResponse> getAllEvents(HttpServletRequest request) {
+        // B1: Lấy memberId từ token nếu có
+        Integer memberId = null;
+        try {
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                AuthenticationResponse userInfo = authenticationService.getCurrentUserFromToken(token);
+
+                if ("MEMBER".equals(userInfo.getRole())) {
+                    memberId = ((Member) userInfo.getUser()).getId();
+                }
+            }
+        } catch (Exception e) {
+            memberId = null;
+        }
+
+        final Integer finalMemberId = memberId;
+
+        // B2: Cập nhật các sự kiện quá hạn
+        LocalDate currentDate = LocalDate.now();
+        List<Event> allEvents = eventRepository.findAll();
+
+        for (Event event : allEvents) {
+            if (event.getDate().isBefore(currentDate) && !"COMPLETED".equals(event.getStatus())) {
+                event.setStatus("COMPLETED");
+                eventRepository.save(event);
+            }
+        }
+
+        // B3: Lọc và map sang EventResponse
+        return allEvents.stream()
+                .filter(event -> !"COMPLETED".equals(event.getStatus()))
                 .map(event -> {
                     EventResponse response = eventMapper.toEventResponse(event);
+
+                    // Số người đã được duyệt
                     int approvedCount = formRepository.countByEventIdAndStatus(event.getId(), "APPROVED");
-                    response.setRegisteredMemberCount(approvedCount); // 👈 Gán giá trị
+                    response.setRegisteredMemberCount(approvedCount);
+
+                    boolean isRegistered = false;
+                    boolean canDonate = true;
+
+                    if (finalMemberId != null) {
+                        // ✅ Dùng repository để kiểm tra chính xác trong DB
+                        isRegistered = formRepository.existsByEventIdAndMemberId(event.getId(), finalMemberId);
+
+                        // Kiểm tra lịch sử hiến máu để xác định có thể hiến hay không
+                        List<DonationHistory> historyList = donationHistoryRepository
+                                .findByMemberIdAndResult(finalMemberId, "Đạt");
+
+                        if (!historyList.isEmpty()) {
+                            LocalDate latestEligibleDate = historyList.stream()
+                                    .map(DonationHistory::getNextEligibleDate)
+                                    .filter(Objects::nonNull)
+                                    .max(LocalDate::compareTo)
+                                    .orElse(LocalDate.MIN);
+
+                            if (event.getDate().isBefore(latestEligibleDate)) {
+                                canDonate = false;
+                            }
+                        }
+                    }
+
+                    response.setRegistered(isRegistered);
+                    response.setCanDonate(canDonate);
+
                     return response;
                 })
-                .filter(response -> !"COMPLETED".equals(response.getStatus()))
                 .toList();
     }
 
