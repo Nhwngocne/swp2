@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css"; // CSS cho DatePicker
 import "../../assets/css/components/guest/EventList.css";
 
 const EventList = () => {
-  const { user,role } = useAuth();
+  const { user, role } = useAuth();
   const { events, loading, error } = useEvents();
   const [filter, setFilter] = useState("all");
   const [startDate, setStartDate] = useState(null); // Từ ngày
@@ -124,28 +124,54 @@ const EventList = () => {
             <p className="event-register-count">
               👥 {event.registeredMemberCount || 0}/{event.maxRegistrations || 150} Người
             </p>
-            {role === "MEMBER" && (
-            <button
-              className="event-horizontal-btn"
-              disabled={!isRegisterable(event.date)}
-              onClick={() => handleRegisterClick(event)}
-              style={{
-                backgroundColor: isRegisterable(event.date) ? "#dc3545" : "#ccc",
-                cursor: isRegisterable(event.date) ? "pointer" : "not-allowed",
-              }}
-            >
-              {isRegisterable(event.date) ? "Đặt lịch đăng ký" : "Chưa đến lúc đặt lịch"}
-            </button>
+
+            {role !== "STAFF" && (
+              event.registered ? (
+                <button
+                  className="event-horizontal-btn"
+                  disabled
+                  style={{
+                    backgroundColor: "#28a745",
+                    color: "white",
+                    cursor: "not-allowed",
+                  }}
+                >
+                  Đã đăng ký
+                </button>
+              ) : !event.canDonate ? (
+                <button
+                  className="event-horizontal-btn"
+                  disabled
+                  style={{
+                    backgroundColor: "#6c757d", // màu xám
+                    color: "white",
+                    cursor: "not-allowed",
+                  }}
+                >
+                  Chưa đến thời gian hiến lại
+                </button>
+              ) : (
+                <button
+                  className="event-horizontal-btn"
+                  disabled={!isRegisterable(event.date)}
+                  onClick={() => handleRegisterClick(event)}
+                  style={{
+                    backgroundColor: isRegisterable(event.date) ? "#dc3545" : "#ccc",
+                    cursor: isRegisterable(event.date) ? "pointer" : "not-allowed",
+                  }}
+                >
+                  {isRegisterable(event.date) ? "Đặt lịch đăng ký" : "Chưa đến lúc đặt lịch"}
+                </button>
+              )
             )}
             {role === "STAFF" && (
-            <button
-              className="event-horizontal-btn detail-btn"
-              onClick={() => navigate(`/bloodFormList/${event.id}`)}
-            >
-              Chi tiết
-            </button>
+              <button
+                className="event-horizontal-btn detail-btn"
+                onClick={() => navigate(`/bloodFormList/${event.id}`)}
+              >
+                Chi tiết
+              </button>
             )}
-
           </div>
         </div>
       ))}
