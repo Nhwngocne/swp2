@@ -1,5 +1,6 @@
 package com.swp391.mapper;
 
+import com.swp391.dto.request.BloodDonationFormCheckInRequest;
 import com.swp391.dto.request.BloodDonationFormCreateRequest;
 import com.swp391.dto.request.BloodDonationFormUpdateRequest;
 import com.swp391.dto.response.BloodDonationFormResponse;
@@ -33,4 +34,8 @@ public interface BloodDonationFormMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "bloodType", ignore = true)
     void updateForm(@MappingTarget BloodDonationForm form, BloodDonationFormUpdateRequest request);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "bloodType", ignore = true)
+    void updateFormFromCheckIn(@MappingTarget BloodDonationForm form, BloodDonationFormCheckInRequest request);
 }

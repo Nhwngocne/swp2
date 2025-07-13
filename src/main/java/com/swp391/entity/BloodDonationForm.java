@@ -54,11 +54,9 @@ public class BloodDonationForm {
     Boolean usedAntibioticsOrAntiInflammatory;
 
     // Câu 7: Trong 2 tuần qua
-    @Column(length = 255)
     Boolean symptomsPast2Weeks;
 
     // Câu 8: Trong 1 tuần qua
-    @Column(length = 255)
     Boolean symptomsPast1Week;
     // Voluome of blood donation, if applicable
     @Column(name = "volume_ml")
@@ -67,6 +65,19 @@ public class BloodDonationForm {
     Boolean isMenstruating;
     Boolean isPregnantOrRecentlyDelivered;
     Boolean noneOfFemaleConditions;
+
+    // Các trường mới cho check-in
+    @Column(nullable = true)
+    Double weight; // Cân nặng (kg)
+
+    @Column(nullable = true)
+    Double height; // Chiều cao (cm)
+
+    @Column(nullable = true)
+    String bloodPressure; // Huyết áp (e.g., "120/80")
+
+    @Column(nullable = true)
+    String note; // Ghi chú của staff
 
     // Ngày tạo form
     @JsonFormat(pattern = "yyyy-MM-dd")

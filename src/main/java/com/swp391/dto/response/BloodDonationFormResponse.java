@@ -64,6 +64,12 @@ public class BloodDonationFormResponse {
     Integer approvedByStaffId;
     String approvedByStaffName;
 
+    // Thông tin check-in
+    Double weight;
+    Double height;
+    String bloodPressure;
+    String note;
+
     // history
     //DonationHistoryResponse donationHistory;
 }

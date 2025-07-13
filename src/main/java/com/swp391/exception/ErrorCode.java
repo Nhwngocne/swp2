@@ -57,6 +57,7 @@ public enum ErrorCode {
     BLOOD_COMPONENT_NOT_FOUND(1002, "Blood component not found", HttpStatus.NOT_FOUND),
     INVALID_INTENT_TYPE(1002, "Invalid intent type", HttpStatus.BAD_REQUEST),
     FORM_ALREADY_PROCESSED(1001, "Form has already been processed", HttpStatus.BAD_REQUEST),
+    FORM_NOT_APPROVED(1001, "Form not approved", HttpStatus.BAD_REQUEST),
 
     INVALID_SEARCH_TYPE(1002,"Invalid search type: CHO/NHAN", HttpStatus.BAD_REQUEST),;
     private final int code;
