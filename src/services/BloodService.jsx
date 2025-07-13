@@ -10,22 +10,15 @@ const bloodAPI = axios.create({
 bloodAPI.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    console.log(
-      "bloodService request:",
-      config.url,
-      "Token:",
-      token || "No token"
-    );
-    // Chỉ bỏ qua token cho GET /blood/type hoặc GET /blood/inventory
-    const isGetBlood =
+    console.log("bloodService request:", config.url, "Token:", token || "No token");
+    const isPublicEndpoint =
       config.method === "get" &&
       (config.url === "/blood/type" ||
-        // config.url === "/blood/inventory" ||
         config.url.match(/^\/blood\/type\/\d+$/) ||
         config.url.match(/^\/blood\/inventory\/\d+$/));
-    if (token && !isGetBlood && !config.url.includes("/auth")) {
+    if (token && !isPublicEndpoint && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else if (!token && !isGetBlood && !config.url.includes("/auth")) {
+    } else if (!token && !isPublicEndpoint && !config.url.includes("/auth")) {
       console.warn("No token found for request:", config.url);
     }
     return config;
@@ -46,6 +39,7 @@ bloodAPI.interceptors.response.use(
     });
     if (
       error.response?.status === 401 &&
+      error.response?.data?.message === "Invalid or expired token" &&
       window.location.pathname !== "/login"
     ) {
       console.log("401 detected, clearing auth data");

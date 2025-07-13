@@ -10,23 +10,16 @@ const donationAPI = axios.create({
 donationAPI.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    console.log(
-      "donationService request:",
-      config.url,
-      "Token:",
-      token || "No token"
-    );
-    // Chỉ bỏ qua token cho GET /donations/histories, /donations/offline, /donations/receive/:id
-    const isGetDonations =
+    console.log("donationService request:", config.url, "Token:", token || "No token");
+    const isPublicEndpoint =
       config.method === "get" &&
-      (
-        config.url === "/donations/offline" ||
+      (config.url === "/donations/offline" ||
         config.url.match(/^\/donations\/histories\/\d+$/) ||
         config.url.match(/^\/donations\/offline\/\d+$/) ||
         config.url.match(/^\/donations\/receive\/\d+$/));
-    if (token && !isGetDonations && !config.url.includes("/auth")) {
+    if (token && !isPublicEndpoint && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else if (!token && !isGetDonations && !config.url.includes("/auth")) {
+    } else if (!token && !isPublicEndpoint && !config.url.includes("/auth")) {
       console.warn("No token found for request:", config.url);
     }
     return config;
@@ -47,6 +40,7 @@ donationAPI.interceptors.response.use(
     });
     if (
       error.response?.status === 401 &&
+      error.response?.data?.message === "Invalid or expired token" &&
       window.location.pathname !== "/login"
     ) {
       console.log("401 detected, clearing auth data");

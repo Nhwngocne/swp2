@@ -4,9 +4,6 @@ import { useEvents } from "../../services/EventContext";
 import { AuthContext } from "../../services/AuthContext";
 import "../../assets/css/components/staff/EventManager.css";
 
-const bloodTypeOptions = ["A", "B", "AB", "O"];
-const bloodTypeMap = { A: 2, B: 3, AB: 4, O: 5 };
-
 const EditEvent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -26,7 +23,6 @@ const EditEvent = () => {
     donationAfternoonStart: "",
     donationAfternoonEnd: "",
     maxRegistrations: "",
-    bloodTypeIds: [],
     image: null,
   });
 
@@ -81,7 +77,6 @@ const EditEvent = () => {
             donationAfternoonStart: data.donationAfternoonStart ? data.donationAfternoonStart.slice(0, 5) : "",
             donationAfternoonEnd: data.donationAfternoonEnd ? data.donationAfternoonEnd.slice(0, 5) : "",
             maxRegistrations: data.maxRegistrations || "",
-            bloodTypeIds: Array.isArray(data.bloodTypeIds) ? data.bloodTypeIds : [],
             image: null,
           });
           if (data.image) {
@@ -148,16 +143,6 @@ const EditEvent = () => {
       }
 
       return newData;
-    });
-  };
-
-  const handleCheckboxChange = (blood) => {
-    const id = bloodTypeMap[blood];
-    setFormData((prev) => {
-      const updated = prev.bloodTypeIds.includes(id)
-        ? prev.bloodTypeIds.filter((b) => b !== id)
-        : [...prev.bloodTypeIds, id];
-      return { ...prev, bloodTypeIds: updated };
     });
   };
 
@@ -476,21 +461,6 @@ const EditEvent = () => {
             min="0"
             required
           />
-        </div>
-        <div className="form-group">
-          <label>Nhóm máu cần:</label>
-          <div className="checkbox-group">
-            {bloodTypeOptions.map((blood) => (
-              <label key={blood}>
-                <input
-                  type="checkbox"
-                  checked={formData.bloodTypeIds.includes(bloodTypeMap[blood])}
-                  onChange={() => handleCheckboxChange(blood)}
-                />
-                {blood}
-              </label>
-            ))}
-          </div>
         </div>
         <div className="form-group">
           <label>Ảnh minh hoạ:</label>

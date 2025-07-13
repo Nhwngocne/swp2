@@ -22,15 +22,9 @@ eventAPI.interceptors.request.use(
       token || "No token"
     );
     // Chỉ bỏ qua token cho GET /events hoặc GET /events/:id
-    const isGetEvents =
-      config.method === "get" &&
-      (config.url === "/events" ||
-        config.url.match(/^\/events\/\d+$/) ||
-        config.url === "/blogs" ||
-        config.url.match(/^\/blogs\/\d+$/));
-    if (token && !isGetEvents && !config.url.includes("/auth")) {
+    if (token && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else if (!token && !isGetEvents && !config.url.includes("/auth")) {
+    } else if (!token && !config.url.includes("/auth")) {
       console.warn("No token found for request:", config.url);
     }
     return config;
@@ -98,7 +92,7 @@ export const eventService = {
 
   // Cập nhật biểu mẫu hiến máu (dành cho staff)
   updateBloodDonationFormByStaff: (formData, config = {}) =>
-    eventAPI.put("/forms/approve", formData, config),
+    eventAPI.put("/forms/checkin", formData, config),
 
   // Cập nhật biểu mẫu hiến máu (dành cho member)
   updateBloodDonationFormByMember: (formId, memberId, formData, config = {}) =>

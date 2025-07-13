@@ -70,13 +70,13 @@ export const EventProvider = ({ children }) => {
       donationMorningEnd: event.donationMorningEnd || "",
       donationAfternoonStart: event.donationAfternoonStart || "",
       donationAfternoonEnd: event.donationAfternoonEnd || "",
-      bloodTypes: Array.isArray(event.bloodTypes) ? event.bloodTypes : [],
-      bloodTypeIds, // Thêm trường này
       maxRegistrations: event.maxRegistrations || 0,
       registeredMemberCount: event.registeredMemberCount || 0,
       image: event.imageUrl || event.images?.[0]?.url || "/assets/event-default.jpg",
       status: getEventStatus(event.date, event.status),
       createdBy: event.staff?.name || "Không xác định",
+      registered: event.registered || false,
+      canDonate: event.canDonate || false,
     };
   };
 
@@ -104,12 +104,12 @@ export const EventProvider = ({ children }) => {
     memberName: form.memberName,
     memberEmail: form.memberEmail,
     bloodTypeId: form.bloodTypeId,
-    bloodType: form.bloodTypeId === 0 ? "Không biết" : form.bloodType?.name || "",
+    bloodType: form.bloodTypeId === 0 ? "Không biết" : form.bloodTypeName || "",
+    volumeMl: form.volumeMl,
+    startTime: form.startTime || "",
+    endTime: form.endTime || "",
     donatedBefore: form.donatedBefore,
-    currentlyIll: form.currentlyIll,
-    illnessDetails: form.illnessDetails,
     hadSeriousDisease: form.hadSeriousDisease,
-    diseaseDetails: form.diseaseDetails,
     hadMalariaOrOtherInfectious: form.hadMalariaOrOtherInfectious,
     receivedBlood: form.receivedBlood,
     gotVaccine: form.gotVaccine,
@@ -117,11 +117,15 @@ export const EventProvider = ({ children }) => {
     tattooOrAcupuncture: form.tattooOrAcupuncture,
     hadSkinIssues: form.hadSkinIssues,
     usedAntibioticsOrAntiInflammatory: form.usedAntibioticsOrAntiInflammatory,
-    symptomsPast2Weeks: form.symptomsPast2Weeks,
-    symptomsPast1Week: form.symptomsPast1Week,
+    symptomsPast2Weeks: form.symptomsPast2Weeks || false,
+    symptomsPast1Week: form.symptomsPast1Week || false,
     isMenstruating: form.isMenstruating,
     isPregnantOrRecentlyDelivered: form.isPregnantOrRecentlyDelivered,
     noneOfFemaleConditions: form.noneOfFemaleConditions,
+    weight: form.weight || null,
+    height: form.height || null,
+    bloodPressure: form.bloodPressure || null,
+    note: form.note || null,
     status: form.status,
     approvedDate: form.approvedDate,
     approvedByStaffId: form.approvedByStaffId,
@@ -440,9 +444,6 @@ export const EventProvider = ({ children }) => {
       formData.append("donationMorningEnd", eventData.donationMorningEnd || "");
       formData.append("donationAfternoonStart", eventData.donationAfternoonStart || "");
       formData.append("donationAfternoonEnd", eventData.donationAfternoonEnd || "");
-      (eventData.bloodTypeIds || []).forEach((id) => {
-        formData.append("bloodTypeIds", id);
-      });
       formData.append("maxRegistrations", eventData.maxRegistrations || 0);
       formData.append("staffId", user.id);
       if (eventData.image) {
@@ -526,7 +527,7 @@ export const EventProvider = ({ children }) => {
 
       // Validation dữ liệu đầu vào
       const errors = [];
-      const validBloodTypeIds = Object.values(bloodTypeMap); // [2, 3, 4, 5, 0]
+      const validBloodTypeIds = Object.values(bloodTypeMap);
       if (!formData.eventId || isNaN(parseInt(formData.eventId))) {
         errors.push("ID sự kiện không hợp lệ");
       }
@@ -545,11 +546,8 @@ export const EventProvider = ({ children }) => {
       if (!["co", "khong"].includes(formData.donated_before)) {
         errors.push("Thông tin từng hiến máu không hợp lệ (phải là 'co' hoặc 'khong')");
       }
-      if (!["co", "khong"].includes(formData.current_illness)) {
-        errors.push("Thông tin bệnh lý hiện tại không hợp lệ (phải là 'co' hoặc 'khong')");
-      }
-      if (!["co", "khong", "benh_khac"].includes(formData.past_diseases)) {
-        errors.push("Thông tin bệnh nguy hiểm không hợp lệ (phải là 'co', 'khong', hoặc 'benh_khac')");
+      if (!["co", "khong"].includes(formData.past_diseases)) {
+        errors.push("Thông tin bệnh nguy hiểm không hợp lệ (phải là 'co' hoặc 'khong')");
       }
       if (!Array.isArray(formData.past_year)) {
         errors.push("Dữ liệu 12 tháng qua không hợp lệ (phải là mảng)");
@@ -579,22 +577,17 @@ export const EventProvider = ({ children }) => {
         volumeMl: parseInt(formData.volumeMl) || null,
         session: formData.session || null,
         donatedBefore: formData.donated_before === "co",
-        currentlyIll: formData.current_illness === "co",
-        illnessDetails: formData.illness_details || "",
-        hadSeriousDisease: formData.past_diseases === "co" || formData.past_diseases === "benh_khac",
-        diseaseDetails: formData.disease_details || "",
+        hadSeriousDisease: formData.past_diseases === "co",
         hadMalariaOrOtherInfectious: formData.past_year.includes("sot_ret"),
         receivedBlood: formData.past_year.includes("truyen_mau"),
         gotVaccine: formData.past_year.includes("tiem_vaccine"),
         noneOfAbove12Months: formData.past_year.includes("khong") || formData.past_year.length === 0,
-        tattooOrAcupuncture: formData.past_6months.includes("xam_hinh"),
-        hadSkinIssues: formData.past_6months.includes("noi_mun"),
-        usedAntibioticsOrAntiInflammatory: formData.past_month.includes("nhan_thuoc"),
-        symptomsPast2Weeks: formData.other_2weeks || "",
-        symptomsPast1Week: formData.other_week || "",
+        tattooOrAcupuncture: formData.past_6months.includes("xam_xo"),
+        hadSkinIssues: formData.past_6months.includes("noi_hach"),
+        usedAntibioticsOrAntiInflammatory: formData.past_week.includes("thuoc_khang_sinh"),
         isMenstruating: formData.female_questions.includes("dang_co_kinh"),
         isPregnantOrRecentlyDelivered: formData.female_questions.includes("co_thai"),
-        noneOfFemaleConditions: formData.female_questions.includes("khong_nu"),
+        noneOfFemaleConditions: formData.female_questions.includes("khong"),
       };
 
       // Log để debug
@@ -613,10 +606,7 @@ export const EventProvider = ({ children }) => {
         `Thể tích máu: ${payload.volumeMl}ml\n` +
         `Khung giờ: ${payload.session}\n` +
         `Từng hiến máu: ${payload.donatedBefore ? "Có" : "Không"}\n` +
-        `Hiện tại mắc bệnh: ${payload.currentlyIll ? "Có" : "Không"}\n` +
-        `Chi tiết bệnh lý: ${payload.illnessDetails || "Không"}\n` +
         `Từng mắc bệnh nguy hiểm: ${payload.hadSeriousDisease ? "Có" : "Không"}\n` +
-        `Chi tiết bệnh: ${payload.diseaseDetails || "Không"}\n` +
         `Mắc sốt rét: ${payload.hadMalariaOrOtherInfectious ? "Có" : "Không"}\n` +
         `Được truyền máu: ${payload.receivedBlood ? "Có" : "Không"}\n` +
         `Tiêm vaccine: ${payload.gotVaccine ? "Có" : "Không"}\n` +
@@ -624,8 +614,6 @@ export const EventProvider = ({ children }) => {
         `Xăm/Châm cứu: ${payload.tattooOrAcupuncture ? "Có" : "Không"}\n` +
         `Vấn đề da liễu: ${payload.hadSkinIssues ? "Có" : "Không"}\n` +
         `Dùng thuốc: ${payload.usedAntibioticsOrAntiInflammatory ? "Có" : "Không"}\n` +
-        `Triệu chứng 2 tuần: ${payload.symptomsPast2Weeks || "Không"}\n` +
-        `Triệu chứng 1 tuần: ${payload.symptomsPast1Week || "Không"}\n` +
         `Đang có kinh: ${payload.isMenstruating ? "Có" : "Không"}\n` +
         `Mang thai/Mới sinh: ${payload.isPregnantOrRecentlyDelivered ? "Có" : "Không"}\n` +
         `Không có điều kiện nữ giới: ${payload.noneOfFemaleConditions ? "Có" : "Không"}\n` +
@@ -671,7 +659,7 @@ export const EventProvider = ({ children }) => {
       console.log(`Đang cập nhật sự kiện ${eventId} tại /swp391/events/${eventId}`);
       if (!user || !user.id)
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-  
+
       const formData = new FormData();
       formData.append("title", eventData.title);
       formData.append("date", eventData.date);
@@ -684,22 +672,17 @@ export const EventProvider = ({ children }) => {
       formData.append("donationMorningEnd", eventData.donationMorningEnd || "");
       formData.append("donationAfternoonStart", eventData.donationAfternoonStart || "");
       formData.append("donationAfternoonEnd", eventData.donationAfternoonEnd || "");
-      console.log("Appending bloodTypeIds:", eventData.bloodTypeIds); // Debug trước khi append
-      (eventData.bloodTypeIds || []).forEach((id, index) => {
-        formData.append(`bloodTypeIds[${index}]`, id); // Thử định dạng mảng kiểu index
-        console.log(`Appended bloodTypeIds[${index}]: ${id}`);
-      });
       formData.append("maxRegistrations", eventData.maxRegistrations || 0);
       formData.append("staffId", user.id);
       if (eventData.image) {
         formData.append("image", eventData.image);
       }
-  
+
       // Log toàn bộ FormData (cách đơn giản để kiểm tra)
       for (let pair of formData.entries()) {
         console.log(`FormData key: ${pair[0]}, value: ${pair[1]}`);
       }
-  
+
       const source = axios.CancelToken.source();
       const response = await eventService.updateEvent(eventId, formData, {
         cancelToken: source.token,
@@ -780,50 +763,51 @@ export const EventProvider = ({ children }) => {
   const updateBloodDonationFormByStaff = async (formData) => {
     try {
       setLoading(true);
-      console.log("Đang cập nhật biểu mẫu hiến máu bởi staff tại /swp391/forms/approve");
+      console.log("Đang cập nhật biểu mẫu hiến máu bởi staff tại /swp391/forms/checkin");
       if (!user || !user.id)
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
 
-      // Xây dựng payload dựa trên BloodDonationFormUpdateRequest
       const payload = {
         formId: parseInt(formData.formId) || 0,
         bloodTypeId: formData.bloodTypeId === "0" ? 0 : (formData.bloodTypeId ? parseInt(formData.bloodTypeId) : null),
         volumeMl: formData.volumeMl ? parseInt(formData.volumeMl) : null,
         session: formData.session || null,
         donatedBefore: formData.donated_before === "co" || false,
-        currentlyIll: formData.current_illness === "co" || false,
-        illnessDetails: formData.illness_details || "",
-        hadSeriousDisease: formData.past_diseases === "co" || formData.past_diseases === "benh_khac" || false,
-        diseaseDetails: formData.disease_details || "",
+        hadSeriousDisease: formData.past_diseases === "co" || false,
         hadMalariaOrOtherInfectious: Array.isArray(formData.past_year) && formData.past_year.includes("sot_ret") || false,
         receivedBlood: Array.isArray(formData.past_year) && formData.past_year.includes("truyen_mau") || false,
         gotVaccine: Array.isArray(formData.past_year) && formData.past_year.includes("tiem_vaccine") || false,
         noneOfAbove12Months: Array.isArray(formData.past_year) && (formData.past_year.length === 0 || formData.past_year.includes("khong")) || false,
-        tattooOrAcupuncture: Array.isArray(formData.past_6months) && formData.past_6months.includes("xam_hinh") || false,
-        hadSkinIssues: Array.isArray(formData.past_6months) && formData.past_6months.includes("noi_mun") || false,
-        usedAntibioticsOrAntiInflammatory: Array.isArray(formData.past_month) && formData.past_month.includes("nhan_thuoc") || false,
-        symptomsPast2Weeks: formData.other_2weeks || "",
-        symptomsPast1Week: formData.other_week || "",
+        tattooOrAcupuncture: Array.isArray(formData.past_6months) && formData.past_6months.includes("xam_xo") || false,
+        hadSkinIssues: Array.isArray(formData.past_6months) && formData.past_6months.includes("noi_hach") || false,
+        usedAntibioticsOrAntiInflammatory: Array.isArray(formData.past_week) && formData.past_week.includes("thuoc_khang_sinh") || false,
+        symptomsPast2Weeks: Array.isArray(formData.past_week) && formData.past_week.includes("trieu_chung_2_tuan") || false,
+        symptomsPast1Week: Array.isArray(formData.past_week) && formData.past_week.includes("trieu_chung_1_tuan") || false,
         isMenstruating: Array.isArray(formData.female_questions) && formData.female_questions.includes("dang_co_kinh") || false,
         isPregnantOrRecentlyDelivered: Array.isArray(formData.female_questions) && formData.female_questions.includes("co_thai") || false,
-        noneOfFemaleConditions: Array.isArray(formData.female_questions) && formData.female_questions.includes("khong_nu") || false,
+        noneOfFemaleConditions: Array.isArray(formData.female_questions) && formData.female_questions.includes("khong") || false,
+        weight: formData.weight ? parseFloat(formData.weight) : null,
+        height: formData.height ? parseFloat(formData.height) : null,
+        bloodPressure: formData.bloodPressure || null,
+        note: formData.note || null,
         status: formData.status || null,
-        approvedByStaffId: formData.approvedByStaffId ? parseInt(formData.approvedByStaffId) : null,
+        approvedByStaffId: parseInt(formData.approvedByStaffId) || user.id,
       };
 
-      // Kiểm tra formId hợp lệ
       if (!payload.formId) {
         throw new Error("ID biểu mẫu là bắt buộc.");
       }
 
-      // Validate session nếu được cung cấp
       if (payload.session && !["MORNING", "AFTERNOON"].includes(payload.session)) {
         throw new Error("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON.");
       }
 
-      // Validate status nếu được cung cấp
-      if (payload.status && !["APPROVED", "REJECTED", "PENDING", "COMPLETED"].includes(payload.status)) {
-        throw new Error("Trạng thái phải là APPROVED, REJECTED, PENDING, hoặc COMPLETED.");
+      if (payload.status && !["COMPLETED", "REJECTED"].includes(payload.status)) {
+        throw new Error("Trạng thái phải là COMPLETED hoặc REJECTED.");
+      }
+
+      if (!payload.approvedByStaffId) {
+        throw new Error("ID nhân viên duyệt là bắt buộc.");
       }
 
       console.log("Payload gửi đến API:", payload);
@@ -850,8 +834,10 @@ export const EventProvider = ({ children }) => {
         return { success: false, error: error.message };
       }
       console.error("Lỗi cập nhật biểu mẫu:", error.response?.status, error.message);
-      const errorMessage =
-        error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
+      let errorMessage = error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
+      if (error.response?.data?.errorCode === "INVALID_EVENT_TIME") {
+        errorMessage = "Sự kiện chưa được cấu hình thời gian hợp lệ.";
+      }
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -868,37 +854,31 @@ export const EventProvider = ({ children }) => {
       if (!user || !user.id)
         throw new Error("Người dùng chưa xác thực hoặc không có ID.");
 
-      // Xây dựng payload dựa trên BloodDonationFormUpdateRequest
       const payload = {
         formId: parseInt(formId) || 0,
         bloodTypeId: formData.bloodTypeId === "0" ? 0 : (formData.bloodTypeId ? parseInt(formData.bloodTypeId) : null),
         volumeMl: formData.volumeMl ? parseInt(formData.volumeMl) : null,
         session: formData.session || null,
         donatedBefore: formData.donated_before === "co" || false,
-        currentlyIll: formData.current_illness === "co" || false,
-        illnessDetails: formData.illness_details || "",
-        hadSeriousDisease: formData.past_diseases === "co" || formData.past_diseases === "benh_khac" || false,
-        diseaseDetails: formData.disease_details || "",
+        hadSeriousDisease: formData.past_diseases === "co" || false,
         hadMalariaOrOtherInfectious: Array.isArray(formData.past_year) && formData.past_year.includes("sot_ret") || false,
         receivedBlood: Array.isArray(formData.past_year) && formData.past_year.includes("truyen_mau") || false,
         gotVaccine: Array.isArray(formData.past_year) && formData.past_year.includes("tiem_vaccine") || false,
         noneOfAbove12Months: Array.isArray(formData.past_year) && (formData.past_year.length === 0 || formData.past_year.includes("khong")) || false,
-        tattooOrAcupuncture: Array.isArray(formData.past_6months) && formData.past_6months.includes("xam_hinh") || false,
-        hadSkinIssues: Array.isArray(formData.past_6months) && formData.past_6months.includes("noi_mun") || false,
-        usedAntibioticsOrAntiInflammatory: Array.isArray(formData.past_month) && formData.past_month.includes("nhan_thuoc") || false,
-        symptomsPast2Weeks: formData.other_2weeks || "",
-        symptomsPast1Week: formData.other_week || "",
+        tattooOrAcupuncture: Array.isArray(formData.past_6months) && formData.past_6months.includes("xam_xo") || false,
+        hadSkinIssues: Array.isArray(formData.past_6months) && formData.past_6months.includes("noi_hach") || false,
+        usedAntibioticsOrAntiInflammatory: Array.isArray(formData.past_week) && formData.past_week.includes("thuoc_khang_sinh") || false,
+        symptomsPast2Weeks: Array.isArray(formData.past_week) && formData.past_week.includes("trieu_chung_2_tuan") || false,
+        symptomsPast1Week: Array.isArray(formData.past_week) && formData.past_week.includes("trieu_chung_1_tuan") || false,
         isMenstruating: Array.isArray(formData.female_questions) && formData.female_questions.includes("dang_co_kinh") || false,
         isPregnantOrRecentlyDelivered: Array.isArray(formData.female_questions) && formData.female_questions.includes("co_thai") || false,
-        noneOfFemaleConditions: Array.isArray(formData.female_questions) && formData.female_questions.includes("khong_nu") || false,
+        noneOfFemaleConditions: Array.isArray(formData.female_questions) && formData.female_questions.includes("khong") || false,
       };
 
-      // Kiểm tra formId hợp lệ
       if (!payload.formId) {
         throw new Error("ID biểu mẫu là bắt buộc.");
       }
 
-      // Validate session nếu được cung cấp
       if (payload.session && !["MORNING", "AFTERNOON"].includes(payload.session)) {
         throw new Error("Khung giờ hiến máu phải là MORNING hoặc AFTERNOON.");
       }
@@ -929,15 +909,16 @@ export const EventProvider = ({ children }) => {
         return { success: false, error: error.message };
       }
       console.error("Lỗi cập nhật biểu mẫu:", error.response?.status, error.message);
-      const errorMessage =
-        error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
+      let errorMessage = error.response?.data?.message || error.message || "Cập nhật biểu mẫu thất bại";
+      if (error.response?.data?.errorCode === "INVALID_EVENT_TIME") {
+        errorMessage = "Sự kiện chưa được cấu hình thời gian hợp lệ.";
+      }
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
   };
-
   const deleteEvent = async (eventId) => {
     try {
       setLoading(true);

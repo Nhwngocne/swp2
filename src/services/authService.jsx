@@ -29,34 +29,39 @@ authAPI.interceptors.request.use(
 authAPI.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isAuthFreeEndpoint =
-      error.config?.url?.includes("/forgotPassword") ||
-      error.config?.url?.includes("/auth/login") ||
-      error.config?.url?.includes("/auth/register") ||
-      error.config?.url?.includes("/auth/loginGoogle") ||
-      error.config?.url?.includes("/reset-password") ||
-      error.config?.url?.includes("/register/send-otp") ||
-      error.config?.url?.includes("/register/verify-otp") ||
-      error.config?.url?.includes("/feedback");
+    const isAuthFreeEndpoint = [
+      "/forgotPassword",
+      "/auth/login",
+      "/auth/register",
+      "/auth/loginGoogle",
+      "/reset-password",
+      "/register/send-otp",
+      "/register/verify-otp",
+      "/feedback",
+      "/blood/type", // Thêm nếu endpoint này là public
+      "/donations/offline",
+      "/donations/receive",
+    ].some((path) => error.config?.url?.includes(path));
 
     if (error.response?.status === 401 && !isAuthFreeEndpoint) {
-      console.log(
-        "401 Unauthorized - URL:",
-        error.config?.url,
-        "Redirecting to /auth/login"
-      ); // Debug
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.location.href = "/auth/login";
+      if (
+        error.response?.data?.message === "Invalid or expired token" &&
+        window.location.pathname !== "/auth/login"
+      ) {
+        console.log("401 Unauthorized - Invalid token, redirecting to /auth/login");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        window.location.href = "/auth/login";
+      }
     } else if (error.response) {
       console.log(
         "API error:",
         error.config?.url,
         error.response.status,
         error.response.data
-      ); // Debug
+      );
     }
-
     return Promise.reject(error);
   }
 );

@@ -21,7 +21,7 @@ export const useDonation = () => {
 };
 
 export const DonationProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [donationHistories, setDonationHistories] = useState([]);
   const [donationRegistrations, setDonationRegistrations] = useState([]);
   const [regisOffline, setRegisOffline] = useState([]);
@@ -551,9 +551,7 @@ export const DonationProvider = ({ children }) => {
       setLoading(true);
       console.log("Đang lấy tất cả đăng ký nhận máu từ /swp391/donations/receive");
       const source = axios.CancelToken.source();
-      const response = await donationService.getRegisReceiveById({
-        cancelToken: source.token,
-      });
+      const response = await donationService.getAllForms({ cancelToken: source.token }); // Sửa để gọi API đúng
       console.log("API response:", response.data);
       const mappedReceive = response.data.result.map(mapRegisReceive);
       setRegisReceive(mappedReceive);
@@ -704,14 +702,13 @@ export const DonationProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (user && user.id) {
-      fetchDonationHistoriesByMemberId(user.id);
-    } else {
-      fetchDonationHistories();
+    if (!authLoading && user) {
+      if (user.id) fetchDonationHistoriesByMemberId(user.id);
+      else fetchDonationHistories();
+      fetchRegisOffline();
+      fetchRegisReceive();
     }
-    fetchRegisOffline();
-    fetchRegisReceive();
-  }, [fetchDonationHistories, fetchDonationHistoriesByMemberId, fetchRegisOffline, fetchRegisReceive, user]);
+  }, [authLoading, user, fetchDonationHistories, fetchDonationHistoriesByMemberId, fetchRegisOffline, fetchRegisReceive]);
 
   const value = {
     donationHistories,

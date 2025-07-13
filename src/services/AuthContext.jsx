@@ -39,11 +39,11 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       const userData = localStorage.getItem("user");
       const storedRole = localStorage.getItem("role");
-
+  
       if (token && userData && storedRole) {
         try {
           const parsedUser = JSON.parse(userData);
-          const success = await verifyToken(); // ✅ cần await
+          const success = await verifyToken();
           if (success) {
             setUser(parsedUser);
             setRole(storedRole);
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       }
       setLoading(false);
     };
-
+  
     initAuth();
   }, []);
 

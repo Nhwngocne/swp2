@@ -1,8 +1,8 @@
 import React from "react";
 import "../../assets/css/pages/DonationStep1.css";
 
-export default function DonationStep1({ formData, setFormData, onNext, eventData, bloodTypes, bloodTypeMap }) {
-  const { bloodTypes: eventBloodTypes, session, donationMorningStart, donationMorningEnd, donationAfternoonStart, donationAfternoonEnd } = eventData;
+export default function DonationStep1({ formData, setFormData, onNext, eventData, bloodTypeMap }) {
+  const {session, donationMorningStart, donationMorningEnd, donationAfternoonStart, donationAfternoonEnd } = eventData;
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "Chưa chọn ngày";
@@ -32,15 +32,6 @@ export default function DonationStep1({ formData, setFormData, onNext, eventData
       <div className="mb-4">
         <label>Địa điểm hiến máu:</label>
         <input type="text" value={formData.location || "Chưa chọn địa điểm"} disabled />
-      </div>
-
-      <div className="mb-4">
-        <label>Nhóm máu cần hiến:</label>
-        <input
-          type="text"
-          value={Array.isArray(eventBloodTypes) && eventBloodTypes.length > 0 ? eventBloodTypes.join(", ") : "Không xác định"}
-          disabled
-        />
       </div>
 
       <div className="mb-4">

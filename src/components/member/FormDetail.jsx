@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { donationService } from "../../services/donationService";
 import { useAuth } from "../../services/AuthContext";
+import { FaCalendar, FaUser, FaHeartbeat } from 'react-icons/fa';
 import "../../assets/css/member/FormDetail.css";
 const FormDetail = () => {
   const { id } = useParams(); // ID của form từ URL
@@ -117,6 +118,7 @@ console.log("User:", user);
             <p><strong>Họ tên:</strong> {form.memberName}</p>
             <p><strong>Email:</strong> {form.memberEmail}</p>
             <p><strong>Thể tích đăng ký:</strong> {form.volumeMl} ml</p>
+            <p><strong>Nhóm máu của bạn:</strong> {form.bloodTypeName} </p>
             <p><strong>Ngày đăng ký:</strong> {formatDate(form.createdAt)}</p>
           </section>
         </div>
@@ -153,7 +155,7 @@ console.log("User:", user);
           </section>
         </div>
       </div>
-      {role === "MEMBER" && form.status !== "APPROVED" && (
+      {role === "MEMBER" && form.status == "APPROVED" && (
         <button className="delete-button" onClick={handleDelete}>Xóa đơn đăng ký</button>
       )}
       {role === "MEMBER" && (
