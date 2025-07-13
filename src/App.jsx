@@ -64,6 +64,11 @@ import BloodInventoryForm from './components/staff/BloodInventoryForm';
 import DonationBloodResult from './components/staff/DonationBloodResult'
 import QnA from './components/staff/QnA'; // Thêm DonationBloodResult
 import CheckIn from './components/staff/CheckIn';
+import RegisterOff from './components/staff/RegisterOffline/RegisterOff.jsx';
+import ResultOff from './components/staff/RegisterOffline/ResultOff';
+import CreateOff from './components/staff/RegisterOffline/CreateOff';
+import OfflineDetail from './components/staff/RegisterOffline/OfflineDetail';
+
 
 
 // Admin Components
@@ -120,7 +125,7 @@ const AppContent = () => {
 
 
 
-          
+
 
           {/* Member */}
           <Route path="/profile" element={<ProtectedRoute requiredRole="MEMBER"><Profile /></ProtectedRoute>} />
@@ -145,11 +150,19 @@ const AppContent = () => {
           <Route path="/bloodIntentList" element={<ProtectedRoute requiredRole="STAFF"><BloodIntentList /></ProtectedRoute>} />
           <Route path="/emergencyList" element={<ProtectedRoute requiredRole="STAFF"><EmergencyList /></ProtectedRoute>} />
           <Route path="/bloodInventoryForm" element={<ProtectedRoute requiredRole="STAFF"><BloodInventoryForm /></ProtectedRoute>} />
-          {/* Staff */}
+
           <Route path="/donationBloodResult" element={<ProtectedRoute requiredRole="STAFF"><DonationBloodResult /></ProtectedRoute>} />
           <Route path="/staff/formDetail/:id" element={<ProtectedRoute requiredRole="STAFF"><FormDetail /></ProtectedRoute>} />
           <Route path="/qna" element={<ProtectedRoute requiredRole="STAFF"><QnA /></ProtectedRoute>} />
           <Route path="/staff/checkin/:id" element={<CheckIn />} />
+        
+          <Route path="/registerOff" element={<ProtectedRoute requiredRole="STAFF"><RegisterOff /></ProtectedRoute>} />
+          <Route path="/resultOff/:id" element={<ProtectedRoute requiredRole="STAFF"><ResultOff /></ProtectedRoute>} />
+          <Route path="/createOff" element={<ProtectedRoute requiredRole="STAFF"><CreateOff /></ProtectedRoute>} />
+          <Route path="/offlineDetail/:id" element={<ProtectedRoute requiredRole="STAFF"><OfflineDetail /></ProtectedRoute>} />
+
+
+
 
 
           {/* Admin */}
@@ -183,9 +196,9 @@ const App = () => (
               <DonationProvider>
                 <DonorProvider>
                   <BloodProvider>
-                  <BrowserRouter>
-                    <AppContent />
-                  </BrowserRouter>
+                    <BrowserRouter>
+                      <AppContent />
+                    </BrowserRouter>
                   </BloodProvider>
                 </DonorProvider>
               </DonationProvider>

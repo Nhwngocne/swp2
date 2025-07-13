@@ -24,7 +24,7 @@ const CheckIn = () => {
     height: "",
     bloodPressure: "",
     note: "",
-    status: "PENDING",
+    status: "APPROVED",
     approvedByStaffId: null,
   });
 

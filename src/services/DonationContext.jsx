@@ -390,158 +390,182 @@ export const DonationProvider = ({ children }) => {
   };
 
   // ===== Regis Offline =====
-  const fetchRegisOffline = useCallback(async () => {
-    if (isFetchingRef.current) return { success: false, error: "Đang tải dữ liệu" };
-    isFetchingRef.current = true;
-    try {
-      setLoading(true);
-      console.log("Đang lấy tất cả đăng ký offline từ /swp391/donations/offline");
-      const source = axios.CancelToken.source();
-      const response = await donationService.getAllRegisOffline({
-        cancelToken: source.token,
-      });
-      console.log("API response:", response.data);
-      const mappedOffline = response.data.result.map(mapRegisOffline);
-      setRegisOffline(mappedOffline);
-      setError(null);
-      return { success: true, offline: mappedOffline };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy lấy đăng ký offline:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("Lỗi lấy đăng ký offline:", error.response?.status, error.message);
-      const errorMessage = error.response?.data?.message || "Không thể tải đăng ký offline";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
-      isFetchingRef.current = false;
-    }
-  }, []);
+    const fetchRegisOffline = useCallback(async () => {
+  if (isFetchingRef.current) {
+    return { success: false, error: "Đang tải dữ liệu..." };
+  }
+
+  isFetchingRef.current = true;
+  setLoading(true);
+
+  try {
+    const response = await donationService.getAllRegisOffline();
+    const data = response?.data?.result || [];
+
+    // Map lại dữ liệu nếu cần sửa format ngày và trạng thái
+    const mapped = data.map((item) => ({
+      ...item,
+      createdAt: item.createdAt 
+        ? new Date(item.createdAt).toLocaleDateString("vi-VN")
+        : "",
+      status: item.status?.toUpperCase() || "CHƯA RÕ",
+    }));
+
+    setRegisOfflineList(mapped);
+    setError(null);
+    return { success: true, data: mapped };
+
+  } catch (err) {
+    const errorMsg = err.response?.data?.message || "Không thể tải danh sách đơn đăng ký";
+    console.error("Lỗi khi tải danh sách regisOffline:", err);
+    setError(errorMsg);
+    return { success: false, error: errorMsg };
+
+  } finally {
+    setLoading(false);
+    isFetchingRef.current = false;
+  }
+}, []);
+
 
   const getRegisOfflineById = async (id) => {
-    try {
-      setLoading(true);
-      console.log(`Đang lấy đăng ký offline ${id} từ /swp391/donations/offline/${id}`);
-      const source = axios.CancelToken.source();
-      const response = await donationService.getRegisOfflineById(id, {
-        cancelToken: source.token,
-      });
-      console.log("API response:", response.data);
-      const mappedOffline = mapRegisOffline(response.data.result);
-      setError(null);
-      return { success: true, offline: mappedOffline };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy lấy đăng ký offline:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("Lỗi lấy đăng ký offline:", error.response?.status, error.message);
-      const errorMessage = error.response?.data?.message || "Không thể tải đăng ký offline";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
+  if (!id) return { success: false, error: "ID không hợp lệ" };
+
+  try {
+    setLoading(true);
+    console.log(`Đang lấy đơn đăng ký offline với ID: ${id}`);
+    
+    const response = await donationService.getRegisOfflineById(id);
+    
+    if (!response?.data?.result) {
+      throw new Error("Không tìm thấy dữ liệu đơn đăng ký");
     }
-  };
+
+    // Có thể map lại dữ liệu nếu cần
+    const mappedOffline = mapRegisOffline(response.data.result);
+
+    setError(null);
+    return { success: true, offline: mappedOffline };
+  } catch (error) {
+    console.error("Lỗi khi lấy đơn đăng ký offline:", error);
+    const errorMessage =
+      error.response?.data?.message || error.message || "Không thể tải đơn đăng ký offline";
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
 
   const createRegisOffline = async (offlineData) => {
-    try {
-      setLoading(true);
-      console.log("Đang tạo đăng ký offline tại /swp391/donations/offline");
-      if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-      const payload = {
-        bloodType: offlineData.bloodType,
-      };
-      const source = axios.CancelToken.source();
-      const response = await donationService.createRegisOffline(payload, {
-        cancelToken: source.token,
-      });
-      console.log("API response:", response.data);
-      const newOffline = mapRegisOffline(response.data.result);
-      setRegisOffline((prev) => [...prev, newOffline]);
-      setError(null);
-      return {
-        success: true,
-        message: "Tạo đăng ký offline thành công",
-        offline: newOffline,
-      };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy tạo đăng ký offline:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("Lỗi tạo đăng ký offline:", error.response?.status, error.message);
-      const errorMessage = error.response?.data?.message || "Tạo đăng ký offline thất bại";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    console.log("Đang tạo đăng ký offline tại /swp391/donations/offline");
 
-  const updateRegisOffline = async (id, offlineData) => {
-    try {
-      setLoading(true);
-      console.log(`Đang cập nhật đăng ký offline ${id} tại /swp391/donations/offline/${id}`);
-      const payload = {
-        bloodType: offlineData.bloodType,
-      };
-      const source = axios.CancelToken.source();
-      const response = await donationService.updateRegisOffline(id, payload, {
-        cancelToken: source.token,
-      });
-      console.log("API response:", response.data);
-      const updatedOffline = mapRegisOffline(response.data.result);
-      setRegisOffline((prev) =>
-        prev.map((offline) => (offline.id === id ? updatedOffline : offline))
-      );
-      setError(null);
-      return {
-        success: true,
-        message: "Cập nhật đăng ký offline thành công",
-        offline: updatedOffline,
-      };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy cập nhật đăng ký offline:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("Lỗi cập nhật đăng ký offline:", error.response?.status, error.message);
-      const errorMessage = error.response?.data?.message || "Cập nhật đăng ký offline thất bại";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
 
-  const deleteRegisOffline = async (id) => {
-    try {
-      setLoading(true);
-      console.log(`Đang xóa đăng ký offline ${id} tại /swp391/donations/offline/${id}`);
-      const source = axios.CancelToken.source();
-      await donationService.deleteRegisOffline(id, {
-        cancelToken: source.token,
-      });
-      console.log("Xóa đăng ký offline thành công");
-      setRegisOffline((prev) => prev.filter((offline) => offline.id !== id));
-      setError(null);
-      return { success: true, message: "Xóa đăng ký offline thành công" };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy xóa đăng ký offline:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("Lỗi xóa đăng ký offline:", error.response?.status, error.message);
-      const errorMessage = error.response?.data?.message || "Xóa đăng ký offline thất bại";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
+    // Tạo payload đúng theo RegisOfflineRequest
+    const payload = {
+      name: offlineData.name,
+      phone: offlineData.phone,
+      numberCccd: offlineData.numberCccd,
+      address: offlineData.address || "",
+      email: offlineData.email || "",
+      donatedBefore: offlineData.donatedBefore || false,
+      hadSeriousDisease: offlineData.hadSeriousDisease || false,
+      hadMalariaOrOtherInfectious: offlineData.hadMalariaOrOtherInfectious || false,
+      receivedBlood: offlineData.receivedBlood || false,
+      gotVaccine: offlineData.gotVaccine || false,
+      noneOfAbove12Months: offlineData.noneOfAbove12Months || false,
+      tattooOrAcupuncture: offlineData.tattooOrAcupuncture || false,
+      hadSkinIssues: offlineData.hadSkinIssues || false,
+      usedAntibioticsOrAntiInflammatory: offlineData.usedAntibioticsOrAntiInflammatory || false,
+      symptomsPast2Weeks: offlineData.symptomsPast2Weeks || false,
+      symptomsPast1Week: offlineData.symptomsPast1Week || false,
+      isMenstruating: offlineData.isMenstruating || false,
+      isPregnantOrRecentlyDelivered: offlineData.isPregnantOrRecentlyDelivered || false,
+      noneOfFemaleConditions: offlineData.noneOfFemaleConditions || false,
+      staffId: user.id, // ID nhân viên hiện tại
+      location: offlineData.location,
+      weight: offlineData.weight || null,
+      height: offlineData.height || null,
+      bloodPressure: offlineData.bloodPressure || "",
+    };
+
+    const response = await donationService.createRegisOffline(payload);
+    console.log("API response:", response.data);
+
+    const newOffline = mapRegisOffline(response.data.result);
+    setRegisOffline((prev) => [...prev, newOffline]);
+    setError(null);
+
+    return {
+      success: true,
+      message: "Tạo đăng ký offline thành công",
+      offline: newOffline,
+    };
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      console.log("Hủy tạo đăng ký offline:", error.message);
+      return { success: false, error: error.message };
     }
-  };
+    console.error("Lỗi tạo đăng ký offline:", error.response?.status, error.message);
+    const errorMessage = error.response?.data?.message || "Tạo đăng ký offline thất bại";
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+ const updateRegisOffline = async (id, offlineData) => {
+  try {
+    setLoading(true);
+
+    if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
+
+    const payload = {
+      id: id,
+      bloodType: offlineData.bloodType,
+      volumeMl: Number(offlineData.volumeMl),
+      result: offlineData.result,
+      note: offlineData.note || "",
+      staffId: Number(user.id),
+      status: "COMPLETED", // mặc định
+    };
+
+    const response = await donationService.updateRegisOffline(id, payload);
+    return {
+      success: true,
+      data: response.data.result,
+    };
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message || "Cập nhật thất bại";
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
+
+ const deleteRegisOffline = async (id) => {
+  try {
+    setLoading(true);
+    console.log(`Đang xóa đăng ký offline ${id} tại /swp391/donations/offline/${id}`);
+    await donationService.deleteRegisOffline(id);
+    setRegisOffline((prev) => prev.filter((offline) => offline.id !== id));
+    setError(null);
+    return { success: true, message: "Xóa đăng ký offline thành công" };
+  } catch (error) {
+    console.error("Lỗi xóa đăng ký offline:", error.response?.status, error.message);
+    const errorMessage = error.response?.data?.message || "Xóa đăng ký offline thất bại";
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ===== Regis Receive from Registration =====
   const fetchRegisReceive = useCallback(async () => {
