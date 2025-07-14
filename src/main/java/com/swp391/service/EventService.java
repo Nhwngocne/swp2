@@ -3,6 +3,7 @@ package com.swp391.service;
 import com.swp391.dto.request.EventCreateRequest;
 import com.swp391.dto.response.AuthenticationResponse;
 import com.swp391.dto.response.EventResponse;
+import com.swp391.dto.response.EventStatisticsResponse;
 import com.swp391.entity.BloodType;
 import com.swp391.entity.DonationHistory;
 import com.swp391.entity.Event;
@@ -188,5 +189,23 @@ public class EventService {
             eventRepository.save(event);
         }
     }
+    public List<EventStatisticsResponse> getEventStatistics() {
+        List<Event> events = eventRepository.findAll();
+
+        return events.stream().map(event -> {
+            Long eventId = (long) event.getId();
+            String eventName = event.getTitle();
+            String eventDate = event.getDate() != null ? event.getDate().toString() : null; // lấy ngày
+
+            int checkinCount = eventRepository.countRegistrationsByStatus(eventId, "CHECKIN");
+            int rejectCount = eventRepository.countRegistrationsByStatus(eventId, "REJECTED");
+            int total = event.getRegisteredMembers().size();
+            int notCheckinCount = total - checkinCount - rejectCount;
+
+            return new EventStatisticsResponse(eventId, eventName, eventDate,
+                    checkinCount, rejectCount, notCheckinCount);
+        }).collect(Collectors.toList());
+    }
+
 
 }
