@@ -3,6 +3,7 @@ package com.swp391.controller;
 import com.swp391.dto.request.EventCreateRequest;
 import com.swp391.dto.response.ApiResponse;
 import com.swp391.dto.response.EventResponse;
+import com.swp391.dto.response.EventStatisticsResponse;
 import com.swp391.service.EventService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -58,5 +60,11 @@ public class EventController {
         return ApiResponse.<EventResponse>builder()
                 .result(eventService.getEventById(eventId))
                 .build();
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<List<EventStatisticsResponse>> getEventStatistics() {
+        List<EventStatisticsResponse> stats = eventService.getEventStatistics();
+        return ResponseEntity.ok(stats);
     }
 }
