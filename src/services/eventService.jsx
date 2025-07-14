@@ -66,7 +66,9 @@ export const eventService = {
  getEventById: (eventId, config = {}) =>
   eventAPI.get(`/events/${eventId}`, config),
 
-  
+//  lấy thống kê sự kiện
+  getEventStatistics: (config = {}) => eventAPI.get("/events/statistics", config),
+
 
 
 

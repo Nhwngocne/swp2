@@ -957,6 +957,7 @@ export const EventProvider = ({ children }) => {
       setLoading(false);
     }
   };
+  
 
   const deleteBloodDonationForm = async (formId) => {
     try {
@@ -984,7 +985,20 @@ export const EventProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
+   const fetchEventStatistics = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await eventService.getEventStatistics();
+      setStatistics(response.data); // Hoặc response.data.result nếu API trả vậy
+      console.log("📊 Event Statistics:", response.data);
+    } catch (err) {
+      console.error("❌ Lỗi load thống kê:", err);
+      setError("Lỗi khi tải dữ liệu thống kê");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     console.log("EventProvider mounted, user:", user);
     fetchEvents();
@@ -1020,6 +1034,7 @@ export const EventProvider = ({ children }) => {
     deleteBlog,
     deleteBloodDonationForm,
     incrementBlogView,
+    fetchEventStatistics,
   };
 
   return (
