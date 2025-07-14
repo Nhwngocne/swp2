@@ -12,11 +12,11 @@ donationAPI.interceptors.request.use(
     const token = localStorage.getItem("token");
     console.log("donationService request:", config.url, "Token:", token || "No token");
     const isPublicEndpoint =
-      config.method === "get" &&
-      (config.url === "/donations/offline" ||
-        config.url.match(/^\/donations\/histories\/\d+$/) ||
-        config.url.match(/^\/donations\/offline\/\d+$/) ||
-        config.url.match(/^\/donations\/receive\/\d+$/));
+  config.method === "get" &&
+  (
+    config.url.match(/^\/donations\/histories\/\d+$/) ||
+    config.url.match(/^\/donations\/receive\/\d+$/)
+  );
     if (token && !isPublicEndpoint && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
     } else if (!token && !isPublicEndpoint && !config.url.includes("/auth")) {
@@ -84,8 +84,8 @@ export const donationService = {
     donationAPI.post("/donations/offline", formData, config),
   getRegisOfflineById: (id, config = {}) =>
     donationAPI.get(`/donations/offline/${id}`, config),
-  getAllRegisOffline: (config = {}) =>
-    donationAPI.get("/donations/offline", config),
+  getAllRegisOffline: (config = {}) => 
+  donationAPI.get("/donations/offline", config),
   updateRegisOffline: (id, formData, config = {}) =>
     donationAPI.put(`/donations/offline/${id}`, formData, config),
   deleteRegisOffline: (id, config = {}) =>
