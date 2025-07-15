@@ -42,6 +42,12 @@ export default function AdminDashboard() {
 
   const [pieData, setPieData] = useState([]);
 
+  const [statistics, setStatistics] = useState([]);
+  const [loadingStats, setLoadingStats] = useState(false);
+  const [errorStats, setErrorStats] = useState(null);
+
+  const [selectedEventId, setSelectedEventId] = useState("");
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -68,6 +74,24 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => {
+    const fetchStatistics = async () => {
+      setLoadingStats(true);
+      setErrorStats(null);
+      try {
+        const res = await eventService.getEventStatistics();
+        setStatistics(res?.data?.result || res?.data || []);
+      } catch (err) {
+        console.error("❌ Lỗi load thống kê:", err);
+        setErrorStats("Lỗi khi tải thống kê");
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    fetchStatistics();
+  }, []);
+
+  useEffect(() => {
     const filteredMembers = members[0]?.createdAt
       ? members.filter((m) => isInTimeRange(m.createdAt, filterType, selectedDate))
       : members;
@@ -80,8 +104,6 @@ export default function AdminDashboard() {
     const filteredIntents = intents[0]?.createdAt
       ? intents.filter((i) => isInTimeRange(i.createdAt, filterType, selectedDate))
       : intents;
-
-    // Kho máu tính đến thời điểm đó
     const filteredInventories = inventories[0]?.lastUpdated
       ? inventories.filter((inv) => isInTimeRangeUpTo(inv.lastUpdated, filterType, selectedDate))
       : inventories;
@@ -95,7 +117,6 @@ export default function AdminDashboard() {
     setTotalRequestForms(requestFormsCount);
     setTotalDonateForms(donateFormsCount);
 
-    // Tính dữ liệu nhóm máu
     const bloodTypeMap = {
       6: "O-", 7: "O+", 8: "A-", 9: "A+",
       10: "B-", 11: "B+", 12: "AB-", 13: "AB+"
@@ -107,7 +128,6 @@ export default function AdminDashboard() {
     }, {});
     const bloodTypeData = Object.entries(typeMap).map(([name, value]) => ({ name, value }));
     setPieData(bloodTypeData);
-
   }, [members, forms, emergencies, intents, inventories, filterType, selectedDate]);
 
   const cards = [
@@ -119,6 +139,16 @@ export default function AdminDashboard() {
   ];
 
   const pieColors = ["#ef4444", "#f97316", "#eab308", "#10b981", "#8b5cf6", "#ec4899"];
+
+  // Tạo dữ liệu chart cho event đang chọn
+  const selectedEventData = statistics.find(s => s.eventId === parseInt(selectedEventId));
+  const eventChartData = selectedEventData
+    ? [
+      { name: "Đã đến", value: selectedEventData.checkinCount },
+      { name: "Đã từ chối", value: selectedEventData.rejectCount },
+      { name: "Chưa checkin", value: selectedEventData.notCheckinCount }
+    ]
+    : [];
 
   return (
     <div className="dashboard-container">
@@ -198,37 +228,57 @@ export default function AdminDashboard() {
           </ResponsiveContainer>
         </div>
       </div>
+
+      <div className="dashboard-events-summary" style={{ marginTop: "40px" }}>
+        <h2>Thống kê chi tiết theo sự kiện</h2>
+        <select value={selectedEventId} onChange={(e) => setSelectedEventId(e.target.value)}>
+          <option value="">-- Chọn sự kiện --</option>
+          {statistics.map(stat => (
+            <option key={stat.eventId} value={stat.eventId}>
+              {stat.eventName} ({stat.eventDate})
+            </option>
+          ))}
+        </select>
+
+        {selectedEventId && (
+          <div style={{ marginTop: "20px" }}>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={eventChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8884d8" radius={[10, 10, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-// FILTER đến ngày đó còn tồn kho
 function isInTimeRangeUpTo(dateStr, type, selectedDate) {
   if (!dateStr) return false;
   const [d, m, y] = dateStr.split("-").map(Number);
   const dataDate = new Date(y, m - 1, d);
-
   if (!selectedDate) return true;
 
   if (type === "day") {
     const [selYear, selMonth, selDay] = selectedDate.split("-").map(Number);
-    const selDate = new Date(selYear, selMonth - 1, selDay);
-    return dataDate <= selDate;
+    return dataDate <= new Date(selYear, selMonth - 1, selDay);
   }
   if (type === "month") {
     const [selYear, selMonth] = selectedDate.split("-").map(Number);
-    const selDate = new Date(selYear, selMonth - 1, 1);
-    return dataDate <= selDate;
+    return dataDate <= new Date(selYear, selMonth - 1, 1);
   }
   if (type === "year") {
     const selYear = parseInt(selectedDate);
-    const selDate = new Date(selYear, 0, 1);
-    return dataDate <= selDate;
+    return dataDate <= new Date(selYear, 0, 1);
   }
   return true;
 }
 
-// FILTER đúng ngày tạo
 function isInTimeRange(dateStr, type, selectedDate) {
   if (!dateStr) return false;
   const [day, month, year] = dateStr.split("-").map(Number);
