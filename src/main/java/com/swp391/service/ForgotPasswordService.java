@@ -7,15 +7,18 @@ import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.repository.ForgotPasswordRepository;
 import com.swp391.repository.MemberRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Random;
@@ -29,21 +32,25 @@ public class ForgotPasswordService {
     ForgotPasswordRepository forgotPasswordRepository;
 
     public void sendSimpleMessage(MailBody mailBody) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(mailBody.to());
-        message.setFrom("vinhhien8882004@gmail.com");
-        message.setSubject(mailBody.subject());
-        message.setText(mailBody.text());
-
-        javaMailSender.send(message);
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(mailBody.to());
+            helper.setFrom("vinhhien8882004@gmail.com");
+            helper.setSubject(mailBody.subject());
+            helper.setText(mailBody.text(), true); // true để render HTML
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Gửi email thất bại", e);
+        }
     }
+
     public String verifyOtp(Integer otp, String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow(() ->
                 new AppException(ErrorCode.USER_NOT_EXISTED));
         ForgotPassword fp = forgotPasswordRepository.findByOtpAndMember_Id(otp, member.getId())
                 .orElseThrow(() -> new RuntimeException("Invalid OTP for email: " + email));
 
-        // Kiểm tra thời hạn OTP
         if (fp.getExpirationTime().before(Date.from(Instant.now()))) {
             forgotPasswordRepository.deleteById(fp.getFpid());
             return "OTP has expired.";
@@ -57,10 +64,21 @@ public class ForgotPasswordService {
                 new AppException(ErrorCode.USER_NOT_EXISTED));
 
         int otp = otpGenerator();
+
+        // Đọc HTML template và replace OTP
+        String html;
+        try {
+            String templatePath = "src/main/resources/templates/otp_forgot_password.html";
+            String htmlTemplate = Files.readString(Paths.get(templatePath));
+            html = htmlTemplate.replace("${otp}", String.valueOf(otp));
+        } catch (IOException e) {
+            throw new RuntimeException("Không đọc được file template OTP email", e);
+        }
+
         MailBody mailBody = MailBody.builder()
                 .to(email)
-                .text("This is the OTP for your forgot password: " + otp)
                 .subject("OTP for Forgot Password request")
+                .text(html)
                 .build();
 
         ForgotPassword forgotPassword = forgotPasswordRepository.findByMember(member)
@@ -74,10 +92,9 @@ public class ForgotPasswordService {
 
         return "Email sent for verification!";
     }
+
     private Integer otpGenerator() {
         Random random = new Random();
         return random.nextInt(100_000, 999_999);
     }
-
-
 }

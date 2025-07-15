@@ -127,7 +127,7 @@ public class BloodService {
             Integer bloodTypeId = (Integer) row[0];
             Long totalQuantity = (Long) row[1];
 
-            if (totalQuantity < 5) {
+            if (totalQuantity < 100) {
                 // Lấy thông báo gần nhất theo nhóm máu này
                 Notification lastNotification = notificationRepository
                         .findTopByTitleAndMessageContainingOrderByCreatedAtDesc(
