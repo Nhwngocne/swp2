@@ -125,24 +125,20 @@ public class EventService {
             }
         }
 
-        // B3: Lọc và map sang EventResponse
+        // B3: Trả về tất cả sự kiện (không lọc theo status)
         return allEvents.stream()
-                .filter(event -> !"COMPLETED".equals(event.getStatus()))
                 .map(event -> {
                     EventResponse response = eventMapper.toEventResponse(event);
 
-                    // Số người đã được duyệt
-                    int approvedCount = formRepository.countByEventIdAndStatus(event.getId(), "APPROVED");
+                    int approvedCount = formRepository.countByEventId(event.getId());
                     response.setRegisteredMemberCount(approvedCount);
 
                     boolean isRegistered = false;
                     boolean canDonate = true;
 
                     if (finalMemberId != null) {
-                        // ✅ Dùng repository để kiểm tra chính xác trong DB
                         isRegistered = formRepository.existsByEventIdAndMemberId(event.getId(), finalMemberId);
 
-                        // Kiểm tra lịch sử hiến máu để xác định có thể hiến hay không
                         List<DonationHistory> historyList = donationHistoryRepository
                                 .findByMemberIdAndResult(finalMemberId, "Đạt");
 
@@ -172,7 +168,7 @@ public class EventService {
         var event = eventRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EVENT_NOT_EXISTED));
         var response = eventMapper.toEventResponse(event);
-        int count = formRepository.countByEventIdAndStatus(event.getId(), "APPROVED");
+        int count = formRepository.countByEventId(event.getId());
         response.setRegisteredMemberCount(count);
         return response;
     }
