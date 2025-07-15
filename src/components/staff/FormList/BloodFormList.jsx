@@ -81,7 +81,7 @@ const BloodFormList = () => {
     setHistoryData({
       result: "Đạt",
       location: form.eventLocation || "",
-      volume: form.volumeMl||"",
+      volume: form.volumeMl || "",
       bloodTypeId: "",
       bloodDonationFormId: form.id,
       staffId: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null,
@@ -205,16 +205,18 @@ const BloodFormList = () => {
                 >
                   {form.status === "APPROVED"
                     ? "Đã duyệt"
-                    : form.status === "REJECTED"
-                      ? "Bị từ chối"
-                      : form.status === "COMPLETED"
-                        ? "Hoàn thành"
-                        : "Đang chờ"}
+                    : form.status === "CHECKIN"
+                      ? "Đã tới"
+                      : form.status === "REJECTED"
+                        ? "Bị từ chối"
+                        : form.status === "COMPLETED"
+                          ? "Hoàn thành"
+                          : "Đang chờ"}
                 </span>
               </td>
               <td className="px-4 py-2">
                 <div className="flex justify-center gap-2 flex-wrap">
-                 
+
 
                   <button
                     onClick={() => handleCheckIn(form.id)}

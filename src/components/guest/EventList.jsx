@@ -32,6 +32,16 @@ const EventList = () => {
       day: "numeric",
     });
   };
+  const formatSessionTime = (event) => {
+    if (event.session === "MORNING") {
+      return `${event.donationMorningStart} - ${event.donationMorningEnd}`;
+    } else if (event.session === "AFTERNOON") {
+      return `${event.donationAfternoonStart} - ${event.donationAfternoonEnd}`;
+    } else if (event.session === "ALL") {
+      return `${event.donationMorningStart} - ${event.donationMorningEnd} | ${event.donationAfternoonStart} - ${event.donationAfternoonEnd}`;
+    }
+    return "Chưa có thông tin khung giờ";
+  };
 
   const handleRegisterClick = (event) => {
     const state = {
@@ -116,7 +126,7 @@ const EventList = () => {
             <h3 className="event-title-link">{event.title}</h3>
             <p><strong>Địa chỉ:</strong> {event.location}</p>
             <p><strong>Thời gian hoạt động:</strong> {formatDate(event.date)} - Từ {event.time}</p>
-            <p><strong>Thời gian hiến máu:</strong> {event.sessionTime || "07:00 - 11:00"}</p>
+            <p><strong>Thời gian hiến máu:</strong> {formatSessionTime(event)}</p>
           </div>
 
           {/* RIGHT: Action */}
@@ -149,6 +159,18 @@ const EventList = () => {
                   }}
                 >
                   Chưa đến thời gian hiến lại
+                </button>
+              ) : event.registeredMemberCount >= event.maxRegistrations ? (
+                <button
+                  className="event-horizontal-btn"
+                  disabled
+                  style={{
+                    backgroundColor: "#6c757d",
+                    color: "white",
+                    cursor: "not-allowed",
+                  }}
+                >
+                  Đã đủ số lượng đăng ký
                 </button>
               ) : (
                 <button
