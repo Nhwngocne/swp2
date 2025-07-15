@@ -3,13 +3,18 @@ package com.swp391.service;
 import com.swp391.dto.request.MailBody;
 import com.swp391.entity.OtpVerification;
 import com.swp391.repository.OtpVerificationRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
@@ -26,20 +31,18 @@ public class OtpService {
         // Tạo OTP
         int otp = otpGenerator();
         Date now = new Date();
-        Date expirationTime = new Date(now.getTime() + 2 * 60 * 1000); // Hết hạn sau 2 phút
+        Date expirationTime = new Date(now.getTime() + 2 * 60 * 1000);
 
         // Lưu OTP vào database
         Optional<OtpVerification> existingOtp = otpVerificationRepository.findByEmail(email);
         OtpVerification otpVerification;
 
         if (existingOtp.isPresent()) {
-            // Cập nhật OTP hiện có
             otpVerification = existingOtp.get();
             otpVerification.setOtp(otp);
             otpVerification.setCreatedAt(now);
             otpVerification.setExpirationTime(expirationTime);
         } else {
-            // Tạo OTP mới
             otpVerification = OtpVerification.builder()
                     .email(email)
                     .otp(otp)
@@ -50,11 +53,21 @@ public class OtpService {
 
         otpVerificationRepository.save(otpVerification);
 
-        // Gửi email
+        // Đọc HTML template & replace OTP
+        String html;
+        try {
+            String templatePath = "src/main/resources/templates/otp_template.html";
+            String htmlTemplate = Files.readString(Paths.get(templatePath));
+            html = htmlTemplate.replace("${otp}", String.valueOf(otp));
+        } catch (IOException e) {
+            throw new RuntimeException("Không đọc được file template OTP email", e);
+        }
+
+        // Gửi email HTML
         MailBody mailBody = MailBody.builder()
                 .to(email)
-                .text("Mã OTP để xác thực đăng ký của bạn là: " + otp)
                 .subject("OTP cho đăng ký tài khoản")
+                .text(html)
                 .build();
         sendSimpleMessage(mailBody);
 
@@ -77,12 +90,17 @@ public class OtpService {
     }
 
     private void sendSimpleMessage(MailBody mailBody) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(mailBody.to());
-        message.setFrom("vinhhien8882004@gmail.com");
-        message.setSubject(mailBody.subject());
-        message.setText(mailBody.text());
-        javaMailSender.send(message);
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(mailBody.to());
+            helper.setFrom("vinhhien8882004@gmail.com");
+            helper.setSubject(mailBody.subject());
+            helper.setText(mailBody.text(), true);
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Gửi email thất bại", e);
+        }
     }
 
     private Integer otpGenerator() {
