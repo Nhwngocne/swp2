@@ -12,7 +12,7 @@ public interface BloodDonationFormRepository extends JpaRepository<BloodDonation
     List<BloodDonationForm> findByEventId(int eventId);
 
     List<BloodDonationForm> findByMemberId(int memberId);
-    int countByEventIdAndStatus(int eventId, String status);
+    int countByEventId(int eventId);
     boolean existsByEventIdAndMemberId(int eventId, int memberId);
 }
 
