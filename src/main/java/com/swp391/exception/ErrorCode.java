@@ -60,7 +60,8 @@ public enum ErrorCode {
     FORM_NOT_APPROVED(1001, "Form not approved", HttpStatus.BAD_REQUEST),
     EVENT_REGISTRATION_NOT_FOUND(1002, "Event registration not found", HttpStatus.NOT_FOUND),
     INVALID_SEARCH_TYPE(1002,"Invalid search type: CHO/NHAN", HttpStatus.BAD_REQUEST),
-    DONATION_REGISTRATION_OFFLINE_NOT_EXISTED(1002,  "Donation registration offline does not exist", HttpStatus.NOT_FOUND ),;
+    DONATION_REGISTRATION_OFFLINE_NOT_EXISTED(1002,  "Donation registration offline does not exist", HttpStatus.NOT_FOUND ),
+    FORM_NOT_CHECKIN(1002,  "Form not checkin" , HttpStatus.BAD_REQUEST ),;
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;

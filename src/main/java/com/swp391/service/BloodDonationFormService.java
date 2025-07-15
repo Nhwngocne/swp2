@@ -99,7 +99,11 @@ public class BloodDonationFormService {
                 .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
 
         // Kiểm tra trạng thái form
-        if (!form.getStatus().equals("APPROVED")) {
+        if (request.getStatus() != null && request.getStatus().equalsIgnoreCase("COMPLETED")) {
+            if (!form.getStatus().equals("CHECKIN")) {
+                throw new AppException(ErrorCode.FORM_NOT_CHECKIN);
+            }
+        } else if (!form.getStatus().equals("APPROVED")) {
             throw new AppException(ErrorCode.FORM_NOT_APPROVED);
         }
 
