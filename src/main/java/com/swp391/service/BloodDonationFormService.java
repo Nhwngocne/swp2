@@ -1,5 +1,6 @@
 package com.swp391.service;
 
+import com.google.firebase.database.core.EventRegistration;
 import com.swp391.dto.request.BloodDonationFormCheckInRequest;
 import com.swp391.dto.request.BloodDonationFormCreateRequest;
 import com.swp391.dto.request.BloodDonationFormUpdateRequest;
@@ -93,7 +94,6 @@ public class BloodDonationFormService {
         );
         return formMapper.toFormResponse(form);
     }
-    // Staff check-in và cập nhật thông tin tại điểm hiến máu
     public BloodDonationFormResponse checkInForm(BloodDonationFormCheckInRequest request) {
         BloodDonationForm form = formRepository.findById(request.getFormId())
                 .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
@@ -106,18 +106,28 @@ public class BloodDonationFormService {
         // Cập nhật các trường cơ bản từ request
         formMapper.updateFormFromCheckIn(form, request);
 
-
-
         // Cập nhật thông tin staff và ngày duyệt
         Staff staff = staffRepository.findById(request.getApprovedByStaffId())
                 .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
         form.setApprovedBy(staff);
         form.setApprovedDate(LocalDate.now());
 
-        // Cập nhật trạng thái
+        // Xử lý cập nhật trạng thái
         if (request.getStatus() != null && !request.getStatus().isBlank()) {
             String status = request.getStatus().toUpperCase();
             form.setStatus(status);
+
+            // Nếu là CHECKIN hoặc REJECT thì update luôn event_registration qua native query
+            if ("CHECKIN".equals(status) || "REJECTED".equals(status)) {
+                int updatedRows = eventRepository.updateRegistrationStatus(
+                        (long)  form.getEvent().getId(),
+                        (long)  form.getMember().getId(),
+                        status
+                );
+                if (updatedRows == 0) {
+                    throw new AppException(ErrorCode.EVENT_REGISTRATION_NOT_FOUND);
+                }
+            }
         }
 
         form = formRepository.save(form);
