@@ -162,7 +162,7 @@ export const DonationProvider = ({ children }) => {
         volume: historyData.volume,
         bloodTypeId: historyData.bloodTypeId,
         bloodDonationFormId: historyData.bloodDonationFormId,
-        memberId: user.id, // Lấy từ user
+        memberId: historyData.memberId, // Lấy từ user
         staffId: historyData.staffId,
       };
       const source = axios.CancelToken.source();
@@ -202,7 +202,7 @@ export const DonationProvider = ({ children }) => {
         volume: historyData.volume,
         bloodTypeId: historyData.bloodTypeId,
         bloodDonationFormId: historyData.bloodDonationFormId,
-        memberId: user.id,
+        memberId: historyData.memberId,
         staffId: historyData.staffId,
       };
       const source = axios.CancelToken.source();

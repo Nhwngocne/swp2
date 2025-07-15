@@ -84,7 +84,7 @@ const DonorSearch = () => {
           <div>
             <label>Nhóm máu (tùy chọn):</label>
             <select value={bloodType} onChange={(e) => setBloodType(e.target.value)}>
-              <option value="">Tất cả</option>
+              <option value="">-- Chọn nhóm máu --</option>
               <option value="A+">A+</option>
               <option value="A-">A-</option>
               <option value="B+">B+</option>
