@@ -32,6 +32,7 @@ public class DonationService {
     NotificationService notificationService;
     BloodDonationFormRepository bloodDonationFormRepository;
     RegisOfflineRepository  regisOfflineRepository;
+    BloodInventoryRepository bloodInventoryRepository;
     // ==== DonationHistory ====
 
     public DonationHistoryResponse createDonationHistory(DonationHistoryCreateRequest request) {
@@ -55,9 +56,15 @@ public class DonationService {
         donationHistory.setStaff(staff);
         donationHistory.setBloodType(bloodType);
         donationHistory.setBloodDonationForm(form);
-
         donationHistory = donationHistoryRepository.save(donationHistory);
 
+        // Cập nhật kho máu nếu kết quả đạt
+        if ("Đạt".equalsIgnoreCase(donationHistory.getResult())) {
+            BloodInventory bloodInventory = bloodInventoryRepository.findByBloodType_Id(donationHistory.getBloodType().getId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BLOOD_INVENTORY_NOT_FOUND));
+            bloodInventory.setQuantity(bloodInventory.getQuantity() + donationHistory.getVolume());
+            bloodInventoryRepository.save(bloodInventory);
+        }
         // Gửi thông báo cho member (giữ nguyên logic)
         String message;
         if ("Đạt".equalsIgnoreCase(donationHistory.getResult())) {
