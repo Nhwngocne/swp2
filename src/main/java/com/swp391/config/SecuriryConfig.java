@@ -48,7 +48,8 @@ public class SecuriryConfig {
             "/forgotPassword/verifyOtp/**",
             "/forgotPassword/changePassword/**",
             "/register/send-otp",
-            "/register/verify-otp"
+            "/register/verify-otp",
+            "/donors/search"
     };
     private final String[] PUBLIC_ENDPOINTS_PATCH = {
             "/blogs/*/view",

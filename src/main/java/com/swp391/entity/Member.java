@@ -93,9 +93,9 @@ public class Member {
     @JsonIgnore // Không serialize
     List<EmergencyRequest> emergencyRequests;
 
-    @OneToOne(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @JsonIgnore // Không serialize
-    NearbyDonor nearbyDonor;
+    List<NearbyDonor> nearbyDonors;
 
     @ManyToMany(mappedBy = "members")
     @JsonIgnore // Không serialize Staff để tránh vòng lặp

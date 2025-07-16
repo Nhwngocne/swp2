@@ -1,14 +1,19 @@
 package com.swp391.service;
 
+import com.swp391.Enum.LatLong;
 import com.swp391.dto.request.BloodIntentFormRequest;
 import com.swp391.dto.response.BloodIntentFormResponse;
 import com.swp391.entity.BloodIntentForm;
+import com.swp391.entity.BloodType;
 import com.swp391.entity.Member;
+import com.swp391.entity.NearbyDonor;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
 import com.swp391.mapper.BloodIntentFormMapper;
 import com.swp391.repository.BloodIntentFormRepository;
+import com.swp391.repository.BloodTypeRepository;
 import com.swp391.repository.MemberRepository;
+import com.swp391.repository.NearbyDonorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +35,9 @@ public class BloodIntentFormService {
     BloodIntentFormMapper intentFormMapper;
     NotificationService notificationService;
     BloodService bloodService;
+    NearbyDonorRepository nearbyDonorRepository;
+    BloodTypeRepository bloodTypeRepository;
+    NearbyDonorService nearbyDonorService;
     // Tạo mới form ý định cho/nhận máu
     public BloodIntentFormResponse create(BloodIntentFormRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -120,18 +128,21 @@ public class BloodIntentFormService {
                         bloodType
                 );
             }
+            // Thêm vào nearby_donor cho người nhận ở cả trạng thái PROCESSING và COMPLETED
+            createNearbyDonor(form);
         } else if ("CHO".equalsIgnoreCase(form.getIntentType())) {
             form.setStatus("COMPLETED");
             form.setApprovedAt(LocalDate.now());
             message = "Cảm ơn bạn đã đăng ký hiến máu. Trung Tâm Y Tế Hiến máu vì cộng đồng sẽ liên hệ với bạn để xác nhận lịch hẹn.";
+            // Thêm vào nearby_donor cho người hiến ở trạng thái COMPLETED
+            createNearbyDonor(form);
         } else {
             throw new AppException(ErrorCode.INVALID_INTENT_TYPE);
         }
 
-        // Gửi thông báo
+        form = intentFormRepository.save(form);
         notificationService.createNotificationForMember(form.getMember().getId(), message);
 
-        form = intentFormRepository.save(form);
         return intentFormMapper.toResponse(form);
     }
 
@@ -162,5 +173,26 @@ public class BloodIntentFormService {
                 .map(intentFormMapper::toResponse)
                 .collect(Collectors.toList());
     }
+    private void createNearbyDonor(BloodIntentForm form) {
+        // Lấy vĩ độ và kinh độ
+        LatLong latLong = nearbyDonorService.getLatLongFromAddress(form.getLocation());
+        if (latLong == null) {
+            throw new AppException(ErrorCode.INVALID_ADDRESS);
+        }
 
+        // Tìm BloodType
+        BloodType bloodType = bloodTypeRepository.findByName(form.getBloodType())
+                .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
+
+        // Tạo mục NearbyDonor
+        NearbyDonor nearbyDonor = NearbyDonor.builder()
+                .latitude(latLong.getLatitude())
+                .longitude(latLong.getLongitude())
+                .bloodType(bloodType)
+                .bloodIntentForm(form)
+                .member(form.getMember())
+                .build();
+
+        nearbyDonorRepository.save(nearbyDonor);
+    }
 }

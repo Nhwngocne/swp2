@@ -58,12 +58,16 @@ public class NearbyDonorService {
             BloodType requestedBloodType = bloodTypeRepository.findByName(request.getBloodType())
                     .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
             List<String> compatibleBloodTypes = Arrays.asList(requestedBloodType.getCanReceiveFrom().split(",\\s*"));
-            donors = donorRepository.findByBloodTypeNameInAndIntentType(compatibleBloodTypes, "CHO");
+            // Tìm người hiến (CHO) với trạng thái COMPLETED
+            donors = donorRepository.findByBloodTypeNameInAndIntentTypeAndStatus(
+                    compatibleBloodTypes, "CHO");
         } else if ("CHO".equalsIgnoreCase(request.getSearchType())) {
             BloodType requestedBloodType = bloodTypeRepository.findByName(request.getBloodType())
                     .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
             List<String> compatibleBloodTypes = Arrays.asList(requestedBloodType.getCanDonateTo().split(",\\s*"));
-            donors = donorRepository.findByBloodTypeNameInAndIntentType(compatibleBloodTypes, "NHAN");
+            // Tìm người nhận (NHAN) với trạng thái PROCESSING hoặc COMPLETED
+            donors = donorRepository.findByBloodTypeNameInAndIntentTypeAndStatus(
+                    compatibleBloodTypes, "NHAN");
         } else {
             throw new AppException(ErrorCode.INVALID_SEARCH_TYPE);
         }

@@ -31,7 +31,8 @@ public class NearbyDonor {
     @JoinColumn(name = "blood_intent_form_id", nullable = false)
     BloodIntentForm bloodIntentForm;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     Member member;
 
     @ManyToOne
