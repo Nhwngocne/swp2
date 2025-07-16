@@ -47,7 +47,7 @@ const Form = () => {
 
   return (
     <div className="blood-register-form">
-      <h2>Đăng ký {formData.intentType === "CHO" ? "hiến máu" : "nhận máu"}</h2>
+      <h2>Đăng ký {formData.intentType === "CHO" ? "cho máu" : "nhận máu"}</h2>
       <form onSubmit={handleSubmit}>
          <div className="form-group">
           <label>Bạn là:</label>
@@ -60,7 +60,7 @@ const Form = () => {
                 checked={formData.intentType === "CHO"}
                 onChange={handleChange}
               />
-              Người hiến
+              Người cho
             </label>
             <label>
               <input

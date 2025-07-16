@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { donationService } from "../../../services/donationService";
 import { AuthContext } from "../../../services/AuthContext";
+import "../../../assets/css/components/staff/ResultOff.css";
 
 const ResultOff = () => {
   const { id } = useParams();

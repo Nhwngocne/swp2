@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { qnaService } from "../../services/qnaService";
- import "../../assets/css/components/staff/QnA.css"; // ✅ thêm CSS nếu cần
+import "../../assets/css/components/staff/QnA.css";
+
 const QnA = () => {
   const [questions, setQuestions] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -26,8 +27,7 @@ const QnA = () => {
 
   const handleAnswer = async (id) => {
     try {
-      const formData = { qnaId: id, answer }; // ✅ đúng với backend
-
+      const formData = { qnaId: id, answer };
       await qnaService.answerQuestion(formData);
       alert("Đã trả lời câu hỏi.");
       setAnswer("");
@@ -39,32 +39,32 @@ const QnA = () => {
     }
   };
 
-  if (loading) return <div>Đang tải câu hỏi...</div>;
+  if (loading) return <div className="qna-empty">Đang tải câu hỏi...</div>;
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Danh sách câu hỏi chưa được trả lời</h2>
+    <div className="qna-container">
+      <h2 className="qna-title">Danh sách câu hỏi chưa được trả lời</h2>
       {questions.length === 0 ? (
-        <div>Không có câu hỏi nào đang chờ trả lời.</div>
+        <div className="qna-empty">Không có câu hỏi nào đang chờ trả lời.</div>
       ) : (
-        <ul className="space-y-4">
+        <ul className="qna-list">
           {questions.map((qna) => (
-            <li key={qna.id} className="border p-4 rounded shadow">
-              <p><strong>Người hỏi:</strong> {qna.username}</p>
-              <p><strong>Câu hỏi:</strong> {qna.question}</p>
+            <li key={qna.id} className="qna-item">
+              <p className="qna-user"><strong>Người hỏi:</strong> {qna.username}</p>
+              <p className="qna-question"><strong>Câu hỏi:</strong> {qna.question}</p>
               {selectedId === qna.id ? (
                 <div className="mt-2">
                   <textarea
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    className="w-full border p-2 rounded"
+                    className="qna-textarea"
                     rows="3"
                     placeholder="Nhập câu trả lời..."
                   ></textarea>
-                  <div className="mt-2 space-x-2">
+                  <div className="qna-button-group">
                     <button
                       onClick={() => handleAnswer(qna.id)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded"
+                      className="qna-button qna-submit-button"
                     >
                       Gửi
                     </button>
@@ -73,7 +73,7 @@ const QnA = () => {
                         setSelectedId(null);
                         setAnswer("");
                       }}
-                      className="bg-gray-300 px-4 py-2 rounded"
+                      className="qna-button qna-cancel-button"
                     >
                       Hủy
                     </button>
@@ -82,7 +82,7 @@ const QnA = () => {
               ) : (
                 <button
                   onClick={() => setSelectedId(qna.id)}
-                  className="mt-2 bg-green-500 text-white px-4 py-2 rounded"
+                  className="qna-button qna-answer-button"
                 >
                   Trả lời
                 </button>

@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../services/AuthContext";
 import { donationService } from "../../../services/donationService";
+import "../../../assets/css/components/staff/CreateOff.css";
+
 
 const CreateOff = () => {
   const navigate = useNavigate();
@@ -57,7 +59,8 @@ const CreateOff = () => {
   };
 
   return (
-    <div>
+      <div className="create-off-container">
+
       <h2>Đăng ký hiến máu trực tiếp</h2>
       <form onSubmit={handleSubmit}>
         {/* Thông tin cá nhân */}

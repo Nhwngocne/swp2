@@ -1,0 +1,184 @@
+.edit-manager {
+  max-width: 800px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.page-eheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-eheader h1 {
+  font-size: 28px;
+  color: #c0392b;
+}
+
+.close-btn {
+  font-size: 24px;
+  background: transparent;
+  border: none;
+  color: #c0392b;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.close-btn:hover {
+  transform: scale(1.2);
+}
+
+.event-form .form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-form label {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.event-form input[type="text"],
+.event-form input[type="date"],
+.event-form input[type="time"],
+.event-form input[type="number"],
+.event-form textarea,
+.event-form select {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border 0.2s ease;
+}
+.event-form input:focus,
+.event-form textarea:focus,
+.event-form select:focus {
+  border-color: #e74c3c;
+  outline: none;
+}
+
+.event-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.time-pair {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.time-pair span {
+  font-weight: bold;
+}
+
+.event-form .event-image-preview {
+  margin-top: 12px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  color: #e74c3c;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center; /* căn giữa ngang */
+  align-items: center;
+  gap: 20px; /* khoảng cách giữa 2 nút */
+  margin-top: 20px;
+}
+
+
+.form-actions button {
+  padding: 10px 20px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.form-actions button[type="submit"] {
+  background-color: #e74c3c;
+  color: #ffffff;
+}
+
+.form-actions button[type="submit"]:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+}
+
+.form-actions button[type="button"] {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.form-actions button[type="button"]:hover {
+  background-color: #ddd;
+  transform: translateY(-2px);
+}
+.animated-button {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: white;
+  background-color: #171717;
+  padding: 1em 2em;
+  border: none;
+  border-radius: 0.6rem;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  margin: 0 10px;
+  min-width: 130px;
+  transition: background-color 0.3s ease;
+}
+
+.animated-button span:not(.text) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 30px;
+  width: 30px;
+  background-color: #0c66ed;
+  border-radius: 50%;
+  transition: 0.6s ease;
+  z-index: 0;
+}
+
+.animated-button .text {
+  position: relative;
+  z-index: 1;
+}
+
+.animated-button span.circle1 { transform: translate(-3.3em, -4em); }
+.animated-button span.circle2 { transform: translate(-6em, 1.3em); }
+.animated-button span.circle3 { transform: translate(-.2em, 1.8em); }
+.animated-button span.circle4 { transform: translate(3.5em, 1.4em); }
+.animated-button span.circle5 { transform: translate(3.5em, -3.8em); }
+
+.animated-button:hover span:not(.text) {
+  transform: translate(-50%, -50%) scale(4);
+  transition: 1.5s ease;
+}
+
+/* Nút huỷ dùng màu đỏ */
+.cancel-button {
+  background-color: #a80000;
+}
+
+.cancel-button span:not(.text) {
+  background-color: #ff4b4b;
+}

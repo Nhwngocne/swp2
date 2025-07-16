@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "../../services/EventContext";
 import { AuthContext } from "../../services/AuthContext";
-import "../../assets/css/components/staff/EventManager.css";
+import "../../assets/css/components/staff/CreateEvent.css";
 
 const CreateEventPage = () => {
   const navigate = useNavigate();
@@ -59,7 +59,6 @@ const CreateEventPage = () => {
     setFormData((prev) => {
       const newData = { ...prev, [name]: value };
 
-      // Kiểm tra startTime < endTime
       if (name === "startTime" || name === "endTime") {
         const startTime = newData.startTime || prev.startTime;
         const endTime = newData.endTime || prev.endTime;
@@ -70,7 +69,6 @@ const CreateEventPage = () => {
         setError("");
       }
 
-      // Điều chỉnh thời gian hiến máu dựa trên session và startTime/endTime
       if (name === "session" || name === "donationMorningStart" || name === "donationMorningEnd" ||
           name === "donationAfternoonStart" || name === "donationAfternoonEnd") {
         const startTime = newData.startTime || prev.startTime;
@@ -136,7 +134,6 @@ const CreateEventPage = () => {
       return;
     }
 
-    // Kiểm tra ràng buộc thời gian theo phiên
     const startIsMorning = isMorning(startTime);
     const endIsAfternoon = isAfternoon(endTime);
     if (session === "MORNING" && !startIsMorning) {
@@ -152,7 +149,6 @@ const CreateEventPage = () => {
       return;
     }
 
-    // Kiểm tra thời gian hiến máu
     if (session === "MORNING") {
       if (!isMorning(donationMorningStart) || !isMorning(donationMorningEnd)) {
         setError("Thời gian hiến máu buổi sáng phải nằm trong khoảng 07:00 - 11:59.");
@@ -219,7 +215,6 @@ const CreateEventPage = () => {
     }
   };
 
-  // Xác định trạng thái hiển thị của các phiên dựa trên startTime và endTime
   const startIsMorning = formData.startTime ? isMorning(formData.startTime) : false;
   const endIsAfternoon = formData.endTime ? isAfternoon(formData.endTime) : false;
   const isFullDay = formData.startTime && formData.endTime && startIsMorning && endIsAfternoon && isBefore(formData.startTime, formData.endTime);
@@ -227,103 +222,102 @@ const CreateEventPage = () => {
   const isAfternoonOnly = formData.startTime && formData.endTime && !startIsMorning && endIsAfternoon && isBefore(formData.startTime, formData.endTime);
 
   return (
-    <div className="event-manager">
-      <div className="page-header">
+    <div className="create-manager">
+      <div className="page-eheader">
         <h1>Tạo sự kiện</h1>
-        <button className="close-btn" onClick={() => navigate("/eventManager")}>×</button>
+        {/* <button className="close-btn" onClick={() => navigate("/eventManager")}>×</button> */}
       </div>
       <form onSubmit={handleSubmit} className="event-form">
         <div className="form-group">
-          <label>Tiêu đề:</label>
+          <label htmlFor="title">Tiêu đề:</label>
           <input type="text" name="title" value={formData.title} onChange={handleChange} required />
         </div>
-
-        <div className="form-group">
-          <label>Mô tả:</label>
+        {/* <div className="form-group">
+          <label htmlFor="description">Mô tả:</label>
           <textarea name="description" value={formData.description} onChange={handleChange} required />
-        </div>
-
+        </div> */}
         <div className="form-group">
-          <label>Ngày:</label>
+          <label htmlFor="date">Ngày:</label>
           <input type="date" name="date" value={formData.date} onChange={handleChange} required />
         </div>
-
-        <div className="form-row">
+        <div className="time-pair">
           <div className="form-group">
-            <label>Thời gian bắt đầu:(sớm nhất 7:00 SA)</label>
+            <label htmlFor="startTime">Thời gian bắt đầu (sớm nhất 7:00 SA):</label>
             <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required min="07:00" max="17:00" step="1800" />
           </div>
+          <span>→</span>
           <div className="form-group">
-            <label>Thời gian kết thúc:(trễ nhất 6:00 CH)</label>
+            <label htmlFor="endTime">Thời gian kết thúc (trễ nhất 6:00 CH):</label>
             <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required min="08:00" max="18:00" step="1800" />
           </div>
         </div>
-
         <div className="form-group">
-          <label>Địa điểm:</label>
+          <label htmlFor="location">Địa điểm:</label>
           <input type="text" name="location" value={formData.location} onChange={handleChange} required />
         </div>
-
         <div className="form-group">
-          <label>Phiên hiến máu:</label>
+          <label htmlFor="session">Phiên hiến máu:</label>
           <select name="session" value={formData.session} onChange={handleChange} disabled={!formData.startTime || !formData.endTime} required>
             <option value="" disabled>-- Chọn phiên --</option>
             {isFullDay && (
               <>
-                <option value="MORNING">Buổi sáng</option>
-                <option value="AFTERNOON">Buổi chiều</option>
+                <option value="MORNING">Chỉ buổi sáng</option>
+                <option value="AFTERNOON">Chỉ buổi chiều</option>
                 <option value="ALL">Cả ngày</option>
               </>
             )}
             {isMorningOnly && (
-              <option value="MORNING">Buổi sáng</option>
+              <option value="MORNING">Chỉ buổi sáng</option>
             )}
             {isAfternoonOnly && (
-              <option value="AFTERNOON">Buổi chiều</option>
+              <option value="AFTERNOON">Chỉ buổi chiều</option>
             )}
           </select>
         </div>
-
         {(formData.session === "MORNING" || formData.session === "ALL") && (
-          <div className="form-row">
+          <div className="time-pair">
             <div className="form-group">
-              <label>Giờ bắt đầu (sáng):</label>
-              <input type="time" name="donationMorningStart" value={formData.donationMorningStart} onChange={handleChange} min={formData.startTime || "07:00"} max={formData.endTime || "12:00"} step="1800" disabled={!formData.startTime || !formData.endTime} />
+              <label htmlFor="donationMorningStart">Giờ bắt đầu (sáng):</label>
+              <input type="time" name="donationMorningStart" value={formData.donationMorningStart} onChange={handleChange} min={formData.startTime || "07:00"} max={formData.endTime || "12:00"} step="1800" disabled={!formData.startTime || !formData.endTime} required={formData.session === "MORNING"} />
             </div>
+            <span>→</span>
             <div className="form-group">
-              <label>Giờ kết thúc (sáng):</label>
-              <input type="time" name="donationMorningEnd" value={formData.donationMorningEnd} onChange={handleChange} min={formData.startTime || "07:00"} max={formData.endTime || "12:00"} step="1800" disabled={!formData.startTime || !formData.endTime} />
+              <label htmlFor="donationMorningEnd">Giờ kết thúc (sáng):</label>
+              <input type="time" name="donationMorningEnd" value={formData.donationMorningEnd} onChange={handleChange} min={formData.startTime || "07:00"} max={formData.endTime || "12:00"} step="1800" disabled={!formData.startTime || !formData.endTime} required={formData.session === "MORNING"} />
             </div>
           </div>
         )}
-
         {(formData.session === "AFTERNOON" || formData.session === "ALL") && (
-          <div className="form-row">
+          <div className="time-pair">
             <div className="form-group">
-              <label>Giờ bắt đầu (chiều):</label>
-              <input type="time" name="donationAfternoonStart" value={formData.donationAfternoonStart} onChange={handleChange} min={formData.startTime || "12:00"} max={formData.endTime || "18:00"} step="1800" disabled={!formData.startTime || !formData.endTime} />
+              <label htmlFor="donationAfternoonStart">Giờ bắt đầu (chiều):</label>
+              <input type="time" name="donationAfternoonStart" value={formData.donationAfternoonStart} onChange={handleChange} min={formData.startTime || "12:00"} max={formData.endTime || "18:00"} step="1800" disabled={!formData.startTime || !formData.endTime} required={formData.session === "AFTERNOON"} />
             </div>
+            <span>→</span>
             <div className="form-group">
-              <label>Giờ kết thúc (chiều):</label>
-              <input type="time" name="donationAfternoonEnd" value={formData.donationAfternoonEnd} onChange={handleChange} min={formData.startTime || "12:00"} max={formData.endTime || "18:00"} step="1800" disabled={!formData.startTime || !formData.endTime} />
+              <label htmlFor="donationAfternoonEnd">Giờ kết thúc (chiều):</label>
+              <input type="time" name="donationAfternoonEnd" value={formData.donationAfternoonEnd} onChange={handleChange} min={formData.startTime || "12:00"} max={formData.endTime || "18:00"} step="1800" disabled={!formData.startTime || !formData.endTime} required={formData.session === "AFTERNOON"} />
             </div>
           </div>
         )}
-
         <div className="form-group">
-          <label>Số lượng đăng ký tối đa:</label>
-          <input type="number" name="maxRegistrations" value={formData.maxRegistrations} onChange={handleChange} required />
+          <label htmlFor="maxRegistrations">Số lượng đăng ký tối đa:</label>
+          <input type="number" name="maxRegistrations" value={formData.maxRegistrations} onChange={handleChange} min="0" required />
         </div>
-
         <div className="form-group">
-          <label>Ảnh:</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          {previewUrl && <img src={previewUrl} alt="Preview" className="preview-img" />}
+          <label htmlFor="image">Ảnh minh hoạ:</label>
+          <input type="file" name="image" accept="image/*" onChange={handleImageChange} />
+          {previewUrl && <img src={previewUrl} alt="Preview" className="event-image-preview" />}
         </div>
-
-        {error && <p className="error">{error}</p>}
-
-        <button type="submit">Tạo sự kiện</button>
+        {error && <p className="error-message">{error}</p>}
+        <div className="form-actions">
+          <button type="submit" className="btn-17">
+            <span className="text-container">
+              <span className="text">Tạo sự kiện</span>
+            </span>
+          </button>
+         
+        </div>
       </form>
     </div>
   );
