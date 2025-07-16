@@ -64,4 +64,9 @@ public class DonationHistory {
     @JoinColumn(name = "blood_donation_form_id", referencedColumnName = "id")
     @JsonIgnore
     BloodDonationForm bloodDonationForm;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    Event event;
+
 }

@@ -15,4 +15,6 @@ public class EventStatisticsResponse {
     private int checkinCount;
     private int rejectCount;
     private int notCheckinCount;
+    private int passCount;
+    private int failCount;
 }
