@@ -16,6 +16,7 @@ public interface DonationMapper {
     // DonationHistory
     @Mapping(target = "staff", ignore = true)           // Gán staff từ service
     @Mapping(target = "member", ignore = true)          // Gán member từ service
+    @Mapping(target = "event", ignore = true)          // Gán event từ service
     @Mapping(target = "bloodType", ignore = true)       // Gán bloodType từ service
     @Mapping(target = "bloodDonationForm", ignore = true) // Gán bloodDonationForm từ service
     @Mapping(target = "certificate", ignore = true)     // Không tạo certificate ở đây
@@ -30,6 +31,7 @@ public interface DonationMapper {
     @Mapping(target = "admin", ignore = true)
     @Mapping(target = "staff", ignore = true)
     @Mapping(target = "member", ignore = true)
+    @Mapping(target = "event", ignore = true)
     @Mapping(target = "bloodType", ignore = true)
     @Mapping(target = "bloodDonationForm", ignore = true)
     @Mapping(target = "certificate", ignore = true)

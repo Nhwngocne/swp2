@@ -19,4 +19,5 @@ public class DonationHistoryCreateRequest {
     int bloodDonationFormId; // ID của form hiến máu
     int memberId; // ID của người dùng
     int staffId; // ID của nhân viên
+    int eventId; // ID của sự kiện (nếu có)
 }

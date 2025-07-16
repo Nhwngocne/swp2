@@ -33,6 +33,7 @@ public class DonationService {
     BloodDonationFormRepository bloodDonationFormRepository;
     RegisOfflineRepository  regisOfflineRepository;
     BloodInventoryRepository bloodInventoryRepository;
+    EventRepository eventRepository;
     // ==== DonationHistory ====
 
     public DonationHistoryResponse createDonationHistory(DonationHistoryCreateRequest request) {
@@ -42,6 +43,7 @@ public class DonationService {
         donationHistory.setCreatedDate(LocalDate.now());
         // ngày có thể hiến máu lại
         donationHistory.setNextEligibleDate(LocalDate.now().plusMonths(3));
+
         // Validate and set related entities
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOT_FOUND));
@@ -51,11 +53,16 @@ public class DonationService {
                 .orElseThrow(() -> new AppException(ErrorCode.BLOOD_TYPE_NOT_FOUND));
         BloodDonationForm form = bloodDonationFormRepository.findById(request.getBloodDonationFormId())
                 .orElseThrow(() -> new AppException(ErrorCode.FORM_NOT_FOUND));
+        Event event = eventRepository.findById(request.getEventId())
+                .orElseThrow(() -> new AppException(ErrorCode.EVENT_NOT_FOUND));
+
 
         donationHistory.setMember(member);
         donationHistory.setStaff(staff);
         donationHistory.setBloodType(bloodType);
         donationHistory.setBloodDonationForm(form);
+        donationHistory.setEvent(event);
+
         donationHistory = donationHistoryRepository.save(donationHistory);
 
         // Cập nhật kho máu nếu kết quả đạt
@@ -65,7 +72,8 @@ public class DonationService {
             bloodInventory.setQuantity(bloodInventory.getQuantity() + donationHistory.getVolume());
             bloodInventoryRepository.save(bloodInventory);
         }
-        // Gửi thông báo cho member (giữ nguyên logic)
+
+        // Gửi thông báo cho member
         String message;
         if ("Đạt".equalsIgnoreCase(donationHistory.getResult())) {
             message = String.format(

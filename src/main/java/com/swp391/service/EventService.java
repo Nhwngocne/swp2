@@ -39,7 +39,6 @@ public class EventService {
     StaffRepository staffRepository;
     BloodDonationFormRepository formRepository;
     NotificationService notificationService;
-    MemberRepository   memberRepository;
     AuthenticationService authenticationService;
     DonationHistoryRepository donationHistoryRepository;
 
@@ -173,18 +172,7 @@ public class EventService {
         return response;
     }
 
-    public void registerMemberToEvent(int memberId, int eventId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new AppException(ErrorCode.EVENT_NOT_EXISTED));
 
-        // Tránh duplicate
-        if (!event.getRegisteredMembers().contains(member)) {
-            event.getRegisteredMembers().add(member);
-            eventRepository.save(event);
-        }
-    }
     public List<EventStatisticsResponse> getEventStatistics() {
         List<Event> events = eventRepository.findAll();
 
@@ -198,8 +186,10 @@ public class EventService {
             int total = event.getRegisteredMembers().size();
             int notCheckinCount = total - checkinCount - rejectCount;
 
+            int passCount = donationHistoryRepository.findByEventIdAndResultIgnoreCase(eventId, "Đạt").size();
+            int failCount = donationHistoryRepository.findByEventIdAndResultIgnoreCase(eventId, "Không đạt").size();
             return new EventStatisticsResponse(eventId, eventName, eventDate,
-                    checkinCount, rejectCount, notCheckinCount);
+                    checkinCount, rejectCount, notCheckinCount,passCount, failCount);
         }).collect(Collectors.toList());
     }
 
