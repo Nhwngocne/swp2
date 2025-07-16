@@ -144,8 +144,8 @@ export default function AdminDashboard() {
   const eventChartData = selectedEventData
     ? [
         { name: "Đã đến", pass: selectedEventData.passCount, fail: selectedEventData.failCount },
-        { name: "Đã từ chối", count: selectedEventData.rejectCount },
-        { name: "Chưa checkin", count: selectedEventData.notCheckinCount }
+        { name: "Đã từ chối", reject: selectedEventData.rejectCount },
+        { name: "Chưa checkin", notCheckin: selectedEventData.notCheckinCount }
       ]
     : [];
 
@@ -209,6 +209,25 @@ export default function AdminDashboard() {
         ))}
       </div>
 
+      <div className="dashboard-charts">
+        <div className="chart-card">
+          <h2>Kho máu theo nhóm máu</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={pieData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="value" radius={[10, 10, 0, 0]}>
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
       <div className="dashboard-events-summary" style={{ marginTop: "40px" }}>
         <h2>Thống kê chi tiết theo sự kiện</h2>
         <select value={selectedEventId} onChange={(e) => setSelectedEventId(e.target.value)}>
@@ -230,7 +249,8 @@ export default function AdminDashboard() {
                 <Tooltip />
                 <Bar dataKey="pass" stackId="a" fill="#10b981" />
                 <Bar dataKey="fail" stackId="a" fill="#ef4444" />
-                <Bar dataKey="count" fill="#6366f1" />
+                <Bar dataKey="reject" fill="#f59e0b" />
+                <Bar dataKey="notCheckin" fill="#6366f1" />
               </BarChart>
             </ResponsiveContainer>
           </div>
