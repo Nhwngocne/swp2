@@ -113,42 +113,50 @@ const BloodFormList = () => {
   };
 
   const handleSubmitResult = async () => {
-    try {
-      // Validate input
-      if (!historyData.volume || !historyData.bloodTypeId) {
-        alert("Vui lòng nhập đầy đủ thể tích và nhóm máu!");
-        return;
-      }
-
-      // Gọi API tạo lịch sử hiến máu
-      const historyResponse = await createDonationHistory(historyData);
-      if (!historyResponse.success) {
-        alert(`Lỗi khi tạo lịch sử hiến máu: ${historyResponse.error}`);
-        return;
-      }
-
-      // Cập nhật trạng thái form thành COMPLETED
-      const payload = {
-        formId: selectedForm.id,
-        status: "COMPLETED",
-        approvedByStaffId: historyData.staffId,
-      };
-      const updateResponse = await updateBloodDonationFormByStaff(payload);
-      if (updateResponse.success) {
-        alert("Tạo lịch sử hiến máu và cập nhật trạng thái thành công!");
-        // Cập nhật danh sách forms
-        const updatedForms = await fetchForms();
-        if (updatedForms.success) {
-          setForms(updatedForms.forms);
-        }
-        closeResultModal();
-      } else {
-        alert(`Lỗi khi cập nhật trạng thái: ${updateResponse.error}`);
-      }
-    } catch (error) {
-      alert("Lỗi: " + error.message);
+  try {
+    // Validate input
+    if (!historyData.volume || !historyData.bloodTypeId) {
+      alert("Vui lòng nhập đầy đủ thể tích và nhóm máu!");
+      return;
     }
-  };
+
+    // Thêm eventId vào payload lịch sử hiến máu
+    const historyPayload = {
+      ...historyData,
+      eventId: selectedForm?.event?.id || selectedForm?.eventId, // tùy thuộc vào dữ liệu của bạn
+    };
+
+    console.log("Gửi createDonationHistory với payload:", historyPayload);
+
+    // Gọi API tạo lịch sử hiến máu
+    const historyResponse = await createDonationHistory(historyPayload);
+    if (!historyResponse.success) {
+      alert(`Lỗi khi tạo lịch sử hiến máu: ${historyResponse.error}`);
+      return;
+    }
+
+    // Cập nhật trạng thái form thành COMPLETED
+    const payload = {
+      formId: selectedForm.id,
+      status: "COMPLETED",
+      approvedByStaffId: historyData.staffId,
+    };
+    const updateResponse = await updateBloodDonationFormByStaff(payload);
+    if (updateResponse.success) {
+      alert("Tạo lịch sử hiến máu và cập nhật trạng thái thành công!");
+      // Cập nhật danh sách forms
+      const updatedForms = await fetchForms();
+      if (updatedForms.success) {
+        setForms(updatedForms.forms);
+      }
+      closeResultModal();
+    } else {
+      alert(`Lỗi khi cập nhật trạng thái: ${updateResponse.error}`);
+    }
+  } catch (error) {
+    alert("Lỗi: " + error.message);
+  }
+};
 
   if (loading) {
     return <p className="text-center text-gray-500">Đang tải...</p>;

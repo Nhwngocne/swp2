@@ -164,7 +164,11 @@ export const DonationProvider = ({ children }) => {
         bloodDonationFormId: historyData.bloodDonationFormId,
         memberId: historyData.memberId, // Lấy từ user
         staffId: historyData.staffId,
+        eventId: historyData.eventId, 
+
       };
+          console.log("Payload gửi backend:", JSON.stringify(payload, null, 2));
+
       const source = axios.CancelToken.source();
       const response = await donationService.createDonationHistory(payload, {
         cancelToken: source.token,
