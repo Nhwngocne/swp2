@@ -16,12 +16,21 @@ const EventList = () => {
 
   // Lọc sự kiện
   const filteredEvents = events.filter((event) => {
-    if (filter !== "all" && event.status !== filter) return false;
+  // Nếu là MEMBER hoặc GUEST thì ẩn các sự kiện COMPLETED
+  if ((role === "MEMBER" || !role) && event.status === "COMPLETED") return false;
 
-    const eventDate = new Date(event.date);
-    const isInRange = (!startDate || eventDate >= startDate) && (!endDate || eventDate <= endDate);
-    return isInRange;
-  });
+  // Lọc theo trạng thái nếu đã chọn filter
+  if (filter !== "all" && event.status !== filter) return false;
+
+  // Lọc theo khoảng ngày
+  const eventDate = new Date(event.date);
+  const isInRange =
+    (!startDate || eventDate >= startDate) &&
+    (!endDate || eventDate <= endDate);
+
+  return isInRange;
+});
+
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
