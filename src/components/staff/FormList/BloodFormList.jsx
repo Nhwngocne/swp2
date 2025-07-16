@@ -216,35 +216,32 @@ const BloodFormList = () => {
               </td>
               <td className="px-4 py-2">
                 <div className="flex justify-center gap-2 flex-wrap">
-
-
-                  <button
-                    onClick={() => handleCheckIn(form.id)}
-                    disabled={loading}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
-                  >
-                    Check-in
-                  </button>
-
-                  <button
-                    onClick={() => openResultModal(form)}
-                    disabled={loading || form.status === "REJECTED"}
-                    className={`px-3 py-1 rounded text-white 
-    ${form.status === "REJECTED" || loading
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-blue-500 hover:bg-blue-600"}
-  `}
-                  >
-                    Nhập kết quả
-                  </button>
-                  <button
-                    onClick={() => handleViewDetail(form)}
-                    className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-                  >
-                    Xem chi tiết
-                    {/* >>>>>>> dabc5e927256250315640f2ba6f1226be5667656 */}
-                  </button>
-
+                  {form.status === "APPROVED" && (
+                    <button
+                      onClick={() => handleCheckIn(form.id)}
+                      disabled={loading}
+                      className={`px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 ${loading ? "bg-gray-400 cursor-not-allowed" : ""}`}
+                    >
+                      Check-in
+                    </button>
+                  )}
+                  {form.status === "CHECKIN" && (
+                    <button
+                      onClick={() => openResultModal(form)}
+                      disabled={loading}
+                      className={`px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 ${loading ? "bg-gray-400 cursor-not-allowed" : ""}`}
+                    >
+                      Nhập kết quả
+                    </button>
+                  )}
+                  {(form.status === "APPROVED" || form.status === "CHECKIN" || form.status === "REJECTED" || form.status === "COMPLETED") && (
+                    <button
+                      onClick={() => handleViewDetail(form)}
+                      className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    >
+                      Xem chi tiết
+                    </button>
+                  )}
                 </div>
               </td>
             </tr>
