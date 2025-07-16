@@ -18,7 +18,7 @@
 
 .create-btn {
   align-self: flex-end;
-  background-color: #dc3545;
+  background-color: #aa0011;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -101,7 +101,7 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  background-color: #474242;
+  background-color: #ff5252;
   color: #ffffff;
   border: none;
 }
@@ -121,7 +121,7 @@
   padding: 10px;
 }
 .news-table thead th {
-  background-color: #a30000;
+  background-color: #710303;
   font-weight: 600;
 }
 .news-table img {
