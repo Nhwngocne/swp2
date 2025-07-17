@@ -41,6 +41,7 @@ export const EmergencyProvider = ({ children }) => {
     memberName: emergency.memberName || "Không xác định",
     adminName: emergency.adminName || "Không xác định",
     bloodTypeName: emergency.bloodTypeName || "UNKNOWN",
+    createdAt: emergency.createdAt,
   });
 
   // Mapping cho NearbyDonorResponse
@@ -131,6 +132,7 @@ export const EmergencyProvider = ({ children }) => {
         description: requestData.description,
         location: requestData.location,
         status: requestData.status,
+        memberId: requestData.memberId,
       };
       const source = axios.CancelToken.source();
       const response = await emergencyService.createEmergencyRequest(payload, {
@@ -170,6 +172,7 @@ export const EmergencyProvider = ({ children }) => {
         description: requestData.description,
         location: requestData.location,
         status: requestData.status,
+        memberId: requestData.memberId,
       };
       const source = axios.CancelToken.source();
       const response = await emergencyService.updateEmergencyRequest(emergencyId, payload, {
