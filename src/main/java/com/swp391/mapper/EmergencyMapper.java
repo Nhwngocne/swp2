@@ -11,10 +11,11 @@ import com.swp391.entity.NearbyDonor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface EmergencyMapper {
-
+    @Mapping(source = "memberId", target = "member", qualifiedByName = "mapMemberIdToMember")
     EmergencyRequest toEmergencyRequest(EmergencyRequestCreateRequest request);
 
     @Mapping(source = "bloodType", target = "bloodTypeName")
@@ -30,5 +31,12 @@ public interface EmergencyMapper {
 
     default String map(BloodType bloodType) {
         return bloodType != null ? bloodType.getName() : null;
+    }
+    // Phương thức tùy chỉnh để ánh xạ memberId sang Member
+    @Named("mapMemberIdToMember")
+    default Member mapMemberIdToMember(int memberId) {
+        Member member = new Member();
+        member.setId(memberId);
+        return member;
     }
 }

@@ -23,6 +23,7 @@ public class EmergencyRequestCreateRequest {
     String phone;
     String description;
     String status;
+    @NotNull(message = "Member ID is required")
     int memberId;
 
 }
