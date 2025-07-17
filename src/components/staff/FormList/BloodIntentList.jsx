@@ -82,9 +82,9 @@ const BloodIntentList = () => {
 
     const getStatusLabel = (status) => {
         switch (status) {
-            case "PENDING": return "Pending";
-            case "ACCEPTED": return "Accepted";
-            case "REJECTED": return "Rejected";
+            case "PENDING": return "Chờ xử lý";
+            case "ACCEPTED": return "Chấp nhận";
+            case "REJECTED": return "Từ chối";
             default: return status;
         }
     };
@@ -164,13 +164,13 @@ const BloodIntentList = () => {
                                                 className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                                                 onClick={() => handleApprove(intent.id)}
                                             >
-                                                Approve
+                                                Chấp nhận 
                                             </button>
                                             <button
                                                 className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                                                 onClick={() => openRejectModal(intent.id)}
                                             >
-                                                Reject
+                                                Từ chối
                                             </button>
                                         </>
                                     ) : (
@@ -178,7 +178,7 @@ const BloodIntentList = () => {
                                             className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
                                             onClick={() => handleDelete(intent.id)}
                                         >
-                                            Delete
+                                            Xóa
                                         </button>
                                     )}
                                 </td>
