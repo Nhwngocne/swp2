@@ -82,9 +82,9 @@ const BloodIntentList = () => {
 
     const getStatusLabel = (status) => {
         switch (status) {
-            case "PENDING": return "Pending";
-            case "ACCEPTED": return "Accepted";
-            case "REJECTED": return "Rejected";
+case "PENDING": return "Chờ xử lý";
+            case "ACCEPTED": return "Chấp nhận";
+            case "REJECTED": return "Từ chối";
             default: return status;
         }
     };
@@ -123,16 +123,16 @@ const BloodIntentList = () => {
                     <thead>
                         <tr>
                             <th className="px-4 py-2">ID</th>
-                            <th className="px-4 py-2">Họ Và Tên</th>
-                            <th className="px-4 py-2">Sdt</th>
-                            <th className="px-4 py-2">Cho & Nhận</th>
-                            <th className="px-4 py-2">Nhóm máu</th>
-                            <th className="px-4 py-2">Từ</th>
-                            <th className="px-4 py-2">Đến</th>
-                            <th className="px-4 py-2">Địa chỉ</th>
-                            <th className="px-4 py-2">Miêu tả</th>
-                            <th className="px-4 py-2">Trạng thái</th>
-                            <th className="px-4 py-2">Hành động</th>
+                            <th className="px-4 py-2">Name</th>
+                            <th className="px-4 py-2">Phone</th>
+                            <th className="px-4 py-2">Intent Type</th>
+                            <th className="px-4 py-2">Blood Type</th>
+                            <th className="px-4 py-2">From</th>
+                            <th className="px-4 py-2">To</th>
+                            <th className="px-4 py-2">Location</th>
+                            <th className="px-4 py-2">Description</th>
+                            <th className="px-4 py-2">Status</th>
+                            <th className="px-4 py-2">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -143,10 +143,10 @@ const BloodIntentList = () => {
                                 <td className="px-4 py-2">{intent.memberPhone || "N/A"}</td>
                                 <td className="px-4 py-2">
                                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${intent.intentType === "CHO"
-                                            ? "bg-blue-100 text-blue-600"
+? "bg-blue-100 text-blue-600"
                                             : "bg-red-100 text-red-600"
                                         }`}>
-                                        {intent.intentType === "CHO" ? "Donate" : "Receive"}
+                                        {intent.intentType === "CHO" ? "CHO" : "NHAN"}
                                     </span>
                                 </td>
                                 <td className="px-4 py-2 text-red-500 font-medium">{intent.bloodType}</td>
@@ -164,13 +164,13 @@ const BloodIntentList = () => {
                                                 className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                                                 onClick={() => handleApprove(intent.id)}
                                             >
-                                                Approve
+                                                Chấp nhận 
                                             </button>
                                             <button
                                                 className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                                                 onClick={() => openRejectModal(intent.id)}
                                             >
-                                                Reject
+                                                Từ chối
                                             </button>
                                         </>
                                     ) : (
@@ -178,7 +178,7 @@ const BloodIntentList = () => {
                                             className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
                                             onClick={() => handleDelete(intent.id)}
                                         >
-                                            Delete
+                                            Xóa
                                         </button>
                                     )}
                                 </td>
@@ -193,7 +193,7 @@ const BloodIntentList = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow-lg p-6 w-96">
                         <h2 className="text-lg font-semibold mb-4">Enter Rejection Reason</h2>
-                        <textarea
+<textarea
                             className="w-full border border-gray-300 rounded p-2 mb-4"
                             rows="4"
                             placeholder="Enter reason..."

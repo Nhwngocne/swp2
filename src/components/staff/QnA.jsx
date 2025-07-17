@@ -50,7 +50,7 @@ const QnA = () => {
         <ul className="qna-list">
           {questions.map((qna) => (
             <li key={qna.id} className="qna-item">
-              <p className="qna-user"><strong>Người hỏi:</strong> {qna.username}</p>
+              <p className="qna-user"><strong>Người hỏi:</strong> {qna.member.name}</p>
               <p className="qna-question"><strong>Câu hỏi:</strong> {qna.question}</p>
               {selectedId === qna.id ? (
                 <div className="mt-2">

@@ -1,0 +1,146 @@
+:root {
+  --main-blue: #155eef;
+  --light-gray: #f2f4f8;
+  --text-color: #1a1a1a;
+  --border-radius: 16px;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  background-color: #eef1f6;
+  font-family: 'Inter', sans-serif;
+}
+
+.offline-detail {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 48px;
+  margin: 40px auto;
+  max-width: 1200px;
+  color: var(--text-color);
+  animation: fadeIn 0.5s ease-in-out;
+  transition: all 0.3s ease;
+}
+
+.offline-detail h2 {
+  font-size: 30px;
+  color: var(--main-blue);
+  margin-bottom: 32px;
+  border-left: 6px solid var(--main-blue);
+  padding-left: 14px;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.info-section,
+.screening-section {
+  flex: 1 1 500px;
+  background: #ffffffdd;
+  padding: 28px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.info-section h3,
+.screening-section h3 {
+  color: #0f172a;
+  font-size: 22px;
+  margin-bottom: 24px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  row-gap: 16px;
+  column-gap: 12px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #555;
+  text-align: right;
+}
+
+.info-value {
+  color: #222;
+  font-size: 16px;
+}
+
+.screening-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-left: 0;
+}
+
+.screening-list li {
+  position: relative;
+  padding-left: 28px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.screening-list li::before {
+  content: "🩸";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--main-blue);
+}
+
+.question-label {
+  font-weight: 700;
+  font-size: 16px;
+  color: #111827;
+}
+
+.back-btn {
+  display: inline-block;
+  margin-top: 40px;
+  padding: 14px 32px;
+  font-size: 16px;
+  background: var(--main-blue);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 14px rgba(21, 94, 239, 0.3);
+}
+
+.back-btn:hover {
+  background: #0e46c5;
+}
+
+/* Responsive for small screens */
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-label {
+    text-align: left;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

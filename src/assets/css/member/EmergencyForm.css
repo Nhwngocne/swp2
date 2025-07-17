@@ -62,7 +62,7 @@ input[type="text"]:focus {
 }
 
 /* Submit Button */
-button[type="submit"] {
+.submit-kc {
   width: 100%;
   padding: 14px 0;
   background-color: #d60000;
@@ -75,7 +75,7 @@ button[type="submit"] {
   transition: background 0.3s ease;
 }
 
-button[type="submit"]:hover {
+.submit-kc:hover {
   background-color: #b80000;
 }
 

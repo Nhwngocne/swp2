@@ -133,8 +133,8 @@ const EmergencyForm = () => {
               maxLength="1000"
             />
           </div>
-          <button type="submit">Gửi yêu cầu</button>
-        </form>
+<button button class="submit-kc">Gửi yêu cầu</button>        
+</form>
       </div>
     </div>
   );
