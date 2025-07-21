@@ -16,12 +16,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -191,6 +194,31 @@ public class EventService {
             return new EventStatisticsResponse(eventId, eventName, eventDate,
                     checkinCount, rejectCount, notCheckinCount,passCount, failCount);
         }).collect(Collectors.toList());
+    }
+    @Transactional
+    @PostConstruct
+    @Scheduled(fixedRate = 3600000)//1h hàng ngày để check
+    public void checkAndDeleteEvents() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        List<Event> eventsTomorrow = eventRepository.findByDate(tomorrow);
+
+        for (Event event : eventsTomorrow) {
+            int registeredCount = formRepository.countByEventId(event.getId());
+            if (registeredCount < 10) {
+                // Lấy danh sách member đã đăng ký để gửi thông báo
+                Set<Member> members = event.getRegisteredMembers();
+                // Xóa sự kiện
+                eventRepository.delete(event);
+                // Gửi thông báo cho từng member
+                for (Member member : members) {
+                    String message = String.format(
+                            "Sự kiện '%s' đã bị hủy vì không đạt số lượng tối thiểu người đăng ký (10 người) để diễn ra.",
+                            event.getTitle()
+                    );
+                    notificationService.createNotificationForMember(member.getId(), message);
+                }
+            }
+        }
     }
 
 

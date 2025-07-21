@@ -25,6 +25,7 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     @Query(value = "SELECT COUNT(*) FROM event_registrations WHERE event_id = :eventId AND status = :status", nativeQuery = true)
     int countRegistrationsByStatus(@Param("eventId") Long eventId, @Param("status") String status);
 
+    List<Event> findByDate(LocalDate date);
 
 }
 
