@@ -16,6 +16,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -24,7 +26,7 @@ public class CertificateService {
     CertificateRepository certificateRepository;
     DonationHistoryRepository donationHistoryRepository;
     CertificateMapper certificateMapper;
-    ImageService imageService; // ✅ sử dụng imageService thay vì fileStorageService
+    ImageService imageService;
 
     @PreAuthorize("hasRole('STAFF')")
     public CertificateResponse createCertificate(CertificateCreateRequest request) {
@@ -35,12 +37,15 @@ public class CertificateService {
             throw new AppException(ErrorCode.CERTIFICATE_ALREADY_EXISTS);
         }
 
-        Certificate certificate = certificateMapper.toEntity(request, donationHistory);
+        Certificate certificate = Certificate.builder()
+                .donationHistory(donationHistory)
+                .donorName(request.getDonorName())
+                .donatedDate(request.getDonatedDate())
+                .location(request.getLocation())
+                .volume(request.getVolume())
+                .build();
 
-        // ✅ Upload ảnh bằng imageService
-        MultipartFile file = request.getFile();
-        String imageUrl = imageService.uploadImage(file);
-        certificate.setImageUrl(imageUrl);
+
 
         certificate = certificateRepository.save(certificate);
         return certificateMapper.toResponse(certificate);
@@ -57,4 +62,5 @@ public class CertificateService {
                 .orElseThrow(() -> new AppException(ErrorCode.CERTIFICATE_NOT_FOUND));
         return certificateMapper.toResponse(certificate);
     }
+
 }

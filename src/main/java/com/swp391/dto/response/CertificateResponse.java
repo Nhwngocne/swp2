@@ -12,8 +12,10 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CertificateResponse {
     int id;
-    LocalDate issuedDate;
-    String issuedBy;
-    String imageUrl; // đường dẫn ảnh chứng nhận
+    String donorName;        // tên người hiến
+    LocalDate donatedDate;   // ngày hiến
+    String location;         // cơ sở hiến
+    int volume;
+
     int donationHistoryId;
 }

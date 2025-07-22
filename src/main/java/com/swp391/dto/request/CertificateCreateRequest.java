@@ -11,6 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CertificateCreateRequest {
     int donationHistoryId;
-    String issuedBy;
-    MultipartFile file; // file ảnh chứng chỉ upload từ phía staff
+
+    String donorName;        // Tên người hiến máu
+    String donatedDate;      // Ngày hiến máu (có thể dùng kiểu String hoặc LocalDate tùy Controller xử lý)
+    String location;         // Cơ sở hiến
+    int volume;
 }

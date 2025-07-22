@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/certificates")
@@ -16,7 +15,7 @@ public class CertificateController {
 
     private final CertificateService certificateService;
 
-    //  API tạo chứng chỉ (upload ảnh) — dành cho STAFF
+    // ✅ API tạo chứng chỉ (dành cho STAFF)
     @PreAuthorize("hasRole('STAFF')")
     @PostMapping("/upload")
     public ResponseEntity<CertificateResponse> uploadCertificate(@ModelAttribute CertificateCreateRequest request) {
@@ -24,17 +23,19 @@ public class CertificateController {
         return ResponseEntity.ok(response);
     }
 
-    //  Lấy chứng chỉ theo ID
+    // ✅ Lấy chứng chỉ theo certificate ID
     @GetMapping("/{id}")
     public ResponseEntity<CertificateResponse> getById(@PathVariable int id) {
         CertificateResponse response = certificateService.getById(id);
         return ResponseEntity.ok(response);
     }
 
-    // Lấy chứng chỉ theo donationHistoryId
+    // ✅ Lấy chứng chỉ theo donationHistoryId
     @GetMapping("/by-donation/{donationHistoryId}")
     public ResponseEntity<CertificateResponse> getByDonationHistoryId(@PathVariable int donationHistoryId) {
         CertificateResponse response = certificateService.getByDonationHistoryId(donationHistoryId);
         return ResponseEntity.ok(response);
     }
+
+
 }

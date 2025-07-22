@@ -1,5 +1,6 @@
 package com.swp391.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,13 +21,11 @@ public class Certificate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    LocalDate issuedDate;
-
-    @Column(length = 50)
-    String issuedBy; // Tên nhân viên/staff cấp
-
-    @Column(length = 255)
-    String imageUrl; // URL dẫn tới file ảnh chứng chỉ
+    String donorName;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    String donatedDate;      // ngày hiến
+    String location;         // cơ sở hiến
+    int volume;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "donation_history_id", referencedColumnName = "id")
