@@ -29,12 +29,14 @@ export const CertificateProvider = ({ children }) => {
 
   // Mapping cho CertificateResponse
   const mapCertificate = (certificate) => ({
-    id: certificate.id,
-    issuedDate: certificate.issuedDate,
-    issuedBy: certificate.issuedBy || "Không xác định",
-    imageUrl: certificate.imageUrl || "",
-    donationHistoryId: certificate.donationHistoryId || 0,
-  });
+  id: certificate.id,
+  donorName: certificate.donorName || "Không xác định",
+  donatedDate: certificate.donatedDate || null,
+  location: certificate.location || "Không rõ",
+  volume: certificate.volume || 0,
+  donationHistoryId: certificate.donationHistoryId || 0,
+});
+
 
   // Fetch certificate by ID
   const getCertificateById = async (id) => {
@@ -114,7 +116,10 @@ export const CertificateProvider = ({ children }) => {
     }
 
     const response = await certificateService.uploadCertificate(formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+       headers: {
+    "Content-Type": "multipart/form-data",
+    "Authorization": `Bearer ${token}`, // ✅ Bắt buộc phải thêm
+  },
     });
 
     const newCertificate = mapCertificate(response.data);

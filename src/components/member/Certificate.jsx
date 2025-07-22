@@ -1,83 +1,52 @@
 import React, { useEffect, useState } from "react";
 import html2pdf from "html2pdf.js";
+import { useLocation, useParams } from "react-router-dom";
 import { authService } from "../../services/authService";
-import { certificateService } from "../../services/certificateService";
 import "../../assets/css/member/Certificate.css";
-import { useParams } from "react-router-dom";
-import { useDonation } from "../../services/DonationContext";
 
 const Certificate = () => {
   const { donationHistoryId } = useParams();
+  const location = useLocation();
+  const passedDonation = location.state?.donation;
+
   const [user, setUser] = useState(null);
   const [certificate, setCertificate] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loadingUser, setLoadingUser] = useState(true);
   const [error, setError] = useState("");
-  const { donationHistories } = useDonation(); // lấy location, volume, ngày hiến
 
-  // Lấy user từ backend
+  // Lấy thông tin user (local hoặc từ backend nếu cần)
   useEffect(() => {
     authService
       .getCurrentUser()
       .then((response) => {
-        setUser(response.data.result?.user || response.data);
+        const u = response.data.result?.user || response.data;
+        setUser(u);
       })
       .catch((error) => {
         console.error("Lỗi lấy người dùng:", error);
         setError("Không thể lấy thông tin người dùng.");
-      })
-      .finally(() => {
-        setLoadingUser(false);
       });
   }, []);
 
-  // Lấy hoặc tạo chứng chỉ
+  // Tạo dữ liệu chứng chỉ từ passedDonation
   useEffect(() => {
-    const fetchOrCreateCertificate = async () => {
-      if (!donationHistoryId || !user || donationHistories.length === 0) return;
+    if (!passedDonation) {
+      setError("Không có dữ liệu hiến máu được truyền.");
+      setLoading(false);
+      return;
+    }
 
-      try {
-        setLoading(true);
+    if (!user) return; // đợi user
 
-        // 1. Thử lấy chứng chỉ
-        const response = await certificateService.getCertificateByDonationHistoryId(donationHistoryId);
-        setCertificate(response.data);
-        setError("");
-      } catch (err) {
-        if (err.response?.status === 404) {
-          try {
-            // 2. Nếu chưa có thì tạo
-            const donation = donationHistories.find(d => d.id === parseInt(donationHistoryId));
-            if (!donation) {
-              setError("Không tìm thấy thông tin hiến máu.");
-              return;
-            }
-
-            const formData = new FormData();
-            formData.append("donationHistoryId", donationHistoryId);
-            formData.append("donorName", user.name);
-            formData.append("donatedDate", new Date(donation.createdDate).toISOString().split("T")[0]);
-            formData.append("location", donation.location || "Không rõ");
-            formData.append("volume", donation.volume || 350);
-
-            const uploadResponse = await certificateService.uploadCertificate(formData);
-            setCertificate(uploadResponse.data);
-            setError("");
-          } catch (uploadErr) {
-            setError("Không thể tạo chứng chỉ");
-            console.error("Upload error:", uploadErr);
-          }
-        } else {
-          setError("Không thể tải chứng chỉ");
-          console.error("Fetch error:", err);
-        }
-      } finally {
-        setLoading(false);
-      }
+    const cert = {
+      donorName: user.name,
+      donatedDate: passedDonation.createdDate,
+      location: passedDonation.location || "Không rõ",
+      volume: passedDonation.volume || 350,
     };
-
-    fetchOrCreateCertificate();
-  }, [donationHistoryId, user, donationHistories]);
+    setCertificate(cert);
+    setLoading(false);
+  }, [user, passedDonation]);
 
   const handleDownload = () => {
     const element = document.getElementById("certificate");
@@ -92,18 +61,39 @@ const Certificate = () => {
       .save();
   };
 
-  const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return isNaN(date)
-      ? "Không xác định"
-      : date.toLocaleDateString("vi-VN", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
+  const genderPrefix = (gender = "") => {
+    const normalized = gender.toLowerCase();
+    if (normalized.includes("nam")) return "anh";
+    if (normalized.includes("nữ") || normalized.includes("nu")) return "chị";
+    return "bạn";
   };
 
-  if (loading || loadingUser) return <p>Đang tải chứng chỉ...</p>;
+  const formatDate = (dateStr) => {
+  if (!dateStr) return "Không xác định";
+
+  // Nếu là dạng "dd-MM-yyyy"
+  if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+    const [day, month, year] = dateStr.split("-");
+    const date = new Date(`${year}-${month}-${day}`);
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
+
+  // Nếu là dạng ISO hoặc Date string hợp lệ
+  const date = new Date(dateStr);
+  return isNaN(date)
+    ? "Không xác định"
+    : date.toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+};
+
+  if (loading) return <p>Đang tải dữ liệu...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
@@ -114,7 +104,7 @@ const Certificate = () => {
             <div className="certificate-inner">
               <h2 className="cert-title">GIẤY CHỨNG NHẬN</h2>
               <p className="cert-subtitle">Trao tặng cho</p>
-              <h1 className="cert-name">{(certificate.donorName || "").toUpperCase()}</h1>
+              <h1 className="cert-name">{certificate.donorName.toUpperCase()}</h1>
               <p className="cert-description">
                 Vì đã tham gia <strong>hiến máu tình nguyện</strong> vào ngày{" "}
                 <strong>{formatDate(certificate.donatedDate)}</strong> tại cơ sở{" "}
@@ -123,8 +113,9 @@ const Certificate = () => {
               </p>
               <p className="cert-description">
                 Chúng tôi ghi nhận và trân trọng nghĩa cử cao đẹp của{" "}
-                {user.gender === "Nam" ? "anh" : user.gender === "Nữ" ? "chị" : "bạn"}.
+                <strong>{genderPrefix(user.gender)}</strong>.
               </p>
+
               <div className="cert-signatures">
                 <div>
                   <p className="signature-name">NGUYỄN VĂN HÒA</p>

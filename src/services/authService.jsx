@@ -38,22 +38,30 @@ authAPI.interceptors.response.use(
       "/register/send-otp",
       "/register/verify-otp",
       "/feedback",
-      "/blood/type", // Thêm nếu endpoint này là public
+      "/blood/type",
       "/donations/offline",
       "/donations/receive",
     ].some((path) => error.config?.url?.includes(path));
 
-    if (error.response?.status === 401 && !isAuthFreeEndpoint) {
-      if (
-        error.response?.data?.message === "Invalid or expired token" &&
-        window.location.pathname !== "/auth/login"
-      ) {
-        console.log("401 Unauthorized - Invalid token, redirecting to /auth/login");
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("role");
-        window.location.href = "/auth/login";
-      }
+    const token = localStorage.getItem("token");
+
+    if (
+      error.response?.status === 401 &&
+      !isAuthFreeEndpoint &&
+      token && // chỉ khi có token
+      error.response?.data?.message === "Invalid or expired token" &&
+      window.location.pathname !== "/auth/login"
+    ) {
+      console.log("401 Unauthorized - Token hết hạn, chuyển về login");
+
+      // Thay vì chuyển hướng ngay, bạn có thể:
+      // 1. Gửi refresh token (nếu có logic đó)
+      // 2. Hoặc hiển thị lỗi và cho người dùng tự xử lý
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
+      window.location.href = "/auth/login"; // hoặc có thể thay bằng Navigate
     } else if (error.response) {
       console.log(
         "API error:",
@@ -62,9 +70,11 @@ authAPI.interceptors.response.use(
         error.response.data
       );
     }
+
     return Promise.reject(error);
   }
 );
+
 
 // Auth API functions
 export const authService = {
