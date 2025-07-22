@@ -140,14 +140,13 @@ export default function AdminDashboard() {
 
   const pieColors = ["#ef4444", "#f97316", "#eab308", "#10b981", "#8b5cf6", "#ec4899"];
 
-  // Tạo dữ liệu chart cho event đang chọn
   const selectedEventData = statistics.find(s => s.eventId === parseInt(selectedEventId));
   const eventChartData = selectedEventData
     ? [
-      { name: "Đã đến", value: selectedEventData.checkinCount },
-      { name: "Đã từ chối", value: selectedEventData.rejectCount },
-      { name: "Chưa checkin", value: selectedEventData.notCheckinCount }
-    ]
+        { name: "Đã đến", pass: selectedEventData.passCount, fail: selectedEventData.failCount },
+        { name: "Đã từ chối", reject: selectedEventData.rejectCount },
+        { name: "Chưa checkin", notCheckin: selectedEventData.notCheckinCount }
+      ]
     : [];
 
   return (
@@ -248,7 +247,10 @@ export default function AdminDashboard() {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill="#8884d8" radius={[10, 10, 0, 0]} />
+                <Bar dataKey="pass" stackId="a" fill="#10b981" />
+                <Bar dataKey="fail" stackId="a" fill="#ef4444" />
+                <Bar dataKey="reject" fill="#f59e0b" />
+                <Bar dataKey="notCheckin" fill="#6366f1" />
               </BarChart>
             </ResponsiveContainer>
           </div>

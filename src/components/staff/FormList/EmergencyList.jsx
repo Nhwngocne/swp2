@@ -25,8 +25,26 @@ const EmergencyList = () => {
 
   const formatDate = (date) => {
     if (!date) return "Không có";
-    const d = new Date(date);
-    return d.toLocaleDateString('vi-VN');
+    try {
+      const d = new Date(date);
+      if (isNaN(d.getTime())) {
+        const [year, month, day] = date.split('-');
+        const parsedDate = new Date(year, month - 1, day);
+        if (isNaN(parsedDate.getTime())) return "Không hợp lệ";
+        return parsedDate.toLocaleDateString('vi-VN', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        }).split('/').join('-');
+      }
+      return d.toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).split('/').join('-');
+    } catch (error) {
+      return "Không hợp lệ";
+    }
   };
 
   const filteredEmergencies = emergencyRequests.filter(em => {
@@ -70,7 +88,7 @@ const EmergencyList = () => {
         {filteredEmergencies.map(em => (
           <div className="emergency-card" key={em.id}>
             <div className="emergency-header">
-              <div className="blood-type-badge">{em.bloodTypeName || "?"}</div>
+              <div className="blood-type-badge">{em.component || "?"}</div>
               <div className={`status-badge status-${em.status?.toLowerCase()}`}>
                 {em.status === 'PENDING' ? 'Đang cần' : 'Đã đủ'}
               </div>
@@ -83,12 +101,9 @@ const EmergencyList = () => {
 
               <div className="emergency-details">
                 <p><strong>Mã yêu cầu:</strong> {em.id}</p>
-                <p><strong>Thành phần:</strong> {em.component || "Không có"}</p>
                 <p><strong>Ngày tạo:</strong> {formatDate(em.createdAt)}</p>
                 <p><strong>Số điện thoại:</strong> {em.phone || "Không có"}</p>
-                <p><strong>Nhân viên phụ trách:</strong> {em.staffName || "Chưa chỉ định"}</p>
                 <p><strong>Thành viên yêu cầu:</strong> {em.memberName || "Không rõ"}</p>
-                <p><strong>Quản trị viên xác nhận:</strong> {em.adminName || "Chưa xác nhận"}</p>
               </div>
             </div>
 

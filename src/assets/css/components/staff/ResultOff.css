@@ -1,0 +1,82 @@
+/* ResultOff.css - styling cho trang cập nhật kết quả đăng ký hiến máu offline */
+.result-off {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.result-off h2 {
+  text-align: center;
+  color: #d60000;
+  font-size: 26px;
+  margin-bottom: 24px;
+}
+
+.result-off form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.result-off label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  color: #333;
+}
+
+.result-off input[type="number"],
+.result-off select,
+.result-off textarea {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #fafafa;
+  transition: border 0.3s;
+}
+
+.result-off input:focus,
+.result-off select:focus,
+.result-off textarea:focus {
+  border-color: #d60000;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(214, 0, 0, 0.15);
+}
+
+.result-off button {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background-color: #d60000;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.result-off button:hover {
+  background-color: #b80000;
+}
+
+.result-off button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .result-off {
+    padding: 20px;
+  }
+
+  .result-off h2 {
+    font-size: 22px;
+  }
+}

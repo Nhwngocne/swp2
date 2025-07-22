@@ -1,0 +1,109 @@
+/* CreateOff.css - styled only for CreateOff component */
+.create-off-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.create-off-container h2 {
+  text-align: center;
+  color: #d60000;
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+.create-off-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.create-off-container input[type="text"],
+.create-off-container input[type="email"],
+.create-off-container input[type="number"] {
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  background-color: #fafafa;
+  transition: border 0.3s;
+}
+
+.create-off-container input:focus {
+  border-color: #d60000;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(214, 0, 0, 0.15);
+}
+
+.create-off-container label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  background-color: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.create-off-container label:hover {
+  background-color: #f2f2f2;
+}
+
+.create-off-container h4 {
+  margin-top: 32px;
+  margin-bottom: 8px;
+  font-size: 20px;
+  color: #333;
+  border-left: 5px solid #d60000;
+  padding-left: 10px;
+}
+
+.create-off-container h5 {
+  margin-top: 20px;
+  margin-bottom: 6px;
+  font-size: 17px;
+  color: #444;
+}
+
+.create-off-container button {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #d60000;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.create-off-container button:hover {
+  background-color: #b80000;
+}
+
+.create-off-container button[type="button"] {
+  background-color: #cccccc;
+  color: #333;
+}
+
+.create-off-container button[type="button"]:hover {
+  background-color: #aaaaaa;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .create-off-container {
+    padding: 20px;
+  }
+
+  .create-off-container h2 {
+    font-size: 24px;
+  }
+}

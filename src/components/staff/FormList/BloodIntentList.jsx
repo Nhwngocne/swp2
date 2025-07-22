@@ -143,10 +143,10 @@ const BloodIntentList = () => {
                                 <td className="px-4 py-2">{intent.memberPhone || "N/A"}</td>
                                 <td className="px-4 py-2">
                                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${intent.intentType === "CHO"
-                                            ? "bg-blue-100 text-blue-600"
+? "bg-blue-100 text-blue-600"
                                             : "bg-red-100 text-red-600"
                                         }`}>
-                                        {intent.intentType === "CHO" ? "Donate" : "Receive"}
+                                        {intent.intentType === "CHO" ? "CHO" : "NHAN"}
                                     </span>
                                 </td>
                                 <td className="px-4 py-2 text-red-500 font-medium">{intent.bloodType}</td>
@@ -193,7 +193,7 @@ const BloodIntentList = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow-lg p-6 w-96">
                         <h2 className="text-lg font-semibold mb-4">Enter Rejection Reason</h2>
-                        <textarea
+<textarea
                             className="w-full border border-gray-300 rounded p-2 mb-4"
                             rows="4"
                             placeholder="Enter reason..."

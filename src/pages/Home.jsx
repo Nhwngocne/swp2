@@ -155,7 +155,7 @@ const Home = () => {
   </div>
 </section>
 
- <section className="achievements-section">
+ {/* <section className="achievements-section">
         <h3 className="section-title">Thành tựu của chúng ta</h3>
         <div className="achievements-grid">
           {achievements.map((ach, idx) => (
@@ -166,7 +166,7 @@ const Home = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
       {/* Achievements */}
         <FeedbackList />
     </div>

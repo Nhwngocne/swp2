@@ -1,60 +1,98 @@
-.emergency-form-container {
-  margin: 20px auto;
-  padding: 10px;
-  max-width: 500px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #fff;
-}
+/* EmergencyForm.css */
 
-.toggle-button {
-  background-color: #d9534f;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 15px;
+.emergency-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .emergency-form {
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
+  background: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  max-width: 550px;
+  width: 100%;
+  transition: 0.3s ease;
 }
 
 .emergency-form h2 {
+  text-align: center;
+  font-size: 28px;
   margin-bottom: 10px;
+  color: #d60000;
 }
 
 .emergency-form p {
-  font-style: italic;
-  margin-bottom: 15px;
+  text-align: center;
+  font-size: 16px;
   color: #555;
+  margin-bottom: 30px;
 }
 
-.emergency-form div {
-  margin-bottom: 15px;
+form div {
+  margin-bottom: 20px;
 }
 
-.emergency-form label {
+label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
 }
 
-.emergency-form input {
+input[type="text"] {
   width: 100%;
-  padding: 8px;
-  border-radius: 5px;
+  padding: 12px 14px;
   border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #fdfdfd;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-.emergency-form button[type="submit"] {
-  background-color: #5cb85c;
+input[type="text"]:focus {
+  border-color: #d60000;
+  box-shadow: 0 0 0 3px rgba(214, 0, 0, 0.2);
+  outline: none;
+}
+
+/* Submit Button */
+.submit-kc {
+  width: 100%;
+  padding: 14px 0;
+  background-color: #d60000;
   color: white;
-  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-kc:hover {
+  background-color: #b80000;
+}
+
+@media screen and (max-width: 600px) {
+  .emergency-form {
+    padding: 20px;
+  }
+
+  .emergency-form h2 {
+    font-size: 24px;
+  }
+
+  input[type="text"] {
+    font-size: 15px;
+  }
+
+  button[type="submit"] {
+    font-size: 15px;
+  }
 }

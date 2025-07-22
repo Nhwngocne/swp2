@@ -1,141 +1,170 @@
+/* QnA.css */
 .qna-container {
-  max-width: 800px;
+  max-width: 896px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: 'Inter', sans-serif;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.qna-container.dark {
+  background-color: #1f2937;
 }
 
 .qna-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #1a202c;
-  margin-bottom: 20px;
-  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24px;
+}
+
+.qna-container.dark .qna-title {
+  color: #ffffff;
 }
 
 .qna-empty {
+  color: #6b7280;
   text-align: center;
-  color: #4a5568;
-  font-size: 1.1rem;
-  padding: 20px;
+  font-style: italic;
+}
+
+.qna-container.dark .qna-empty {
+  color: #9ca3af;
 }
 
 .qna-list {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  margin-bottom: 24px;
 }
 
 .qna-item {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
   border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s;
+  background-color: #f9fafb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+}
+
+.qna-container.dark .qna-item {
+  border-color: #4b5563;
+  background-color: #111827;
 }
 
 .qna-item:hover {
-  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
-.qna-username,
+.qna-user {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.qna-container.dark .qna-user {
+  color: #d1d5db;
+}
+
 .qna-question {
-  margin: 0 0 10px;
-  font-size: 1rem;
-  color: #2d3748;
+  font-size: 16px;
+  color: #1f2937;
+  margin-top: 8px;
 }
 
-.qna-username strong,
-.qna-question strong {
-  color: #1a202c;
-  font-weight: 600;
+.qna-container.dark .qna-question {
+  color: #e5e7eb;
 }
 
 .qna-textarea {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  resize: vertical;
-  font-size: 0.95rem;
-  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #1f2937;
   outline: none;
-  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+.qna-container.dark .qna-textarea {
+  border-color: #4b5563;
+  background-color: #1f2937;
+  color: #e5e7eb;
 }
 
 .qna-textarea:focus {
-  border-color: #3182ce;
-  box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
 }
 
 .qna-button-group {
+  margin-top: 12px;
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 12px;
 }
 
 .qna-button {
   padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.95rem;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.qna-button--answer {
-  background: #38a169;
-  color: #fff;
+.qna-answer-button {
+  background-color: #22c55e;
+  color: #ffffff;
 }
 
-.qna-button--answer:hover {
-  background: #2f855a;
+.qna-answer-button:hover {
+  background-color: #16a34a;
 }
 
-.qna-button--submit {
-  background: #3182ce;
-  color: #fff;
+.qna-submit-button {
+  background-color: #3b82f6;
+  color: #ffffff;
 }
 
-.qna-button--submit:hover {
-  background: #2b6cb0;
+.qna-submit-button:hover {
+  background-color: #2563eb;
 }
 
-.qna-button--cancel {
-  background: #e2e8f0;
-  color: #2d3748;
+.qna-cancel-button {
+  background-color: #d1d5db;
+  color: #1f2937;
 }
 
-.qna-button--cancel:hover {
-  background: #cbd5e0;
+.qna-container.dark .qna-cancel-button {
+  background-color: #4b5563;
+  color: #e5e7eb;
 }
 
-.loading {
-  text-align: center;
-  color: #4a5568;
-  font-size: 1.1rem;
-  padding: 20px;
+.qna-cancel-button:hover {
+  background-color: #9ca3af;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+.qna-container.dark .qna-cancel-button:hover {
+  background-color: #6b7280;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
   .qna-container {
-    padding: 15px;
-  }
-
-  .qna-title {
-    font-size: 1.5rem;
+    padding: 16px;
   }
 
   .qna-item {
-    padding: 12px;
+    padding: 16px;
+  }
+
+  .qna-button-group {
+    flex-direction: column;
+    gap: 8px;
   }
 
   .qna-button {
-    padding: 6px 12px;
-    font-size: 0.9rem;
+    width: 100%;
+    text-align: center;
   }
 }

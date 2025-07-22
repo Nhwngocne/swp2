@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEvents } from "../../services/EventContext";
 import { AuthContext } from "../../services/AuthContext";
-import "../../assets/css/components/staff/EventManager.css";
+import "../../assets/css/components/staff/EditManager.css";
 
 const EditEvent = () => {
   const { id } = useParams();
@@ -293,8 +293,8 @@ const EditEvent = () => {
   const isAfternoonOnly = formData.startTime && formData.endTime && !startIsMorning && endIsAfternoon && isBefore(formData.startTime, formData.endTime);
 
   return (
-    <div className="event-manager">
-      <div className="page-header">
+    <div className="edit-manager">
+      <div className="page-eheader">
         <h1>Chỉnh sửa sự kiện</h1>
         <button className="close-btn" onClick={() => navigate("/eventManager")}>
           ×
@@ -312,7 +312,7 @@ const EditEvent = () => {
             required
           />
         </div>
-        <div className="form-group">
+        {/* <div className="form-group">
           <label htmlFor="description">Mô tả:</label>
           <textarea
             name="description"
@@ -321,7 +321,7 @@ const EditEvent = () => {
             onChange={handleChange}
             required
           />
-        </div>
+        </div> */}
         <div className="form-group">
           <label htmlFor="date">Ngày:</label>
           <input
@@ -469,13 +469,25 @@ const EditEvent = () => {
         </div>
         {error && <p className="error-message">{error}</p>}
         <div className="form-actions">
-          <button type="submit" disabled={loading}>
-            {loading ? "Đang cập nhật..." : "Cập nhật"}
-          </button>
-          <button type="button" onClick={() => navigate("/eventManager")}>
-            Hủy
-          </button>
-        </div>
+                <button className="animated-button" type="submit" disabled={loading}>
+                  <span className="circle1"></span>
+                  <span className="circle2"></span>
+                  <span className="circle3"></span>
+                  <span className="circle4"></span>
+                  <span className="circle5"></span>
+                  <span className="text">{loading ? "Đang cập nhật..." : "Cập nhật"}</span>
+                </button>
+                
+                <button className="animated-button cancel-button" type="button" onClick={() => navigate("/eventManager")}>
+                  <span className="circle1"></span>
+                  <span className="circle2"></span>
+                  <span className="circle3"></span>
+                  <span className="circle4"></span>
+                  <span className="circle5"></span>
+                  <span className="text">Huỷ</span>
+                </button>
+          </div>
+
       </form>
     </div>
   );

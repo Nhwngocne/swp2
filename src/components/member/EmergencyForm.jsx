@@ -4,7 +4,6 @@ import { useAuth } from "../../services/AuthContext";
 import { useEmergency } from "../../services/EmergencyContext";
 import { useNavigate } from "react-router-dom";
 
-
 const EmergencyForm = () => {
   const { user } = useAuth();
   const { createEmergencyRequest, fetchEmergencyRequests } = useEmergency();
@@ -18,6 +17,8 @@ const EmergencyForm = () => {
     description: "",
     status: "PENDING",
   });
+
+  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,6 +46,7 @@ const EmergencyForm = () => {
       component: formData.component,
       description: formData.description,
       status: formData.status,
+      memberId: user?.id || 0, // Include memberId from user
     };
 
     try {
@@ -61,7 +63,7 @@ const EmergencyForm = () => {
           status: "PENDING",
         });
         await fetchEmergencyRequests();
-        navigate("/doner-search"); 
+        navigate("/doner-search");
       } else {
         alert(response.error || "Gửi yêu cầu thất bại.");
       }
@@ -105,13 +107,21 @@ const EmergencyForm = () => {
             />
           </div>
           <div>
-            <label>Thành phần (component):</label>
-            <input
-              type="text"
+            <label>Nhóm máu:</label>
+            <select
               name="component"
               value={formData.component}
               onChange={handleChange}
-            />
+            >
+              <option value="" disabled>
+                Chọn nhóm máu
+              </option>
+              {bloodTypes.map((bloodType) => (
+                <option key={bloodType} value={bloodType}>
+                  {bloodType}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label>Mô tả (description):</label>
@@ -123,8 +133,8 @@ const EmergencyForm = () => {
               maxLength="1000"
             />
           </div>
-          <button type="submit">Gửi yêu cầu</button>
-        </form>
+<button button class="submit-kc">Gửi yêu cầu</button>        
+</form>
       </div>
     </div>
   );
