@@ -19,10 +19,12 @@ certificateAPI.interceptors.request.use(
     // Chỉ bỏ qua token cho GET /api/certificates/:id hoặc /api/certificates/by-donation/:id
     const isGetCertificates =
       config.method === "get" &&
-      (config.url.match(/^\/api\/certificates\/\d+$/) ||
-        config.url.match(/^\/api\/certificates\/by-donation\/\d+$/||
-        config.url.match(/^\/lookup\/\d+\/\d+$/))
-        );
+      (
+        /^\/api\/certificates\/\d+$/.test(config.url) ||
+        /^\/api\/certificates\/by-donation\/\d+$/.test(config.url) ||
+        /^\/lookup\/\d+\/\d+$/.test(config.url)
+      );
+
     if (token && !isGetCertificates && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
     } else if (!token && !isGetCertificates && !config.url.includes("/auth")) {

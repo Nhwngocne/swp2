@@ -89,10 +89,11 @@ const DonationHistory = () => {
                   <div className="card-item flex-buttons">
                     <button
                       className="view-result-btn"
-                      onClick={() => navigate(`/donation-result/${donation.id}`)}
+                      onClick={() => navigate(`/certificate/${donation.id}`)}
                     >
-                      Xem kết quả
+                      Xem chứng chỉ
                     </button>
+
                     <button
                       className="feedback-btn"
                       onClick={() =>

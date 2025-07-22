@@ -133,7 +133,7 @@ const AppContent = () => {
           <Route path="/donationHistory" element={<ProtectedRoute requiredRole="MEMBER"><DonationHistory /></ProtectedRoute>} />
           <Route path="/emergency" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyList /></ProtectedRoute>} />
           <Route path="/registerHistory" element={<ProtectedRoute requiredRole="MEMBER"><RegisterHistory /></ProtectedRoute>} />
-          <Route path="/certificate" element={<ProtectedRoute requiredRole="MEMBER"><Certificate /></ProtectedRoute>} />
+          <Route path="/certificate/:donationHistoryId" element={<ProtectedRoute requiredRole="MEMBER"><Certificate /></ProtectedRoute>}/>
           <Route path="/form" element={<ProtectedRoute requiredRole="MEMBER"><Form /></ProtectedRoute>} />
           <Route path="/emergencyForm" element={<ProtectedRoute requiredRole="MEMBER"><EmergencyForm /></ProtectedRoute>} />
           <Route path="/formDetail/:id" element={<ProtectedRoute requiredRole="MEMBER"><FormDetail /></ProtectedRoute>} />
