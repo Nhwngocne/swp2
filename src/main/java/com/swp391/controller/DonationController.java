@@ -163,7 +163,7 @@ public class DonationController {
     }
 
     @GetMapping("/top-donors")
-    public ApiResponse<List<TopDonorResponse>> getTopDonors(@RequestParam(defaultValue = "10") int limit) {
+    public ApiResponse<List<TopDonorResponse>> getTopDonors(@RequestParam(defaultValue = "5") int limit) {
         return ApiResponse.<List<TopDonorResponse>>builder()
                 .result(donationService.getTopDonors(limit))
                 .build();
