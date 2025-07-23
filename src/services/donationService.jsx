@@ -10,13 +10,16 @@ const donationAPI = axios.create({
 donationAPI.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    console.log("donationService request:", config.url, "Token:", token || "No token");
+    console.log(
+      "donationService request:",
+      config.url,
+      "Token:",
+      token || "No token"
+    );
     const isPublicEndpoint =
-  config.method === "get" &&
-  (
-    config.url.match(/^\/donations\/histories\/\d+$/) ||
-    config.url.match(/^\/donations\/receive\/\d+$/)
-  );
+      config.method === "get" &&
+      (config.url.match(/^\/donations\/histories\/\d+$/) ||
+        config.url.match(/^\/donations\/receive\/\d+$/));
     if (token && !isPublicEndpoint && !config.url.includes("/auth")) {
       config.headers.Authorization = `Bearer ${token}`;
     } else if (!token && !isPublicEndpoint && !config.url.includes("/auth")) {
@@ -60,7 +63,7 @@ export const donationService = {
   getDonationHistoryById: (id, config = {}) =>
     donationAPI.get(`/donations/histories/${id}`, config),
   getAllDonationHistories: (config = {}) =>
-  donationAPI.get("/donations/histories", config),
+    donationAPI.get("/donations/histories", config),
 
   updateDonationHistory: (id, formData, config = {}) =>
     donationAPI.put(`/donations/histories/${id}`, formData, config),
@@ -74,24 +77,27 @@ export const donationService = {
   updateDonationRegistration: (id, formData, config = {}) =>
     donationAPI.put(`/donations/registrations/${id}`, formData, config),
   deleteDonationRegistration: (id, config = {}) =>
-  donationAPI.delete(`/forms/${id}`, config),
+    donationAPI.delete(`/forms/${id}`, config),
   getDonationRegistrationsByMember: (memberId, config = {}) =>
     donationAPI.get(`/forms/member/${memberId}`, config),
-  
 
+  getTopDonors: (limit = 10, config = {}) =>
+    donationAPI.get("/donations/top-donors", { params: { limit }, ...config }),
+  getTotalVolumeByMemberId: (memberId, config = {}) =>
+    donationAPI.get(`/donations/total-volume/${memberId}`, config),
   // ===== Regis Offline =====
   createRegisOffline: (formData, config = {}) =>
     donationAPI.post("/donations/offline", formData, config),
   getRegisOfflineById: (id, config = {}) =>
     donationAPI.get(`/donations/offline/${id}`, config),
-  getAllRegisOffline: (config = {}) => 
-  donationAPI.get("/donations/offline", config),
+  getAllRegisOffline: (config = {}) =>
+    donationAPI.get("/donations/offline", config),
   updateRegisOffline: (id, formData, config = {}) =>
     donationAPI.put(`/donations/offline/${id}`, formData, config),
   deleteRegisOffline: (id, config = {}) =>
     donationAPI.delete(`/donations/offline/${id}`, config),
   getDonationRegistrationById: (id, config = {}) =>
-  donationAPI.get(`/forms/${id}`, config),
+    donationAPI.get(`/forms/${id}`, config),
 
   // ===== Regis Receive from Registration =====
   createRegisReceiveFromRegistration: (formData, config = {}) =>
@@ -103,5 +109,6 @@ export const donationService = {
   deleteRegisReceive: (id, config = {}) =>
     donationAPI.delete(`/donations/receive/${id}`, config),
 
-  getAllForms: (config = {}) => donationAPI.get("/blood-donation-forms", config),
+  getAllForms: (config = {}) =>
+    donationAPI.get("/blood-donation-forms", config),
 };

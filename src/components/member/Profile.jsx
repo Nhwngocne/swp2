@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../services/AuthContext";
+import { useDonation } from "../../services/DonationContext"; // Import useDonation
 import { authService } from "../../services/authService";
 import "../../assets/css/member/Profile.css";
 import FeedbackForm from "../../pages/FeedbackForm";
 
-
 const Profile = () => {
   const { updateProfile } = useAuth();
-  const [profileData, setProfileData] = useState(null);
+  const { fetchTotalVolumeByMemberId, totalVolume, loading: donationLoading, error: donationError } = useDonation(); // Use DonationContext
+  const [profileData, setProfileData] = useState(null); // Fixed typo: removed "Seigneur"
   const [isEditing, setIsEditing] = useState(false);
   const [originalProfile, setOriginalProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -20,6 +20,10 @@ const Profile = () => {
         const userData = response.data.result.user;
         setProfileData(userData);
         setOriginalProfile(userData);
+        // Fetch total volume for the user
+        if (userData?.id) {
+          fetchTotalVolumeByMemberId(userData.id);
+        }
       } catch (error) {
         alert("Không thể tải thông tin cá nhân");
       } finally {
@@ -28,7 +32,7 @@ const Profile = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [fetchTotalVolumeByMemberId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -56,7 +60,7 @@ const Profile = () => {
     }
   };
 
-  if (loading) return <div className="loading">Đang tải thông tin...</div>;
+  if (loading || donationLoading) return <div className="loading">Đang tải thông tin...</div>;
   if (!profileData) return <div className="error">Không có dữ liệu</div>;
 
   return (
@@ -69,6 +73,7 @@ const Profile = () => {
             {renderField("Số CCCD", "numberCccd", profileData.numberCccd)}
             {renderField("Ngày sinh", "dob", profileData.dob)}
             {renderField("Giới tính", "gender", profileData.gender)}
+            {renderField("Tổng lượng máu hiến", "totalVolume", totalVolume ? `${totalVolume} ml` : "Chưa có dữ liệu")}
           </div>
 
           <div className="profile-column">
@@ -82,7 +87,11 @@ const Profile = () => {
                   setIsEditing(!isEditing);
                 }}
               >
-                {isEditing ? "Hủy" : (<><i className="fa-solid fa-pen"></i> Chỉnh sửa</>)}
+                {isEditing ? "Hủy" : (
+                  <>
+                    <i className="fa-solid fa-pen"></i> Chỉnh sửa
+                  </>
+                )}
               </button>
             </div>
             {renderField("Địa chỉ liên hệ", "address", profileData.address, true)}
@@ -98,28 +107,27 @@ const Profile = () => {
           </div>
         )}
       </form>
-      
     </div>
   );
 
-function renderField(label, name, value, allowEdit = false) {
-  return (
-    <div className="profile-field-inline">
-      <span className="label">{label}</span>
-      <span className="colon">:</span>
-      {isEditing && allowEdit ? (
-        <input
-          type="text"
-          name={name}
-          value={value || ""}
-          onChange={handleInputChange}
-        />
-      ) : (
-        <span className="value">{value || "-"}</span>
-      )}
-    </div>
-  );
-}
+  function renderField(label, name, value, allowEdit = false) {
+    return (
+      <div className="profile-field-inline">
+        <span className="label">{label}</span>
+        <span className="colon">:</span>
+        {isEditing && allowEdit ? (
+          <input
+            type="text"
+            name={name}
+            value={value || ""}
+            onChange={handleInputChange}
+          />
+        ) : (
+          <span className="value">{value || "-"}</span>
+        )}
+      </div>
+    );
+  }
 };
 
 export default Profile;

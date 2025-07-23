@@ -367,4 +367,81 @@
   .benefit-right {
     width: 100%;
   }
+
 }
+
+.top-donors-section {
+  padding: 60px 20px;
+  background-color: #fff6f6;
+}
+
+.top-donors-section .container {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.top-donors-section .section-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #a73737;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.top-donors-section .section-title::after {
+  content: "";
+  width: 60px;
+  height: 4px;
+  background-color: #a73737;
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 4px;
+}
+
+.top-donors-section .loading,
+.top-donors-section .error {
+  font-size: 18px;
+  color: #a73737;
+  margin-top: 20px;
+}
+
+.top-donors-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.top-donors-section li {
+  background: #fff;
+  border: 2px solid #f8dada;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.top-donors-section li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.top-donors-section li p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.top-donors-section li strong {
+  display: inline-block;
+  font-size: 18px;
+  color: #a73737;
+  margin-bottom: 6px;
+}
+

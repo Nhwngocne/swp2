@@ -8,9 +8,11 @@ import imgMain from '../assets/img/home2.jpg';
 import imgSub1 from '../assets/img/hom1.jpg';
 import imgSub2 from '../assets/img/hien-mau-nhan-dao.webp';
 import FeedbackList from "./FeedbackList";
-// import heartImg from "../assets/img/heart-in-hand.jpg";
-
-
+import { useDonation } from "../services/DonationContext";
+import {
+  IdCard, Syringe, ShieldX, Weight, HeartPulse,
+  Droplet, UserCheck, CalendarDays
+} from "lucide-react";
 
 const benefitSlides = [
   {
@@ -42,32 +44,29 @@ const benefitSlides = [
   }
 ];
 
-import {
-  IdCard, Syringe, ShieldX, Weight, HeartPulse,
-  Droplet, UserCheck, CalendarDays, ShieldCheck
-} from "lucide-react";
-
 const standardsList = [
   { icon: <IdCard color="#a73737" size={28} />, text: "Mang theo chứng minh nhân dân/hộ chiếu" },
   { icon: <Syringe color="#a73737" size={28} />, text: "Không nghiện ma túy, rượu bia và các chất kích thích" },
   { icon: <ShieldX color="#a73737" size={28} />, text: "Không mắc HIV, viêm gan B/C, các virus lây qua máu" },
   { icon: <Weight color="#a73737" size={28} />, text: "Cân nặng: Nam ≥ 45 kg, Nữ ≥ 45 kg" },
-  // vị trí giữa chèn tiêu đề
   { icon: null, text: <span className="center-title">Tiêu chuẩn tham gia hiến máu</span>, center: true },
   { icon: <HeartPulse color="#a73737" size={28} />, text: "Không mắc bệnh tim mạch, huyết áp, hô hấp…" },
   { icon: <Droplet color="#a73737" size={28} />, text: "Chỉ số huyết sắc tố (Hb) ≥120g/l (≥125g/l nếu hiến ≥350ml)" },
   { icon: <UserCheck color="#a73737" size={28} />, text: "Người khỏe mạnh, độ tuổi từ 18 đến 60" },
   { icon: <CalendarDays color="#a73737" size={28} />, text: "Thời gian giữa 2 lần hiến máu là 12 tuần trở lên" },
 ];
-const achievements = [
-  { icon: "🩸", label: "Lượt hiến máu", value: 12450 },
-  { icon: "👥", label: "Người hiến máu", value: 3567 },
-  { icon: "🏥", label: "Đơn vị máu", value: 8920 },
-  { icon: "❤️", label: "Mạng sống được cứu", value: 25380 }
-];
-
 
 const Home = () => {
+  const { topDonors, loading, error, fetchTopDonors } = useDonation();
+  console.log("Home: Giá trị topDonors:", JSON.stringify(topDonors, null, 2));
+  console.log("Home: loading:", loading, "error:", error);
+
+  const handleFetchTopDonors = async () => {
+    console.log("Home: Gọi lại fetchTopDonors");
+    const result = await fetchTopDonors(10);
+    console.log("Home: Kết quả fetchTopDonors:", JSON.stringify(result, null, 2));
+  };
+
   const settings = {
     dots: true,
     infinite: true,
@@ -79,96 +78,98 @@ const Home = () => {
 
   return (
     <div className="home-page">
-
-<section className="hero-section-implant">
-  <div className="container hero-layout">
-    <div className="hero-content-left">
-      <span className="hero-brand">BỆNH VIỆN</span>
-      <h1>
-        <span className="highlight">HIẾN MÁU VÌ CỘNG ĐỒNG </span><br />
-        
-      </h1>
-      <div className="hero-description">
-        Hiến máu không chỉ là một hành động nhân văn cao cả, mà còn là cầu nối yêu thương giữa những trái tim đang cần sự sống.<br /> 
-        Mỗi giọt máu bạn trao đi hôm nay có thể đem lại hy vọng sống cho một người bệnh, một đứa trẻ, hoặc một người mẹ đang giành giật sự sống từng giây.<br />
-        <b>Hãy cùng chúng tôi lan tỏa thông điệp nhân ái và xây dựng một cộng đồng khoẻ mạnh – nơi mà mỗi người đều có thể trở thành người hùng thầm lặng chỉ bằng một hành động đơn giản.</b>
-
-      </div>
-      <div className="hero-actions">
-        <Link to="/events" className="btn red">Xem Sự Kiện</Link>
-        <Link to="/faq" className="btn white">Tìm Hiểu Thêm</Link>
-      </div>
-    </div>
-
-      <div className="hero-image-group">
-        <img src={imgMain} alt="..." className="hero-img main" />
-        <img src={imgSub1} alt="..." className="hero-img sub1" />
-        <img src={imgSub2} alt="..." className="hero-img sub2" />
-      </div>
-  </div>
-</section>
-
-            {/* Quyền lợi của người hiến máu */}
-<section className="benefit-modern-section">
-  <div className="benefit-modern-container">
-<div className="benefit-image-wrapper">
-  <div className="l-frame-bg"></div> {/* Khối nền L riêng */}
-  <img src={imgSub2} alt="Hiến máu" className="benefit-modern-img" />
-</div>
-
-    <div className="benefit-modern-list">
-      <h2 className="section-title yellow">Quyền lợi của người hiến máu</h2>
-      <Slider {...settings}>
-  {benefitSlides.map((slide, index) => (
-    <div key={index}>
-      {/* Khối bo tròn đỏ chỉ chứa title */}
-      <div className="benefit-title-box">
-        <span className="check-icon">✔</span>
-       
-        <span className="benefit-title-text">{slide.title}</span>
-      </div>
-
-      {/* Các content hiển thị dạng thường */}
-      {slide.content.map((item, idx) => (
-        <div key={idx} className="benefit-content-item">
-          <span className="content-check">✔</span> {item}
+      <section className="hero-section-implant">
+        <div className="container hero-layout">
+          <div className="hero-content-left">
+            <span className="hero-brand">BỆNH VIỆN</span>
+            <h1>
+              <span className="highlight">HIẾN MÁU VÌ CỘNG ĐỒNG </span><br />
+            </h1>
+            <div className="hero-description">
+              Hiến máu không chỉ là một hành động nhân văn cao cả, mà còn là cầu nối yêu thương giữa những trái tim đang cần sự sống.<br /> 
+              Mỗi giọt máu bạn trao đi hôm nay có thể đem lại hy vọng sống cho một người bệnh, một đứa trẻ, hoặc một người mẹ đang giành giật sự sống từng giây.<br />
+              <b>Hãy cùng chúng tôi lan tỏa thông điệp nhân ái và xây dựng một cộng đồng khoẻ mạnh – nơi mà mỗi người đều có thể trở thành người hùng thầm lặng chỉ bằng một hành động đơn giản.</b>
+            </div>
+            <div className="hero-actions">
+              <Link to="/events" className="btn red">Xem Sự Kiện</Link>
+              <Link to="/faq" className="btn white">Tìm Hiểu Thêm</Link>
+            </div>
+          </div>
+          <div className="hero-image-group">
+            <img src={imgMain} alt="..." className="hero-img main" />
+            <img src={imgSub1} alt="..." className="hero-img sub1" />
+            <img src={imgSub2} alt="..." className="hero-img sub2" />
+          </div>
         </div>
-      ))}
-    </div>
-  ))}
-</Slider>
-    </div>
-  </div>
-</section>
-      {/* Standards */}
-<section className="donation-standards">
-  <div className="standards-grid-centered">
-    {standardsList.map((item, idx) => (
-      <div
-        className={`standard-box ${item.center ? "center-title-box" : ""}`}
-        key={idx}
-      >
-        {item.icon && <div className="icon-circle">{item.icon}</div>}
-        <p className={item.center ? "center-title-text" : ""}>{item.text}</p>
-      </div>
-    ))}
-  </div>
-</section>
+      </section>
 
- {/* <section className="achievements-section">
-        <h3 className="section-title">Thành tựu của chúng ta</h3>
-        <div className="achievements-grid">
-          {achievements.map((ach, idx) => (
-            <div className="achievement-card" key={idx}>
-              <span className="achievement-icon">{ach.icon}</span>
-              <div className="achievement-value">{ach.value.toLocaleString()}</div>
-              <div className="achievement-label">{ach.label}</div>
+      <section className="benefit-modern-section">
+        <div className="benefit-modern-container">
+          <div className="benefit-image-wrapper">
+            <div className="l-frame-bg"></div>
+            <img src={imgSub2} alt="Hiến máu" className="benefit-modern-img" />
+          </div>
+          <div className="benefit-modern-list">
+            <h2 className="section-title yellow">Quyền lợi của người hiến máu</h2>
+            <Slider {...settings}>
+              {benefitSlides.map((slide, index) => (
+                <div key={index}>
+                  <div className="benefit-title-box">
+                    <span className="check-icon">✔</span>
+                    <span className="benefit-title-text">{slide.title}</span>
+                  </div>
+                  {slide.content.map((item, idx) => (
+                    <div key={idx} className="benefit-content-item">
+                      <span className="content-check">✔</span> {item}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </Slider>
+          </div>
+        </div>
+      </section>
+
+      <section className="donation-standards">
+        <div className="standards-grid-centered">
+          {standardsList.map((item, idx) => (
+            <div
+              className={`standard-box ${item.center ? "center-title-box" : ""}`}
+              key={idx}
+            >
+              {item.icon && <div className="icon-circle">{item.icon}</div>}
+              <p className={item.center ? "center-title-text" : ""}>{item.text}</p>
             </div>
           ))}
         </div>
-      </section> */}
-      {/* Achievements */}
-        <FeedbackList />
+      </section>
+
+      <section className="top-donors-section">
+        <div className="container">
+          <h2 className="section-title yellow">Top Nhà Hảo Tâm</h2>
+          {loading ? (
+            <div className="loading">Đang tải...</div>
+          ) : error ? (
+            <div className="error">Lỗi: {error}</div>
+          ) : topDonors.length === 0 ? (
+            <p>Chưa có dữ liệu nhà hảo tâm</p>
+          ) : (
+            <ul>
+              {topDonors.map((donor) => (
+                <li key={donor.memberId}>
+                  <p>
+                    <strong>{donor.memberName}</strong><br />
+                    Tổng lượng máu: {donor.totalVolume.toLocaleString()} ml<br />
+                    Số lần hiến: {donor.donationCount}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+
+      <FeedbackList />
     </div>
   );
 };

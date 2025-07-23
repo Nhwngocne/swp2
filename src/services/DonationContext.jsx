@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from "react";
 import { donationService } from "../services/donationService";
-import { useAuth } from "../services/AuthContext";
+import { useAuth } from "./AuthContext";
 import axios from "axios";
 
 const DonationContext = createContext();
@@ -28,16 +28,18 @@ export const DonationProvider = ({ children }) => {
   const [regisReceive, setRegisReceive] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const isFetchingRef = useRef(false);
   const [forms, setForms] = useState([]);
+  const [topDonors, setTopDonors] = useState([]);
+  const [totalVolume, setTotalVolume] = useState(null); // New state for total volume
+  const isFetchingRef = useRef(false);
 
   // Mapping cho DonationHistoryResponse
   const mapDonationHistory = (history) => ({
     id: history.id,
-    createdDate: history.createdDate, // Khớp với DonationHistoryResponse
-    result: history.result || "Không đạt", // "Đạt" hoặc "Không đạt"
+    createdDate: history.createdDate,
+    result: history.result || "Không đạt",
     location: history.location || "",
-    bloodType: history.bloodType || "UNKNOWN", // Khớp với String bloodType
+    bloodType: history.bloodType || "UNKNOWN",
     volume: history.volume || 0,
     memberId: history.memberId,
     memberName: history.memberName || "Không xác định",
@@ -47,7 +49,7 @@ export const DonationProvider = ({ children }) => {
     bloodIntentFormResponse: history.bloodIntentFormResponse || null,
   });
 
-  // Mapping cho DonationRegistrationResponse (giả định không có response cụ thể, dùng trạng thái)
+  // Mapping cho DonationRegistrationResponse
   const mapDonationRegistration = (status) => ({ status });
 
   // Mapping cho RegisOfflineResponse
@@ -64,28 +66,131 @@ export const DonationProvider = ({ children }) => {
     id: receive.id,
   });
 
-  // ===== Donation History =====
+  // Mapping cho TopDonorResponse
+  const mapTopDonor = (donor) => {
+    console.log("mapTopDonor: Đang map donor:", JSON.stringify(donor, null, 2));
+    return {
+      memberId: donor.memberId,
+      memberName: donor.memberName || "Không xác định",
+      totalVolume: donor.totalVolume || 0,
+      donationCount: donor.donationCount || 0,
+    };
+  };
+// volume
+  const fetchTotalVolumeByMemberId = useCallback(async (memberId) => {
+    if (isFetchingRef.current) {
+      console.log("fetchTotalVolumeByMemberId: Đang tải, bỏ qua yêu cầu mới");
+      return { success: false, error: "Đang tải dữ liệu" };
+    }
+    isFetchingRef.current = true;
+    try {
+      setLoading(true);
+      console.log(
+        `fetchTotalVolumeByMemberId: Đang lấy tổng volume của member ${memberId} từ /swp391/total-volume/${memberId}`
+      );
+      const source = axios.CancelToken.source();
+      const response = await donationService.getTotalVolumeByMemberId(memberId, {
+        cancelToken: source.token,
+      });
+      console.log(
+        "fetchTotalVolumeByMemberId: API response:",
+        JSON.stringify(response.data, null, 2)
+      );
+      const volume = response.data.result || 0;
+      setTotalVolume(volume);
+      setError(null);
+      return { success: true, totalVolume: volume };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log(
+          "fetchTotalVolumeByMemberId: Hủy lấy tổng volume:",
+          error.message
+        );
+        return { success: false, error: error.message };
+      }
+      console.error(
+        "fetchTotalVolumeByMemberId: Lỗi lấy tổng volume:",
+        error.response?.status,
+        error.message
+      );
+      const errorMessage =
+        error.response?.data?.message || "Không thể tải tổng volume";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+      console.log("fetchTotalVolumeByMemberId: Hoàn tất yêu cầu, loading:", false);
+    }
+  }, []);
+  // Fetch Top Donors
+  const fetchTopDonors = useCallback(async (limit = 10) => {
+    if (isFetchingRef.current) {
+      console.log("fetchTopDonors: Đang tải, bỏ qua yêu cầu mới");
+      return { success: false, error: "Đang tải dữ liệu" };
+    }
+    isFetchingRef.current = true;
+    try {
+      setLoading(true);
+      console.log(`fetchTopDonors: Gửi yêu cầu tới /swp391/donations/top-donors?limit=${limit}`);
+      console.log("fetchTopDonors: Token trong localStorage:", localStorage.getItem("token"));
+      const source = axios.CancelToken.source();
+      const response = await donationService.getTopDonors(limit, {
+        cancelToken: source.token,
+      });
+      console.log("fetchTopDonors: Response từ BE:", JSON.stringify(response.data, null, 2));
+      const result = response.data.result || [];
+      console.log("fetchTopDonors: result:", JSON.stringify(result, null, 2));
+      const mappedDonors = result.map(mapTopDonor);
+      console.log("fetchTopDonors: Dữ liệu sau khi map:", JSON.stringify(mappedDonors, null, 2));
+      setTopDonors(mappedDonors);
+      console.log("fetchTopDonors: Đã set topDonors:", JSON.stringify(mappedDonors, null, 2));
+      setError(null);
+      return { success: true, donors: mappedDonors };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("fetchTopDonors: Yêu cầu bị hủy:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error("fetchTopDonors: Lỗi khi gọi API:", {
+        status: error.response?.status,
+        message: error.message,
+        data: error.response?.data,
+        url: error.config?.url,
+      });
+      const errorMessage = error.response?.data?.message || "Không thể tải danh sách top nhà hảo tâm";
+      setError(errorMessage);
+      console.log("fetchTopDonors: Đã set error:", errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+      console.log("fetchTopDonors: Hoàn tất yêu cầu, loading:", false);
+    }
+  }, []);
+
+  // Fetch Donation Histories
   const fetchDonationHistories = useCallback(async () => {
     if (isFetchingRef.current) return { success: false, error: "Đang tải dữ liệu" };
     isFetchingRef.current = true;
     try {
       setLoading(true);
-      console.log("Đang lấy tất cả lịch sử hiến máu từ /swp391/donations/histories");
+      console.log("fetchDonationHistories: Đang lấy tất cả lịch sử hiến máu từ /swp391/donations/histories");
       const source = axios.CancelToken.source();
       const response = await donationService.getAllDonationHistories({
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("fetchDonationHistories: API response:", JSON.stringify(response.data, null, 2));
       const mappedHistories = response.data.result.map(mapDonationHistory);
       setDonationHistories(mappedHistories);
       setError(null);
       return { success: true, histories: mappedHistories };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy lấy lịch sử hiến máu:", error.message);
+        console.log("fetchDonationHistories: Hủy lấy lịch sử hiến máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi lấy lịch sử hiến máu:", error.response?.status, error.message);
+      console.error("fetchDonationHistories: Lỗi lấy lịch sử hiến máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Không thể tải lịch sử hiến máu";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -100,22 +205,22 @@ export const DonationProvider = ({ children }) => {
     isFetchingRef.current = true;
     try {
       setLoading(true);
-      console.log(`Đang lấy lịch sử hiến máu của member ${memberId} từ /swp391/donations/histories/member/${memberId}`);
+      console.log(`fetchDonationHistoriesByMemberId: Đang lấy lịch sử hiến máu của member ${memberId} từ /swp391/donations/histories/member/${memberId}`);
       const source = axios.CancelToken.source();
       const response = await donationService.getDonationHistoriesByMemberId(memberId, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("fetchDonationHistoriesByMemberId: API response:", JSON.stringify(response.data, null, 2));
       const mappedHistories = response.data.result.map(mapDonationHistory);
       setDonationHistories(mappedHistories);
       setError(null);
       return { success: true, histories: mappedHistories };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy lấy lịch sử hiến máu:", error.message);
+        console.log("fetchDonationHistoriesByMemberId: Hủy lấy lịch sử hiến máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi lấy lịch sử hiến máu:", error.response?.status, error.message);
+      console.error("fetchDonationHistoriesByMemberId: Lỗi lấy lịch sử hiến máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Không thể tải lịch sử hiến máu";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -128,21 +233,21 @@ export const DonationProvider = ({ children }) => {
   const getDonationHistoryById = async (id) => {
     try {
       setLoading(true);
-      console.log(`Đang lấy lịch sử hiến máu ${id} từ /swp391/donations/histories/${id}`);
+      console.log(`getDonationHistoryById: Đang lấy lịch sử hiến máu ${id} từ /swp391/donations/histories/${id}`);
       const source = axios.CancelToken.source();
       const response = await donationService.getDonationHistoryById(id, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("getDonationHistoryById: API response:", JSON.stringify(response.data, null, 2));
       const mappedHistory = mapDonationHistory(response.data.result);
       setError(null);
       return { success: true, history: mappedHistory };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy lấy lịch sử hiến máu:", error.message);
+        console.log("getDonationHistoryById: Hủy lấy lịch sử hiến máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi lấy lịch sử hiến máu:", error.response?.status, error.message);
+      console.error("getDonationHistoryById: Lỗi lấy lịch sử hiến máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Không thể tải lịch sử hiến máu";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -154,26 +259,24 @@ export const DonationProvider = ({ children }) => {
   const createDonationHistory = async (historyData) => {
     try {
       setLoading(true);
-      console.log("Đang tạo lịch sử hiến máu tại /swp391/donations/histories");
+      console.log("createDonationHistory: Đang tạo lịch sử hiến máu tại /swp391/donations/histories");
       if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
       const payload = {
-        result: historyData.result, // "Đạt" hoặc "Không đạt"
+        result: historyData.result,
         location: historyData.location,
         volume: historyData.volume,
         bloodTypeId: historyData.bloodTypeId,
         bloodDonationFormId: historyData.bloodDonationFormId,
-        memberId: historyData.memberId, // Lấy từ user
+        memberId: historyData.memberId,
         staffId: historyData.staffId,
-        eventId: historyData.eventId, 
-
+        eventId: historyData.eventId,
       };
-          console.log("Payload gửi backend:", JSON.stringify(payload, null, 2));
-
+      console.log("createDonationHistory: Payload gửi backend:", JSON.stringify(payload, null, 2));
       const source = axios.CancelToken.source();
       const response = await donationService.createDonationHistory(payload, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("createDonationHistory: API response:", JSON.stringify(response.data, null, 2));
       const newHistory = mapDonationHistory(response.data.result);
       setDonationHistories((prev) => [...prev, newHistory]);
       setError(null);
@@ -184,10 +287,10 @@ export const DonationProvider = ({ children }) => {
       };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy tạo lịch sử hiến máu:", error.message);
+        console.log("createDonationHistory: Hủy tạo lịch sử hiến máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi tạo lịch sử hiến máu:", error.response?.status, error.message);
+      console.error("createDonationHistory: Lỗi tạo lịch sử hiến máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Tạo lịch sử hiến máu thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -199,7 +302,7 @@ export const DonationProvider = ({ children }) => {
   const updateDonationHistory = async (id, historyData) => {
     try {
       setLoading(true);
-      console.log(`Đang cập nhật lịch sử hiến máu ${id} tại /swp391/donations/histories/${id}`);
+      console.log(`updateDonationHistory: Đang cập nhật lịch sử hiến máu ${id} tại /swp391/donations/histories/${id}`);
       const payload = {
         result: historyData.result,
         location: historyData.location,
@@ -213,7 +316,7 @@ export const DonationProvider = ({ children }) => {
       const response = await donationService.updateDonationHistory(id, payload, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("updateDonationHistory: API response:", JSON.stringify(response.data, null, 2));
       const updatedHistory = mapDonationHistory(response.data.result);
       setDonationHistories((prev) =>
         prev.map((history) => (history.id === id ? updatedHistory : history))
@@ -226,10 +329,10 @@ export const DonationProvider = ({ children }) => {
       };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy cập nhật lịch sử hiến máu:", error.message);
+        console.log("updateDonationHistory: Hủy cập nhật lịch sử hiến máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi cập nhật lịch sử hiến máu:", error.response?.status, error.message);
+      console.error("updateDonationHistory: Lỗi cập nhật lịch sử hiến máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Cập nhật lịch sử hiến máu thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -241,21 +344,21 @@ export const DonationProvider = ({ children }) => {
   const deleteDonationHistory = async (id) => {
     try {
       setLoading(true);
-      console.log(`Đang xóa lịch sử hiến máu ${id} tại /swp391/donations/histories/${id}`);
+      console.log(`deleteDonationHistory: Đang xóa lịch sử hiến máu ${id} tại /swp391/donations/histories/${id}`);
       const source = axios.CancelToken.source();
       await donationService.deleteDonationHistory(id, {
         cancelToken: source.token,
       });
-      console.log("Xóa lịch sử hiến máu thành công");
+      console.log("deleteDonationHistory: Xóa lịch sử hiến máu thành công");
       setDonationHistories((prev) => prev.filter((history) => history.id !== id));
       setError(null);
       return { success: true, message: "Xóa lịch sử hiến máu thành công" };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy xóa lịch sử hiến máu:", error.message);
+        console.log("deleteDonationHistory: Hủy xóa lịch sử hiến máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi xóa lịch sử hiến máu:", error.response?.status, error.message);
+      console.error("deleteDonationHistory: Lỗi xóa lịch sử hiến máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Xóa lịch sử hiến máu thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -264,11 +367,10 @@ export const DonationProvider = ({ children }) => {
     }
   };
 
-  // ===== Donation Registration =====
   const createDonationRegistration = async (registrationData) => {
     try {
       setLoading(true);
-      console.log("Đang tạo đăng ký hiến máu tại /swp391/donations/registrations");
+      console.log("createDonationRegistration: Đang tạo đăng ký hiến máu tại /swp391/donations/registrations");
       if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
       const payload = {
         donateDate: registrationData.donateDate,
@@ -280,7 +382,7 @@ export const DonationProvider = ({ children }) => {
       const response = await donationService.createDonationRegistration(payload, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("createDonationRegistration: API response:", JSON.stringify(response.data, null, 2));
       const newStatus = mapDonationRegistration(response.data.result);
       setDonationRegistrations((prev) => [...prev, newStatus]);
       setError(null);
@@ -291,10 +393,10 @@ export const DonationProvider = ({ children }) => {
       };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy tạo đăng ký hiến máu:", error.message);
+        console.log("createDonationRegistration: Hủy tạo đăng ký hiến máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi tạo đăng ký hiến máu:", error.response?.status, error.message);
+      console.error("createDonationRegistration: Lỗi tạo đăng ký hiến máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Tạo đăng ký hiến máu thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -306,7 +408,7 @@ export const DonationProvider = ({ children }) => {
   const updateDonationRegistration = async (id, registrationData) => {
     try {
       setLoading(true);
-      console.log(`Đang cập nhật đăng ký hiến máu ${id} tại /swp391/donations/registrations/${id}`);
+      console.log(`updateDonationRegistration: Đang cập nhật đăng ký hiến máu ${id} tại /swp391/donations/registrations/${id}`);
       const payload = {
         donateDate: registrationData.donateDate,
         location: registrationData.location,
@@ -317,7 +419,7 @@ export const DonationProvider = ({ children }) => {
       const response = await donationService.updateDonationRegistration(id, payload, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("updateDonationRegistration: API response:", JSON.stringify(response.data, null, 2));
       const updatedStatus = mapDonationRegistration(response.data.result);
       setDonationRegistrations((prev) =>
         prev.map((reg) => (reg.id === id ? updatedStatus : reg))
@@ -330,10 +432,10 @@ export const DonationProvider = ({ children }) => {
       };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy cập nhật đăng ký hiến máu:", error.message);
+        console.log("updateDonationRegistration: Hủy cập nhật đăng ký hiến máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi cập nhật đăng ký hiến máu:", error.response?.status, error.message);
+      console.error("updateDonationRegistration: Lỗi cập nhật đăng ký hiến máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Cập nhật đăng ký hiến máu thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -345,21 +447,21 @@ export const DonationProvider = ({ children }) => {
   const deleteDonationRegistration = async (id) => {
     try {
       setLoading(true);
-      console.log(`Đang xóa đăng ký hiến máu ${id} tại /swp391/donations/registrations/${id}`);
+      console.log(`deleteDonationRegistration: Đang xóa đăng ký hiến máu ${id} tại /swp391/donations/registrations/${id}`);
       const source = axios.CancelToken.source();
       await donationService.deleteDonationRegistration(id, {
         cancelToken: source.token,
       });
-      console.log("Xóa đăng ký hiến máu thành công");
+      console.log("deleteDonationRegistration: Xóa đăng ký hiến máu thành công");
       setDonationRegistrations((prev) => prev.filter((reg) => reg.id !== id));
       setError(null);
       return { success: true, message: "Xóa đăng ký hiến máu thành công" };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy xóa đăng ký hiến máu:", error.message);
+        console.log("deleteDonationRegistration: Hủy xóa đăng ký hiến máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi xóa đăng ký hiến máu:", error.response?.status, error.message);
+      console.error("deleteDonationRegistration: Lỗi xóa đăng ký hiến máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Xóa đăng ký hiến máu thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -371,20 +473,20 @@ export const DonationProvider = ({ children }) => {
   const getFormsByMember = async (memberId) => {
     setLoading(true);
     try {
-      console.log(`Đang lấy danh sách đăng ký của member ${memberId} từ /swp391/forms/member/${memberId}`);
+      console.log(`getFormsByMember: Đang lấy danh sách đăng ký của member ${memberId} từ /swp391/forms/member/${memberId}`);
       const source = axios.CancelToken.source();
       const response = await donationService.getDonationRegistrationsByMember(memberId, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("getFormsByMember: API response:", JSON.stringify(response.data, null, 2));
       setForms(response.data.result || []);
       setError(null);
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy lấy danh sách đăng ký:", error.message);
+        console.log("getFormsByMember: Hủy lấy danh sách đăng ký:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi lấy danh sách đăng ký:", error.response?.status, error.message);
+      console.error("getFormsByMember: Lỗi lấy danh sách đăng ký:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Không thể tải danh sách đăng ký";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -393,231 +495,246 @@ export const DonationProvider = ({ children }) => {
     }
   };
 
-  // ===== Regis Offline =====
-    const fetchRegisOffline = useCallback(async () => {
-  if (isFetchingRef.current) {
-    return { success: false, error: "Đang tải dữ liệu..." };
-  }
-
-  isFetchingRef.current = true;
-  setLoading(true);
-
-  try {
-    const response = await donationService.getAllRegisOffline();
-    const data = response?.data?.result || [];
-
-    // Map lại dữ liệu nếu cần sửa format ngày và trạng thái
-    const mapped = data.map((item) => ({
-      ...item,
-      createdAt: item.createdAt 
-        ? new Date(item.createdAt).toLocaleDateString("vi-VN")
-        : "",
-      status: item.status?.toUpperCase() || "CHƯA RÕ",
-    }));
-
-    setRegisOfflineList(mapped);
-    setError(null);
-    return { success: true, data: mapped };
-
-  } catch (err) {
-    const errorMsg = err.response?.data?.message || "Không thể tải danh sách đơn đăng ký";
-    console.error("Lỗi khi tải danh sách regisOffline:", err);
-    setError(errorMsg);
-    return { success: false, error: errorMsg };
-
-  } finally {
-    setLoading(false);
-    isFetchingRef.current = false;
-  }
-}, []);
-
-
-  const getRegisOfflineById = async (id) => {
-  if (!id) return { success: false, error: "ID không hợp lệ" };
-
-  try {
-    setLoading(true);
-    console.log(`Đang lấy đơn đăng ký offline với ID: ${id}`);
-    
-    const response = await donationService.getRegisOfflineById(id);
-    
-    if (!response?.data?.result) {
-      throw new Error("Không tìm thấy dữ liệu đơn đăng ký");
+  const fetchRegisOffline = useCallback(async () => {
+    if (isFetchingRef.current) {
+      console.log("fetchRegisOffline: Đang tải, bỏ qua yêu cầu mới");
+      return { success: false, error: "Đang tải dữ liệu..." };
     }
-
-    // Có thể map lại dữ liệu nếu cần
-    const mappedOffline = mapRegisOffline(response.data.result);
-
-    setError(null);
-    return { success: true, offline: mappedOffline };
-  } catch (error) {
-    console.error("Lỗi khi lấy đơn đăng ký offline:", error);
-    const errorMessage =
-      error.response?.data?.message || error.message || "Không thể tải đơn đăng ký offline";
-    setError(errorMessage);
-    return { success: false, error: errorMessage };
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const createRegisOffline = async (offlineData) => {
-  try {
-    setLoading(true);
-    console.log("Đang tạo đăng ký offline tại /swp391/donations/offline");
-
-    if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-
-    // Tạo payload đúng theo RegisOfflineRequest
-    const payload = {
-      name: offlineData.name,
-      phone: offlineData.phone,
-      numberCccd: offlineData.numberCccd,
-      address: offlineData.address || "",
-      email: offlineData.email || "",
-      donatedBefore: offlineData.donatedBefore || false,
-      hadSeriousDisease: offlineData.hadSeriousDisease || false,
-      hadMalariaOrOtherInfectious: offlineData.hadMalariaOrOtherInfectious || false,
-      receivedBlood: offlineData.receivedBlood || false,
-      gotVaccine: offlineData.gotVaccine || false,
-      noneOfAbove12Months: offlineData.noneOfAbove12Months || false,
-      tattooOrAcupuncture: offlineData.tattooOrAcupuncture || false,
-      hadSkinIssues: offlineData.hadSkinIssues || false,
-      usedAntibioticsOrAntiInflammatory: offlineData.usedAntibioticsOrAntiInflammatory || false,
-      symptomsPast2Weeks: offlineData.symptomsPast2Weeks || false,
-      symptomsPast1Week: offlineData.symptomsPast1Week || false,
-      isMenstruating: offlineData.isMenstruating || false,
-      isPregnantOrRecentlyDelivered: offlineData.isPregnantOrRecentlyDelivered || false,
-      noneOfFemaleConditions: offlineData.noneOfFemaleConditions || false,
-      staffId: user.id, // ID nhân viên hiện tại
-      location: offlineData.location,
-      weight: offlineData.weight || null,
-      height: offlineData.height || null,
-      bloodPressure: offlineData.bloodPressure || "",
-    };
-
-    const response = await donationService.createRegisOffline(payload);
-    console.log("API response:", response.data);
-
-    const newOffline = mapRegisOffline(response.data.result);
-    setRegisOffline((prev) => [...prev, newOffline]);
-    setError(null);
-
-    return {
-      success: true,
-      message: "Tạo đăng ký offline thành công",
-      offline: newOffline,
-    };
-  } catch (error) {
-    if (axios.isCancel(error)) {
-      console.log("Hủy tạo đăng ký offline:", error.message);
-      return { success: false, error: error.message };
-    }
-    console.error("Lỗi tạo đăng ký offline:", error.response?.status, error.message);
-    const errorMessage = error.response?.data?.message || "Tạo đăng ký offline thất bại";
-    setError(errorMessage);
-    return { success: false, error: errorMessage };
-  } finally {
-    setLoading(false);
-  }
-};
-
-
- const updateRegisOffline = async (id, offlineData) => {
-  try {
-    setLoading(true);
-
-    if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
-
-    const payload = {
-      id: id,
-      bloodType: offlineData.bloodType,
-      volumeMl: Number(offlineData.volumeMl),
-      result: offlineData.result,
-      note: offlineData.note || "",
-      staffId: Number(user.id),
-      status: "COMPLETED", // mặc định
-    };
-
-    const response = await donationService.updateRegisOffline(id, payload);
-    return {
-      success: true,
-      data: response.data.result,
-    };
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message || "Cập nhật thất bại";
-    setError(errorMessage);
-    return { success: false, error: errorMessage };
-  } finally {
-    setLoading(false);
-  }
-};
-
- const deleteRegisOffline = async (id) => {
-  try {
-    setLoading(true);
-    console.log(`Đang xóa đăng ký offline ${id} tại /swp391/donations/offline/${id}`);
-    await donationService.deleteRegisOffline(id);
-    setRegisOffline((prev) => prev.filter((offline) => offline.id !== id));
-    setError(null);
-    return { success: true, message: "Xóa đăng ký offline thành công" };
-  } catch (error) {
-    console.error("Lỗi xóa đăng ký offline:", error.response?.status, error.message);
-    const errorMessage = error.response?.data?.message || "Xóa đăng ký offline thất bại";
-    setError(errorMessage);
-    return { success: false, error: errorMessage };
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // ===== Regis Receive from Registration =====
-  const fetchRegisReceive = useCallback(async () => {
-    if (isFetchingRef.current) return { success: false, error: "Đang tải dữ liệu" };
     isFetchingRef.current = true;
     try {
       setLoading(true);
-      console.log("Đang lấy tất cả đăng ký nhận máu từ /swp391/donations/receive");
+      console.log("fetchRegisOffline: Đang lấy tất cả đăng ký offline từ /swp391/donations/offline");
+      const response = await donationService.getAllRegisOffline();
+      console.log("fetchRegisOffline: API response:", JSON.stringify(response.data, null, 2));
+      const data = response?.data?.result || [];
+      const mapped = data.map((item) => ({
+        ...mapRegisOffline(item),
+        createdAt: item.createdAt
+          ? new Date(item.createdAt).toLocaleDateString("vi-VN")
+          : "",
+        status: item.status?.toUpperCase() || "CHƯA RÕ",
+      }));
+      setRegisOffline(mapped);
+      console.log("fetchRegisOffline: Đã set regisOffline:", JSON.stringify(mapped, null, 2));
+      setError(null);
+      return { success: true, data: mapped };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("fetchRegisOffline: Hủy lấy đăng ký offline:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error("fetchRegisOffline: Lỗi khi tải danh sách regisOffline:", error.response?.status, error.message);
+      const errorMessage = error.response?.data?.message || "Không thể tải danh sách đơn đăng ký";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+      console.log("fetchRegisOffline: Hoàn tất yêu cầu, loading:", false);
+    }
+  }, []);
+
+  const getRegisOfflineById = async (id) => {
+    if (!id) return { success: false, error: "ID không hợp lệ" };
+    try {
+      setLoading(true);
+      console.log(`getRegisOfflineById: Đang lấy đơn đăng ký offline với ID: ${id}`);
+      const response = await donationService.getRegisOfflineById(id);
+      console.log("getRegisOfflineById: API response:", JSON.stringify(response.data, null, 2));
+      if (!response?.data?.result) {
+        throw new Error("Không tìm thấy dữ liệu đơn đăng ký");
+      }
+      const mappedOffline = mapRegisOffline(response.data.result);
+      setError(null);
+      return { success: true, offline: mappedOffline };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("getRegisOfflineById: Hủy lấy đăng ký offline:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error("getRegisOfflineById: Lỗi khi lấy đơn đăng ký offline:", error.response?.status, error.message);
+      const errorMessage = error.response?.data?.message || error.message || "Không thể tải đơn đăng ký offline";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createRegisOffline = async (offlineData) => {
+    try {
+      setLoading(true);
+      console.log("createRegisOffline: Đang tạo đăng ký offline tại /swp391/donations/offline");
+      if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
+      const payload = {
+        name: offlineData.name,
+        phone: offlineData.phone,
+        numberCccd: offlineData.numberCccd,
+        address: offlineData.address || "",
+        email: offlineData.email || "",
+        donatedBefore: offlineData.donatedBefore || false,
+        hadSeriousDisease: offlineData.hadSeriousDisease || false,
+        hadMalariaOrOtherInfectious: offlineData.hadMalariaOrOtherInfectious || false,
+        receivedBlood: offlineData.receivedBlood || false,
+        gotVaccine: offlineData.gotVaccine || false,
+        noneOfAbove12Months: offlineData.noneOfAbove12Months || false,
+        tattooOrAcupuncture: offlineData.tattooOrAcupuncture || false,
+        hadSkinIssues: offlineData.hadSkinIssues || false,
+        usedAntibioticsOrAntiInflammatory: offlineData.usedAntibioticsOrAntiInflammatory || false,
+        symptomsPast2Weeks: offlineData.symptomsPast2Weeks || false,
+        symptomsPast1Week: offlineData.symptomsPast1Week || false,
+        isMenstruating: offlineData.isMenstruating || false,
+        isPregnantOrRecentlyDelivered: offlineData.isPregnantOrRecentlyDelivered || false,
+        noneOfFemaleConditions: offlineData.noneOfFemaleConditions || false,
+        staffId: user.id,
+        location: offlineData.location,
+        weight: offlineData.weight || null,
+        height: offlineData.height || null,
+        bloodPressure: offlineData.bloodPressure || "",
+      };
+      console.log("createRegisOffline: Payload gửi backend:", JSON.stringify(payload, null, 2));
+      const response = await donationService.createRegisOffline(payload);
+      console.log("createRegisOffline: API response:", JSON.stringify(response.data, null, 2));
+      const newOffline = mapRegisOffline(response.data.result);
+      setRegisOffline((prev) => [...prev, newOffline]);
+      setError(null);
+      return {
+        success: true,
+        message: "Tạo đăng ký offline thành công",
+        offline: newOffline,
+      };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("createRegisOffline: Hủy tạo đăng ký offline:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error("createRegisOffline: Lỗi tạo đăng ký offline:", error.response?.status, error.message);
+      const errorMessage = error.response?.data?.message || "Tạo đăng ký offline thất bại";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateRegisOffline = async (id, offlineData) => {
+    try {
+      setLoading(true);
+      console.log(`updateRegisOffline: Đang cập nhật đăng ký offline ${id} tại /swp391/donations/offline/${id}`);
+      if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
+      const payload = {
+        id: id,
+        bloodType: offlineData.bloodType,
+        volumeMl: Number(offlineData.volumeMl),
+        result: offlineData.result,
+        note: offlineData.note || "",
+        staffId: Number(user.id),
+        status: "COMPLETED",
+      };
+      console.log("updateRegisOffline: Payload gửi backend:", JSON.stringify(payload, null, 2));
+      const response = await donationService.updateRegisOffline(id, payload);
+      console.log("updateRegisOffline: API response:", JSON.stringify(response.data, null, 2));
+      const updatedOffline = mapRegisOffline(response.data.result);
+      setRegisOffline((prev) =>
+        prev.map((offline) => (offline.id === id ? updatedOffline : offline))
+      );
+      setError(null);
+      return {
+        success: true,
+        data: updatedOffline,
+      };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("updateRegisOffline: Hủy cập nhật đăng ký offline:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error("updateRegisOffline: Lỗi cập nhật đăng ký offline:", error.response?.status, error.message);
+      const errorMessage = error.response?.data?.message || "Cập nhật thất bại";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteRegisOffline = async (id) => {
+    try {
+      setLoading(true);
+      console.log(`deleteRegisOffline: Đang xóa đăng ký offline ${id} tại /swp391/donations/offline/${id}`);
       const source = axios.CancelToken.source();
-      const response = await donationService.getAllForms({ cancelToken: source.token }); // Sửa để gọi API đúng
-      console.log("API response:", response.data);
+      await donationService.deleteRegisOffline(id, {
+        cancelToken: source.token,
+      });
+      console.log("deleteRegisOffline: Xóa đăng ký offline thành công");
+      setRegisOffline((prev) => prev.filter((offline) => offline.id !== id));
+      setError(null);
+      return { success: false, message: "Xóa đăng ký offline thành công" };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("deleteRegisOffline: Hủy xóa đăng ký offline:", error.message);
+        return { success: false, error: error.message };
+      }
+      console.error("deleteRegisOffline: Lỗi xóa đăng ký offline:", error.response?.status, error.message);
+      const errorMessage = error.response?.data?.message || "Xóa đăng ký offline thất bại";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRegisReceive = useCallback(async () => {
+    if (isFetchingRef.current) {
+      console.log("fetchRegisReceive: Đang tải, bỏ qua yêu cầu mới");
+      return { success: false, error: "Đang tải dữ liệu" };
+    }
+    isFetchingRef.current = true;
+    try {
+      setLoading(true);
+      console.log("fetchRegisReceive: Đang lấy tất cả đăng ký nhận máu từ /swp391/donations/receive");
+      const source = axios.CancelToken.source();
+      const response = await donationService.getAllForms({
+        cancelToken: source.token,
+      });
+      console.log("fetchRegisReceive: API response:", JSON.stringify(response.data, null, 2));
       const mappedReceive = response.data.result.map(mapRegisReceive);
       setRegisReceive(mappedReceive);
       setError(null);
       return { success: true, receive: mappedReceive };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy lấy đăng ký nhận máu:", error.message);
+        console.log("fetchRegisReceive: Hủy lấy đăng ký nhận máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi lấy đăng ký nhận máu:", error.response?.status, error.message);
+      console.error("fetchRegisReceive: Lỗi lấy đăng ký nhận máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Không thể tải đăng ký nhận máu";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
       isFetchingRef.current = false;
+      console.log("fetchRegisReceive: Hoàn tất yêu cầu, loading:", false);
     }
   }, []);
 
   const getRegisReceiveById = async (id) => {
     try {
       setLoading(true);
-      console.log(`Đang lấy đăng ký nhận máu ${id} từ /swp391/donations/receive/${id}`);
+      console.log(`getRegisReceiveById: Đang lấy đăng ký nhận máu ${id} từ /swp391/donations/receive/${id}`);
       const source = axios.CancelToken.source();
       const response = await donationService.getRegisReceiveById(id, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("getRegisReceiveById: API response:", JSON.stringify(response.data, null, 2));
       const mappedReceive = mapRegisReceive(response.data.result);
       setError(null);
       return { success: true, receive: mappedReceive };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy lấy đăng ký nhận máu:", error.message);
+        console.log("getRegisReceiveById: Hủy lấy đăng ký nhận máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi lấy đăng ký nhận máu:", error.response?.status, error.message);
+      console.error("getRegisReceiveById: Lỗi lấy đăng ký nhận máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Không thể tải đăng ký nhận máu";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -629,7 +746,7 @@ export const DonationProvider = ({ children }) => {
   const createRegisReceiveFromRegistration = async (receiveData) => {
     try {
       setLoading(true);
-      console.log("Đang tạo đăng ký nhận máu tại /swp391/donations/receive-from-registration");
+      console.log("createRegisReceiveFromRegistration: Đang tạo đăng ký nhận máu tại /swp391/donations/receive-from-registration");
       if (!user || !user.id) throw new Error("Người dùng chưa xác thực hoặc không có ID.");
       const payload = {
         donateDate: receiveData.donateDate,
@@ -637,11 +754,12 @@ export const DonationProvider = ({ children }) => {
         status: receiveData.status,
         component: receiveData.component,
       };
+      console.log("createRegisReceiveFromRegistration: Payload gửi backend:", JSON.stringify(payload, null, 2));
       const source = axios.CancelToken.source();
       const response = await donationService.createRegisReceiveFromRegistration(payload, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("createRegisReceiveFromRegistration: API response:", JSON.stringify(response.data, null, 2));
       const newReceive = mapRegisReceive(response.data.result);
       setRegisReceive((prev) => [...prev, newReceive]);
       setError(null);
@@ -652,10 +770,10 @@ export const DonationProvider = ({ children }) => {
       };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy tạo đăng ký nhận máu:", error.message);
+        console.log("createRegisReceiveFromRegistration: Hủy tạo đăng ký nhận máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi tạo đăng ký nhận máu:", error.response?.status, error.message);
+      console.error("createRegisReceiveFromRegistration: Lỗi tạo đăng ký nhận máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Tạo đăng ký nhận máu thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -667,18 +785,19 @@ export const DonationProvider = ({ children }) => {
   const updateRegisReceiveFromRegistration = async (id, receiveData) => {
     try {
       setLoading(true);
-      console.log(`Đang cập nhật đăng ký nhận máu ${id} tại /swp391/donations/receive/${id}`);
+      console.log(`updateRegisReceiveFromRegistration: Đang cập nhật đăng ký nhận máu ${id} tại /swp391/donations/receive/${id}`);
       const payload = {
         donateDate: receiveData.donateDate,
         location: receiveData.location,
         status: receiveData.status,
         component: receiveData.component,
       };
+      console.log("updateRegisReceiveFromRegistration: Payload gửi backend:", JSON.stringify(payload, null, 2));
       const source = axios.CancelToken.source();
       const response = await donationService.updateRegisReceiveFromRegistration(id, payload, {
         cancelToken: source.token,
       });
-      console.log("API response:", response.data);
+      console.log("updateRegisReceiveFromRegistration: API response:", JSON.stringify(response.data, null, 2));
       const updatedReceive = mapRegisReceive(response.data.result);
       setRegisReceive((prev) =>
         prev.map((receive) => (receive.id === id ? updatedReceive : receive))
@@ -691,10 +810,10 @@ export const DonationProvider = ({ children }) => {
       };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy cập nhật đăng ký nhận máu:", error.message);
+        console.log("updateRegisReceiveFromRegistration: Hủy cập nhật đăng ký nhận máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi cập nhật đăng ký nhận máu:", error.response?.status, error.message);
+      console.error("updateRegisReceiveFromRegistration: Lỗi cập nhật đăng ký nhận máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Cập nhật đăng ký nhận máu thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -706,21 +825,21 @@ export const DonationProvider = ({ children }) => {
   const deleteRegisReceive = async (id) => {
     try {
       setLoading(true);
-      console.log(`Đang xóa đăng ký nhận máu ${id} tại /swp391/donations/receive/${id}`);
+      console.log(`deleteRegisReceive: Đang xóa đăng ký nhận máu ${id} tại /swp391/donations/receive/${id}`);
       const source = axios.CancelToken.source();
       await donationService.deleteRegisReceive(id, {
         cancelToken: source.token,
       });
-      console.log("Xóa đăng ký nhận máu thành công");
-      setRegisReceive((prev) => prev.filter((receive) => (receive.id !== id)));
+      console.log("deleteRegisReceive: Xóa đăng ký nhận máu thành công");
+      setRegisReceive((prev) => prev.filter((receive) => receive.id !== id));
       setError(null);
       return { success: true, message: "Xóa đăng ký nhận máu thành công" };
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Hủy xóa đăng ký nhận máu:", error, message);
+        console.log("deleteRegisReceive: Hủy xóa đăng ký nhận máu:", error.message);
         return { success: false, error: error.message };
       }
-      console.error("Lỗi xóa đăng ký nhận máu:", error.response?.status, error.message);
+      console.error("deleteRegisReceive: Lỗi xóa đăng ký nhận máu:", error.response?.status, error.message);
       const errorMessage = error.response?.data?.message || "Xóa đăng ký nhận máu thất bại";
       setError(errorMessage);
       return { success: false, error: errorMessage };
@@ -730,13 +849,47 @@ export const DonationProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!authLoading && user) {
-      if (user.id) fetchDonationHistoriesByMemberId(user.id);
-      else fetchDonationHistories();
+    console.log(
+      "DonationContext useEffect: authLoading:",
+      authLoading,
+      "user:",
+      JSON.stringify(user, null, 2)
+    );
+    console.log("DonationContext useEffect: Gọi fetchTopDonors");
+    fetchTopDonors(5);
+    if (!authLoading && user && user.id) {
+      console.log(
+        "DonationContext useEffect: Bắt đầu gọi APIs, user.id:",
+        user.id
+      );
+      console.log(
+        "DonationContext useEffect: Gọi fetchDonationHistoriesByMemberId"
+      );
+      fetchDonationHistoriesByMemberId(user.id);
+      console.log("DonationContext useEffect: Gọi fetchTotalVolumeByMemberId");
+      fetchTotalVolumeByMemberId(user.id); // Fetch total volume for the logged-in user
+      console.log("DonationContext useEffect: Gọi fetchRegisOffline");
       fetchRegisOffline();
+      console.log("DonationContext useEffect: Gọi fetchRegisReceive");
       fetchRegisReceive();
+    } else {
+      console.log(
+        "DonationContext useEffect: Chỉ gọi fetchTopDonors vì authLoading:",
+        authLoading,
+        "user:",
+        user
+      );
     }
-  }, [authLoading, user, fetchDonationHistories, fetchDonationHistoriesByMemberId, fetchRegisOffline, fetchRegisReceive]);
+  }, [
+    authLoading,
+    user,
+    fetchDonationHistories,
+    fetchDonationHistoriesByMemberId,
+    fetchRegisOffline,
+    fetchRegisReceive,
+    fetchTopDonors,
+    fetchTotalVolumeByMemberId, // Add to dependencies
+  ]);
 
   const value = {
     donationHistories,
@@ -746,6 +899,7 @@ export const DonationProvider = ({ children }) => {
     loading,
     error,
     forms,
+    totalVolume, // Expose totalVolume in context
     getFormsByMember,
     fetchDonationHistories,
     fetchDonationHistoriesByMemberId,
@@ -766,7 +920,12 @@ export const DonationProvider = ({ children }) => {
     createRegisReceiveFromRegistration,
     updateRegisReceiveFromRegistration,
     deleteRegisReceive,
+    topDonors,
+    fetchTopDonors,
+    fetchTotalVolumeByMemberId, // Expose fetch method in context
   };
 
   return <DonationContext.Provider value={value}>{children}</DonationContext.Provider>;
 };
+
+export default DonationProvider;

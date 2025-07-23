@@ -59,7 +59,7 @@ const NewsList = () => {
           <h1 className="news-title">{selectedNews.title}</h1>
           <div className="news-meta">
             <span>👤 {selectedNews.author}</span>
-            <span>📅 {formatDate(selectedNews.publishDate)}</span>
+            <span>📅 {selectedNews.published_date}</span>
             <span>👁️ {selectedNews.views.toLocaleString()} lượt xem</span>
           </div>
 
