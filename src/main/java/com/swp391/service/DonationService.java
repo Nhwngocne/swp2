@@ -4,6 +4,7 @@ import com.swp391.dto.request.*;
 import com.swp391.dto.response.DonationHistoryResponse;
 import com.swp391.dto.response.RegisOfflineResponse;
 import com.swp391.dto.response.RegisReceiveResponse;
+import com.swp391.dto.response.TopDonorResponse;
 import com.swp391.entity.*;
 import com.swp391.exception.AppException;
 import com.swp391.exception.ErrorCode;
@@ -15,7 +16,9 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +34,7 @@ public class DonationService {
     StaffRepository staffRepository;
     NotificationService notificationService;
     BloodDonationFormRepository bloodDonationFormRepository;
-    RegisOfflineRepository  regisOfflineRepository;
+    RegisOfflineRepository regisOfflineRepository;
     BloodInventoryRepository bloodInventoryRepository;
     EventRepository eventRepository;
     // ==== DonationHistory ====
@@ -153,6 +156,7 @@ public class DonationService {
         }
         donationHistoryRepository.deleteById(id);
     }
+
     public List<DonationHistoryResponse> getDonationHistoriesByMemberId(int memberId) {
         // Validate memberId
         if (!memberRepository.existsById(memberId)) {
@@ -269,4 +273,36 @@ public class DonationService {
         receive = regisReceiveRepository.save(receive);
         return donationMapper.toRegisReceiveResponse(receive);
     }
+
+    public List<TopDonorResponse> getTopDonors(int limit) {
+        return donationHistoryRepository.findAll().stream()
+                .collect(Collectors.groupingBy(
+                        history -> history.getMember(),
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                histories -> TopDonorResponse.builder()
+                                        .memberId(histories.get(0).getMember().getId())
+                                        .memberName(histories.get(0).getMember().getName())
+                                        .totalVolume(histories.stream()
+                                                .mapToInt(DonationHistory::getVolume)
+                                                .sum())
+                                        .donationCount(histories.size())
+                                        .build()
+                        )
+                ))
+                .values()
+                .stream()
+                .sorted(Comparator.comparing(TopDonorResponse::getTotalVolume).reversed())
+                .limit(limit)
+                .toList();
+    }
+
+    // Total volume of blood donated by a member
+    public int getTotalVolumeByMemberId(int memberId) {
+        return donationHistoryRepository.findByMemberId(memberId)
+                .stream()
+                .mapToInt(DonationHistory::getVolume)
+                .sum();
+    }
+
 }

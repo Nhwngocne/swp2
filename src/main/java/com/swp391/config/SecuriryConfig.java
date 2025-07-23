@@ -40,7 +40,10 @@ public class SecuriryConfig {
             "/emergencies/nearbyDonors",
             "/feedbacks",
             "/lookup/**",
-            "/blood/type"
+            "/blood/type",
+            "/donations/top-donors",
+            "/donations/total-volume",
+
     };
     private final String[] PUBLIC_ENDPOINTS_POST = {
             "/members", "/auth/login", "/auth/introspect", "/auth/loginGoogle", "/auth/refresh", "/staffs", "/admins",
@@ -49,7 +52,7 @@ public class SecuriryConfig {
             "/forgotPassword/changePassword/**",
             "/register/send-otp",
             "/register/verify-otp",
-            "/donors/search"
+            "/donors/search",
     };
     private final String[] PUBLIC_ENDPOINTS_PATCH = {
             "/blogs/*/view",

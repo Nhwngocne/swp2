@@ -161,4 +161,20 @@ public class DonationController {
                 .result("Receive record deleted successfully.")
                 .build();
     }
+
+    @GetMapping("/top-donors")
+    public ApiResponse<List<TopDonorResponse>> getTopDonors(@RequestParam(defaultValue = "10") int limit) {
+        return ApiResponse.<List<TopDonorResponse>>builder()
+                .result(donationService.getTopDonors(limit))
+                .build();
+    }
+
+    @GetMapping("/total-volume/{memberId}")
+    public ApiResponse<Integer> getTotalVolumeByMemberId(@PathVariable int memberId) {
+        int totalVolume = donationService.getTotalVolumeByMemberId(memberId);
+        return ApiResponse.<Integer>builder()
+                .result(totalVolume)
+                .build();
+    }
+
 }
