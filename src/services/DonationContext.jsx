@@ -82,98 +82,93 @@ const isFetchingRef = useRef({
     };
   };
 // volume
-  const fetchTotalVolumeByMemberId = useCallback(async (memberId) => {
-    if (isFetchingRef.current) {
-      console.log("fetchTotalVolumeByMemberId: Đang tải, bỏ qua yêu cầu mới");
-      return { success: false, error: "Đang tải dữ liệu" };
+ const fetchTotalVolumeByMemberId = useCallback(async (memberId) => {
+  console.log("fetchTotalVolumeByMemberId: Bắt đầu, memberId:", memberId, "isFetchingRef.current:", isFetchingRef.current.fetchTotalVolumeByMemberId);
+  if (!memberId) {
+    console.error("fetchTotalVolumeByMemberId: memberId không hợp lệ:", memberId);
+    setError("memberId không hợp lệ");
+    return { success: false, error: "memberId không hợp lệ" };
+  }
+  if (isFetchingRef.current.fetchTotalVolumeByMemberId) {
+    console.log("fetchTotalVolumeByMemberId: Đang tải, bỏ qua yêu cầu mới");
+    return { success: false, error: "Đang tải dữ liệu" };
+  }
+  isFetchingRef.current.fetchTotalVolumeByMemberId = true;
+  try {
+    setLoading(true);
+    console.log(`fetchTotalVolumeByMemberId: Đang lấy tổng volume của member ${memberId} từ /swp391/total-volume/${memberId}`);
+    const source = axios.CancelToken.source();
+    const response = await donationService.getTotalVolumeByMemberId(memberId, {
+      cancelToken: source.token,
+    });
+    console.log("fetchTotalVolumeByMemberId: Phản hồi đầy đủ từ API:", JSON.stringify(response, null, 2));
+    const volume = response.data.result || response.data.totalVolume || 0;
+    console.log("fetchTotalVolumeByMemberId: Giá trị volume:", volume);
+    setTotalVolume(volume);
+    setError(null);
+    return { success: true, totalVolume: volume };
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      console.log("fetchTotalVolumeByMemberId: Hủy lấy tổng volume:", error.message);
+      return { success: false, error: error.message };
     }
-    isFetchingRef.current = true;
-    try {
-      setLoading(true);
-      console.log(
-        `fetchTotalVolumeByMemberId: Đang lấy tổng volume của member ${memberId} từ /swp391/total-volume/${memberId}`
-      );
-      const source = axios.CancelToken.source();
-      const response = await donationService.getTotalVolumeByMemberId(memberId, {
-        cancelToken: source.token,
-      });
-      console.log(
-        "fetchTotalVolumeByMemberId: API response:",
-        JSON.stringify(response.data, null, 2)
-      );
-      const volume = response.data.result || 0;
-      setTotalVolume(volume);
-      setError(null);
-      return { success: true, totalVolume: volume };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log(
-          "fetchTotalVolumeByMemberId: Hủy lấy tổng volume:",
-          error.message
-        );
-        return { success: false, error: error.message };
-      }
-      console.error(
-        "fetchTotalVolumeByMemberId: Lỗi lấy tổng volume:",
-        error.response?.status,
-        error.message
-      );
-      const errorMessage =
-        error.response?.data?.message || "Không thể tải tổng volume";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
-      isFetchingRef.current = false;
-      console.log("fetchTotalVolumeByMemberId: Hoàn tất yêu cầu, loading:", false);
-    }
-  }, []);
-  // Fetch Top Donors
+    console.error("fetchTotalVolumeByMemberId: Lỗi lấy tổng volume:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message,
+      config: error.config,
+    });
+    const errorMessage =
+      error.response?.data?.message || "Không thể tải tổng volume";
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+    isFetchingRef.current.fetchTotalVolumeByMemberId = false;
+    console.log("fetchTotalVolumeByMemberId: Hoàn tất yêu cầu, isFetchingRef.current.fetchTotalVolumeByMemberId:", isFetchingRef.current.fetchTotalVolumeByMemberId);
+  }
+}, []); // Fetch Top Donors
   const fetchTopDonors = useCallback(async (limit = 10) => {
-    if (isFetchingRef.current) {
-      console.log("fetchTopDonors: Đang tải, bỏ qua yêu cầu mới");
-      return { success: false, error: "Đang tải dữ liệu" };
+  if (isFetchingRef.current.fetchTopDonors) {
+    console.log("fetchTopDonors: Đang tải, bỏ qua yêu cầu mới");
+    return { success: false, error: "Đang tải dữ liệu" };
+  }
+  isFetchingRef.current.fetchTopDonors = true;
+  try {
+    setLoading(true);
+    console.log(`fetchTopDonors: Gửi yêu cầu tới /swp391/donations/top-donors?limit=${limit}`);
+    console.log("fetchTopDonors: Token trong localStorage:", localStorage.getItem("token") || "Không có token");
+    const source = axios.CancelToken.source();
+    const response = await donationService.getTopDonors(limit, {
+      cancelToken: source.token,
+    });
+    console.log("fetchTopDonors: Response từ API:", JSON.stringify(response.data, null, 2));
+    const result = Array.isArray(response.data.result) ? response.data.result : [];
+    const mappedDonors = result.map(mapTopDonor);
+    console.log("fetchTopDonors: Dữ liệu sau ánh xạ:", JSON.stringify(mappedDonors, null, 2));
+    setTopDonors(mappedDonors);
+    setError(null);
+    return { success: true, donors: mappedDonors };
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      console.log("fetchTopDonors: Yêu cầu bị hủy:", error.message);
+      return { success: false, error: error.message };
     }
-    isFetchingRef.current = true;
-    try {
-      setLoading(true);
-      console.log(`fetchTopDonors: Gửi yêu cầu tới /swp391/donations/top-donors?limit=${limit}`);
-      console.log("fetchTopDonors: Token trong localStorage:", localStorage.getItem("token"));
-      const source = axios.CancelToken.source();
-      const response = await donationService.getTopDonors(limit, {
-        cancelToken: source.token,
-      });
-      console.log("fetchTopDonors: Response từ BE:", JSON.stringify(response.data, null, 2));
-      const result = response.data.result || [];
-      console.log("fetchTopDonors: result:", JSON.stringify(result, null, 2));
-      const mappedDonors = result.map(mapTopDonor);
-      console.log("fetchTopDonors: Dữ liệu sau khi map:", JSON.stringify(mappedDonors, null, 2));
-      setTopDonors(mappedDonors);
-      console.log("fetchTopDonors: Đã set topDonors:", JSON.stringify(mappedDonors, null, 2));
-      setError(null);
-      return { success: true, donors: mappedDonors };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("fetchTopDonors: Yêu cầu bị hủy:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("fetchTopDonors: Lỗi khi gọi API:", {
-        status: error.response?.status,
-        message: error.message,
-        data: error.response?.data,
-        url: error.config?.url,
-      });
-      const errorMessage = error.response?.data?.message || "Không thể tải danh sách top nhà hảo tâm";
-      setError(errorMessage);
-      console.log("fetchTopDonors: Đã set error:", errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
-      isFetchingRef.current = false;
-      console.log("fetchTopDonors: Hoàn tất yêu cầu, loading:", false);
-    }
-  }, []);
-
+    console.error("fetchTopDonors: Lỗi khi gọi API:", {
+      status: error.response?.status,
+      message: error.message,
+      data: error.response?.data,
+      url: error.config?.url,
+    });
+    const errorMessage = error.response?.data?.message || "Không thể tải danh sách top nhà hảo tâm";
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+    isFetchingRef.current.fetchTopDonors = false;
+    console.log("fetchTopDonors: Hoàn tất yêu cầu, loading:", false);
+  }
+}, []);
   // Fetch Donation Histories
   const fetchDonationHistories = useCallback(async () => {
     if (isFetchingRef.current) return { success: false, error: "Đang tải dữ liệu" };
@@ -865,25 +860,40 @@ useEffect(() => {
     "user:",
     JSON.stringify(user, null, 2)
   );
-  if (authLoading) {
-    console.log("DonationContext useEffect: Đang chờ xác thực");
-    return;
-  }
-  if (!user || !user.id) {
-    console.warn("DonationContext useEffect: Không có user hoặc user.id, không gọi API");
-    setError("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
-    return;
-  }
-  console.log("DonationContext useEffect: Gọi fetchTopDonors");
-  fetchTopDonors(5);
-  console.log("DonationContext useEffect: Gọi fetchDonationHistoriesByMemberId");
-  fetchDonationHistoriesByMemberId(user.id);
-  console.log("DonationContext useEffect: Gọi fetchTotalVolumeByMemberId");
-  fetchTotalVolumeByMemberId(user.id);
-  console.log("DonationContext useEffect: Gọi fetchRegisOffline");
-  fetchRegisOffline();
-  console.log("DonationContext useEffect: Gọi fetchRegisReceive");
-  fetchRegisReceive();
+
+  const fetchData = async () => {
+    try {
+      console.log("DonationContext useEffect: Gọi fetchTopDonors");
+      const topDonorsResult = await fetchTopDonors(5);
+      console.log("DonationContext useEffect: Kết quả fetchTopDonors:", JSON.stringify(topDonorsResult, null, 2));
+
+      if (!authLoading && user && user.id) {
+        console.log("DonationContext useEffect: Gọi fetchDonationHistoriesByMemberId");
+        await fetchDonationHistoriesByMemberId(user.id);
+        console.log("DonationContext useEffect: Gọi fetchTotalVolumeByMemberId");
+        await fetchTotalVolumeByMemberId(user.id);
+        console.log("DonationContext useEffect: Gọi fetchRegisOffline");
+        await fetchRegisOffline();
+        console.log("DonationContext useEffect: Gọi fetchRegisReceive");
+        await fetchRegisReceive();
+      } else {
+        console.log(
+          "DonationContext useEffect: Chỉ gọi fetchTopDonors vì authLoading:",
+          authLoading,
+          "user:",
+          user
+        );
+      }
+    } catch (error) {
+      console.error("DonationContext useEffect: Lỗi khi gọi các API:", {
+        message: error.message,
+        stack: error.stack,
+      });
+      setError("Không thể tải dữ liệu. Vui lòng thử lại.");
+    }
+  };
+
+  fetchData();
 }, [
   authLoading,
   user,
