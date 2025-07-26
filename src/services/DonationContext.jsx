@@ -31,8 +31,13 @@ export const DonationProvider = ({ children }) => {
   const [forms, setForms] = useState([]);
   const [topDonors, setTopDonors] = useState([]);
   const [totalVolume, setTotalVolume] = useState(null); // New state for total volume
-  const isFetchingRef = useRef(false);
-
+const isFetchingRef = useRef({
+  fetchTopDonors: false,
+  fetchDonationHistoriesByMemberId: false,
+  fetchTotalVolumeByMemberId: false,
+  fetchRegisOffline: false,
+  fetchRegisReceive: false,
+});
   // Mapping cho DonationHistoryResponse
   const mapDonationHistory = (history) => ({
     id: history.id,
@@ -199,37 +204,43 @@ export const DonationProvider = ({ children }) => {
       isFetchingRef.current = false;
     }
   }, []);
-
   const fetchDonationHistoriesByMemberId = useCallback(async (memberId) => {
-    if (isFetchingRef.current) return { success: false, error: "Đang tải dữ liệu" };
-    isFetchingRef.current = true;
-    try {
-      setLoading(true);
-      console.log(`fetchDonationHistoriesByMemberId: Đang lấy lịch sử hiến máu của member ${memberId} từ /swp391/donations/histories/member/${memberId}`);
-      const source = axios.CancelToken.source();
-      const response = await donationService.getDonationHistoriesByMemberId(memberId, {
-        cancelToken: source.token,
-      });
-      console.log("fetchDonationHistoriesByMemberId: API response:", JSON.stringify(response.data, null, 2));
-      const mappedHistories = response.data.result.map(mapDonationHistory);
-      setDonationHistories(mappedHistories);
-      setError(null);
-      return { success: true, histories: mappedHistories };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("fetchDonationHistoriesByMemberId: Hủy lấy lịch sử hiến máu:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("fetchDonationHistoriesByMemberId: Lỗi lấy lịch sử hiến máu:", error.response?.status, error.message);
-      const errorMessage = error.response?.data?.message || "Không thể tải lịch sử hiến máu";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
-      isFetchingRef.current = false;
+  if (isFetchingRef.current.fetchDonationHistoriesByMemberId) {
+    console.log("fetchDonationHistoriesByMemberId: Đang tải, bỏ qua yêu cầu mới");
+    return { success: false, error: "Đang tải dữ liệu" };
+  }
+  isFetchingRef.current.fetchDonationHistoriesByMemberId = true;
+  try {
+    setLoading(true);
+    console.log(`fetchDonationHistoriesByMemberId: Đang lấy lịch sử hiến máu của member ${memberId} từ /swp391/donations/histories/member/${memberId}`);
+    const source = axios.CancelToken.source();
+    const response = await donationService.getDonationHistoriesByMemberId(memberId, {
+      cancelToken: source.token,
+    });
+    console.log("fetchDonationHistoriesByMemberId: API response:", JSON.stringify(response.data, null, 2));
+    const result = Array.isArray(response.data.result) ? response.data.result : [];
+    const mappedHistories = result.map(mapDonationHistory);
+    setDonationHistories(mappedHistories);
+    setError(null);
+    return { success: true, histories: mappedHistories };
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      console.log("fetchDonationHistoriesByMemberId: Hủy lấy lịch sử hiến máu:", error.message);
+      return { success: false, error: error.message };
     }
-  }, []);
-
+    console.error("fetchDonationHistoriesByMemberId: Lỗi lấy lịch sử hiến máu:", {
+      status: error.response?.status,
+      message: error.message,
+      data: error.response?.data,
+    });
+    const errorMessage = error.response?.data?.message || "Không thể tải lịch sử hiến máu";
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+    isFetchingRef.current.fetchDonationHistoriesByMemberId = false;
+  }
+}, []);
   const getDonationHistoryById = async (id) => {
     try {
       setLoading(true);
@@ -847,50 +858,41 @@ export const DonationProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    console.log(
-      "DonationContext useEffect: authLoading:",
-      authLoading,
-      "user:",
-      JSON.stringify(user, null, 2)
-    );
-    console.log("DonationContext useEffect: Gọi fetchTopDonors");
-    fetchTopDonors(5);
-    if (!authLoading && user && user.id) {
-      console.log(
-        "DonationContext useEffect: Bắt đầu gọi APIs, user.id:",
-        user.id
-      );
-      console.log(
-        "DonationContext useEffect: Gọi fetchDonationHistoriesByMemberId"
-      );
-      fetchDonationHistoriesByMemberId(user.id);
-      console.log("DonationContext useEffect: Gọi fetchTotalVolumeByMemberId");
-      fetchTotalVolumeByMemberId(user.id); // Fetch total volume for the logged-in user
-      console.log("DonationContext useEffect: Gọi fetchRegisOffline");
-      fetchRegisOffline();
-      console.log("DonationContext useEffect: Gọi fetchRegisReceive");
-      fetchRegisReceive();
-    } else {
-      console.log(
-        "DonationContext useEffect: Chỉ gọi fetchTopDonors vì authLoading:",
-        authLoading,
-        "user:",
-        user
-      );
-    }
-  }, [
+useEffect(() => {
+  console.log(
+    "DonationContext useEffect: authLoading:",
     authLoading,
-    user,
-    fetchDonationHistories,
-    fetchDonationHistoriesByMemberId,
-    fetchRegisOffline,
-    fetchRegisReceive,
-    fetchTopDonors,
-    fetchTotalVolumeByMemberId, // Add to dependencies
-  ]);
-
+    "user:",
+    JSON.stringify(user, null, 2)
+  );
+  if (authLoading) {
+    console.log("DonationContext useEffect: Đang chờ xác thực");
+    return;
+  }
+  if (!user || !user.id) {
+    console.warn("DonationContext useEffect: Không có user hoặc user.id, không gọi API");
+    setError("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
+    return;
+  }
+  console.log("DonationContext useEffect: Gọi fetchTopDonors");
+  fetchTopDonors(5);
+  console.log("DonationContext useEffect: Gọi fetchDonationHistoriesByMemberId");
+  fetchDonationHistoriesByMemberId(user.id);
+  console.log("DonationContext useEffect: Gọi fetchTotalVolumeByMemberId");
+  fetchTotalVolumeByMemberId(user.id);
+  console.log("DonationContext useEffect: Gọi fetchRegisOffline");
+  fetchRegisOffline();
+  console.log("DonationContext useEffect: Gọi fetchRegisReceive");
+  fetchRegisReceive();
+}, [
+  authLoading,
+  user,
+  fetchDonationHistoriesByMemberId,
+  fetchRegisOffline,
+  fetchRegisReceive,
+  fetchTopDonors,
+  fetchTotalVolumeByMemberId,
+]);
   const value = {
     donationHistories,
     donationRegistrations,
