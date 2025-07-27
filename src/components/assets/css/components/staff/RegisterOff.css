@@ -1,0 +1,145 @@
+.register-off-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  position: relative;
+  min-height: calc(100vh - 4rem); /* Đảm bảo container đủ cao để nút luôn hiển thị */
+}
+h2 {
+   text-align: center;
+
+}
+
+.register-off-header {
+  margin-bottom: 1.5rem;
+}
+
+.register-off-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.register-off-add-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  margin-right: 0; 
+}
+
+.register-off-loading {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #3b82f6;
+  margin: 1rem 0;
+}
+
+.register-off-error {
+  text-align: center;
+  font-size: 1.1rem;
+  margin: 1rem 0;
+}
+
+.register-off-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.register-off-thead {
+  background-color: #c62828; /* Màu đỏ */
+  color: #ffffff;
+}
+
+.register-off-th {
+  padding: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+}
+
+.register-off-tbody {
+  background-color: #ffffff;
+}
+
+.register-off-tr {
+  transition: background-color 0.2s ease;
+}
+
+.register-off-tr:hover {
+  background-color: #f9fafb;
+}
+
+.register-off-td {
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+.register-off-detail-btn,
+.register-off-result-btn,
+.register-off-delete-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.register-off-detail-btn:hover {
+  background-color: #16a34a;
+}
+
+.register-off-result-btn:hover {
+  background-color: #f59e0b;
+}
+
+.register-off-delete-btn:hover {
+  background-color: #dc2626;
+}
+
+.register-off-no-data {
+  text-align: center;
+  font-size: 1rem;
+  color: #6b7280;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .register-off-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .register-off-title {
+    font-size: 1.5rem;
+  }
+
+  .register-off-add-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .register-off-th,
+  .register-off-td {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .register-off-detail-btn,
+  .register-off-result-btn,
+  .register-off-delete-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .register-off-add-btn.fixed {
+    bottom: 1rem;
+    right: 1rem;
+  }
+}

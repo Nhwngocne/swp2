@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { donationService } from "../../../services/donationService";
+import "../../assets/css/components/staff/RegisterOff.css"; // Thêm CSS nếu cần
 
 const RegisterOff = () => {
   const [regisOfflineList, setRegisOfflineList] = useState([]);
@@ -20,7 +21,7 @@ const RegisterOff = () => {
       console.log("DATA TỪ SERVER:", response?.data?.result);
       const data = response?.data?.result || [];
 
-      const mapped = data.map(item => {
+      const mapped = data.map((item) => {
         console.log("Ngày tạo thô:", item.createdAt); // log kiểm tra
 
         return {
@@ -47,7 +48,6 @@ const RegisterOff = () => {
 
   const deleteRegisOffline = async (id) => {
     try {
-
       console.log("ID cần xóa:", id);
       await donationService.deleteRegisOffline(id);
 
@@ -72,52 +72,51 @@ const RegisterOff = () => {
   }, [fetchRegisOffline]);
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Danh sách đăng ký hiến máu offline</h2>
+    <div className="register-off-container p-4">
+      <div className="register-off-header mb-4">
+        <h2 className="register-off-title text-2xl font-bold">Danh sách đăng ký hiến máu tại cơ sở</h2>
         <button
           onClick={() => navigate("/createOff")}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          className="register-off-add-btn mt-2 ml-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
           + Thêm đơn
         </button>
       </div>
 
-      {loading && <p>Đang tải dữ liệu...</p>}
-      {error && <p className="text-red-500">Lỗi: {error}</p>}
+      {loading && <p className="register-off-loading">Đang tải dữ liệu...</p>}
+      {error && <p className="register-off-error text-red-500">Lỗi: {error}</p>}
 
       {!loading && !error && (
-        <table className="w-full border-collapse border border-gray-300">
+        <table className="register-off-table w-full border-collapse border border-gray-300">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-4 py-2">ID</th>
-              <th className="border px-4 py-2">Họ tên</th>
-              <th className="border px-4 py-2">Địa điểm</th>
-              <th className="border px-4 py-2">Ngày tạo</th>
-              <th className="border px-4 py-2">Trạng thái</th>
-              <th className="border px-4 py-2">Hành động</th>
+            <tr className="register-off-thead bg-gray-100">
+              <th className="register-off-th border px-4 py-2">ID</th>
+              <th className="register-off-th border px-4 py-2">Họ tên</th>
+              <th className="register-off-th border px-4 py-2">Địa điểm</th>
+              <th className="register-off-th border px-4 py-2">Ngày tạo</th>
+              <th className="register-off-th border px-4 py-2">Trạng thái</th>
+              <th className="register-off-th border px-4 py-2">Hành động</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="register-off-tbody">
             {regisOfflineList.length > 0 ? (
               regisOfflineList.map((item) => (
-                <tr key={item.id}>
-                  <td className="border px-4 py-2">{item.id}</td>
-                  <td className="border px-4 py-2">{item.name || "N/A"}</td>
-                  <td className="border px-4 py-2">{item.location || "N/A"}</td>
-                  <td className="border px-4 py-2">{item.createdAt}</td>
-                  <td className="border px-4 py-2">{item.status}</td>
-                  <td className="border px-4 py-2 flex flex-col sm:flex-row gap-2">
+                <tr key={item.id} className="register-off-tr">
+                  <td className="register-off-td border px-4 py-2">{item.id}</td>
+                  <td className="register-off-td border px-4 py-2">{item.name || "N/A"}</td>
+                  <td className="register-off-td border px-4 py-2">{item.location || "N/A"}</td>
+                  <td className="register-off-td border px-4 py-2">{item.createdAt}</td>
+                  <td className="register-off-td border px-4 py-2">{item.status}</td>
+                  <td className="register-off-td border px-4 py-2 flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => navigate(`/offlineDetail/${item.id}`)}
-
-                      className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded"
+                      className="register-off-detail-btn bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded"
                     >
                       Chi tiết
                     </button>
                     <button
                       onClick={() => navigate(`/resultOff/${item.id}`)}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded"
+                      className="register-off-result-btn bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded"
                     >
                       Nhập kết quả
                     </button>
@@ -127,7 +126,7 @@ const RegisterOff = () => {
                           deleteRegisOffline(item.id);
                         }
                       }}
-                      className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+                      className="register-off-delete-btn bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
                     >
                       Xóa
                     </button>
@@ -136,7 +135,7 @@ const RegisterOff = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center py-4">
+                <td colSpan="6" className="register-off-no-data text-center py-4">
                   Không có đơn đăng ký nào.
                 </td>
               </tr>
