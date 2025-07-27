@@ -19,4 +19,7 @@ public class MemberUpdateRequest {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate dob;
+
+    String numberCccd; // Thêm Số CCCD
+    String gender;     // Thêm Giới tính
 }

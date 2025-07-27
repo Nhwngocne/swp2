@@ -19,5 +19,7 @@ public interface MemberMapper {
     MemberResponse toMemberResponse(Member member);
     // Updates an existing Member entity with data from MemberCreateRequest
 
+    @Mapping(target = "numberCccd", source = "numberCccd")
+    @Mapping(target = "gender", source = "gender")
     void updateMember(@MappingTarget Member member, MemberUpdateRequest request);
 }
