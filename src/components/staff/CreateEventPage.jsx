@@ -302,7 +302,7 @@ const CreateEventPage = () => {
         )}
         <div className="form-group">
           <label htmlFor="maxRegistrations">Số lượng đăng ký tối đa:</label>
-          <input type="number" name="maxRegistrations" value={formData.maxRegistrations} onChange={handleChange} min="0" required />
+          <input type="number" name="maxRegistrations" value={formData.maxRegistrations} onChange={handleChange} min="10" required />
         </div>
         <div className="form-group">
           <label htmlFor="image">Ảnh minh hoạ:</label>

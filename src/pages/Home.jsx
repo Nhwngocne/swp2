@@ -112,7 +112,7 @@ const Home = () => {
         }
 
         if (user?.id || (localUserData && localUserData.id)) {
-          await fetchTopDonors(10);
+          await fetchTopDonors(6);
         }
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu từ /auth/me:", error.response?.data || error.message);
