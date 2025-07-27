@@ -38,8 +38,8 @@ const Sidebar = ({ isOpen, setIsOpen, userRole }) => {
             children: [
               { path: "/events", label: " Danh Sách Hiến Máu" },
               { path: "/bloodIntentList", label: "Danh Sách Hiến/Nhận Máu" },
-              { path: "/emergencyList", label: "Danh Sách Cấp Cứu" },
-              { path: "/registerOff", label: "Danh Sách hiến máu tại chỗ" }
+              { path: "/emergencyList", label: "Danh Sách Khẩn Cấp" },
+              { path: "/registerOff", label: "Danh Sách Hiến Máu Tại Chỗ" }
             ]
           },
           { path: "/manage-members", label: "Quản lý thành viên" },

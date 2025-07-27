@@ -22,6 +22,28 @@ const EmergencyList = () => {
       alert('Có lỗi xảy ra. Vui lòng thử lại.');
     }
   };
+  const handleContactEmergency = async (emergencyId, emergency) => {
+    try {
+      if (!window.confirm(`Bạn có muốn liên hệ với người này không?`)) {
+        return;
+      }
+      const payload = {
+        status: "CONTACTED",
+        location: emergency.location || "",
+        name: emergency.name || "",
+        memberId: emergency.memberId || 0, // Giả sử memberId có sẵn hoặc mặc định
+        component: emergency.component || "",
+        phone: emergency.phone || "",
+        description: emergency.description || ""
+      };
+      await emergencyService.updateEmergencyRequest(emergencyId, payload);
+      alert(`Đã liên hệ thành công.`);
+      await fetchEmergencyRequests(); // Làm mới danh sách
+    } catch (error) {
+      console.error("Lỗi khi cập nhật trạng thái liên hệ:", error);
+      alert("Có lỗi xảy ra. Vui lòng thử lại.");
+    }
+  };
 
   const formatDate = (date) => {
     if (!date) return "Không có";
@@ -89,9 +111,9 @@ const EmergencyList = () => {
           <div className="emergency-card" key={em.id}>
             <div className="emergency-header">
               <div className="blood-type-badge">{em.component || "?"}</div>
-              {/* <div className={`status-badge status-${em.status?.toLowerCase()}`}>
-                {em.status === 'PENDING' ? 'Đang cần' : 'Đã đủ'}
-              </div> */}
+              <div className={`status-badge status-${em.status?.toLowerCase()}`}>
+                {em.status === 'PENDING' ? 'Đang chờ' : em.status === "CONTACTED" ? "Đã liên hệ" : "Đã đủ"}
+              </div>
             </div>
 
             <div className="emergency-content">
@@ -108,26 +130,24 @@ const EmergencyList = () => {
             </div>
 
             <div className="emergency-actions">
-              {em.status?.toLowerCase() === 'pending' && (
-                <button
-                  className="respond-btn reject-btn"
-                  onClick={() => handleRejectEmergency(em.id)}
-                >
-                  Từ chối
-                </button>
-              )}
-              <button className="contact-btn">
-                <a href={`tel:${em.phone || '#'}`}>Gọi ngay</a>
+            
+              <button
+                className="contact-btn"
+                onClick={() => handleContactEmergency(em.id,em)}
+                disabled={em.status !== "PENDING"}
+              >Gọi ngay
               </button>
             </div>
           </div>
         ))}
       </div>
 
-      {filteredEmergencies.length === 0 && (
-        <div className="no-data">Không có yêu cầu cấp cứu phù hợp.</div>
-      )}
-    </div>
+      {
+        filteredEmergencies.length === 0 && (
+          <div className="no-data">Không có yêu cầu cấp cứu phù hợp.</div>
+        )
+      }
+    </div >
   );
 };
 
