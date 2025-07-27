@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BloodInventoryForm from "./BloodInventoryForm";
 import { bloodService } from "../../services/BloodService";
+import "../../assets/css/components/staff/BloodInventory.css";
 
 const bloodTypeMap = {
   6: "O-",
@@ -10,7 +11,7 @@ const bloodTypeMap = {
   10: "B-",
   11: "B+",
   12: "AB-",
-  13: "AB+"
+  13: "AB+",
 };
 
 const BloodInventory = () => {
@@ -41,7 +42,7 @@ const BloodInventory = () => {
 
       const typeDataArray = Object.entries(typeMap).map(([type, quantity]) => ({
         type,
-        quantity
+        quantity,
       }));
 
       console.log("Processed bloodTypeData:", typeDataArray);
@@ -59,27 +60,27 @@ const BloodInventory = () => {
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-      <h2 className="text-2xl font-semibold text-gray-700 mb-4">Kho Máu</h2>
+    <div className="blood-inventory-container bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+      <h2 className="blood-inventory-title text-2xl font-semibold text-gray-700 mb-4">Kho Máu</h2>
 
-      {loading && <p className="text-blue-500">Đang tải dữ liệu...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {loading && <p className="blood-inventory-loading text-blue-500">Đang tải dữ liệu...</p>}
+      {error && <p className="blood-inventory-error text-red-500">{error}</p>}
 
       {!loading && !error && bloodTypeData.length > 0 ? (
-        <table className="min-w-full divide-y divide-gray-200 text-center">
+        <table className="blood-inventory-table min-w-full divide-y divide-gray-200 text-center">
           <thead>
             <tr>
-              <th className="px-4 py-2 text-sm font-medium text-gray-500">Nhóm máu</th>
-              <th className="px-4 py-2 text-sm font-medium text-gray-500">Số lượng (đơn vị)</th>
+              <th className="blood-inventory-th px-4 py-2 text-sm font-medium text-gray-500">Nhóm máu</th>
+              <th className="blood-inventory-th px-4 py-2 text-sm font-medium text-gray-500">Số lượng (đơn vị)</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="blood-inventory-tbody divide-y divide-gray-100">
             {bloodTypeData.map((item, idx) => (
               <tr key={idx}>
-                <td className="px-4 py-2 text-lg font-medium text-gray-700">
+                <td className="blood-inventory-td px-4 py-2 text-lg font-medium text-gray-700">
                   {item.type}
                 </td>
-                <td className="px-4 py-2 text-lg text-red-500 font-semibold">
+                <td className="blood-inventory-td px-4 py-2 text-lg text-red-500 font-semibold">
                   {item.quantity}
                 </td>
               </tr>
@@ -87,11 +88,11 @@ const BloodInventory = () => {
           </tbody>
         </table>
       ) : (!loading && !error) && (
-        <p className="text-gray-500">Chưa có dữ liệu kho máu.</p>
+        <p className="blood-inventory-no-data text-gray-500">Chưa có dữ liệu kho máu.</p>
       )}
 
       {/* ✅ TRUYỀN raw bloodInventories xuống form */}
-      <div className="mt-6">
+      <div className="blood-inventory-form-container mt-6">
         <BloodInventoryForm
           bloodInventories={bloodInventories}
           onSuccess={fetchBloodInventories}

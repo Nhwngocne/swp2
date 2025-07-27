@@ -163,17 +163,17 @@ export default function AdminDashboard() {
     return null;
   };
 
-  const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percentage, name }) => {
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    return (
-      <text x={x} y={y} fill="#fff" textAnchor="middle" dominantBaseline="central">
-        {`${name}: ${percentage}%`}
-      </text>
-    );
-  };
+const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percentage }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  return (
+    <text x={x} y={y} fill="#fff" textAnchor="middle" dominantBaseline="central">
+      {`${percentage}%`}
+    </text>
+  );
+};
 
   return (
     <div className="dashboard-container">
@@ -283,7 +283,6 @@ export default function AdminDashboard() {
                     <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomTooltip />} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
