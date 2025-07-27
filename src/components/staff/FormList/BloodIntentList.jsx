@@ -82,7 +82,7 @@ const BloodIntentList = () => {
 
     const getStatusLabel = (status) => {
         switch (status) {
-case "PENDING": return "Chờ xử lý";
+            case "PENDING": return "Chờ xử lý";
             case "ACCEPTED": return "Chấp nhận";
             case "REJECTED": return "Từ chối";
             default: return status;

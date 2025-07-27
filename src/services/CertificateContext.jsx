@@ -29,12 +29,14 @@ export const CertificateProvider = ({ children }) => {
 
   // Mapping cho CertificateResponse
   const mapCertificate = (certificate) => ({
-    id: certificate.id,
-    issuedDate: certificate.issuedDate,
-    issuedBy: certificate.issuedBy || "Không xác định",
-    imageUrl: certificate.imageUrl || "",
-    donationHistoryId: certificate.donationHistoryId || 0,
-  });
+  id: certificate.id,
+  donorName: certificate.donorName || "Không xác định",
+  donatedDate: certificate.donatedDate || null,
+  location: certificate.location || "Không rõ",
+  volume: certificate.volume || 0,
+  donationHistoryId: certificate.donationHistoryId || 0,
+});
+
 
   // Fetch certificate by ID
   const getCertificateById = async (id) => {
@@ -97,58 +99,46 @@ export const CertificateProvider = ({ children }) => {
 
   // Upload certificate (STAFF)
   const uploadCertificate = async (certificateData) => {
-    try {
-      setLoading(true);
-      console.log("Đang tải chứng chỉ tại /swp391/api/certificates/upload");
-      if (!user || !user.id || !user.roles.includes("STAFF"))
-        throw new Error("Người dùng không có quyền STAFF hoặc chưa xác thực.");
+  try {
+    setLoading(true);
 
-      // Tạo FormData để gửi file và các trường khác
-      const formData = new FormData();
-      formData.append("donationHistoryId", certificateData.donationHistoryId);
-      formData.append("issuedBy", certificateData.issuedBy);
-      if (certificateData.file) formData.append("file", certificateData.file); // Thêm file nếu có
+    if (!user || !user.id || !user.roles.includes("STAFF"))
+      throw new Error("Người dùng không có quyền STAFF hoặc chưa xác thực.");
 
-      const source = axios.CancelToken.source();
-      const response = await certificateService.uploadCertificate(formData, {
-        cancelToken: source.token,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      console.log("API response:", response.data);
-      const newCertificate = mapCertificate(response.data);
-      setCertificates((prev) => [...prev, newCertificate]);
-      setError(null);
-      return {
-        success: true,
-        message: "Tải chứng chỉ thành công",
-        certificate: newCertificate,
-      };
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("Hủy tải chứng chỉ:", error.message);
-        return { success: false, error: error.message };
-      }
-      console.error("Lỗi tải chứng chỉ:", error.response?.status, error.message);
-      const errorMessage =
-        error.response?.data?.message || "Tải chứng chỉ thất bại";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
+    const formData = new FormData();
+    formData.append("donationHistoryId", certificateData.donationHistoryId);
+    formData.append("donorName", certificateData.donorName);
+    formData.append("donatedDate", certificateData.donatedDate); // phải là yyyy-MM-dd
+    formData.append("location", certificateData.location);
+    formData.append("volume", certificateData.volume);
+    if (certificateData.file) {
+      formData.append("file", certificateData.file);
     }
-  };
-  const lookupBloodCompatibility = async (componentId = 0, bloodTypeId = 0) => {
-    try {
-      setLoading(true);
-      const response = await certificateService.lookupBloodCompatibility(componentId, bloodTypeId);
-      return { success: true, data: response.data };
-    } catch (error) {
-      console.error("Lỗi tra cứu tương thích máu:", error);
-      return { success: false, error: "Không thể tra cứu tương thích máu" };
-    } finally {
-      setLoading(false);
-    }
-  };
+
+    const response = await certificateService.uploadCertificate(formData, {
+       headers: {
+    "Content-Type": "multipart/form-data",
+    "Authorization": `Bearer ${token}`, // ✅ Bắt buộc phải thêm
+  },
+    });
+
+    const newCertificate = mapCertificate(response.data);
+    setCertificates((prev) => [...prev, newCertificate]);
+    setError(null);
+    return {
+      success: true,
+      message: "Tải chứng chỉ thành công",
+      certificate: newCertificate,
+    };
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || "Tải chứng chỉ thất bại";
+    setError(errorMessage);
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Không tự động fetch tất cả vì chỉ có get by ID hoặc by donationHistoryId
 

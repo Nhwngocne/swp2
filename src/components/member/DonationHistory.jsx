@@ -87,7 +87,15 @@ const DonationHistory = () => {
               {isCompleted(donation.result) && (
                 <>
                   <div className="card-item flex-buttons">
-                    
+                    <button
+                      className="view-result-btn"
+                      onClick={() =>
+                        navigate(`/certificate/${donation.id}`, { state: { donation } })
+                      }
+                    >
+                      Xem chứng chỉ
+                    </button>
+
                     <button
                       className="feedback-btn"
                       onClick={() =>

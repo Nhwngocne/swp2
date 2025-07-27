@@ -178,10 +178,7 @@ const Navbar = () => {
                         <i className="fa-solid fa-list" style={{ marginRight: 8 }}></i>
                         Lịch sử đăng ký
                       </Link>
-                      <Link to="/certificate" className="dropdown-btn">
-                        <i className="fa-solid fa-certificate" style={{ marginRight: 8 }}></i>
-                        Chứng chỉ
-                      </Link>
+                      
                     </>
                   )}
                   <button className="dropdown-btn" onClick={handleLogout}>

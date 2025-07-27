@@ -10,6 +10,9 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Legend,
 } from "recharts";
 import {
   FaUsers,
@@ -27,25 +30,20 @@ import "../../assets/css/components/admin/AdminDashboard.css";
 export default function AdminDashboard() {
   const [filterType, setFilterType] = useState("month");
   const [selectedDate, setSelectedDate] = useState("");
-
   const [members, setMembers] = useState([]);
   const [forms, setForms] = useState([]);
   const [emergencies, setEmergencies] = useState([]);
   const [intents, setIntents] = useState([]);
   const [inventories, setInventories] = useState([]);
-
   const [totalMembers, setTotalMembers] = useState(0);
   const [totalForms, setTotalForms] = useState(0);
   const [totalEmergencies, setTotalEmergencies] = useState(0);
   const [totalRequestForms, setTotalRequestForms] = useState(0);
   const [totalDonateForms, setTotalDonateForms] = useState(0);
-
   const [pieData, setPieData] = useState([]);
-
   const [statistics, setStatistics] = useState([]);
   const [loadingStats, setLoadingStats] = useState(false);
   const [errorStats, setErrorStats] = useState(null);
-
   const [selectedEventId, setSelectedEventId] = useState("");
 
   useEffect(() => {
@@ -53,23 +51,18 @@ export default function AdminDashboard() {
       try {
         const membersRes = await authService.getAllUsers();
         setMembers(membersRes?.data?.result || []);
-
         const formsRes = await eventService.getAllBloodDonationForms();
         setForms(formsRes?.data?.result || []);
-
         const emergencyRes = await emergencyService.getAllEmergencyRequests();
         setEmergencies(emergencyRes?.data?.result || []);
-
         const intentRes = await bloodService.getAllBloodIntentForms();
         setIntents(intentRes?.data?.result || []);
-
         const bloodRes = await bloodService.getAllBloodInventories();
         setInventories(bloodRes?.data?.result || []);
       } catch (err) {
-        console.error("❌ Lỗi khi load dashboard:", err);
+        console.error("Lỗi khi tải dashboard:", err);
       }
     };
-
     fetchDashboardData();
   }, []);
 
@@ -81,13 +74,12 @@ export default function AdminDashboard() {
         const res = await eventService.getEventStatistics();
         setStatistics(res?.data?.result || res?.data || []);
       } catch (err) {
-        console.error("❌ Lỗi load thống kê:", err);
-        setErrorStats("Lỗi khi tải thống kê");
+        console.error("Lỗi khi tải thống kê:", err);
+        setErrorStats("Không thể tải thống kê");
       } finally {
         setLoadingStats(false);
       }
     };
-
     fetchStatistics();
   }, []);
 
@@ -122,7 +114,7 @@ export default function AdminDashboard() {
       10: "B-", 11: "B+", 12: "AB-", 13: "AB+"
     };
     const typeMap = filteredInventories.reduce((acc, curr) => {
-      const typeName = bloodTypeMap[curr.bloodTypeId] || `Type-${curr.bloodTypeId}`;
+      const typeName = bloodTypeMap[curr.bloodTypeId] || `Loại-${curr.bloodTypeId}`;
       acc[typeName] = (acc[typeName] || 0) + (curr.quantity || 0);
       return acc;
     }, {});
@@ -132,26 +124,60 @@ export default function AdminDashboard() {
 
   const cards = [
     { label: "Người dùng", value: totalMembers, icon: <FaUsers />, color: "#3b82f6" },
-    { label: "ĐK Event", value: totalForms, icon: <FaCalendarAlt />, color: "#10b981" },
-    { label: "Máu khẩn", value: totalEmergencies, icon: <FaHeartbeat />, color: "#f59e0b" },
-    { label: "Đơn nhận máu", value: totalRequestForms, icon: <FaHandHoldingHeart />, color: "#8b5cf6" },
-    { label: "Đơn hiến máu", value: totalDonateForms, icon: <FaHandHoldingMedical />, color: "#ec4899" },
+    { label: "Đăng ký sự kiện", value: totalForms, icon: <FaCalendarAlt />, color: "#10b981" },
+    { label: "Máu khẩn cấp", value: totalEmergencies, icon: <FaHeartbeat />, color: "#f59e0b" },
+    { label: "Yêu cầu máu", value: totalRequestForms, icon: <FaHandHoldingHeart />, color: "#8b5cf6" },
+    { label: "Hiến máu", value: totalDonateForms, icon: <FaHandHoldingMedical />, color: "#ec4899" },
   ];
 
-  const pieColors = ["#ef4444", "#f97316", "#eab308", "#10b981", "#8b5cf6", "#ec4899"];
+  const pieColors = ["#10b981", "#ef4444"];
 
   const selectedEventData = statistics.find(s => s.eventId === parseInt(selectedEventId));
-  const eventChartData = selectedEventData
-    ? [
-        { name: "Đã đến", pass: selectedEventData.passCount, fail: selectedEventData.failCount },
-        { name: "Đã từ chối", reject: selectedEventData.rejectCount },
-        { name: "Chưa checkin", notCheckin: selectedEventData.notCheckinCount }
-      ]
+  const eventPieData = selectedEventData
+    ? (() => {
+        const total = (selectedEventData.passCount || 0) +
+                      (selectedEventData.failCount || 0) +
+                      (selectedEventData.rejectCount || 0) +
+                      (selectedEventData.notCheckinCount || 0);
+        if (total === 0) return [];
+        const attendees = selectedEventData.passCount || 0;
+        const nonAttendees = (selectedEventData.failCount || 0) +
+                            (selectedEventData.rejectCount || 0) +
+                            (selectedEventData.notCheckinCount || 0);
+        return [
+          { name: "Người tham dự", value: attendees, percentage: ((attendees / total) * 100).toFixed(1) },
+          { name: "Người không tham dự", value: nonAttendees, percentage: ((nonAttendees / total) * 100).toFixed(1) },
+        ].filter(item => item.value > 0);
+      })()
     : [];
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="custom-tooltip">
+          <p>{`${data.name}: ${data.value} (${data.percentage}%)`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percentage, name }) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    return (
+      <text x={x} y={y} fill="#fff" textAnchor="middle" dominantBaseline="central">
+        {`${name}: ${percentage}%`}
+      </text>
+    );
+  };
 
   return (
     <div className="dashboard-container">
-      <h1 className="dashboard-title">Dashboard Tổng Quan</h1>
+      <h1 className="dashboard-title">Bảng Điều Khiển Quản Trị</h1>
 
       <div className="filter-bar">
         <label>Lọc theo:</label>
@@ -228,8 +254,8 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="dashboard-events-summary" style={{ marginTop: "40px" }}>
-        <h2>Thống kê chi tiết theo sự kiện</h2>
+      <div className="dashboard-events-summary">
+        <h2>Thống kê tham dự sự kiện</h2>
         <select value={selectedEventId} onChange={(e) => setSelectedEventId(e.target.value)}>
           <option value="">-- Chọn sự kiện --</option>
           {statistics.map(stat => (
@@ -240,18 +266,26 @@ export default function AdminDashboard() {
         </select>
 
         {selectedEventId && (
-          <div style={{ marginTop: "20px" }}>
+          <div className="pie-chart-container">
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={eventChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="pass" stackId="a" fill="#10b981" />
-                <Bar dataKey="fail" stackId="a" fill="#ef4444" />
-                <Bar dataKey="reject" fill="#f59e0b" />
-                <Bar dataKey="notCheckin" fill="#6366f1" />
-              </BarChart>
+              <PieChart>
+                <Pie
+                  data={eventPieData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label={CustomLabel}
+                  labelLine={false}
+                >
+                  {eventPieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+              </PieChart>
             </ResponsiveContainer>
           </div>
         )}
