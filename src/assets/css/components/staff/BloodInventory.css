@@ -1,0 +1,79 @@
+.blood-inventory-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+}
+
+.blood-inventory-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.blood-inventory-loading {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #3b82f6;
+}
+
+.blood-inventory-error {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #ef4444;
+}
+
+.blood-inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.blood-inventory-th {
+  padding: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  background-color: #f9fafb;
+}
+
+.blood-inventory-tbody {
+  background-color: #fff;
+}
+
+.blood-inventory-td {
+  padding: 1rem;
+  font-size: 1.125rem;
+}
+
+.blood-inventory-no-data {
+  text-align: center;
+  font-size: 1rem;
+  color: #6b7280;
+  margin-top: 1rem;
+}
+
+.blood-inventory-form-container {
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .blood-inventory-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .blood-inventory-title {
+    font-size: 1.5rem;
+  }
+
+  .blood-inventory-th,
+  .blood-inventory-td {
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+}
