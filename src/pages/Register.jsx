@@ -1,11 +1,7 @@
-// Register.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-//import { useAuth } from '../services/AuthContext';
 import { showNotification } from "../components/common/Notification";
-
-import "../assets/css/pages/Register.css"; //
-//import VerifyGmail from './VerifyGmail';
+import "../assets/css/pages/Register.css";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -22,9 +18,9 @@ const Register = () => {
     agreeTerms: false,
   });
 
-  //const { register } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({}); // Thêm trạng thái errors
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -32,79 +28,140 @@ const Register = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+
+    // Kiểm tra lỗi thời gian thực
+    let newErrors = { ...errors };
+    if (name === "name" && !value.trim()) {
+      newErrors.name = "Vui lòng nhập họ tên";
+    } else if (name === "name") {
+      newErrors.name = "";
+    }
+
+    if (name === "email" && (!value.trim() || !/\S+@\S+\.\S+/.test(value))) {
+      newErrors.email = "Vui lòng nhập email hợp lệ";
+    } else if (name === "email") {
+      newErrors.email = "";
+    }
+
+    if (name === "phone" && !/^0\d{9}$/.test(value)) {
+      newErrors.phone = "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số";
+    } else if (name === "phone") {
+      newErrors.phone = "";
+    }
+
+    if (name === "numberCccd" && !/^[0-9]{9,12}$/.test(value)) {
+      newErrors.numberCccd = "Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)";
+    } else if (name === "numberCccd") {
+      newErrors.numberCccd = "";
+    }
+
+    if (name === "dob" && value) {
+      const dob = new Date(value);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      if (age < 18) {
+        newErrors.dob = "Bạn phải từ 18 tuổi trở lên để đăng ký";
+      } else {
+        newErrors.dob = "";
+      }
+    } else if (name === "dob" && !value) {
+      newErrors.dob = "Vui lòng chọn ngày sinh";
+    }
+
+    if (name === "gender" && !value) {
+      newErrors.gender = "Vui lòng chọn giới tính";
+    } else if (name === "gender") {
+      newErrors.gender = "";
+    }
+
+    if (name === "job" && !value.trim()) {
+      newErrors.job = "Vui lòng nhập nghề nghiệp";
+    } else if (name === "job") {
+      newErrors.job = "";
+    }
+
+    if (name === "address" && !value.trim()) {
+      newErrors.address = "Vui lòng nhập địa chỉ";
+    } else if (name === "address") {
+      newErrors.address = "";
+    }
+
+    if (name === "password" && (!value || value.length < 6)) {
+      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    } else if (name === "password") {
+      newErrors.password = "";
+    }
+
+    if (name === "confirmPassword" && value !== formData.password) {
+      newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
+    } else if (name === "confirmPassword") {
+      newErrors.confirmPassword = "";
+    }
+
+    if (name === "agreeTerms" && !checked) {
+      newErrors.agreeTerms = "Vui lòng đồng ý với điều khoản sử dụng";
+    } else if (name === "agreeTerms") {
+      newErrors.agreeTerms = "";
+    }
+
+    setErrors(newErrors);
   };
 
   const validateForm = () => {
-    // <<<<<<< HEAD
-    //     const { name, email, phone, numberCccd, gender, job, dob, address, password, confirmPassword, agreeTerms } = formData;
-    //     if (!name.trim()) return showNotification('Vui lòng nhập họ tên', 'error');
-    //     if (!/\S+@\S+\.\S+/.test(email)) return showNotification('Email không hợp lệ', 'error');
-    //     if (!/^0\d{9}$/.test(phone)) return showNotification('SĐT không hợp lệ', 'error');
-    //     if (!/^[0-9]{9,12}$/.test(numberCccd)) return showNotification('CCCD/CMND không hợp lệ', 'error');
-    //     if (!gender) return showNotification('Chọn giới tính', 'error');
-    //     if (!job.trim()) return showNotification('Nhập nghề nghiệp', 'error');
-    //     if (!dob) return showNotification('Chọn ngày sinh', 'error');
-    //     if (!address.trim()) return showNotification('Nhập địa chỉ', 'error');
-    //     if (password.length < 6) return showNotification('Mật khẩu ít nhất 6 ký tự', 'error');
-    //     if (password !== confirmPassword) return showNotification('Mật khẩu xác nhận không khớp', 'error');
-    //     if (!agreeTerms) return showNotification('Đồng ý điều khoản', 'error');
-    // =======
+    let newErrors = {};
+
     if (!formData.name.trim()) {
-      showNotification("Vui lòng nhập họ tên", "error");
-      return false;
+      newErrors.name = "Vui lòng nhập họ tên";
     }
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) {
-      showNotification("Vui lòng nhập email hợp lệ", "error");
-      return false;
+      newErrors.email = "Vui lòng nhập email hợp lệ";
     }
     if (!/^0\d{9}$/.test(formData.phone)) {
-      showNotification(
-        "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số",
-        "error"
-      );
-      return false;
+      newErrors.phone = "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số";
     }
-
     if (!formData.password || formData.password.length < 6) {
-      showNotification("Mật khẩu phải có ít nhất 6 ký tự", "error");
-      return false;
+      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
     }
     if (formData.password !== formData.confirmPassword) {
-      showNotification("Mật khẩu xác nhận không khớp", "error");
-      return false;
+      newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
     }
     if (!formData.gender) {
-      showNotification("Vui lòng chọn giới tính", "error");
-      return false;
+      newErrors.gender = "Vui lòng chọn giới tính";
     }
     if (!formData.address.trim()) {
-      showNotification("Vui lòng nhập địa chỉ", "error");
-      return false;
+      newErrors.address = "Vui lòng nhập địa chỉ";
     }
     if (!formData.job.trim()) {
-      showNotification("Vui lòng nhập nghề nghiệp", "error");
-      return false;
+      newErrors.job = "Vui lòng nhập nghề nghiệp";
     }
-
     if (!/^[0-9]{9,12}$/.test(formData.numberCccd)) {
-      showNotification("Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)", "error");
-      return false;
-    }
-    if (!formData.agreeTerms) {
-      showNotification("Vui lòng đồng ý với điều khoản sử dụng", "error");
-      return false;
+      newErrors.numberCccd = "Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)";
     }
     if (!formData.dob || formData.dob.trim() === "") {
-      showNotification("Vui lòng chọn ngày sinh", "error");
-      return false;
+      newErrors.dob = "Vui lòng chọn ngày sinh";
+    } else {
+      const dob = new Date(formData.dob);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      if (age < 18) {
+        newErrors.dob = "Bạn phải từ 18 tuổi trở lên để đăng ký";
+      }
     }
     if (!formData.agreeTerms) {
-      showNotification("Vui lòng đồng ý với điều khoản sử dụng", "error");
-      return false;
+      newErrors.agreeTerms = "Vui lòng đồng ý với điều khoản sử dụng";
     }
 
-    // >>>>>>> origin/FE_Moi
-    return true;
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
@@ -143,6 +200,11 @@ const Register = () => {
                 required
               />
               <label>Họ và tên *</label>
+              {errors.name && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.name}
+                </small>
+              )}
             </div>
             <div className="floating-label">
               <input
@@ -154,6 +216,11 @@ const Register = () => {
                 required
               />
               <label>Email *</label>
+              {errors.email && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.email}
+                </small>
+              )}
             </div>
 
             <div className="floating-label">
@@ -166,6 +233,11 @@ const Register = () => {
                 required
               />
               <label>Số điện thoại *</label>
+              {errors.phone && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.phone}
+                </small>
+              )}
             </div>
             <div className="floating-label">
               <input
@@ -177,6 +249,11 @@ const Register = () => {
                 required
               />
               <label>Số CCCD/CMND *</label>
+              {errors.numberCccd && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.numberCccd}
+                </small>
+              )}
             </div>
 
             <div className="floating-label">
@@ -189,6 +266,11 @@ const Register = () => {
                 required
               />
               <label>Ngày sinh *</label>
+              {errors.dob && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.dob}
+                </small>
+              )}
             </div>
             <div className="floating-label">
               <select
@@ -203,6 +285,11 @@ const Register = () => {
                 <option value="Khác">Khác</option>
               </select>
               <label>Giới tính *</label>
+              {errors.gender && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.gender}
+                </small>
+              )}
             </div>
 
             <div className="floating-label full-width">
@@ -215,6 +302,11 @@ const Register = () => {
                 required
               />
               <label>Nghề nghiệp *</label>
+              {errors.job && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.job}
+                </small>
+              )}
             </div>
 
             <div className="floating-label full-width">
@@ -227,6 +319,11 @@ const Register = () => {
                 required
               ></textarea>
               <label>Địa chỉ *</label>
+              {errors.address && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.address}
+                </small>
+              )}
             </div>
 
             <div className="floating-label">
@@ -239,6 +336,11 @@ const Register = () => {
                 required
               />
               <label>Mật khẩu *</label>
+              {errors.password && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.password}
+                </small>
+              )}
             </div>
             <div className="floating-label">
               <input
@@ -250,14 +352,11 @@ const Register = () => {
                 required
               />
               <label>Xác nhận mật khẩu *</label>
-              {formData.confirmPassword &&
-                formData.confirmPassword !== formData.password && (
-                  <small
-                    style={{ color: "red", marginTop: "4px", display: "block" }}
-                  >
-                    Mật khẩu xác nhận không khớp
-                  </small>
-                )}
+              {errors.confirmPassword && (
+                <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                  {errors.confirmPassword}
+                </small>
+              )}
             </div>
           </div>
 
@@ -273,6 +372,11 @@ const Register = () => {
               Tôi đồng ý với <Link to="/terms">Điều khoản</Link> và{" "}
               <Link to="/privacy">Chính sách</Link>
             </label>
+            {errors.agreeTerms && (
+              <small style={{ color: "red", marginTop: "4px", display: "block" }}>
+                {errors.agreeTerms}
+              </small>
+            )}
           </div>
 
           <button type="submit" className="register-btn" disabled={loading}>

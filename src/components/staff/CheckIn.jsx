@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {eventService} from "../../services/eventService"; // Sửa nếu bạn dùng service khác
+import { useNavigate } from "react-router-dom";
 
 const CheckIn = () => {
+  const navigate = useNavigate();
   const { id } = useParams(); // formId
   const [formData, setFormData] = useState({
     formId: id,
@@ -45,6 +47,7 @@ const CheckIn = () => {
 
       await eventService.updateBloodDonationFormByStaff(payload);
       alert("Check-in thành công!");
+      navigate("/events");
     } catch (error) {
       console.error(error);
       alert("Lỗi khi check-in.");

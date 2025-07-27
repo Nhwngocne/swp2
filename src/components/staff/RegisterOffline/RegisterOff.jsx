@@ -45,6 +45,21 @@ const RegisterOff = () => {
     }
   }, []);
 
+  const getStatusText = (status) => {
+    switch (status) {
+      case "APPROVED":
+        return "Đã duyệt";
+      case "CHECKIN":
+        return "Đã tới";
+      case "REJECTED":
+        return "Bị từ chối";
+      case "COMPLETED":
+        return "Hoàn thành";
+      default:
+        return "Đang chờ";
+    }
+  };
+
   const deleteRegisOffline = async (id) => {
     try {
 
@@ -90,7 +105,7 @@ const RegisterOff = () => {
         <table className="w-full border-collapse border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border px-4 py-2">ID</th>
+            
               <th className="border px-4 py-2">Họ tên</th>
               <th className="border px-4 py-2">Địa điểm</th>
               <th className="border px-4 py-2">Ngày tạo</th>
@@ -102,11 +117,11 @@ const RegisterOff = () => {
             {regisOfflineList.length > 0 ? (
               regisOfflineList.map((item) => (
                 <tr key={item.id}>
-                  <td className="border px-4 py-2">{item.id}</td>
+                
                   <td className="border px-4 py-2">{item.name || "N/A"}</td>
                   <td className="border px-4 py-2">{item.location || "N/A"}</td>
                   <td className="border px-4 py-2">{item.createdAt}</td>
-                  <td className="border px-4 py-2">{item.status}</td>
+                  <td className="border px-4 py-2">{getStatusText(item.status)}</td>
                   <td className="border px-4 py-2 flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => navigate(`/offlineDetail/${item.id}`)}
