@@ -89,9 +89,9 @@ const EmergencyList = () => {
           <div className="emergency-card" key={em.id}>
             <div className="emergency-header">
               <div className="blood-type-badge">{em.component || "?"}</div>
-              <div className={`status-badge status-${em.status?.toLowerCase()}`}>
+              {/* <div className={`status-badge status-${em.status?.toLowerCase()}`}>
                 {em.status === 'PENDING' ? 'Đang cần' : 'Đã đủ'}
-              </div>
+              </div> */}
             </div>
 
             <div className="emergency-content">
