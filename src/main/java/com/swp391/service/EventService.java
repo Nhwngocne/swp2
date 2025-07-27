@@ -196,7 +196,6 @@ public class EventService {
         }).collect(Collectors.toList());
     }
     @Transactional
-    @PostConstruct
     @Scheduled(fixedRate = 3600000)//1h hàng ngày để check
     public void checkAndDeleteEvents() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
