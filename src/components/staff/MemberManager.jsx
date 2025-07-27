@@ -71,7 +71,7 @@ const MemberManager = () => {
 
   return (
     <div className="member-manager-container">
-      <h2>Quản lý nhân viên</h2>
+      <h2>Quản lý thành viên</h2>
       {loading ? (
         <p>Đang tải danh sách...</p>
       ) : (
