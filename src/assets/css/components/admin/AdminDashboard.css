@@ -1,67 +1,33 @@
 .dashboard-container {
+  padding: 2rem;
   max-width: 1200px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  font-family: 'Inter', sans-serif;
+  margin: auto;
 }
 
 .dashboard-title {
   font-size: 2rem;
-  font-weight: 700;
-  color: #333;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
   text-align: center;
-  margin-bottom: 2rem;
-}
-
-.filter-bar {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-}
-
-.filter-bar label {
-  font-size: 1rem;
-  font-weight: 500;
   color: #333;
-}
-
-.filter-bar select,
-.filter-bar input {
-  padding: 0.5rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  background: #fff;
-  transition: border-color 0.3s ease;
-}
-
-.filter-bar select:focus,
-.filter-bar input:focus {
-  outline: none;
-  border-color: #FF6B6B;
 }
 
 .dashboard-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
 .dashboard-card {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s;
 }
 
 .dashboard-card:hover {
@@ -71,8 +37,9 @@
 .card-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+  justify-content: space-between;
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 .card-icon {
@@ -80,14 +47,13 @@
 }
 
 .card-value {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.8rem;
 }
 
 .card-label {
   font-size: 1rem;
-  color: #6B7280;
-  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  color: #555;
 }
 
 .card-sparkline {
@@ -96,168 +62,133 @@
 
 .dashboard-charts {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.5rem;
 }
 
 .chart-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1rem;
 }
 
 .chart-card h2 {
-  font-size: 1.5rem;
-  color: #333;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
-}
-
-.dashboard-events-summary {
-  margin-top: 2.5rem;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-events-summary h2 {
-  font-size: 1.5rem;
   color: #333;
-  margin-bottom: 1rem;
+  text-align: center;
 }
 
-.dashboard-events-summary select {
-  width: 100%;
-  max-width: 300px;
+input[type="date"],
+input[type="month"],
+input[type="number"],
+select {
   padding: 0.5rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  outline: none;
   font-size: 1rem;
-  background: #fff;
-  margin-bottom: 1rem;
 }
 
-.pie-chart-container {
-  margin-top: 1.5rem;
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
 }
 
-.recharts-legend-item-text {
-  color: #333 !important;
-  font-size: 0.875rem;
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fef2f2; /* Light red background for blood donation theme */
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1); /* Subtle red-tinted shadow */
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  border: 1px solid #f87171; /* Soft red border */
+}
+
+.filter-bar label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #7f1d1d; /* Deep red for text */
+  margin-right: 8px;
+}
+
+.filter-bar select {
+  padding: 10px 16px;
+  font-size: 14px;
+  border: 1px solid #f87171; /* Red border */
+  border-radius: 8px;
+  background: #ffffff; /* White background for contrast */
+  color: #7f1d1d; /* Deep red text */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 150px;
+}
+
+.filter-bar select:focus {
+  outline: none;
+  border-color: #dc2626; /* Brighter red on focus */
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2); /* Red-tinted focus ring */
+}
+
+/* Date Range Inputs Styling */
+.date-range-inputs {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.date-range-inputs input {
+  padding: 10px 16px;
+  font-size: 14px;
+  border: 1px solid #f87171; /* Red border */
+  border-radius: 8px;
+  background: #ffffff; /* White background */
+  color: #7f1d1d; /* Deep red text */
+  transition: all 0.2s ease;
+  min-width: 160px;
+}
+
+.date-range-inputs input:focus {
+  outline: none;
+  border-color: #dc2626; /* Brighter red on focus */
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2); /* Red-tinted focus ring */
+}
+
+.date-range-inputs input::placeholder {
+  color: #fca5a5; /* Light red placeholder */
+}
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-  .dashboard-container {
-    padding: 1rem;
-  }
-
-  .dashboard-title {
-    font-size: 1.5rem;
-  }
-
   .filter-bar {
     flex-direction: column;
     align-items: flex-start;
+    padding: 12px;
   }
 
-  .dashboard-cards {
-    grid-template-columns: 1fr;
+  .filter-bar select,
+  .date-range-inputs input {
+    width: 100%;
+    min-width: unset;
   }
 
-  .chart-card,
-  .dashboard-events-summary {
-    padding: 1rem;
+  .date-range-inputs {
+    flex-direction: column;
+    width: 100%;
   }
 }
-/* === Blood Inventory Bar Chart Styles === */
-.chart-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
-}
 
-.chart-card:hover {
-  transform: translateY(-4px);
-}
-
-.chart-card h2 {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 1.2rem;
-  text-align: center;
-}
-
-/* === Event Pie Chart Styles === */
-.dashboard-events-summary {
-  margin-top: 3rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-events-summary h2 {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.dashboard-events-summary select {
-  width: 100%;
-  max-width: 350px;
-  padding: 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 1rem;
-  margin: 0 auto 1.5rem auto;
-  display: block;
-  background: #fff;
-  transition: border-color 0.3s ease;
-}
-
-.dashboard-events-summary select:focus {
-  border-color: #FF6B6B;
-  outline: none;
-}
-
-.pie-chart-container {
-  margin-top: 1rem;
-}
-
-/* === Tooltip for PieChart === */
-.custom-tooltip {
-  background: #333;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-}
-
-/* === Label for PieChart Segments === */
-.recharts-pie-label-text {
-  font-size: 0.75rem;
-  fill: #fff;
-}
-
-/* === Responsive Overrides === */
-@media (max-width: 768px) {
-  .chart-card,
-  .dashboard-events-summary {
-    padding: 1rem;
-  }
-
-  .chart-card h2,
-  .dashboard-events-summary h2 {
-    font-size: 1.3rem;
-  }
-
-  .dashboard-events-summary select {
-    font-size: 0.9rem;
-  }
+/* Hover Effects */
+.filter-bar select:hover,
+.date-range-inputs input:hover {
+  border-color: #dc2626; /* Brighter red on hover */
+  background: #fff1f1; /* Very light red background on hover */
 }
