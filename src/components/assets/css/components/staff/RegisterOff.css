@@ -9,9 +9,9 @@
   position: relative;
   min-height: calc(100vh - 4rem); /* Đảm bảo container đủ cao để nút luôn hiển thị */
 }
-h2 {
-   text-align: center;
 
+h2 {
+  text-align: center;
 }
 
 .register-off-header {
@@ -29,7 +29,7 @@ h2 {
   font-size: 1rem;
   border-radius: 8px;
   transition: background-color 0.3s ease;
-  margin-right: 0; 
+  margin-right: 0;
 }
 
 .register-off-loading {
@@ -94,8 +94,12 @@ h2 {
   background-color: #16a34a;
 }
 
+.register-off-result-btn {
+  background-color: #ef4444; /* Màu đỏ */
+}
+
 .register-off-result-btn:hover {
-  background-color: #f59e0b;
+  background-color: #dc2626; /* Màu đỏ đậm hơn khi hover */
 }
 
 .register-off-delete-btn:hover {
