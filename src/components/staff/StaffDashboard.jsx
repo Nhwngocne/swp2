@@ -52,30 +52,41 @@ export default function AdminDashboard() {
   const [selectedEventId, setSelectedEventId] = useState("");
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const membersRes = await authService.getAllUsers();
-        setMembers(membersRes?.data?.result || []);
+  const fetchDashboardData = async () => {
+    try {
+      const membersRes = await authService.getAllUsers();
+      const fetchedMembers = membersRes?.data?.result || [];
+      setMembers(fetchedMembers);
+      console.log("Fetched members:", fetchedMembers); // Debug log
 
-        const formsRes = await eventService.getAllBloodDonationForms();
-        setForms(formsRes?.data?.result || []);
+      const formsRes = await eventService.getAllBloodDonationForms();
+      const fetchedForms = formsRes?.data?.result || [];
+      setForms(fetchedForms);
+      console.log("Fetched forms:", fetchedForms); // Debug log
 
-        const emergencyRes = await emergencyService.getAllEmergencyRequests();
-        setEmergencies(emergencyRes?.data?.result || []);
+      const emergencyRes = await emergencyService.getAllEmergencyRequests();
+      const fetchedEmergencies = emergencyRes?.data?.result || [];
+      setEmergencies(fetchedEmergencies);
+      console.log("Fetched emergencies:", fetchedEmergencies); // Debug log
 
-        const intentRes = await bloodService.getAllBloodIntentForms();
-        setIntents(intentRes?.data?.result || []);
+      const intentRes = await bloodService.getAllBloodIntentForms();
+      const fetchedIntents = intentRes?.data?.result || [];
+      setIntents(fetchedIntents);
+      console.log("Fetched intents:", fetchedIntents); // Debug log
 
-        const bloodRes = await bloodService.getAllBloodInventories();
-        setInventories(bloodRes?.data?.result || []);
-      } catch (err) {
-        console.error("❌ Lỗi khi load dashboard:", err);
-      }
-    };
+      const bloodRes = await bloodService.getAllBloodInventories();
+      const fetchedInventories = bloodRes?.data?.result || [];
+      setInventories(fetchedInventories);
+      console.log("Fetched inventories:", fetchedInventories); // Debug log
+    } catch (err) {
+      console.error("❌ Lỗi khi load dashboard:", err);
+      // Optionally set an error state to display to the user
+      setErrorStats("Không thể tải dữ liệu dashboard");
+    }
+  };
 
-    fetchDashboardData();
-  }, []);
-
+  fetchDashboardData();
+}, []);
   useEffect(() => {
     const fetchStatistics = async () => {
       setLoadingStats(true);
@@ -172,18 +183,10 @@ export default function AdminDashboard() {
       icon: <FaUsers />,
       color: "#3b82f6",
     },
-    {
-      label: "ĐK Event",
-      value: totalForms,
-      icon: <FaCalendarAlt />,
-      color: "#10b981",
-    },
-    {
-      label: "Máu khẩn",
-      value: totalEmergencies,
-      icon: <FaHeartbeat />,
-      color: "#f59e0b",
-    },
+        { label: "ĐK Event", value: totalForms, icon: <FaCalendarAlt />, color: "#10b981" },
+    
+        { label: "Máu khẩn", value: totalEmergencies, icon: <FaHeartbeat />, color: "#f59e0b" },
+    
     {
       label: "Đơn nhận máu",
       value: totalRequestForms,
@@ -540,16 +543,30 @@ function isInTimeRangeUpTo(dateStr, type, dateRange) {
 }
 
 function isInTimeRange(dateStr, type, dateRange) {
-  if (!dateStr) return false;
-
-  const dataDate = new Date(dateStr);
-  if (isNaN(dataDate.getTime())) {
-    console.warn("Invalid date:", dateStr);
-    return false;
-  }
-
+  // If no date range is set, include all records
   if (!dateRange.startDate && !dateRange.endDate) {
     return true;
+  }
+
+  if (!dateStr) {
+    console.warn("Missing dateStr:", dateStr);
+    return false; // Exclude records with missing dates when a range is set
+  }
+
+  let dataDate;
+  // Handle different date formats
+  if (dateStr.includes("-") && dateStr.split("-").length === 3) {
+    // Assume format like "27-07-2025" or similar
+    const [d, m, y] = dateStr.split("-").map(Number);
+    dataDate = new Date(y, m - 1, d);
+  } else {
+    // Try parsing ISO or other formats
+    dataDate = new Date(dateStr);
+  }
+
+  if (isNaN(dataDate.getTime())) {
+    console.warn("Invalid date:", dateStr);
+    return false; // Exclude invalid dates when a range is set
   }
 
   const start = dateRange.startDate ? new Date(dateRange.startDate) : null;
