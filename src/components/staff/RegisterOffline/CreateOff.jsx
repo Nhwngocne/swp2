@@ -4,7 +4,6 @@ import { AuthContext } from "../../../services/AuthContext";
 import { donationService } from "../../../services/donationService";
 import "../../../assets/css/components/staff/CreateOff.css";
 
-
 const CreateOff = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
@@ -59,8 +58,7 @@ const CreateOff = () => {
   };
 
   return (
-      <div className="create-off-container">
-
+    <div className="create-off-container">
       <h2>Đăng ký hiến máu trực tiếp</h2>
       <form onSubmit={handleSubmit}>
         {/* Thông tin cá nhân */}
@@ -77,56 +75,62 @@ const CreateOff = () => {
         <h4>Câu hỏi sàng lọc</h4>
 
         <h5>Tiền sử hiến máu & bệnh lý</h5>
-        {[
-          { label: "Bạn đã từng hiến máu trước đây chưa?", name: "donatedBefore" },
-          { label: "Bạn có từng mắc các bệnh nghiêm trọng như tim mạch, tiểu đường hoặc ung thư không?", name: "hadSeriousDisease" },
-          { label: "Bạn đã từng bị sốt rét, viêm gan B/C hoặc bệnh truyền nhiễm khác chưa?", name: "hadMalariaOrOtherInfectious" },
-          { label: "Bạn đã từng nhận máu từ người khác chưa?", name: "receivedBlood" },
-          { label: "Bạn đang hoặc gần đây có dùng thuốc kháng sinh như Amoxicillin hoặc thuốc chống viêm như Ibuprofen không?", name: "usedAntibioticsOrAntiInflammatory" },
-          { label: "Trong 2 tuần qua, bạn có các triệu chứng như sốt, ho, đau họng, tiêu chảy, mất vị giác… không?", name: "symptomsPast2Weeks" },
-          { label: "Trong 1 tuần qua, bạn có gặp tình trạng như tiêu chảy, buồn nôn, hoặc phát ban không?", name: "symptomsPast1Week" },
-        ].map(({ label, name }) => (
-          <label key={name}>
-            <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
-            {label}
-          </label>
-        ))}
+        <div className="create-off-checkbox-group">
+          {[
+            { label: "Bạn đã từng hiến máu trước đây chưa?", name: "donatedBefore" },
+            { label: "Bạn có từng mắc các bệnh nghiêm trọng như tim mạch, tiểu đường hoặc ung thư không?", name: "hadSeriousDisease" },
+            { label: "Bạn đã từng bị sốt rét, viêm gan B/C hoặc bệnh truyền nhiễm khác chưa?", name: "hadMalariaOrOtherInfectious" },
+            { label: "Bạn đã từng nhận máu từ người khác chưa?", name: "receivedBlood" },
+            { label: "Bạn đang hoặc gần đây có dùng thuốc kháng sinh như Amoxicillin hoặc thuốc chống viêm như Ibuprofen không?", name: "usedAntibioticsOrAntiInflammatory" },
+            { label: "Trong 2 tuần qua, bạn có các triệu chứng như sốt, ho, đau họng, tiêu chảy, mất vị giác… không?", name: "symptomsPast2Weeks" },
+            { label: "Trong 1 tuần qua, bạn có gặp tình trạng như tiêu chảy, buồn nôn, hoặc phát ban không?", name: "symptomsPast1Week" },
+          ].map(({ label, name }) => (
+            <label key={name} className="create-off-label">
+              <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
+              {label}
+            </label>
+          ))}
+        </div>
 
         <h5>Hoạt động gần đây</h5>
-        {[
-          { label: "Bạn có tiêm vaccine như COVID-19, cúm mùa… trong 14 ngày qua không?", name: "gotVaccine" },
-          { label: "Trong 12 tháng qua, bạn không thực hiện bất kỳ hoạt động nào thuộc các mục ở trên?", name: "noneOfAbove12Months" },
-          { label: "Bạn có xăm hình, châm cứu hoặc thủ thuật xuyên da trong 6 tháng qua không?", name: "tattooOrAcupuncture" },
-        ].map(({ label, name }) => (
-          <label key={name}>
-            <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
-            {label}
-          </label>
-        ))}
+        <div className="create-off-checkbox-group">
+          {[
+            { label: "Bạn có tiêm vaccine như COVID-19, cúm mùa… trong 14 ngày qua không?", name: "gotVaccine" },
+            { label: "Trong 12 tháng qua, bạn không thực hiện bất kỳ hoạt động nào thuộc các mục ở trên?", name: "noneOfAbove12Months" },
+            { label: "Bạn có xăm hình, châm cứu hoặc thủ thuật xuyên da trong 6 tháng qua không?", name: "tattooOrAcupuncture" },
+          ].map(({ label, name }) => (
+            <label key={name} className="create-off-label">
+              <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
+              {label}
+            </label>
+          ))}
+        </div>
 
         <h5>Tình trạng da liễu</h5>
-        {[
-          { label: "Bạn có đang gặp vấn đề về da như viêm da, nấm da, zona hay vảy nến không?", name: "hadSkinIssues" },
-        ].map(({ label, name }) => (
-          <label key={name}>
-            <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
-            {label}
-          </label>
-        ))}
+        <div className="create-off-checkbox-group">
+          {[
+            { label: "Bạn có đang gặp vấn đề về da như viêm da, nấm da, zona hay vảy nến không?", name: "hadSkinIssues" },
+          ].map(({ label, name }) => (
+            <label key={name} className="create-off-label">
+              <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
+              {label}
+            </label>
+          ))}
+        </div>
 
         <h5>Thông tin dành cho nữ</h5>
-        {[
-          { label: "Hiện bạn đang trong kỳ kinh nguyệt?", name: "isMenstruating" },
-          { label: "Bạn đang mang thai hoặc vừa sinh con trong 6 tháng qua?", name: "isPregnantOrRecentlyDelivered" },
-          { label: "Bạn không thuộc bất kỳ tình trạng sức khỏe nào nêu trên dành cho nữ?", name: "noneOfFemaleConditions" },
-        ].map(({ label, name }) => (
-          <label key={name}>
-            <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
-            {label}
-          </label>
-        ))}
-
-
+        <div className="create-off-checkbox-group">
+          {[
+            { label: "Hiện bạn đang trong kỳ kinh nguyệt?", name: "isMenstruating" },
+            { label: "Bạn đang mang thai hoặc vừa sinh con trong 6 tháng qua?", name: "isPregnantOrRecentlyDelivered" },
+            { label: "Bạn không thuộc bất kỳ tình trạng sức khỏe nào nêu trên dành cho nữ?", name: "noneOfFemaleConditions" },
+          ].map(({ label, name }) => (
+            <label key={name} className="create-off-label">
+              <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
+              {label}
+            </label>
+          ))}
+        </div>
 
         {/* Kiểm tra sức khỏe */}
         <h4>Thông tin kiểm tra</h4>
@@ -135,12 +139,11 @@ const CreateOff = () => {
         <input type="text" name="bloodPressure" placeholder="Huyết áp (VD: 120/80)" value={formData.bloodPressure} onChange={handleChange} />
 
         <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
-          <button type="submit">Nộp đơn</button>
-          <button type="button" onClick={() => navigate("/registerOff")}>
+          <button type="submit" className="create-off-submit-btn">Nộp đơn</button>
+          <button type="button" className="create-off-cancel-btn" onClick={() => navigate("/registerOff")}>
             Hủy
           </button>
         </div>
-
       </form>
     </div>
   );
