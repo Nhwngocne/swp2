@@ -85,6 +85,7 @@ const BloodIntentList = () => {
             case "PENDING": return "Chờ xử lý";
             case "ACCEPTED": return "Chấp nhận";
             case "REJECTED": return "Từ chối";
+            case "PROCESSING": return "Đang xử lý";
             case "COMPLETED": return "Đã hoàn thành";
             default: return status;
         }
