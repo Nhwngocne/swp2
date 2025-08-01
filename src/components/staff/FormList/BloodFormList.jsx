@@ -6,6 +6,9 @@ import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { eventService } from "../../../services/eventService";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+import "../../../assets/css/components/staff/BloodFromList.css";
+
 dayjs.extend(customParseFormat);
 
 const BloodFormList = () => {
